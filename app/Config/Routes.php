@@ -11,3 +11,7 @@ use App\Controllers\Pages;
 
 $routes->get('pages', [Pages::class, 'index']);
 $routes->get('(:segment)', [Pages::class, 'view']);
+$routes->get('login', 'AuthController::index');        // shows login form
+$routes->post('login', 'AuthController::authenticate'); // handles login POST
+$routes->get('dashboard', 'DashboardController::index'); // protected dashboard
+

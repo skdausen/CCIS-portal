@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2025 at 09:52 AM
+-- Generation Time: Jun 30, 2025 at 10:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,16 +32,15 @@ CREATE TABLE `admins` (
   `admin_id` int(11) NOT NULL,
   `admin_lname` varchar(100) NOT NULL,
   `admin_fname` varchar(100) NOT NULL,
-  `admin_mname` varchar(100) NOT NULL,
-  `admin_email` varchar(100) NOT NULL
+  `admin_mname` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`user_id`, `admin_id`, `admin_lname`, `admin_fname`, `admin_mname`, `admin_email`) VALUES
-(1, 1, 'admin', 'ccis', 'ispsc', 'ccisportal2025@gmail.com');
+INSERT INTO `admins` (`user_id`, `admin_id`, `admin_lname`, `admin_fname`, `admin_mname`) VALUES
+(1, 1, 'admin', 'ccis', 'ispsc');
 
 -- --------------------------------------------------------
 
@@ -98,8 +97,7 @@ CREATE TABLE `faculty` (
   `faculty_id` int(25) NOT NULL,
   `faculty_lname` varchar(100) NOT NULL,
   `faculty_fname` varchar(100) NOT NULL,
-  `faculty_mname` varchar(100) NOT NULL,
-  `faculty_email` varchar(100) NOT NULL
+  `faculty_mname` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -156,8 +154,7 @@ CREATE TABLE `students` (
   `student_mname` varchar(100) NOT NULL,
   `program` varchar(100) NOT NULL,
   `year_level` int(1) NOT NULL,
-  `student_birthdate` date NOT NULL,
-  `student_email` varchar(100) NOT NULL
+  `student_birthdate` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -172,15 +169,16 @@ CREATE TABLE `users` (
   `userpassword` varchar(255) NOT NULL,
   `role` enum('superadmin','admin','faculty','student') NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `last_login` datetime DEFAULT NULL
+  `last_login` datetime DEFAULT NULL,
+  `email` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`) VALUES
-(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL);
+INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`) VALUES
+(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com');
 
 --
 -- Indexes for dumped tables

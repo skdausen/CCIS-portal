@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="<?= base_url('rsc/bootstrap-5.3.7/css/bootstrap.min.css'); ?>">
+    <link rel="stylesheet" href="<?= base_url('rsc/custom_css/login.css'); ?>">
     <style>
         body {
             background-color: #f8f9fa;

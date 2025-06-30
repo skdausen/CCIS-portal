@@ -1,5 +1,6 @@
 
     <div class="card p-4 shadow" style="min-width: 300px;">
+        <img src="<?= base_url('rsc/assets/cs-logo.png'); ?>" alt="" class="mb-3 mx-auto login-img">
         <h3 class="mb-4 text-center">Login</h3>
 
         <?php if (session()->getFlashdata('error')): ?>

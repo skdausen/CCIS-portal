@@ -26,23 +26,25 @@
                 <form action="/login" method="post" onsubmit="showSpinner()">
                 <?= csrf_field() ?>
                 <div class="mb-3">
-                    <input type="text" name="username" class="form-control" placeholder="Enter UserID" required autofocus>
+                    <input type="text" name="username" class="form-control" placeholder="Enter Username" required autofocus>
                 </div>
                 <div class="mb-3">
                     <input type="password" name="password" class="form-control" placeholder="Enter Password" required>
                 </div>
-                <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                    <label class="form-check-label small" for="remember">Remember me</label>
+                <div class="d-flex mb-3">
+                    <div class="form-check mb-3 col-md-6">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label small" for="remember">Remember me</label>
+                    </div>
+                    <div class="text-end col-md-6">
+                            <a href="#" class="small text-muted">Forgot password?</a>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-teal w-100">
                     <span class="spinner-border spinner-border-sm d-none" id="spinner" role="status"></span>
                     <span id="btnText">LOGIN</span>
                 </button>
                 </form>
-                <div class="text-end mt-2">
-                <a href="#" class="small text-muted">Forgot password?</a>
-                </div>
             </div>
             </div>
 

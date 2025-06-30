@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2025 at 09:49 AM
+-- Generation Time: Jun 30, 2025 at 09:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -180,7 +180,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`) VALUES
-(1, 'superadmin', '889a3a791b3875cfae413574b53da4bb8a90d53e', 'superadmin', '2025-06-30 15:31:35', NULL);
+(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL);
 
 --
 -- Indexes for dumped tables

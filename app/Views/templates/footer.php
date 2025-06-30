@@ -1,3 +1,9 @@
-    <script src="<?= base_url('rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js'); ?>"></script>
+    <script>
+        function showSpinner() {
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('spinner').style.display = 'inline-block';
+            document.getElementById('btnText').textContent = ' Logging in...';
+        }
+    </script>
 </body>
 </html>

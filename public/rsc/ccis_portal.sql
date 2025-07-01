@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2025 at 06:18 AM
+-- Generation Time: Jul 01, 2025 at 06:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -113,21 +113,6 @@ CREATE TABLE `grades` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `password_resets`
---
-
-CREATE TABLE `password_resets` (
-  `id` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `otp_code` varchar(6) NOT NULL,
-  `otp_expiry` datetime NOT NULL,
-  `is_used` tinyint(1) DEFAULT 0,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `students`
 --
 
@@ -171,16 +156,17 @@ CREATE TABLE `users` (
   `sex` enum('male','female') NOT NULL,
   `address` varchar(255) NOT NULL,
   `birthday` date NOT NULL,
-  `otp` varchar(6) NOT NULL,
-  `otp_expiry` datetime NOT NULL
+  `otp_code` varchar(6) NOT NULL,
+  `otp_expiry` datetime NOT NULL,
+  `is_verified` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`, `profile_img`, `lname`, `fname`, `mname`, `sex`, `address`, `birthday`, `otp`, `otp_expiry`) VALUES
-(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com', '', '', '', '', 'male', '', '0000-00-00', '', '0000-00-00 00:00:00');
+INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`, `profile_img`, `lname`, `fname`, `mname`, `sex`, `address`, `birthday`, `otp_code`, `otp_expiry`, `is_verified`) VALUES
+(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com', '', '', '', '', 'male', '', '0000-00-00', '', '0000-00-00 00:00:00', 0);
 
 --
 -- Indexes for dumped tables
@@ -231,12 +217,6 @@ ALTER TABLE `grades`
   ADD UNIQUE KEY `student_id` (`student_id`);
 
 --
--- Indexes for table `password_resets`
---
-ALTER TABLE `password_resets`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
@@ -285,12 +265,6 @@ ALTER TABLE `course`
 --
 ALTER TABLE `grades`
   MODIFY `grade_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `password_resets`
---
-ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `student_schedule`

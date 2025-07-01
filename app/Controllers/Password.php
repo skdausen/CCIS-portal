@@ -1,68 +1,75 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\OtpModel;
 
-// use CodeIgniter\Exceptions\PageNotFoundException;
+use App\Models\UserModel;
+use CodeIgniter\Controller;
 
 class Password extends BaseController
 {
-    // create a method to display the HTML form you have created
-    public function forgotPasswordForm()
+    public function forgot()
     {
-        // We load the Form helper with the helper() function. Most helper functions require the helper to be loaded before use.
-        helper('form');
-
-        // Then it returns the created form view.
-        return view('templates/header', ['title' => 'Forgot Password'])
-            . view('password/forgotPasswordForm')
-            . view('templates/footer');
+        return view('password/forgot_form');
     }
 
-    public function sendOtp()
+    public function sendOTP()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $email = trim($_POST['email']);
-            $otp = rand(100000, 999999); // Generate 6-digit OTP
-            $otp_expiry = date("Y-m-d H:i:s", strtotime("+5 minutes"));
+        helper('email');
 
-            $OtpModel = new OtpModel();
+        $email = $this->request->getPost('email');
 
-            // Clear any existing OTP for this email
-            $OtpModel->deleteByEmail($email);
+        $userModel = new UserModel();
+        $user = $userModel->getByEmail($email);
 
-            // Insert new OTP
-            $saved = $OtpModel->insertOtp($email, $otp, $otp_expiry);
-
-            // $sql = "INSERT INTO users (email, otp_code, otp_expiry) VALUES (?, ?, ?)";
-            // $stmt = $conn->prepare($sql);
-            // $stmt->bind_param("sss", $email, $otp, $otp_expiry);
-            
-            if ($saved) {
-                helper('email'); // Or load custom email library
-                sendOtpEmail($email, $otp); // From helper or library
-
-                return redirect()->to('/verify?email=' . urlencode($email));
-            } else {
-                return redirect()->back()->with('error', 'Failed to store OTP');
-            }
-
-            // if ($stmt->execute()) {
-            //     // Debug output
-            //     echo "OTP stored in database: $otp (expires: $otp_expiry)<br>";
-                
-            //     // Send email
-            //     sendOtpEmail($email, $otp);
-                
-            //     // Redirect to verify page
-            //     header("Location: verify.php?email=" . urlencode($email));
-            //     exit();
-            // } else {
-            //     echo "Error: " . $stmt->error;
-            // }
+        // Check if email exists in the database
+        if (!$user) {
+            return redirect()->back()->withInput()->with('error', 'Email not found.');
         }
 
-        return view('password/forgot'); // Your form view
+        $otp = rand(100000, 999999);
+        $expiry = date("Y-m-d H:i:s", strtotime("+5 minutes"));
+        
+        $userModel->storeOTP($email, $otp, $expiry);
 
+        sendOtpEmail($email, $otp);
+
+        return redirect()->to('/password/verify?email=' . urlencode($email));
+    }
+
+    public function verifyForm()
+    {
+        $email = $this->request->getGet('email');
+        return view('password/verify_form', ['email' => $email]);
+    }
+
+    public function verifyOTP()
+    {
+        $email = $this->request->getPost('email');
+        $otp = $this->request->getPost('otp');
+
+        $userModel = new UserModel();
+        if ($userModel->verifyOTP($email, $otp)) {
+            $userModel->markVerified($email);
+            return redirect()->to('/password/reset?email=' . urlencode($email));
+        } else {
+            return redirect()->back()->with('error', 'Invalid or expired OTP');
+        }
+    }
+
+    public function resetForm()
+    {
+        $email = $this->request->getGet('email');
+        return view('password/reset_form', ['email' => $email]);
+    }
+
+    public function resetPassword()
+    {
+        $email = $this->request->getPost('email');
+        $password = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+
+        $userModel = new UserModel();
+        $userModel->updatePassword($email, $password);
+
+        return redirect()->to('/login')->with('message', 'Password changed successfully!');
     }
 }

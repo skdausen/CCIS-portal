@@ -1,7 +1,7 @@
 
 <div class="container mt-5">
     <h2>Enter your email</h2>
-    <form action="/forgot" method="post">
+    <form action="/send_otp" method="post">
         <?= csrf_field() ?>
         
         <div class="mb-3">
@@ -10,7 +10,7 @@
             <input type="email" class="form-control" name="email" id="email" value="<?= set_value('email') ?>" required>
         </div>
 
-        <button type="submit" name="submit" class="btn btn-primary">Forgot Password</button>
+        <button type="submit" name="submit" class="btn btn-primary">Send OTP</button>
 
     </form>
 </div>

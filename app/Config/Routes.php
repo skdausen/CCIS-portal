@@ -14,4 +14,4 @@ $routes->get('pages', [Pages::class, 'index']);
 $routes->get('(:segment)', [Pages::class, 'view']);
 
 $routes->get('password/forgot', [Password::class, 'forgotPasswordForm']);
-$routes->post('forgot', [Password::class, 'forgot']);
+$routes->post('send_otp', [Password::class, 'sendOtp']);

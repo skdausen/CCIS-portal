@@ -67,17 +67,3 @@ database.default.DBDriver = MySQLi
 #--------------------------------------------------------------------
 
 # logger.threshold = 4
-
-email.fromEmail = 'ccisportal2025@gmail.com'
-email.fromName  = 'CCIS Portal'
-email.protocol  = smtp
-email.SMTPHost  = smtp.gmail.com
-email.SMTPUser  = ccisportal2025@gmail.com
-email.SMTPPass  = your_app_password_or_generated_token
-email.SMTPPort  = 587
-email.SMTPTimeout = 30
-email.SMTPKeepAlive = true
-email.SMTPAuth = true
-email.SMTPCrypto = tls
-email.mailType = html
-email.charset  = utf-8

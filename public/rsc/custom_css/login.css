@@ -15,7 +15,10 @@
   background-color: #2bbbad;
 }
 
-/* SPINNER toggle JS */
-#spinner {
-  display: none;
+.btn-teal:disabled {
+    background-color: #26a699b6 !important;
+    border-color: #26a699b6 !important;
+    color: white !important;
+    opacity: 0.8;
 }
+

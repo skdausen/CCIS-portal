@@ -1,9 +1,4 @@
-    <script>
-        function showSpinner() {
-            document.getElementById('loginBtn').disabled = true;
-            document.getElementById('spinner').style.display = 'inline-block';
-            document.getElementById('btnText').textContent = ' Logging in...';
-        }
+    <script src="<?= base_url('rsc/custom_js/login_spinner.js'); ?>">
     </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <?php
-
+//Routes.php
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -7,13 +7,13 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
+use App\Controllers\AuthController;
 use App\Controllers\Pages;
 
 $routes->get('pages', [Pages::class, 'index']);
 $routes->get('(:segment)', [Pages::class, 'view']);
 $routes->get('login', 'AuthController::index');        // shows login form
 $routes->post('login', 'AuthController::authenticate'); // handles login POST
-// $routes->get('dashboard', 'DashboardController::index'); // protected dashboard
 $routes->get('home', 'AuthController::home'); // Show home page
 $routes->get('logout', 'AuthController::logout'); // Logout user
 

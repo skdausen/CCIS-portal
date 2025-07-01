@@ -1,5 +1,4 @@
-<?php
-//AuthController.php
+<?php //AuthController.php
 namespace App\Controllers;
 
 use App\Models\LoginModel;
@@ -22,8 +21,8 @@ class AuthController extends BaseController
 
         $user = $model->getUserByUsername($username);
 
-        // Now using password_verify() for bcrypt hashes
-        if ($user && password_verify($password, $user['userpassword'])) {
+        // Plain text password comparison
+        if ($user && $password === $user['userpassword']) {
             $model->update($user['user_id'], ['last_login' => date('Y-m-d H:i:s')]);
 
             $session->set([

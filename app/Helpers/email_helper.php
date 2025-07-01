@@ -11,12 +11,12 @@ function sendOtpEmail($email, $otp)
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'skdausen@gmail.com';
-        $mail->Password   = 'hgso ftaj lrww humw';
+        $mail->Username   = 'ccisportal2025@gmail.com';
+        $mail->Password   = 'oqwt yykv msqb xhht';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        $mail->setFrom('skdausen@gmail.com', 'OTP Verification');
+        $mail->setFrom('ccisportal2025@gmail.com', 'OTP Verification');
         $mail->addAddress($email);
 
         $mail->isHTML(true);

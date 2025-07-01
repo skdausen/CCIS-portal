@@ -21,4 +21,8 @@
     color: white !important;
     opacity: 0.8;
 }
+        
+.spinner-border {
+    display: none;
+}
 

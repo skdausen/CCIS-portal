@@ -7,6 +7,6 @@
 <body>
     <h1>Welcome, <?= session('username') ?>!</h1>
     <p>You are logged in.</p>
-    <a href="<?= site_url('logout') ?>">Logout</a>
+    <a href="<?= base_url('logout') ?>">Logout</a>
 </body>
 </html>

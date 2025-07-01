@@ -1,0 +1,28 @@
+.login-img {
+    width: 100px;  /* or any size you want */
+    height: auto;
+}
+/* CUSTOM TEAL BUTTON */
+.btn-teal {
+  background-color: #26a69a;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  /* transition: background 0.3s; */
+}
+
+.btn-teal:hover {
+  background-color: #2bbbad;
+}
+
+.btn-teal:disabled {
+    background-color: #26a699b6 !important;
+    border-color: #26a699b6 !important;
+    color: white !important;
+    opacity: 0.8;
+}
+        
+.spinner-border {
+    display: none;
+}
+

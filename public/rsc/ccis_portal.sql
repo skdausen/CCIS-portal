@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2025 at 05:01 AM
+-- Generation Time: Jul 01, 2025 at 06:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -164,6 +164,7 @@ CREATE TABLE `users` (
   `created_at` datetime DEFAULT current_timestamp(),
   `last_login` datetime DEFAULT NULL,
   `email` varchar(255) NOT NULL,
+  `profile_img` varchar(255) NOT NULL,
   `lname` varchar(100) NOT NULL,
   `fname` varchar(100) NOT NULL,
   `mname` varchar(100) NOT NULL,
@@ -178,8 +179,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`, `lname`, `fname`, `mname`, `sex`, `address`, `birthday`, `otp`, `otp_expiry`) VALUES
-(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com', '', '', '', 'male', '', '0000-00-00', '', '0000-00-00 00:00:00');
+INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`, `profile_img`, `lname`, `fname`, `mname`, `sex`, `address`, `birthday`, `otp`, `otp_expiry`) VALUES
+(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com', '', '', '', '', 'male', '', '0000-00-00', '', '0000-00-00 00:00:00');
 
 --
 -- Indexes for dumped tables

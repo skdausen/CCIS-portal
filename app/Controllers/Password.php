@@ -9,7 +9,10 @@ class Password extends BaseController
 {
     public function forgot()
     {
-        return view('password/forgot_form');
+        // return view('password/forgot_form');
+        return view('templates/header')
+            . view('password/forgot_form')
+            . view('templates/footer');
     }
 
     public function sendOTP()
@@ -39,7 +42,11 @@ class Password extends BaseController
     public function verifyForm()
     {
         $email = $this->request->getGet('email');
-        return view('password/verify_form', ['email' => $email]);
+        // return view('password/verify_form', ['email' => $email]);
+
+         return view('templates/header')
+            . view('password/verify_form', ['email' => $email])
+            . view('templates/footer');
     }
 
     public function verifyOTP()
@@ -59,7 +66,12 @@ class Password extends BaseController
     public function resetForm()
     {
         $email = $this->request->getGet('email');
-        return view('password/reset_form', ['email' => $email]);
+
+        // return view('password/reset_form', ['email' => $email]);
+
+        return view('templates/header')
+            . view('password/reset_form', ['email' => $email])
+            . view('templates/footer');
     }
 
     public function resetPassword()

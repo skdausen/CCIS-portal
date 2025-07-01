@@ -1,9 +1,8 @@
 <?php
-
+//AuthController.php
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use App\Models\LoginModel; // ✅ Import your LoginModel
+use App\Models\LoginModel;
 
 class AuthController extends BaseController
 {
@@ -16,26 +15,43 @@ class AuthController extends BaseController
     {
         $session = session();
         $request = \Config\Services::request();
-        $model = new LoginModel();
+        $model = new LoginModel(); // Simplified since you have 'use' statement
 
         $username = $request->getPost('username');
         $password = $request->getPost('password');
 
-        // ✅ Get user from the database
         $user = $model->getUserByUsername($username);
 
-        if ($user && password_verify($password, $user['password'])) {
-            // ✅ Set session data if password is correct
+        // Now using password_verify() for bcrypt hashes
+        if ($user && password_verify($password, $user['userpassword'])) {
+            $model->update($user['user_id'], ['last_login' => date('Y-m-d H:i:s')]);
+
             $session->set([
-                'user_id'   => $user['id'],
-                'username'  => $user['username'],
+                'user_id'    => $user['user_id'],
+                'username'   => $user['username'],
+                'role'       => $user['role'],
                 'isLoggedIn' => true
             ]);
-            return redirect()->to('/dashboard');
+
+            return redirect()->to('home');
         } else {
-            // ❌ Login failed
             $session->setFlashdata('error', 'Invalid credentials.');
-            return redirect()->to('/login')->withInput();
+            return redirect()->to('login')->withInput();
         }
+    }
+
+    public function home()
+    {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('login');
+        }
+
+        return view('home');
+    }
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('login');
     }
 }

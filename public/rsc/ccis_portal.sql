@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2025 at 10:47 AM
+-- Generation Time: Jul 01, 2025 at 05:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,18 +29,15 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admins` (
   `user_id` int(11) NOT NULL,
-  `admin_id` int(11) NOT NULL,
-  `admin_lname` varchar(100) NOT NULL,
-  `admin_fname` varchar(100) NOT NULL,
-  `admin_mname` varchar(100) NOT NULL
+  `admin_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`user_id`, `admin_id`, `admin_lname`, `admin_fname`, `admin_mname`) VALUES
-(1, 1, 'admin', 'ccis', 'ispsc');
+INSERT INTO `admins` (`user_id`, `admin_id`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -95,9 +92,7 @@ CREATE TABLE `course` (
 CREATE TABLE `faculty` (
   `user_id` int(11) NOT NULL,
   `faculty_id` int(25) NOT NULL,
-  `faculty_lname` varchar(100) NOT NULL,
-  `faculty_fname` varchar(100) NOT NULL,
-  `faculty_mname` varchar(100) NOT NULL
+  `employment_status` enum('full-time','part-time') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -110,7 +105,9 @@ CREATE TABLE `grades` (
   `grade_id` int(11) NOT NULL,
   `course_id` int(11) NOT NULL,
   `student_id` varchar(25) NOT NULL,
-  `grade` int(10) NOT NULL
+  `grade` int(10) NOT NULL,
+  `semester` enum('first','second','midyear') NOT NULL,
+  `school_year` varchar(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -131,30 +128,26 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `schedule`
---
-
-CREATE TABLE `schedule` (
-  `schedule_id` int(11) NOT NULL,
-  `student_id` varchar(25) NOT NULL,
-  `class_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `students`
 --
 
 CREATE TABLE `students` (
   `user_id` int(11) NOT NULL,
   `student_id` varchar(25) NOT NULL,
-  `student_lname` varchar(100) NOT NULL,
-  `student_fname` varchar(100) NOT NULL,
-  `student_mname` varchar(100) NOT NULL,
   `program` varchar(100) NOT NULL,
-  `year_level` int(1) NOT NULL,
-  `student_birthdate` date NOT NULL
+  `year_level` enum('first year','second year','third year','fourth year') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_schedule`
+--
+
+CREATE TABLE `student_schedule` (
+  `schedule_id` int(11) NOT NULL,
+  `student_id` varchar(25) NOT NULL,
+  `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -170,15 +163,23 @@ CREATE TABLE `users` (
   `role` enum('superadmin','admin','faculty','student') NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `last_login` datetime DEFAULT NULL,
-  `email` varchar(255) NOT NULL
+  `email` varchar(255) NOT NULL,
+  `lname` varchar(100) NOT NULL,
+  `fname` varchar(100) NOT NULL,
+  `mname` varchar(100) NOT NULL,
+  `sex` enum('male','female') NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `birthday` date NOT NULL,
+  `otp` varchar(6) NOT NULL,
+  `otp_expiry` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`) VALUES
-(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com');
+INSERT INTO `users` (`user_id`, `username`, `userpassword`, `role`, `created_at`, `last_login`, `email`, `lname`, `fname`, `mname`, `sex`, `address`, `birthday`, `otp`, `otp_expiry`) VALUES
+(1, 'superadmin', 'superadmin', 'superadmin', '2025-06-30 15:31:35', NULL, 'ccisportal2025@gmail.com', '', '', '', 'male', '', '0000-00-00', '', '0000-00-00 00:00:00');
 
 --
 -- Indexes for dumped tables
@@ -235,19 +236,19 @@ ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `schedule`
---
-ALTER TABLE `schedule`
-  ADD PRIMARY KEY (`schedule_id`),
-  ADD KEY `student_id` (`student_id`),
-  ADD KEY `class_id` (`class_id`);
-
---
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
   ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `student_id` (`student_id`);
+
+--
+-- Indexes for table `student_schedule`
+--
+ALTER TABLE `student_schedule`
+  ADD PRIMARY KEY (`schedule_id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `class_id` (`class_id`);
 
 --
 -- Indexes for table `users`
@@ -291,9 +292,9 @@ ALTER TABLE `password_resets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `schedule`
+-- AUTO_INCREMENT for table `student_schedule`
 --
-ALTER TABLE `schedule`
+ALTER TABLE `student_schedule`
   MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -339,17 +340,17 @@ ALTER TABLE `grades`
   ADD CONSTRAINT `grades_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 
 --
--- Constraints for table `schedule`
---
-ALTER TABLE `schedule`
-  ADD CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`),
-  ADD CONSTRAINT `schedule_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`);
-
---
 -- Constraints for table `students`
 --
 ALTER TABLE `students`
   ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `student_schedule`
+--
+ALTER TABLE `student_schedule`
+  ADD CONSTRAINT `student_schedule_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`),
+  ADD CONSTRAINT `student_schedule_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

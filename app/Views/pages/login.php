@@ -1,17 +1,17 @@
 <!-- login.php -->
 
 <!-- HEADER -->
-    <div class="d-flex w-100 justify-content-between align-items-center bg-dark text-white px-4 py-2 position-fixed top-0 start-0" style="z-index: 1000;">
-        <div>
-        <div style="font-weight: bold;">CCIS</div>
-    <div style="font-weight: bold;">LOGO</div>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-3" href="#">CCIS</a>
         </div>
-    </div>
+    </nav>
+
 
 
 <!-- MAIN CONTENT -->
     <div class="container-fluid vh-100 row">
-        <div class="row flex-grow-1">
+        <div class="row flex-grow-1 px-0">
             <!-- LEFT: LOGIN FORM -->
             <div class="col-md-6 d-flex align-items-center justify-content-center bg-white">
             <div class="card shadow p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">

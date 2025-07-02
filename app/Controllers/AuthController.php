@@ -20,9 +20,14 @@ class AuthController extends BaseController
         $password = $request->getPost('password');
 
         $user = $model->getUserByUsername($username);
-
-        // Plain text password comparison
-        if ($user && $password === $user['userpassword']) {
+        
+        if (!$user) {
+        // USER NOT FOUND
+        $session->setFlashdata('error', 'User does not exist.');
+        return redirect()->to('login')->withInput();
+        }
+        // password hash verification
+        if (password_verify($password, $user['userpassword'])) {
             $model->update($user['user_id'], ['last_login' => date('Y-m-d H:i:s')]);
 
             $session->set([
@@ -34,7 +39,7 @@ class AuthController extends BaseController
 
             return redirect()->to('home');
         } else {
-            $session->setFlashdata('error', 'Invalid credentials.');
+            $session->setFlashdata('error', 'Incorrect password.');
             return redirect()->to('login')->withInput();
         }
     }

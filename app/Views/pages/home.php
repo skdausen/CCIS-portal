@@ -58,13 +58,11 @@
             <input type="text" class="form-control" placeholder="Search" aria-label="Search">
         </div>
 
-        <!-- Your provided home.php content now in a new container -->
         <div class="welcome-message">
             <h1>Welcome, <?= session('username') ?>!</h1>
             <p>You are logged in.</p>
             <a href="<?= site_url('logout') ?>" class="btn btn-primary rounded-pill">Logout</a>
         </div>
-        <!-- End of your provided home.php content -->
 
     </div>
 

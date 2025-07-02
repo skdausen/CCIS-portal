@@ -82,6 +82,6 @@ class Password extends BaseController
         $userModel = new UserModel();
         $userModel->updatePassword($email, $password);
 
-        return redirect()->to('/login')->with('message', 'Password changed successfully!');
+        return redirect()->to('auth/login')->with('message', 'Password changed successfully!');
     }
 }

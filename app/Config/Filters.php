@@ -1,5 +1,5 @@
 <?php
-
+// Filters.php
 namespace Config;
 
 use CodeIgniter\Config\Filters as BaseFilters;
@@ -34,6 +34,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        // CUSTOM FILTER TO PREVENT BACK BUTTON CACHING
+        'preventBackHistory' => \App\Filters\PreventBackHistory::class,
+
     ];
 
     /**
@@ -76,6 +79,7 @@ class Filters extends BaseFilters
         'after' => [
             // 'honeypot',
             // 'secureheaders',
+            'preventBackHistory' //prevent back
         ],
     ];
 
@@ -103,5 +107,7 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        'preventBackHistory' => ['after' => ['*']],
+    ];
 }

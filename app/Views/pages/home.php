@@ -13,13 +13,13 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Schedules</a>
+                        <a class="nav-link" href="<?= site_url('schedules') ?>">Schedules</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Grades</a>
+                        <a class="nav-link" href="<?= site_url('grades') ?>">Grades</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="<?= site_url('about') ?>">About</a>
                     </li>
                 </ul>
                 <!-- Icons on the far right -->
@@ -58,13 +58,11 @@
             <input type="text" class="form-control" placeholder="Search" aria-label="Search">
         </div>
 
-        <!-- Your provided home.php content now in a new container -->
         <div class="welcome-message">
             <h1>Welcome, <?= session('username') ?>!</h1>
             <p>You are logged in.</p>
             <a href="<?= site_url('logout') ?>" class="btn btn-primary rounded-pill">Logout</a>
         </div>
-        <!-- End of your provided home.php content -->
 
     </div>
 

@@ -17,10 +17,10 @@ $routes->get('pages', [Pages::class, 'index']);
 $routes->get('(:segment)', [Pages::class, 'view']);
 
 // Authentication routes
-$routes->get('login', [AuthController::class, 'index']);           // Show login form
-$routes->post('login', [AuthController::class, 'authenticate']);   // Handle login
+$routes->get('auth/login', [AuthController::class, 'index']);           // Show login form
+$routes->post('auth/login', [AuthController::class, 'authenticate']);   // Handle login
 $routes->get('home', [AuthController::class, 'home']);             // Home page after login
-$routes->get('logout', [AuthController::class, 'logout']);         // Logout
+$routes->get('auth/logout', [AuthController::class, 'logout']);         // Logout
 
 
 $routes->get('password/forgot', [Password::class, 'forgot']);

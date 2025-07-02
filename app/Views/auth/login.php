@@ -1,14 +1,5 @@
 <!-- login.php -->
 
-<!-- HEADER -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand ms-3" href="#">CCIS</a>
-        </div>
-    </nav>
-
-
-
 <!-- MAIN CONTENT -->
     <div class="container-fluid vh-100 row">
         <div class="row flex-grow-1 px-0">

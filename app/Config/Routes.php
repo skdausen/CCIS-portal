@@ -31,7 +31,3 @@ $routes->get('password/reset', [Password::class, 'resetForm']);
 $routes->post('password/reset', [Password::class, 'resetPassword']);
 
 
-
-// $routes->get('password/forgot', [Password::class, 'forgotPasswordForm']);
-// $routes->post('send_otp', [Password::class, 'sendOtp']);
-// $routes->get('password/(:segment)', [Password::class, 'forgotPasswordForm']);

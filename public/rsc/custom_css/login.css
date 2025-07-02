@@ -1,3 +1,10 @@
+body {
+    /* font-family: 'Inter', sans-serif; */
+    background: linear-gradient(to bottom right, #e0f7fa, #00bcd4); /* Gradient background from your image */
+    min-height: 100vh; /* Ensure it takes full viewport height */
+    display: flex;
+    flex-direction: column;
+}
 .navbar {
     background-color: #343a40; /* Dark background for navbar */
     border-radius: 0 0 10px 10px; /* Rounded bottom corners */

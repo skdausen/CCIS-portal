@@ -7,7 +7,9 @@ class AuthController extends BaseController
 {
     public function index()
     {
-        return view('login');
+            return view('templates/login_header')
+            . view('auth/login')
+            . view('templates/login_footer');
     }
 
     public function authenticate()
@@ -24,7 +26,7 @@ class AuthController extends BaseController
         if (!$user) {
         // USER NOT FOUND
         $session->setFlashdata('error', 'User does not exist.');
-        return redirect()->to('login')->withInput();
+        return redirect()->to('auth/login')->withInput();
         }
         // password hash verification
         if (password_verify($password, $user['userpassword'])) {
@@ -40,14 +42,14 @@ class AuthController extends BaseController
             return redirect()->to('home');
         } else {
             $session->setFlashdata('error', 'Incorrect password.');
-            return redirect()->to('login')->withInput();
+            return redirect()->to('auth/login')->withInput();
         }
     }
 
     public function home()
     {
         if (!session()->get('isLoggedIn')) {
-            return redirect()->to('login');
+            return redirect()->to('auth/login');
         }
 
         return view('home');
@@ -56,6 +58,6 @@ class AuthController extends BaseController
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('login');
+        return redirect()->to('auth/login');
     }
 }

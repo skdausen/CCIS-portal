@@ -25,7 +25,7 @@
                 <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
                 <?php endif; ?>
 
-                <form action="<?= site_url('login') ?>" method="post" onsubmit="showSpinner()">
+                <form action="<?= site_url('auth/login') ?>" method="post" onsubmit="showSpinner()">
                 <?= csrf_field() ?>
                 <div class="mb-3">
                     <input type="text" name="username" class="form-control" placeholder="Enter Username" required autofocus>
@@ -39,7 +39,7 @@
                         <label class="form-check-label small" for="remember">Remember me</label>
                     </div>
                     <div class="text-end col-md-6">
-                            <a href="password/forgot" class="small text-muted">Forgot password?</a>
+                            <a href="<?= site_url('password/forgot') ?>" class="small text-muted">Forgot password?</a>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-teal w-100">

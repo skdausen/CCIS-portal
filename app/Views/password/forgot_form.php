@@ -39,7 +39,7 @@
                         </button>
 
                         <div class="text-end">
-                            <a href="/login" class="small text-decoration-none text-reset"> cancel </a>
+                            <a href="<?= site_url('auth/login') ?>" class="small text-decoration-none text-reset"> cancel </a>
                         </div>
                     </form>
                     

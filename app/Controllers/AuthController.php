@@ -65,14 +65,21 @@ class AuthController extends BaseController
     // DISPLAY HOME PAGE (PROTECTED)
     public function home()
     {
-        // ONLY ALLOW ACCESS IF LOGGED IN
-        if (!session()->get('isLoggedIn')) {
-            return redirect()->to('auth/login');
+        // CHECK IF USER IS LOGGED IN
+        if (session()->get('isLoggedIn')) {
+            echo "SESSION NOT FOUND!";
+            // CHECK IF USER ROLE IS ALLOWED (admin or superadmin)
+            $role = session()->get('role');
+            if ($role == 'admin' && $role == 'superadmin') {
+                return redirect()->to('home');
+            }
         }
 
-        // LOAD HOME VIEW
-        return view('home');
+        // USER IS LOGGED IN AND HAS THE RIGHT ROLE
+        return view('auth/login');
     }
+
+
 
     // LOGOUT FUNCTION
     public function logout()
@@ -83,4 +90,5 @@ class AuthController extends BaseController
         // REDIRECT TO LOGIN PAGE
         return redirect()->to('auth/login');
     }
+
 }

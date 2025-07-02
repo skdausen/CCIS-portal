@@ -62,6 +62,7 @@
         <div class="welcome-message">
             <h1>Welcome, <?= session('username') ?>!</h1>
             <p>You are logged in.</p>
+            <a href="<?= site_url('admin/register-user') ?>" class="btn btn-primary rounded-pill">Add New User</a>
             <a href="<?= site_url('logout') ?>" class="btn btn-primary rounded-pill">Logout</a>
         </div>
         <!-- End of your provided home.php content -->

@@ -10,6 +10,8 @@ $routes->get('/', 'Home::index');
 use App\Controllers\Pages;
 use App\Controllers\Password;
 use App\Controllers\AuthController;
+use App\Controllers\Admin;
+
 
 
 
@@ -31,7 +33,10 @@ $routes->get('password/reset', [Password::class, 'resetForm']);
 $routes->post('password/reset', [Password::class, 'resetPassword']);
 
 
-$routes->get('admin/add-account', [Password::class, 'addAccount']);
-$routes->post('admin/register', [Password::class, 'forgot']);
+// $routes->get('admin/add-account', [Password::class, 'addAccount']);
+// $routes->post('admin/register', [Password::class, 'forgot']);
+
+$routes->get('admin/register-user', [Admin::class, 'registerUser']);
+$routes->post('admin/save-user', [Admin::class, 'saveUser']);
 
 

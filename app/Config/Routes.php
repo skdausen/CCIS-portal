@@ -31,3 +31,7 @@ $routes->get('password/reset', [Password::class, 'resetForm']);
 $routes->post('password/reset', [Password::class, 'resetPassword']);
 
 
+$routes->get('admin/add-account', [Password::class, 'addAccount']);
+$routes->post('admin/register', [Password::class, 'forgot']);
+
+

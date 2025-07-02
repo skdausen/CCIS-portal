@@ -9,9 +9,19 @@ $routes->get('/', 'Home::index');
 
 use App\Controllers\Pages;
 use App\Controllers\Password;
+use App\Controllers\AuthController;
+
+
 
 $routes->get('pages', [Pages::class, 'index']);
 $routes->get('(:segment)', [Pages::class, 'view']);
+
+// Authentication routes
+$routes->get('login', [AuthController::class, 'index']);           // Show login form
+$routes->post('login', [AuthController::class, 'authenticate']);   // Handle login
+$routes->get('home', [AuthController::class, 'home']);             // Home page after login
+$routes->get('logout', [AuthController::class, 'logout']);         // Logout
+
 
 $routes->get('password/forgot', [Password::class, 'forgot']);
 $routes->post('password/send', [Password::class, 'sendOTP']);

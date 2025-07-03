@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\LoginModel;
+use App\Models\AnnouncementModel;
 
 class AdminController extends BaseController
 {
@@ -13,8 +14,11 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
+        $announcementModel = new \App\Models\AnnouncementModel();
+        $announcements = $announcementModel->getAllWithUsernames();
+
         return view('templates/admin/admin_header')
-            . view('admin/home')
+            . view('admin/home', ['announcements' => $announcements])
             . view('templates/admin/admin_footer');
     }
 
@@ -97,6 +101,26 @@ class AdminController extends BaseController
                 . view('admin/view_user', ['user' => $user])
                 . view('templates/admin/admin_footer');
     }
+
+    public function saveAnnouncement()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
+
+        $announcementModel = new \App\Models\AnnouncementModel();
+
+        $announcementModel->insert([
+            'title'       => $this->request->getPost('title'),
+            'content'     => $this->request->getPost('content'),
+            'audience'    => $this->request->getPost('audience'),
+            'created_by'  => session()->get('user_id'),
+            'created_at'  => date('Y-m-d H:i:s')
+        ]);
+
+        return redirect()->to('admin/home')->with('success', 'Announcement added!');
+    }
+
 
 
 }

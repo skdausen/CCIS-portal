@@ -32,10 +32,16 @@ $routes->post('password/reset', [Password::class, 'resetPassword']);
 // Admin routes (grouped)
 $routes->group('admin', function ($routes) {
     $routes->get('home', 'AdminController::adminHome');
+
+    //User management routes
     $routes->get('users', 'AdminController::users');
     $routes->get('add-user', 'AdminController::addUserForm');
     $routes->post('create-user', 'AdminController::createUser');
     $routes->get('user/(:num)', 'AdminController::viewUser/$1');
+
+    // Announcement management routes
+    $routes->post('saveAnnouncement', 'AdminController::saveAnnouncement');
+
     // User management routes
     // These routes handle viewing, editing, updating, deleting, activating, and deactivating users
     // $routes->get('user/edit/(:num)', 'AdminController::editUserForm/$1');

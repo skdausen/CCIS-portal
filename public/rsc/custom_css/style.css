@@ -166,6 +166,43 @@ body {
     border-color: #adb5bd;
 }
 
+/* CALENDAR STYLES */
+#calendar.calendar-sm {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+}
+
+.fc {
+  font-size: 12px !important;
+}
+
+.fc-toolbar-title {
+  font-size: 1rem !important;
+}
+
+.fc-event {
+  font-size: 10px !important;
+  padding: 2px 4px !important;
+}
+
+.fc-daygrid-day-frame {
+  padding: 4px !important;
+}
+
+/* REMOVE SCROLL IF TIGHT */
+.fc-scroller-harness {
+  overflow: hidden !important;
+}
+
+#latest-update {
+  box-shadow: 0 0 10px rgba(0,0,0,0.03);
+}
+
+
+
+
 /* Custom styles for the navbar to ensure proper alignment and full width */
 .navbar-nav.main-nav-links {
     margin-left: auto; /* Push main nav links to the right */

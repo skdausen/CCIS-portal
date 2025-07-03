@@ -1,7 +1,5 @@
 <!-- footer.php    -->
-    <!--  Logout Modal (Put this before closing body tag) -->
-    <!-- Trigger Button should be somewhere in the navbar or sidebar -->
-    <!-- Modal HTML -->
+
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

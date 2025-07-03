@@ -2,7 +2,6 @@
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-2">👥 List of Users</h3>
-        <a href="<?= site_url('admin/add-user') ?>" class="btn btn-success">➕ Add Account</a>
     </div>
 
     <!-- FLASH MESSAGES -->
@@ -23,8 +22,11 @@
                 <option value="student">Student</option>
             </select>
         </div>
-        <div class="col-md-5 mb-2">
+        <div class="col-md-4 mb-2">
             <input type="text" id="searchInput" class="form-control" placeholder="Search by username or email...">
+        </div>
+        <div class="col-md-5 mb-2 d-flex justify-content-end">
+            <a href="<?= site_url('admin/add-user') ?>" class="btn btn-success">➕ Add Account</a>
         </div>
     </div>
 

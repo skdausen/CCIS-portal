@@ -66,18 +66,24 @@ class AuthController extends BaseController
     public function home()
     {
         // CHECK IF USER IS LOGGED IN
-        if (session()->get('isLoggedIn')) {
-            echo "SESSION NOT FOUND!";
-            // CHECK IF USER ROLE IS ALLOWED (admin or superadmin)
-            $role = session()->get('role');
-            if ($role == 'admin' && $role == 'superadmin') {
-                return redirect()->to('home');
-            }
+        if (!session()->get('isLoggedIn')) {
+            // REDIRECT TO LOGIN IF SESSION NOT FOUND
+            return redirect()->to('auth/login');
         }
 
-        // USER IS LOGGED IN AND HAS THE RIGHT ROLE
-        return view('auth/login');
+        // OPTIONAL: Restrict to certain roles (e.g. admin, superadmin)
+        $role = session()->get('role');
+
+        // EXAMPLE: Allow only 'admin' and 'superadmin'
+        if (!in_array($role, ['admin', 'superadmin'])) {
+            // Redirect or show forbidden message
+            return redirect()->to('auth/login')->with('error', 'Access denied.');
+        }
+
+        // ✅ USER IS LOGGED IN AND HAS PERMISSION
+        return view('home');
     }
+
 
 
 

@@ -5,11 +5,13 @@
     <link rel="stylesheet" href="<?php echo base_url("rsc/bootstrap-5.3.7/css/bootstrap.css"); ?>">
     <link rel="stylesheet" href="<?= base_url("rsc/bootstrap-5.3.7/css/bootstrap.min.css") ?>">
     <link rel="stylesheet" href="<?= base_url('rsc/custom_css/style.css'); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <!-- Force browser not to cache this page -->
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
+
 </head>
 <body class="d-flex align-items-center justify-content-center vh-100">
 
@@ -38,19 +40,19 @@
                 <!-- Icons on the far right -->
                 <ul class="navbar-nav icon-nav-links me-3">
                     <li class="nav-item me-3">
-                        <a class="nav-link" href="#"><i class="fas fa-bell"></i></a>
+                        <a class="nav-link" href="#"><i class="fas fa-bell mt-2"></i></a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle profile-dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- Placeholder for user profile image -->
                             <img src="https://placehold.co/30x30/00bcd4/ffffff?text=U" alt="User Profile">
-                            <i class="fas fa-chevron-down"></i>
+                            <!-- <i class="fas fa-chevron-down"></i> -->
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profile</a></li>
                             <li><a class="dropdown-item" href="#">Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<?= site_url('logout') ?>">Logout</a></li>
+                              <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
                         </ul>
                     </li>
                 </ul>

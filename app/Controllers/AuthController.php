@@ -24,28 +24,35 @@ class AuthController extends BaseController
     // HANDLE LOGIN FORM SUBMISSION
     public function authenticate()
     {
-        $session = session(); // START SESSION
-        $request = \Config\Services::request(); // GET POST REQUEST
-        $model = new LoginModel(); // LOAD LOGIN MODEL
+        $session = session();
+        $request = \Config\Services::request();
+        $model = new LoginModel();
 
         $username = $request->getPost('username');
         $password = $request->getPost('password');
 
-        // FIND USER BY USERNAME
         $user = $model->getUserByUsername($username);
 
-        // IF USER NOT FOUND
         if (!$user) {
             $session->setFlashdata('error', 'User does not exist.');
             return redirect()->to('auth/login')->withInput();
         }
 
-        // VERIFY PASSWORD
-        if (password_verify($password, $user['userpassword'])) {
-            // UPDATE LAST LOGIN TIMESTAMP
-            $model->update($user['user_id'], ['last_login' => date('Y-m-d H:i:s')]);
+        // 🚫 If user is already logged in (status = active), block login
+        if ($user['status'] === 'active') {
+            $session->setFlashdata('error', 'User is already logged in elsewhere.');
+            return redirect()->to('auth/login')->withInput();
+        }
 
-            // SET SESSION DATA
+        // 🔒 Verify password
+        if (password_verify($password, $user['userpassword'])) {
+            // ✅ Update login timestamp and set status to active
+            $model->update($user['user_id'], [
+                'last_login' => date('Y-m-d H:i:s'),
+                'status'     => 'active'
+            ]);
+
+            // ✅ Set session data
             $session->set([
                 'user_id'    => $user['user_id'],
                 'username'   => $user['username'],
@@ -53,42 +60,57 @@ class AuthController extends BaseController
                 'isLoggedIn' => true
             ]);
 
-            // REDIRECT TO HOME PAGE
-            return redirect()->to('home');
+            // ✅ Role-based redirect
+            if (in_array($user['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('admin/home');
+            } else {
+                return redirect()->to('home');
+            }
         } else {
-            // WRONG PASSWORD
             $session->setFlashdata('error', 'Incorrect password.');
             return redirect()->to('auth/login')->withInput();
         }
     }
 
+
     // DISPLAY HOME PAGE (PROTECTED)
     public function home()
     {
-        // CHECK IF USER IS LOGGED IN
-        if (session()->get('isLoggedIn')) {
-            echo "SESSION NOT FOUND!";
-            // CHECK IF USER ROLE IS ALLOWED (admin or superadmin)
-            $role = session()->get('role');
-            if ($role == 'admin' && $role == 'superadmin') {
-                return redirect()->to('home');
-            }
+        $session = session();
+        $model = new LoginModel();
+
+        if (!$session->get('isLoggedIn')) {
+            return redirect()->to('auth/login');
         }
 
-        // USER IS LOGGED IN AND HAS THE RIGHT ROLE
-        return view('auth/login');
+        $user = $model->find($session->get('user_id'));
+
+        // If user is not active, redirect
+        if (!$user || $user['status'] !== 'active') {
+            $session->destroy();
+            return redirect()->to('auth/login')->with('error', 'Session expired or unauthorized access.');
+        }
+
+        return view('home');
     }
-
-
 
     // LOGOUT FUNCTION
     public function logout()
     {
-        // DESTROY ALL SESSION DATA
+        $userId = session()->get('user_id');
+        $model = new LoginModel();
+
+        if ($userId) {
+            // 📴 Set user status to inactive
+            $model->update($userId, ['status' => 'inactive']);
+        }
+
+        // Destroy session
         session()->destroy();
 
-        // REDIRECT TO LOGIN PAGE
+        // Redirect to login
         return redirect()->to('auth/login');
     }
+
 
 }

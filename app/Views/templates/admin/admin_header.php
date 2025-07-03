@@ -14,7 +14,7 @@
     <meta http-equiv="Expires" content="0">
 
 </head>
-<body class="d-flex align-items-center justify-content-center vh-100">
+<body>
 
         <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
@@ -26,13 +26,16 @@
                 <!-- Main navigation links - pushed to the right -->
                 <ul class="navbar-nav main-nav-links">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="<?= site_url('admin/home') ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Schedules</a>
+                        <a class="nav-link" href="<?= site_url('admin/users') ?>">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Grades</a>
+                        <a class="nav-link" href="<?= site_url('admin/academics') ?>">Academics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= site_url('admin/announcements') ?>">Announcements</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">About</a>

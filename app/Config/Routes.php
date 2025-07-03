@@ -35,6 +35,14 @@ $routes->group('admin', function ($routes) {
     $routes->get('users', 'AdminController::users');
     $routes->get('add-user', 'AdminController::addUserForm');
     $routes->post('create-user', 'AdminController::createUser');
+    $routes->get('user/(:num)', 'AdminController::viewUser/$1');
+    // User management routes
+    // These routes handle viewing, editing, updating, deleting, activating, and deactivating users
+    // $routes->get('user/edit/(:num)', 'AdminController::editUserForm/$1');
+    // $routes->post('user/update/(:num)', 'AdminController::updateUser/$1');
+    // $routes->get('user/delete/(:num)', 'AdminController::deleteUser/$1');
+    // $routes->get('user/activate/(:num)', 'AdminController::activateUser/$1');
+    // $routes->get('user/deactivate/(:num)', 'AdminController::deactivateUser/$1');
 });
 
 

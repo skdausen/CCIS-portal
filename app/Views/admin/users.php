@@ -1,3 +1,4 @@
+<!-- users.php -->
 <div class="container mt-5">
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
@@ -61,7 +62,7 @@
                             <td>
                                 <a href="<?= site_url('admin/user/' . $user['user_id']) ?>" class="btn btn-sm btn-outline-primary">
                                     View
-                                </a>
+                                </a>   
                             </td>
                         </tr>
                     <?php endforeach; ?>

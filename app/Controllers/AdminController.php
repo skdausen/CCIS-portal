@@ -85,17 +85,18 @@ class AdminController extends BaseController
     }
 
     public function viewUser($id)
-    {
-        $model = new LoginModel();
-        $user = $model->find($id);
+        {
+            $model = new LoginModel();
+            $user = $model->find($id);
 
-        if (!$user) {
-            return redirect()->to('admin/users')->with('error', 'User not found.');
-        }
+            if (!$user) {
+                return redirect()->to('admin/users')->with('error', 'User not found.');
+            }
 
-        return view('templates/admin/admin_header')
-            . view('admin/view_user', ['user' => $user])
-            . view('templates/admin/admin_footer');
+            return view('templates/admin/admin_header')
+                . view('admin/view_user', ['user' => $user])
+                . view('templates/admin/admin_footer');
     }
+
 
 }

@@ -102,14 +102,36 @@ class AdminController extends BaseController
     }
 
     // Academics Main Page
-    public function index()
-    {
-        $data['title'] = 'Academics';
+   // 📂 App\Controllers\AdminController.php
 
-        return view('templates/admin/admin_header', $data)
-            . view('admin/academics')
-            . view('templates/admin/admin_footer');
+public function index()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
+
+    $schoolYearModel = new SchoolYearModel();
+    $semesterModel = new SemesterModel();
+    $courseModel = new CourseModel();
+    $classModel = new ClassModel();
+    $facultyModel = new FacultyModel();
+
+    // ✅ Get counts
+    $data = [
+        'title' => 'Academics',
+        'schoolYearsCount' => $schoolYearModel->countAllResults(),
+        'semestersCount' => $semesterModel->countAllResults(),
+        'coursesCount' => $courseModel->countAllResults(),
+        'classesCount' => $classModel->countAllResults(),
+        'facultyCount' => $facultyModel->countAllResults(),
+        // ✅ Get 5 most recent courses
+        'recentCourses' => $courseModel->orderBy('course_id', 'DESC')->findAll(5),
+    ];
+
+    return view('templates/admin/admin_header', $data)
+        . view('admin/academics', $data)
+        . view('templates/admin/admin_footer');
+}
 
     // Semesters List
     public function view_semesters()
@@ -284,6 +306,7 @@ public function deleteCourse($course_id)
 
     return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
 }
+
 public function updateClass($class_id)
 {
     $classModel = new ClassModel();

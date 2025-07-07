@@ -63,11 +63,12 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/courses/update/(:num)', [AdminController::class, 'updateCourse/$1']);
     $routes->post('academics/courses/delete/(:num)', [AdminController::class, 'deleteCourse/$1']);
 
-     // ✅ CLASSES
+    // ✅ CLASSES
     $routes->get('academics/classes', [AdminController::class, 'view_classes']);
-    $routes->post('academics/classes/create', [AdminController::class, 'createClass']);
+    $routes->post('academics/classes/add', [AdminController::class, 'createClass']);  // ✅ FIXED: Removed duplicate 'admin/'
     $routes->post('academics/classes/update/(:num)', [AdminController::class, 'updateClass/$1']);
     $routes->post('academics/classes/delete/(:num)', [AdminController::class, 'deleteClass/$1']);
+
 
     // ✅ Other Academics Sections
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);

@@ -1,11 +1,15 @@
-<div class="maincontent container mt-5">
-    <h1 class="mb-4">Academics</h1>
+ <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-title">Academics</div>
+            <ul class="sidebar-nav">
+                <li><a href="<?=site_url('admin/academics/semesters')?>">Semesters</a></li>
+                <li><a href="<?=site_url('admin/academics/courses')?>">Courses</a></li>
+                <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
+                <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
+                <li><a href="<?=site_url('admin/academics/teaching_loads')?>">Teaching Loads</a></li>
+            </ul>
+        </div>
+        
 
-    <div class="d-grid gap-3">
-        <a href="<?= site_url('academic/schoolyear') ?>" class="btn btn-primary">School Year</a>
-        <a href="<?= site_url('academic/semester') ?>" class="btn btn-primary">Semester</a>
-        <a href="<?= site_url('academic/courses') ?>" class="btn btn-primary">Courses</a>
-        <a href="<?= site_url('academic/classes') ?>" class="btn btn-primary">Classes</a>
-        <a href="<?= site_url('academic/teachingloads') ?>" class="btn btn-primary">Teaching Loads</a>
-    </div>
-</div>

@@ -154,6 +154,7 @@ public function view_semesters()
 }
 
 // CREATE SEMESTER
+// CREATE SEMESTER
 public function createSemester()
 {
     if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -168,10 +169,22 @@ public function createSemester()
     }
 
     $schoolYearModel = new SchoolYearModel();
-    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+    $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+    $schoolyearId = $existingSchoolYear ? $existingSchoolYear['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
 
     $semesterModel = new SemesterModel();
+
+    // 🔍 Check if the semester-schoolyear combination already exists
+    $duplicate = $semesterModel
+        ->where('semester', $semester)
+        ->where('schoolyear_id', $schoolyearId)
+        ->first();
+
+    if ($duplicate) {
+        return redirect()->back()->with('error', '❌ Semester and school year combination already exists.');
+    }
+
+    // ✔ Save if no duplicate
     $semesterModel->insert([
         'semester' => $semester,
         'schoolyear_id' => $schoolyearId,
@@ -199,6 +212,18 @@ public function updateSemester($id)
     $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
 
     $semesterModel = new SemesterModel();
+
+    // 🔍 Check for duplicates excluding the current ID
+    $duplicate = $semesterModel
+        ->where('semester', $semester)
+        ->where('schoolyear_id', $schoolyearId)
+        ->where('semester_id !=', $id)
+        ->first();
+
+    if ($duplicate) {
+        return redirect()->back()->with('error', 'Semester and school year combination already exists.');
+    }
+
     $semesterModel->update($id, [
         'semester' => $semester,
         'schoolyear_id' => $schoolyearId,
@@ -206,6 +231,7 @@ public function updateSemester($id)
 
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
 }
+
 
 // DELETE SEMESTER
 public function deleteSemester($id)
@@ -295,21 +321,28 @@ public function deleteCourse($course_id)
 
 
     // Other academics views
- public function view_classes()
+public function view_classes()
 {
     $classModel = new ClassModel();
     $facultyModel = new FacultyModel();
     $userModel = new LoginModel();
     $courseModel = new CourseModel();
+    $semesterModel = new SemesterModel();
 
-    // Get classes with course description
-    $classes = $classModel->select('class.*, course.course_description, faculty.faculty_id, users.fname, users.lname')
+    // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
+    $classes = $classModel
+        ->select('class.*, 
+                  course.course_code, course.course_description, 
+                  semesters.semester, schoolyears.schoolyear,
+                  faculty.faculty_id, users.fname, users.lname')
         ->join('course', 'course.course_id = class.course_id', 'left')
+        ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left') // ✅ Add this join
         ->join('faculty', 'faculty.faculty_id = class.faculty_id', 'left')
         ->join('users', 'users.user_id = faculty.user_id', 'left')
         ->findAll();
 
-    // Prepare instructors list
+    // ✅ Prepare instructors list
     $faculty = $facultyModel->findAll();
     $instructors = [];
     foreach ($faculty as $f) {
@@ -320,15 +353,19 @@ public function deleteCourse($course_id)
     }
 
     $courses = $courseModel->findAll();
+    $semesters = $semesterModel->findAll();
 
     return view('templates/admin/admin_header')
         . view('admin/academics/classes', [
             'classes' => $classes,
             'instructors' => $instructors,
             'courses' => $courses,
+            'semesters' => $semesters,
         ])
         . view('templates/admin/admin_footer');
 }
+
+
 
 
 
@@ -339,10 +376,12 @@ public function deleteCourse($course_id)
     $classModel->insert([
         'faculty_id' => $this->request->getPost('faculty_id'),
         'course_id' => $this->request->getPost('course_id'),
+        'semester_id' => $this->request->getPost('semester_id'), 
         'class_day' => $this->request->getPost('class_day'),
         'class_start' => $this->request->getPost('class_start'),
         'class_end' => $this->request->getPost('class_end'),
         'class_room' => $this->request->getPost('class_room'),
+        'class_type' => $this->request->getPost('class_type'),
     ]);
 
     return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
@@ -353,18 +392,19 @@ public function updateClass($class_id)
     $classModel = new ClassModel();
 
     $data = [
+        'faculty_id'  => $this->request->getPost('faculty_id'),
         'course_id'   => $this->request->getPost('course_id'),
+        'semester_id' => $this->request->getPost('semester_id'), 
         'class_day'   => $this->request->getPost('class_day'),
         'class_start' => $this->request->getPost('class_start'),
         'class_end'   => $this->request->getPost('class_end'),
         'class_room'  => $this->request->getPost('class_room'),
-        'faculty_id'  => $this->request->getPost('faculty_id'),
+        'class_type' => $this->request->getPost('class_type'),
     ];
 
     $classModel->update($class_id, $data);
 
     return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
-
 }
 
 public function deleteClass($class_id)
@@ -383,12 +423,4 @@ public function deleteClass($class_id)
             . view('admin/academics/curriculums')
             . view('templates/admin/admin_footer');
     }
-
-    public function view_teaching_loads()
-    {
-        return view('templates/admin/admin_header')
-            . view('admin/academics/teaching_loads')
-            . view('templates/admin/admin_footer');
-    }
-
 }

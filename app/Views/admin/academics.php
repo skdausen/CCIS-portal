@@ -17,12 +17,6 @@
     <div class="row g-4">
         <div class="col-md-4">
             <div class="card text-center p-3 shadow-sm">
-                <h5>📅 School Years</h5>
-                <div class="fs-1"><?= $schoolYearsCount ?></div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center p-3 shadow-sm">
                 <h5>🗓️ Semesters</h5>
                 <div class="fs-1"><?= $semestersCount ?></div>
             </div>
@@ -59,11 +53,11 @@
         const summaryChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['School Years', 'Semesters', 'Courses', 'Classes', 'Faculty'],
+                labels: [ 'Semesters', 'Courses', 'Classes', 'Faculty'],
                 datasets: [{
                     label: 'Total Count',
-                    data: [<?= $schoolYearsCount ?>, <?= $semestersCount ?>, <?= $coursesCount ?>, <?= $classesCount ?>, <?= $facultyCount ?>],
-                    backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1'],
+                    data: [<?= $semestersCount ?>, <?= $coursesCount ?>, <?= $classesCount ?>, <?= $facultyCount ?>],
+                    backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6f42c1'],
                 }]
             },
             options: {

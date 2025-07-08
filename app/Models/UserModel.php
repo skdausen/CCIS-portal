@@ -8,7 +8,11 @@ class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'user_id';
-    protected $allowedFields = ['email', 'otp_code', 'otp_expiry', 'is_verified', 'userpassword'];
+    protected $allowedFields = [
+        'username', 'fname', 'lname', 'mname', 'sex', 'address', 'birthday',
+        'email', 'userpassword', 'role',
+        'otp_code', 'otp_expiry', 'is_verified'
+    ];
     protected $useTimestamps = false;
 
     public function getByEmail($email)

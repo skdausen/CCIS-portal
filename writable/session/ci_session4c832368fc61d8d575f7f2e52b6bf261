@@ -1,0 +1,1 @@
+__ci_last_regenerate|i:1751877803;_ci_previous_url|s:55:"http://localhost:8080/index.php/admin/academics/courses";user_id|s:1:"1";username|s:10:"superadmin";role|s:10:"superadmin";isLoggedIn|b:1;error|s:58:"❌ Cannot delete. This course has classes assigned to it.";__ci_vars|a:1:{s:5:"error";s:3:"old";}

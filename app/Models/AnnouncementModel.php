@@ -1,5 +1,5 @@
 <?php
-
+// AnnouncementModel.php 
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -14,8 +14,10 @@ class AnnouncementModel extends Model
         'content',
         'created_by',
         'audience',
-        'created_at'
+        'created_at',
+        'event_datetime' // ✅ THIS IS NEEDED TO SAVE THE EVENT DATE
     ];
+
 
     protected $useTimestamps = false; // true if using created_at automatically
 

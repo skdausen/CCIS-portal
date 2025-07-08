@@ -1,5 +1,5 @@
 <?php
-
+// AdminController.php 
 namespace App\Controllers;
 
 use App\Models\LoginModel;
@@ -114,12 +114,51 @@ class AdminController extends BaseController
             'title'       => $this->request->getPost('title'),
             'content'     => $this->request->getPost('content'),
             'audience'    => $this->request->getPost('audience'),
+            'event_datetime' => $this->request->getPost('event_datetime'),
             'created_by'  => session()->get('user_id'),
             'created_at'  => date('Y-m-d H:i:s')
+            
         ]);
 
         return redirect()->to('admin/home')->with('success', 'Announcement added!');
     }
+
+    public function updateAnnouncement()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
+
+        $id = $this->request->getPost('announcement_id');
+        $data = [
+            'title' => $this->request->getPost('title'),
+            'content' => $this->request->getPost('content'),
+            'audience' => $this->request->getPost('audience'),
+            'event_datetime' => $this->request->getPost('event_datetime')
+        ];
+
+        $model = new \App\Models\AnnouncementModel();
+        $model->update($id, $data);
+
+        return redirect()->to('admin/home')->with('success', 'Announcement updated successfully.');
+    }
+
+
+    public function deleteAnnouncement()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
+
+        $id = $this->request->getPost('announcement_id');
+
+        $model = new \App\Models\AnnouncementModel();
+        $model->delete($id);
+
+        return redirect()->to('admin/home')->with('success', 'Announcement deleted successfully.');
+    }
+
+
 
 
 

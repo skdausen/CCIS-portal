@@ -250,8 +250,8 @@
 
             <!-- Class Day -->
             <div class="mb-3">
-                <label for="class_day" class="form-label">Day</label>
-                <input type="text" name="class_day" class="form-control" placeholder="e.g., Monday" required>
+                <label for="class_day" class="form-label">Day/s</label>
+                <input type="text" name="class_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
             </div>
 
             <!-- Class Start -->

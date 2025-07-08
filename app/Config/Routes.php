@@ -53,29 +53,29 @@ $routes->group('admin', function ($routes) {
     $routes->post('create-user', 'AdminController::createUser');
     $routes->get('user/(:num)', 'AdminController::viewUser/$1');
 
-    // ✅ Academics Home
+    // Academics Home
     $routes->get('academics', [AdminController::class, 'index']);
 
-    // ✅ SEMESTERS
+    // SEMESTERS
     $routes->get('academics/semesters', [AdminController::class, 'view_semesters']);
     $routes->post('academics/semesters/create', [AdminController::class, 'createSemester']);
     $routes->post('academics/semesters/update/(:num)', 'AdminController::updateSemester/$1');
     $routes->post('academics/semesters/delete/(:num)', 'AdminController::deleteSemester/$1');
 
-    // ✅ COURSES
+    // COURSES
     $routes->get('academics/courses', [AdminController::class, 'view_courses']);
     $routes->post('academics/courses/create', [AdminController::class, 'createCourse']);
     $routes->post('academics/courses/update/(:num)', [AdminController::class, 'updateCourse/$1']);
     $routes->post('academics/courses/delete/(:num)', [AdminController::class, 'deleteCourse/$1']);
 
-    // ✅ CLASSES
+    // CLASSES
     $routes->get('academics/classes', [AdminController::class, 'view_classes']);
-    $routes->post('academics/classes/add', [AdminController::class, 'createClass']);  // ✅ FIXED: Removed duplicate 'admin/'
+    $routes->post('academics/classes/add', [AdminController::class, 'createClass']); 
     $routes->post('academics/classes/update/(:num)', [AdminController::class, 'updateClass/$1']);
     $routes->post('academics/classes/delete/(:num)', [AdminController::class, 'deleteClass/$1']);
 
 
-    // ✅ Other Academics Sections
+    //  Other Academics Sections
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
     $routes->get('academics/teaching_loads', [AdminController::class, 'view_teaching_loads']);
     $routes->get('academics/add_courses', [AdminController::class, 'add_courses']);
@@ -84,7 +84,7 @@ $routes->group('admin', function ($routes) {
 
     // 📢 Announcement management
     $routes->post('saveAnnouncement', 'AdminController::saveAnnouncement');
-    $routes->post('updateAnnouncement', 'AdminController::updateAnnouncement'); // ✅ Add this line
+    $routes->post('updateAnnouncement', 'AdminController::updateAnnouncement'); 
     $routes->post('deleteAnnouncement', 'AdminController::deleteAnnouncement');
 
 });

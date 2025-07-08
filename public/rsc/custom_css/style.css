@@ -1,6 +1,6 @@
 body {
     /* font-family: 'Inter', sans-serif; */
-    background: linear-gradient(to bottom right, #e0f7fa, #00bcd4); /* Gradient background from your image */
+    background: linear-gradient(to bottom right, #e0f7fa, #631561); /* Gradient background from your image */
     min-height: 100vh; /* Ensure it takes full viewport height */
     display: flex;
     flex-direction: column;
@@ -168,39 +168,60 @@ body {
 
 /* CALENDAR STYLES */
 #calendar.calendar-sm {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    background-color: #ffffff;
+    color: #631561 !important;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.05);
 }
-
+#calendar a{
+    color: #631561 !important;
+}
 .fc {
-  font-size: 12px !important;
+    font-size: 12px !important;
 }
 
 .fc-toolbar-title {
-  font-size: 1rem !important;
+    font-size: 1rem !important;
 }
 
 .fc-event {
-  font-size: 10px !important;
-  padding: 2px 4px !important;
+    font-size: 10px !important;
+    padding: 2px 4px !important;
 }
 
 .fc-daygrid-day-frame {
-  padding: 4px !important;
+    padding: 4px !important;
 }
 
 /* REMOVE SCROLL IF TIGHT */
 .fc-scroller-harness {
-  overflow: hidden !important;
+    overflow: hidden !important;
 }
 
 #latest-update {
-  box-shadow: 0 0 10px rgba(0,0,0,0.03);
+    box-shadow: 0 0 10px rgba(0,0,0,0.03);
 }
 
+/* Custom styles for buttons, backgrounds, and text */
+.bg-gray {
+    background-color: #343a40 !important;
+    color: white !important;
+}
 
+.text-purple {
+    color: #631561 !important;
+}
+
+.btn-purple {
+    background-color: #631561 !important;
+    color: white !important;
+    border: none;
+}
+
+.btn-purple:hover {
+    background-color: #4d104a !important;
+}
 
 
 /* Custom styles for the navbar to ensure proper alignment and full width */

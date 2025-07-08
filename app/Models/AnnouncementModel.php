@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class AnnouncementModel extends Model
 {
-    protected $table = 'announcements'; // Your table name
+    protected $table = 'announcements'; 
     protected $primaryKey = 'announcement_id';
 
     protected $allowedFields = [
@@ -15,11 +15,11 @@ class AnnouncementModel extends Model
         'created_by',
         'audience',
         'created_at',
-        'event_datetime' // ✅ THIS IS NEEDED TO SAVE THE EVENT DATE
+        'event_datetime' 
     ];
 
 
-    protected $useTimestamps = false; // true if using created_at automatically
+    protected $useTimestamps = false; 
 
     public function getAllWithUsernames()
     {

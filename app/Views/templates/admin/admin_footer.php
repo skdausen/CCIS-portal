@@ -1,7 +1,7 @@
 <!-- admin_footer.php -->
 
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Confirm Logout</h5>
@@ -28,6 +28,8 @@
 
 <!-- Your calendar logic -->
 <script src="<?= base_url('rsc/custom_js/calendar.js') ?>"></script>
+
+<script src="<?= base_url('rsc/custom_js/eventModal.js') ?>"></script>
 
 </body>
 </html>

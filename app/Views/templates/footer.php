@@ -20,7 +20,6 @@
     <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
     <script src="<?php echo base_url("rsc/custom_js/preventBackHistory.js"); ?>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
 
 
 </body>

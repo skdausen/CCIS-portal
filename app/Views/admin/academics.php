@@ -69,11 +69,36 @@
             options: {
                 responsive: true,
                 scales: {
-                    y: { beginAtZero: true }
+                    x: {
+                        ticks: {
+                            color: 'white' // X-axis labels
+                        },
+                        grid: {
+                            color: '#E0E0E0 ' // X-axis grid lines
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white' // Y-axis labels
+                        },
+                        grid: {
+                            color: '#E0E0E0' // Y-axis grid lines
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white' // Legend text
+                        }
+                    }
                 }
             }
         });
     </script>
+
+
 
     <!-- Recently Added Courses -->
     <div class="mt-5">

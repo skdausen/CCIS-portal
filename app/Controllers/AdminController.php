@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\LoginModel;
 use App\Models\SemesterModel;
 use App\Models\SchoolYearModel;
-use App\Models\CourseModel; // ✅ Add this
+use App\Models\CourseModel; 
 use App\Models\ClassModel;
 use App\Models\FacultyModel;
 use App\Models\AnnouncementModel;
@@ -19,7 +19,7 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $announcementModel = new \App\Models\AnnouncementModel();
+        $announcementModel = new AnnouncementModel();
         $announcements = $announcementModel->getAllWithUsernames();
 
         return view('templates/admin/admin_header')
@@ -111,7 +111,7 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $announcementModel = new \App\Models\AnnouncementModel();
+        $announcementModel = new AnnouncementModel();
 
         $announcementModel->insert([
             'title'       => $this->request->getPost('title'),
@@ -140,7 +140,7 @@ class AdminController extends BaseController
             'event_datetime' => $this->request->getPost('event_datetime')
         ];
 
-        $model = new \App\Models\AnnouncementModel();
+        $model = new AnnouncementModel();
         $model->update($id, $data);
 
         return redirect()->to('admin/home')->with('success', 'Announcement updated successfully.');
@@ -155,290 +155,287 @@ class AdminController extends BaseController
 
         $id = $this->request->getPost('announcement_id');
 
-        $model = new \App\Models\AnnouncementModel();
+        $model = new AnnouncementModel();
         $model->delete($id);
 
         return redirect()->to('admin/home')->with('success', 'Announcement deleted successfully.');
     }
 
 
-
-
-
     // Academics Main Page
-   // 📂 App\Controllers\AdminController.php
+   // App\Controllers\AdminController.php
 
-public function index()
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
+    public function index()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
+
+        $schoolYearModel = new SchoolYearModel();
+        $semesterModel = new SemesterModel();
+        $courseModel = new CourseModel();
+        $classModel = new ClassModel();
+        $facultyModel = new FacultyModel();
+
+        // Get counts
+        $data = [
+            'title' => 'Academics',
+            'schoolYearsCount' => $schoolYearModel->countAllResults(),
+            'semestersCount' => $semesterModel->countAllResults(),
+            'coursesCount' => $courseModel->countAllResults(),
+            'classesCount' => $classModel->countAllResults(),
+            'facultyCount' => $facultyModel->countAllResults(),
+            // Get 5 most recent courses
+            'recentCourses' => $courseModel->orderBy('course_id', 'DESC')->findAll(5),
+        ];
+
+        return view('templates/admin/admin_header', $data)
+            . view('admin/academics', $data)
+            . view('templates/admin/admin_footer');
     }
 
-    $schoolYearModel = new SchoolYearModel();
-    $semesterModel = new SemesterModel();
-    $courseModel = new CourseModel();
-    $classModel = new ClassModel();
-    $facultyModel = new FacultyModel();
+        // Semesters List
+        // SEMESTERS LIST
+    public function view_semesters()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
 
-    // ✅ Get counts
-    $data = [
-        'title' => 'Academics',
-        'schoolYearsCount' => $schoolYearModel->countAllResults(),
-        'semestersCount' => $semesterModel->countAllResults(),
-        'coursesCount' => $courseModel->countAllResults(),
-        'classesCount' => $classModel->countAllResults(),
-        'facultyCount' => $facultyModel->countAllResults(),
-        // ✅ Get 5 most recent courses
-        'recentCourses' => $courseModel->orderBy('course_id', 'DESC')->findAll(5),
-    ];
+        $semesterModel = new SemesterModel();
 
-    return view('templates/admin/admin_header', $data)
-        . view('admin/academics', $data)
-        . view('templates/admin/admin_footer');
-}
+        $data['semesters'] = $semesterModel
+            ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+            ->findAll();
 
-    // Semesters List
-    // SEMESTERS LIST
-public function view_semesters()
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
+        return view('templates/admin/admin_header')
+            . view('admin/academics/semesters', $data)
+            . view('templates/admin/admin_footer');
     }
 
-    $semesterModel = new SemesterModel();
+    // CREATE SEMESTER
+    public function createSemester()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
 
-    $data['semesters'] = $semesterModel
-        ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-        ->findAll();
+        $semester = $this->request->getPost('semester');
+        $schoolyearText = $this->request->getPost('schoolyear');
 
-    return view('templates/admin/admin_header')
-        . view('admin/academics/semesters', $data)
-        . view('templates/admin/admin_footer');
-}
+        if (!$semester || !$schoolyearText) {
+            return redirect()->back()->with('error', 'Please fill all fields.');
+        }
 
-// CREATE SEMESTER
-public function createSemester()
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
+        $schoolYearModel = new SchoolYearModel();
+        $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+        $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+
+        $semesterModel = new SemesterModel();
+        $semesterModel->insert([
+            'semester' => $semester,
+            'schoolyear_id' => $schoolyearId,
+        ]);
+
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
     }
 
-    $semester = $this->request->getPost('semester');
-    $schoolyearText = $this->request->getPost('schoolyear');
+    // UPDATE SEMESTER
+    public function updateSemester($id)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
 
-    if (!$semester || !$schoolyearText) {
-        return redirect()->back()->with('error', 'Please fill all fields.');
+        $semester = $this->request->getPost('semester');
+        $schoolyearText = $this->request->getPost('schoolyear');
+
+        if (!$semester || !$schoolyearText) {
+            return redirect()->back()->with('error', 'Please fill all fields.');
+        }
+
+        $schoolYearModel = new SchoolYearModel();
+        $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+        $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+
+        $semesterModel = new SemesterModel();
+        $semesterModel->update($id, [
+            'semester' => $semester,
+            'schoolyear_id' => $schoolyearId,
+        ]);
+
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
     }
 
-    $schoolYearModel = new SchoolYearModel();
-    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+    // DELETE SEMESTER
+    public function deleteSemester($id)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
 
-    $semesterModel = new SemesterModel();
-    $semesterModel->insert([
-        'semester' => $semester,
-        'schoolyear_id' => $schoolyearId,
-    ]);
+        $semesterModel = new SemesterModel();
+        $semesterModel->delete($id);
 
-    return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
-}
-
-// UPDATE SEMESTER
-public function updateSemester($id)
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
     }
 
-    $semester = $this->request->getPost('semester');
-    $schoolyearText = $this->request->getPost('schoolyear');
+    // View all courses (unchanged)
+    public function view_courses()
+    {
+        $courseModel = new CourseModel();
+        $data['courses'] = $courseModel->findAll();
 
-    if (!$semester || !$schoolyearText) {
-        return redirect()->back()->with('error', 'Please fill all fields.');
+        return view('templates/admin/admin_header')
+            . view('admin/academics/courses', $data)
+            . view('templates/admin/admin_footer');
     }
 
-    $schoolYearModel = new SchoolYearModel();
-    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+    // Create a new course (unchanged)
+    public function createCourse()
+    {
+        $courseModel = new CourseModel();
+        $courseModel->insert([
+            'course_code' => $this->request->getPost('course_code'),
+            'course_description' => $this->request->getPost('course_description'),
+            'lec_units' => $this->request->getPost('lec_units'),
+            'lab_units' => $this->request->getPost('lab_units'),
+        ]);
 
-    $semesterModel = new SemesterModel();
-    $semesterModel->update($id, [
-        'semester' => $semester,
-        'schoolyear_id' => $schoolyearId,
-    ]);
-
-    return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
-}
-
-// DELETE SEMESTER
-public function deleteSemester($id)
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
+        return redirect()->to('admin/academics/courses')->with('success', 'Course added successfully.');
     }
 
-    $semesterModel = new SemesterModel();
-    $semesterModel->delete($id);
+    // Show edit form
+    public function editCourse($id)
+    {
+        $courseModel = new CourseModel();
+        $course = $courseModel->find($id);
 
-    return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
-}
+        if (!$course) {
+            return redirect()->to('admin/academics/courses')->with('error', 'Course not found.');
+        }
 
-   // ✅ View all courses (unchanged)
-public function view_courses()
-{
-    $courseModel = new CourseModel();
-    $data['courses'] = $courseModel->findAll();
-
-    return view('templates/admin/admin_header')
-        . view('admin/academics/courses', $data)
-        . view('templates/admin/admin_footer');
-}
-
-// ✅ Create a new course (unchanged)
-public function createCourse()
-{
-    $courseModel = new CourseModel();
-    $courseModel->insert([
-        'course_code' => $this->request->getPost('course_code'),
-        'course_description' => $this->request->getPost('course_description'),
-        'lec_units' => $this->request->getPost('lec_units'),
-        'lab_units' => $this->request->getPost('lab_units'),
-    ]);
-
-    return redirect()->to('admin/academics/courses')->with('success', 'Course added successfully.');
-}
-
-// ✅ Show edit form
-public function editCourse($id)
-{
-    $courseModel = new CourseModel();
-    $course = $courseModel->find($id);
-
-    if (!$course) {
-        return redirect()->to('admin/academics/courses')->with('error', 'Course not found.');
+        return view('templates/admin/admin_header')
+            . view('admin/academics/edit_course', ['course' => $course])
+            . view('templates/admin/admin_footer');
     }
 
-    return view('templates/admin/admin_header')
-        . view('admin/academics/edit_course', ['course' => $course])
-        . view('templates/admin/admin_footer');
-}
+    // Update the course
+    public function updateCourse($id)
+    {
+        $courseModel = new CourseModel();
+        $courseModel->update($id, [
+            'course_code' => $this->request->getPost('course_code'),
+            'course_description' => $this->request->getPost('course_description'),
+            'lec_units' => $this->request->getPost('lec_units'),
+            'lab_units' => $this->request->getPost('lab_units'),
+        ]);
 
-// ✅ Update the course
-public function updateCourse($id)
-{
-    $courseModel = new CourseModel();
-    $courseModel->update($id, [
-        'course_code' => $this->request->getPost('course_code'),
-        'course_description' => $this->request->getPost('course_description'),
-        'lec_units' => $this->request->getPost('lec_units'),
-        'lab_units' => $this->request->getPost('lab_units'),
-    ]);
-
-    return redirect()->to('admin/academics/courses')->with('success', 'Course updated successfully.');
-}
-
-// ✅ Delete a course
-public function deleteCourse($course_id)
-{
-    $courseModel = new CourseModel();
-    $classModel = new ClassModel();
-
-    // Check if there are related classes first
-    $relatedClasses = $classModel->where('course_id', $course_id)->countAllResults();
-
-    if ($relatedClasses > 0) {
-        return redirect()->back()->with('error', '❌ Cannot delete. This course has classes assigned to it.');
+        return redirect()->to('admin/academics/courses')->with('success', 'Course updated successfully.');
     }
 
-    // Delete course
-    $courseModel->delete($course_id);
+    // Delete a course
+    public function deleteCourse($course_id)
+    {
+        $courseModel = new CourseModel();
+        $classModel = new ClassModel();
 
-    return redirect()->back()->with('success', 'Course deleted successfully.');
-}
+        // Check if there are related classes first
+        $relatedClasses = $classModel->where('course_id', $course_id)->countAllResults();
+
+        if ($relatedClasses > 0) {
+            return redirect()->back()->with('error', '❌ Cannot delete. This course has classes assigned to it.');
+        }
+
+        // Delete course
+        $courseModel->delete($course_id);
+
+        return redirect()->back()->with('success', 'Course deleted successfully.');
+    }
 
 
     // Other academics views
- public function view_classes()
-{
-    $classModel = new ClassModel();
-    $facultyModel = new FacultyModel();
-    $userModel = new LoginModel();
-    $courseModel = new CourseModel();
+    public function view_classes()
+    {
+        $classModel = new ClassModel();
+        $facultyModel = new FacultyModel();
+        $userModel = new LoginModel();
+        $courseModel = new CourseModel();
 
-    // Get classes with course description
-    $classes = $classModel->select('class.*, course.course_description, faculty.faculty_id, users.fname, users.lname')
-        ->join('course', 'course.course_id = class.course_id', 'left')
-        ->join('faculty', 'faculty.faculty_id = class.faculty_id', 'left')
-        ->join('users', 'users.user_id = faculty.user_id', 'left')
-        ->findAll();
+        // Get classes with course description
+        $classes = $classModel->select('class.*, course.course_description, faculty.faculty_id, users.fname, users.lname')
+            ->join('course', 'course.course_id = class.course_id', 'left')
+            ->join('faculty', 'faculty.faculty_id = class.faculty_id', 'left')
+            ->join('users', 'users.user_id = faculty.user_id', 'left')
+            ->findAll();
 
-    // Prepare instructors list
-    $faculty = $facultyModel->findAll();
-    $instructors = [];
-    foreach ($faculty as $f) {
-        $user = $userModel->find($f['user_id']);
-        if ($user) {
-            $instructors[$f['faculty_id']] = $user['fname'] . ' ' . $user['lname'];
+        // Prepare instructors list
+        $faculty = $facultyModel->findAll();
+        $instructors = [];
+        foreach ($faculty as $f) {
+            $user = $userModel->find($f['user_id']);
+            if ($user) {
+                $instructors[$f['faculty_id']] = $user['fname'] . ' ' . $user['lname'];
+            }
         }
+
+        $courses = $courseModel->findAll();
+
+        return view('templates/admin/admin_header')
+            . view('admin/academics/classes', [
+                'classes' => $classes,
+                'instructors' => $instructors,
+                'courses' => $courses,
+            ])
+            . view('templates/admin/admin_footer');
     }
-
-    $courses = $courseModel->findAll();
-
-    return view('templates/admin/admin_header')
-        . view('admin/academics/classes', [
-            'classes' => $classes,
-            'instructors' => $instructors,
-            'courses' => $courses,
-        ])
-        . view('templates/admin/admin_footer');
-}
 
 
 
     public function createClass()
-{
-    $classModel = new ClassModel();
+    {
+        $classModel = new ClassModel();
 
-    $classModel->insert([
-        'faculty_id' => $this->request->getPost('faculty_id'),
-        'course_id' => $this->request->getPost('course_id'),
-        'class_day' => $this->request->getPost('class_day'),
-        'class_start' => $this->request->getPost('class_start'),
-        'class_end' => $this->request->getPost('class_end'),
-        'class_room' => $this->request->getPost('class_room'),
-    ]);
+        $classModel->insert([
+            'faculty_id' => $this->request->getPost('faculty_id'),
+            'course_id' => $this->request->getPost('course_id'),
+            'class_day' => $this->request->getPost('class_day'),
+            'class_start' => $this->request->getPost('class_start'),
+            'class_end' => $this->request->getPost('class_end'),
+            'class_room' => $this->request->getPost('class_room'),
+        ]);
 
-    return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
-}
+        return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
+    }
 
-public function updateClass($class_id)
-{
-    $classModel = new ClassModel();
+    public function updateClass($class_id)
+    {
+        $classModel = new ClassModel();
 
-    $data = [
-        'course_id'   => $this->request->getPost('course_id'),
-        'class_day'   => $this->request->getPost('class_day'),
-        'class_start' => $this->request->getPost('class_start'),
-        'class_end'   => $this->request->getPost('class_end'),
-        'class_room'  => $this->request->getPost('class_room'),
-        'faculty_id'  => $this->request->getPost('faculty_id'),
-    ];
+        $data = [
+            'course_id'   => $this->request->getPost('course_id'),
+            'class_day'   => $this->request->getPost('class_day'),
+            'class_start' => $this->request->getPost('class_start'),
+            'class_end'   => $this->request->getPost('class_end'),
+            'class_room'  => $this->request->getPost('class_room'),
+            'faculty_id'  => $this->request->getPost('faculty_id'),
+        ];
 
-    $classModel->update($class_id, $data);
+        $classModel->update($class_id, $data);
 
-    return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
+        return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
 
-}
+    }
 
-public function deleteClass($class_id)
-{
-    $classModel = new ClassModel();
-    $classModel->delete($class_id);
+    public function deleteClass($class_id)
+    {
+        $classModel = new ClassModel();
+        $classModel->delete($class_id);
 
-   return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
+    return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
-}
+    }
 
 
     public function view_curriculums()

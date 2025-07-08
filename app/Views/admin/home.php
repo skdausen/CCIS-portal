@@ -3,17 +3,15 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
-    <a href="<?= site_url('admin/users') ?>" class="btn btn-primary mt-3">Manage Users</a>
-
     <!-- Calendar -->
     <div class="card mt-4 p-3 border-0" style="background-color:rgba(248, 249, 255, 0);">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-gray text-white d-flex justify-content-between align-items-center">
             <div>
-                📅 Announcements Calendar & Latest Updates
+                Events & Announcements
             </div>
             <div>
                 <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
-                    ➕ Add Announcement
+                    Add Announcement
                 </button>
             </div>
         </div>
@@ -28,7 +26,8 @@
                 <div class="col-md-6">
                     <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
                         <!-- Latest Announcement -->
-                        <h5 class="text-primary">🆕 Latest Announcement</h5>
+                        <h5 class="text-purple mb-3
+                        ">🆕 Latest Announcement</h5>
                         <?php if (!empty($announcements)) : ?>
                             <?php $latest = reset($announcements); ?>
                             <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
@@ -44,7 +43,7 @@
                         <hr>
 
                         <!-- Nearest Upcoming Announcements -->
-                        <h6 class="text-primary mt-3">📌 Nearing Announcements</h6>
+                        <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
                         <?php
                             $today = date('Y-m-d H:i:s');
                             $nearing = array_filter($announcements, function($a) use ($today) {
@@ -94,7 +93,7 @@
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow">
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header text-dark">
                     <h5 class="modal-title" id="eventModalLabel">Announcement Details</h5>
                     <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -119,7 +118,7 @@
         <div class="modal fade" id="addAnnouncementModal" tabindex="-1" aria-labelledby="addAnnouncementModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow">
-            <div class="modal-header bg-success text-white">
+            <div class="modal-header text-dark">
                 <h5 class="modal-title" id="addAnnouncementModalLabel">Add New Announcement</h5>
                 <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -155,7 +154,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Post Announcement</button>
+                        <button type="submit" class="btn btn-success">Post Announcement</button>
                     </div>
                 </form>
             </div>
@@ -166,7 +165,7 @@
         <div class="modal fade" id="editAnnouncementModal" tabindex="-1" aria-labelledby="editAnnouncementModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content shadow">
-                    <div class="modal-header bg-warning text-dark">
+                    <div class="modal-header text-dark">
                         <h5 class="modal-title" id="editAnnouncementModalLabel">Edit Announcement</h5>
                         <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -223,58 +222,6 @@
 
 <script>
     const announcements = <?= isset($announcements) ? json_encode($announcements) : '[]'; ?>;
-
-    const eventModalEl = document.getElementById('eventModal');
-    eventModalEl.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const title = button.getAttribute('data-title');
-        const dateRaw = new Date(button.getAttribute('data-date'));
-        const description = button.getAttribute('data-description');
-
-        const formattedDate = dateRaw.toLocaleDateString('en-US', {
-            year: 'numeric', month: 'long', day: 'numeric'
-        });
-        const formattedTime = dateRaw.toLocaleTimeString('en-US', {
-            hour: 'numeric', minute: '2-digit', hour12: true
-        });
-
-        document.getElementById('eventTitle').innerText = title;
-        document.getElementById('eventDate').innerText = `${formattedDate} at ${formattedTime}`;
-        document.getElementById('eventDescription').innerText = description;
-
-        // Also set hidden ID for delete/edit
-        const announcementId = button.getAttribute('data-id');
-        document.getElementById('modalAnnouncementId').value = announcementId;
-
-        // On Edit Button click → open the edit modal with data
-        document.getElementById('editAnnouncementBtn').onclick = function () {
-            const announcement = announcements.find(a => a.announcement_id == announcementId);
-            if (announcement) {
-                document.getElementById('editAnnouncementId').value = announcement.announcement_id;
-                document.getElementById('editTitle').value = announcement.title;
-                document.getElementById('editContent').value = announcement.content;
-                document.getElementById('editAudience').value = announcement.audience;
-                document.getElementById('editEventDatetime').value = announcement.event_datetime.replace(' ', 'T');
-
-                const editModal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
-                editModal.show();
-            }
-        };
-    });
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const successModalEl = document.getElementById('successModal');
-        if (successModalEl) {
-            const modal = new bootstrap.Modal(successModalEl);
-            modal.show();
-
-            // Optional: hide automatically after 3 seconds
-            setTimeout(() => {
-                modal.hide();
-            }, 3000);
-        }
-    });
 </script>
 
 

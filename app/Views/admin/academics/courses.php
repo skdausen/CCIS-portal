@@ -8,7 +8,7 @@
                 <li><a href="<?=site_url('admin/academics/courses')?>">Courses</a></li>
                 <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
                 <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
-                <li><a href="<?=site_url('admin/academics/teaching_loads')?>">Teaching Loads</a></li>
+               
             </ul>
         </div>
 <div class="container mt-5">

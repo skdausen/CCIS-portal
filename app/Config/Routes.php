@@ -59,8 +59,8 @@ $routes->group('admin', function ($routes) {
     // SEMESTERS
     $routes->get('academics/semesters', [AdminController::class, 'view_semesters']);
     $routes->post('academics/semesters/create', [AdminController::class, 'createSemester']);
-    $routes->post('academics/semesters/update/(:num)', 'AdminController::updateSemester/$1');
-    $routes->post('academics/semesters/delete/(:num)', 'AdminController::deleteSemester/$1');
+    $routes->post('academics/semesters/update/(:num)', [AdminController::class, 'updateSemester/$1']);
+    $routes->post('academics/semesters/delete/(:num)', [AdminController::class, 'deleteSemester/$1']);
 
     // COURSES
     $routes->get('academics/courses', [AdminController::class, 'view_courses']);
@@ -77,7 +77,6 @@ $routes->group('admin', function ($routes) {
 
     //  Other Academics Sections
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
-    $routes->get('academics/teaching_loads', [AdminController::class, 'view_teaching_loads']);
     $routes->get('academics/add_courses', [AdminController::class, 'add_courses']);
 
     

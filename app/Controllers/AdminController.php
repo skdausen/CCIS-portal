@@ -134,50 +134,91 @@ public function index()
 }
 
     // Semesters List
-    public function view_semesters()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-
-        $semesterModel = new SemesterModel();
-
-        $data['semesters'] = $semesterModel
-            ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
-            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-            ->findAll();
-
-        return view('templates/admin/admin_header')
-            . view('admin/academics/semesters', $data)
-            . view('templates/admin/admin_footer');
+    // SEMESTERS LIST
+public function view_semesters()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
 
-    public function createSemester()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
+    $semesterModel = new SemesterModel();
 
-        $semester = $this->request->getPost('semester');
-        $schoolyearText = $this->request->getPost('schoolyear');
+    $data['semesters'] = $semesterModel
+        ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->findAll();
 
-        if (!$semester || !$schoolyearText) {
-            return redirect()->back()->with('error', 'Please fill all fields.');
-        }
+    return view('templates/admin/admin_header')
+        . view('admin/academics/semesters', $data)
+        . view('templates/admin/admin_footer');
+}
 
-        $schoolYearModel = new SchoolYearModel();
-        $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-
-        $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
-
-        $semesterModel = new SemesterModel();
-        $semesterModel->insert([
-            'semester' => $semester,
-            'schoolyear_id' => $schoolyearId,
-        ]);
-
-        return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
+// CREATE SEMESTER
+public function createSemester()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
+
+    $semester = $this->request->getPost('semester');
+    $schoolyearText = $this->request->getPost('schoolyear');
+
+    if (!$semester || !$schoolyearText) {
+        return redirect()->back()->with('error', 'Please fill all fields.');
+    }
+
+    $schoolYearModel = new SchoolYearModel();
+    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+
+    $semesterModel = new SemesterModel();
+    $semesterModel->insert([
+        'semester' => $semester,
+        'schoolyear_id' => $schoolyearId,
+    ]);
+
+    return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
+}
+
+// UPDATE SEMESTER
+public function updateSemester($id)
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
+    }
+
+    $semester = $this->request->getPost('semester');
+    $schoolyearText = $this->request->getPost('schoolyear');
+
+    if (!$semester || !$schoolyearText) {
+        return redirect()->back()->with('error', 'Please fill all fields.');
+    }
+
+    $schoolYearModel = new SchoolYearModel();
+    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+
+    $semesterModel = new SemesterModel();
+    $semesterModel->update($id, [
+        'semester' => $semester,
+        'schoolyear_id' => $schoolyearId,
+    ]);
+
+    return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
+}
+
+// DELETE SEMESTER
+public function deleteSemester($id)
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
+    }
+
+    $semesterModel = new SemesterModel();
+    $semesterModel->delete($id);
+
+    return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
+}
 
    // ✅ View all courses (unchanged)
 public function view_courses()

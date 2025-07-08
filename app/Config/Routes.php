@@ -56,6 +56,8 @@ $routes->group('admin', function ($routes) {
     // ✅ SEMESTERS
     $routes->get('academics/semesters', [AdminController::class, 'view_semesters']);
     $routes->post('academics/semesters/create', [AdminController::class, 'createSemester']);
+    $routes->post('academics/semesters/update/(:num)', 'AdminController::updateSemester/$1');
+    $routes->post('academics/semesters/delete/(:num)', 'AdminController::deleteSemester/$1');
 
     // ✅ COURSES
     $routes->get('academics/courses', [AdminController::class, 'view_courses']);

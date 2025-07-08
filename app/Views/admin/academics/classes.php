@@ -248,7 +248,7 @@
         filterRows();
     });
 </script>
-<!-- ✅ Success Modal -->
+<!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -263,7 +263,7 @@
     </div>
 </div>
 
-<!-- ❌ Error Modal -->
+<!-- Error Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -282,7 +282,7 @@
     </div>
 </div>
 
-<!-- ✅ Flash Message Script -->
+<!-- Flash Message Script -->
 <?php if (session()->getFlashdata('success') || session()->getFlashdata('error')): ?>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

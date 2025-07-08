@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let matchRole = true;
 
             if (roleVal === 'admin') {
-                matchRole = role === 'admin' || role === 'superadmin'; // ✅ Include superadmin under admin
+                matchRole = role === 'admin' || role === 'superadmin'; // Include superadmin under admin
             } else if (roleVal) {
                 matchRole = role === roleVal;
             }

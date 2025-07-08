@@ -89,7 +89,7 @@
     </div>
     
     </div>
-        <!-- 📌 Modal for Announcement -->
+        <!-- Modal for Announcement -->
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow">
@@ -114,7 +114,7 @@
             </div>
         </div>
         </div>
-        <!-- 📢 Add Announcement Modal -->
+        <!-- Add Announcement Modal -->
         <div class="modal fade" id="addAnnouncementModal" tabindex="-1" aria-labelledby="addAnnouncementModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow">
@@ -161,7 +161,7 @@
         </div>
         </div>
 
-        <!-- ✏️ Edit Announcement Modal -->
+        <!-- Edit Announcement Modal -->
         <div class="modal fade" id="editAnnouncementModal" tabindex="-1" aria-labelledby="editAnnouncementModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content shadow">
@@ -204,7 +204,7 @@
     </div>
 </div>
 <?php if (session()->getFlashdata('success')): ?>
-<!-- 🎉 Success Modal (centered modal for updates and deletes) -->
+<!-- Success Modal (centered modal for updates and deletes) -->
 <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content shadow-lg border-success">

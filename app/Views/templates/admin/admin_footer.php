@@ -29,7 +29,11 @@
 <!-- Your calendar logic -->
 <script src="<?= base_url('rsc/custom_js/calendar.js') ?>"></script>
 
+<!-- Event Modal JS -->
 <script src="<?= base_url('rsc/custom_js/eventModal.js') ?>"></script>
+
+<!--View, Search, & Filter Users JS -->
+<script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
 
 </body>
 </html>

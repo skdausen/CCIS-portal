@@ -27,7 +27,7 @@
             <input type="text" id="searchInput" class="form-control" placeholder="Search by username or email...">
         </div>
         <div class="col-md-5 mb-2 d-flex justify-content-end">
-            <a href="<?= site_url('admin/add-user') ?>" class="btn btn-success">➕ Add Account</a>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Add Account</button>
         </div>
     </div>
 
@@ -39,6 +39,7 @@
                     <th>User ID</th>
                     <th>Role</th>
                     <th>Username</th>
+                    <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -51,6 +52,7 @@
                             <td><?= esc($user['user_id']) ?></td>
                             <td><?= esc($user['role']) ?></td>
                             <td><?= esc($user['username']) ?></td>
+                            <td><?= esc($user['lname']) . ', ' . esc($user['fname']) . ' ' . esc($user['mname']) ?></td>
                             <td><?= esc($user['email']) ?></td>
                             <td>
                                 <?php if ($user['status'] === 'active'): ?>
@@ -60,9 +62,11 @@
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="<?= site_url('admin/user/' . $user['user_id']) ?>" class="btn btn-sm btn-outline-primary">
-                                    View
-                                </a>   
+                                <a href="#" 
+                                class="btn btn-sm btn-outline-primary viewUserBtn"
+                                data-user='<?= json_encode($user) ?>'>
+                                View
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -74,40 +78,106 @@
             </tbody>
         </table>
     </div>
+
+    <!-- ADD USER MODAL -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addUserModalLabel">Add New User Account</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+            <form action="<?= site_url('admin/create-user') ?>" method="post">
+                <div class="modal-body">
+
+                    <?php if (session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+                    <?php elseif (session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+                    <?php endif; ?>
+
+                    <div class="mb-3">
+                    <label for="username" class="form-label">Username:</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Enter ID Number" required>
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter email address" required>
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="fname" class="form-label">First Name:</label>
+                    <input type="text" name="fname" id="fname" class="form-control" placeholder="e.g. Juan" required>
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="mname" class="form-label">Middle Name:</label>
+                    <input type="text" name="mname" id="mname" class="form-control" placeholder="(Optional)">
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="lname" class="form-label">Last Name:</label>
+                    <input type="text" name="lname" id="lname" class="form-control" placeholder="e.g. Dela Cruz" required>
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="role" class="form-label">Role:</label>
+                    <select name="role" id="role" class="form-select" required>
+                        <option value="">Select role</option>
+                        <option value="admin">Admin</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="student">Student</option>
+                    </select>
+                    </div>
+
+                    <p class="mt-3"><strong>Default password:</strong> <code>ccis1234</code></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+    </div>
+
+    <!-- VIEW USER MODAL -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="viewUserModalLabel">👤 User Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <!-- USER INFO WILL BE INSERTED HERE VIA JS -->
+            <div id="userDetailsContent">
+            <p><strong>User ID:</strong> <span id="detailUserID"></span></p>
+            <p><strong>Role:</strong> <span id="detailRole"></span></p>
+            <p><strong>Username:</strong> <span id="detailUsername"></span></p>
+            <p><strong>Email:</strong> <span id="detailEmail"></span></p>
+            <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+            <p><strong>Full Name:</strong> <span id="detailFullname"></span></p>
+            <p><strong>Sex:</strong> <span id="detailSex"></span></p>
+            <p><strong>Birthday:</strong> <span id="detailBirthday"></span></p>
+            <p><strong>Address:</strong> <span id="detailAddress"></span></p>
+            <p><strong>Contact Number:</strong> <span id="detailContact"></span></p>
+            <p><strong>Created At:</strong> <span id="detailCreated"></span></p>
+            <p><strong>Last Login:</strong> <span id="detailLogin"></span></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
 </div>
 
-<!-- SEARCH & FILTER SCRIPT -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const filter = document.getElementById('roleFilter');
-    const search = document.getElementById('searchInput');
-    const rows = document.querySelectorAll('#usersTable tbody tr');
 
-    function filterRows() {
-        const roleVal = filter.value.toLowerCase();
-        const searchVal = search.value.toLowerCase();
-
-        rows.forEach(row => {
-            const role = row.cells[1].textContent.toLowerCase();
-            const username = row.cells[2].textContent.toLowerCase();
-            const email = row.cells[3].textContent.toLowerCase();
-
-            let matchRole = true;
-
-            if (roleVal === 'admin') {
-                matchRole = role === 'admin' || role === 'superadmin'; // Include superadmin under admin
-            } else if (roleVal) {
-                matchRole = role === roleVal;
-            }
-
-            const matchSearch = !searchVal || username.includes(searchVal) || email.includes(searchVal);
-
-            row.style.display = matchRole && matchSearch ? '' : 'none';
-        });
-    }
-
-    filter.addEventListener('change', filterRows);
-    search.addEventListener('input', filterRows);
-});
-</script>
 

@@ -42,18 +42,6 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Add User Form
-    public function addUserForm()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-
-        return view('templates/admin/admin_header')
-            . view('admin/add_users')
-            . view('templates/admin/admin_footer');
-    }
-
     // Create New User
     public function createUser()
     {
@@ -64,6 +52,9 @@ class AdminController extends BaseController
         $model = new LoginModel();
 
         $username = $this->request->getPost('username');
+        $fname = $this->request->getPost('fname');
+        $mname = $this->request->getPost('mname');
+        $lname = $this->request->getPost('lname');
         $email = $this->request->getPost('email');
         $role = $this->request->getPost('role');
 
@@ -85,26 +76,15 @@ class AdminController extends BaseController
             'role' => $role,
             'status' => 'inactive',
             'created_at' => date('Y-m-d H:i:s'),
+            'fname'         => $fname,
+            'mname'         => $mname,
+            'lname'         => $lname,
         ]);
 
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
 
-    // View Single User
-    public function viewUser($id)
-        {
-            $model = new LoginModel();
-            $user = $model->find($id);
-
-            if (!$user) {
-                return redirect()->to('admin/users')->with('error', 'User not found.');
-            }
-
-            return view('templates/admin/admin_header')
-                . view('admin/view_user', ['user' => $user])
-                . view('templates/admin/admin_footer');
-    }
-
+    //Adding Announcement
     public function saveAnnouncement()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {

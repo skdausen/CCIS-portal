@@ -1,10 +1,12 @@
 <?php
 
 use App\Controllers\AdminController;
+use App\Controllers\FacultyController;
 use CodeIgniter\Router\RouteCollection;
 use App\Controllers\Pages;
 use App\Controllers\Password;
 use App\Controllers\AuthController;
+
 
 /**
  * @var RouteCollection $routes
@@ -90,4 +92,12 @@ $routes->group('admin', function ($routes) {
 
 
 
+// ---------------------
+// FACULTY ROUTES
+// ---------------------
+$routes->group('faculty', function ($routes) {
 
+    // Faculty Home & Users
+    $routes->get('home', 'FacultyController::facultyHome');
+
+});

@@ -52,7 +52,7 @@
                     <td><?= esc(ucfirst($semester['semester'])) ?></td>
                     <td><?= esc($semester['schoolyear']) ?></td>
                     <td>
-                        <<?php if (!empty($semester['is_active'])): ?>
+                        <?php if (!empty($semester['is_active'])): ?>
                         <span class="badge bg-success">Active</span>
                     <?php else: ?>
                         <span class="badge bg-secondary">Inactive</span>
@@ -88,6 +88,13 @@
                                         <label>School Year</label>
                                         <input type="text" name="schoolyear" class="form-control" value="<?= esc($semester['schoolyear']) ?>" required>
                                     </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select name="status" class="form-select" required>
+                                                <option value="1" <?= isset($semester) && $semester['is_active'] === 'Active' ? 'selected' : '' ?>>Active</option>
+                                                <option value="0" <?= isset($semester) && $semester['is_active'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
+                                            </select>
+                                        </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-success">Update</button>

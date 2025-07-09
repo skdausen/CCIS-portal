@@ -77,8 +77,12 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/classes/delete/(:num)', [AdminController::class, 'deleteClass/$1']);
 
 
-    //  Other Academics Sections
+    // CURRICULUM
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
+    $routes->get('academics/curriculum_old', [AdminController::class, 'curriculum_old']);
+    $routes->get('academics/curriculum_new', [AdminController::class, 'curriculum_new']);
+
+
     $routes->get('academics/add_courses', [AdminController::class, 'add_courses']);
 
     

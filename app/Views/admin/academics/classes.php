@@ -70,14 +70,14 @@
 
                     <!-- Edit Modal -->
                    <!-- Edit Modal (UPDATED to match Add Modal) -->
-<div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
-                <?= csrf_field() ?>
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Class</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
+                            <?= csrf_field() ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Class</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">

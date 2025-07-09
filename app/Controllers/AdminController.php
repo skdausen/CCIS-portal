@@ -80,6 +80,7 @@ class AdminController extends BaseController
             'fname'         => $fname,
             'mname'         => $mname,
             'lname'         => $lname,
+            'profile_img'   => 'default.png', // Default profile image
         ]);
 
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
@@ -195,6 +196,7 @@ class AdminController extends BaseController
             . view('admin/academics/semesters', $data)
             . view('templates/admin/admin_footer');
     }
+// CREATE SEMESTER
 public function createSemester()
 {
     if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -203,7 +205,7 @@ public function createSemester()
 
     $semester = $this->request->getPost('semester');
     $schoolyearText = $this->request->getPost('schoolyear');
-    $status = $this->request->getPost('status');
+    $status = $this->request->getPost('status'); // "1" or "0"
 
     if (!$semester || !$schoolyearText || $status === null) {
         return redirect()->back()->with('error', 'Please fill all fields.');
@@ -213,11 +215,13 @@ public function createSemester()
 
     $schoolYearModel = new SchoolYearModel();
     $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-    $schoolyearId = $existingSchoolYear ? $existingSchoolYear['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+    $schoolyearId = $existingSchoolYear
+        ? $existingSchoolYear['schoolyear_id']
+        : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
 
     $semesterModel = new SemesterModel();
 
-    // Check for duplicates
+    // Check for duplicate semester-schoolyear
     $duplicate = $semesterModel
         ->where('semester', $semester)
         ->where('schoolyear_id', $schoolyearId)
@@ -227,14 +231,12 @@ public function createSemester()
         return redirect()->back()->with('error', '❌ Semester and school year combination already exists.');
     }
 
-    // ✔️ Prevent multiple active semesters
+    // Deactivate others if new semester is active
     if ($isActive === 1) {
-        $activeSemester = $semesterModel->where('is_active', 1)->first();
-        if ($activeSemester) {
-            return redirect()->back()->with('error', '❌ Another active semester already exists. Please deactivate it first.');
-        }
+        $semesterModel->where('is_active', 1)->set('is_active', 0)->update();
     }
 
+    // Save new semester
     $semesterModel->insert([
         'semester' => $semester,
         'schoolyear_id' => $schoolyearId,
@@ -243,6 +245,8 @@ public function createSemester()
 
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
 }
+
+
 
 
 
@@ -418,8 +422,6 @@ public function updateSemester($id)
     ->join('users', 'users.user_id = class.user_id', 'left') // CHANGED HERE ✅
     ->findAll();
 
-
-
         // ✅ Prepare instructors list
      $instructors = [];
         $facultyUsers = $userModel->where('role', 'faculty')->findAll();
@@ -427,8 +429,8 @@ public function updateSemester($id)
         foreach ($facultyUsers as $user) {
             $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
         }
-
-
+        // Get all courses and semesters
+        // This will be used in the class creation form
         $courses = $courseModel->findAll();
         $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')

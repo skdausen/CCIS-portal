@@ -50,12 +50,10 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle profile-dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- Placeholder for user profile image -->
-                            <img src="https://placehold.co/30x30/00bcd4/ffffff?text=U" alt="User Profile">
-                            <!-- <i class="fas fa-chevron-down"></i> -->
+                            <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profile_img') ?? 'rsc/assets/uploads/default.png')) ?>"  alt="User Profile">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="bi bi-person-circle"></i> Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
                         </ul>

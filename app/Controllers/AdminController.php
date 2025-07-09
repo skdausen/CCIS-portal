@@ -195,7 +195,6 @@ class AdminController extends BaseController
     }
 
     // CREATE SEMESTER
-// CREATE SEMESTER
     public function createSemester()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -368,7 +367,7 @@ class AdminController extends BaseController
         $facultyModel = new FacultyModel();
         $userModel = new LoginModel();
         $courseModel = new CourseModel();
-    $semesterModel = new SemesterModel();
+        $semesterModel = new SemesterModel();
 
         // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
         $classes = $classModel
@@ -394,7 +393,9 @@ class AdminController extends BaseController
         }
 
         $courses = $courseModel->findAll();
-    $semesters = $semesterModel->findAll();
+        $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->findAll();
 
         return view('templates/admin/admin_header')
             . view('admin/academics/classes', [
@@ -418,7 +419,7 @@ class AdminController extends BaseController
             'faculty_id' => $this->request->getPost('faculty_id'),
             'course_id' => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
-        'class_day' => $this->request->getPost('class_day'),
+            'class_day' => $this->request->getPost('class_day'),
             'class_start' => $this->request->getPost('class_start'),
             'class_end' => $this->request->getPost('class_end'),
             'class_room' => $this->request->getPost('class_room'),
@@ -434,13 +435,13 @@ class AdminController extends BaseController
 
         $data = [
             'faculty_id'  => $this->request->getPost('faculty_id'),
-        'course_id'   => $this->request->getPost('course_id'),
+            'course_id'   => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
-        'class_day'   => $this->request->getPost('class_day'),
+            'class_day'   => $this->request->getPost('class_day'),
             'class_start' => $this->request->getPost('class_start'),
             'class_end'   => $this->request->getPost('class_end'),
             'class_room'  => $this->request->getPost('class_room'),
-            'class_type' => $this->request->getPost('class_type'),
+            'class_type'  => $this->request->getPost('class_type'),
         ];
 
         $classModel->update($class_id, $data);
@@ -453,7 +454,7 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
         $classModel->delete($class_id);
 
-    return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
+        return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
     }
 

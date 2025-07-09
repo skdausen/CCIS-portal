@@ -38,21 +38,21 @@ class AuthController extends BaseController
             return redirect()->to('auth/login')->withInput();
         }
 
-        // 🚫 If user is already logged in (status = active), block login
+        //  If user is already logged in (status = active), block login
         if ($user['status'] === 'active') {
             $session->setFlashdata('error', 'User is already logged in elsewhere.');
             return redirect()->to('auth/login')->withInput();
         }
 
-        // 🔒 Verify password
+        //  Verify password
         if (password_verify($password, $user['userpassword'])) {
-            // ✅ Update login timestamp and set status to active
+            //  Update login timestamp and set status to active
             $model->update($user['user_id'], [
                 'last_login' => date('Y-m-d H:i:s'),
                 'status'     => 'active'
             ]);
 
-            // ✅ Set session data
+            //  Set session data
             $session->set([
                 'user_id'    => $user['user_id'],
                 'username'   => $user['username'],
@@ -60,10 +60,14 @@ class AuthController extends BaseController
                 'isLoggedIn' => true
             ]);
 
-            // ✅ Role-based redirect
+            //  Role-based redirect
             if (in_array($user['role'], ['admin', 'superadmin'])) {
                 return redirect()->to('admin/home');
-            } else {
+            } 
+            else if (in_array($user['role'], ['faculty'])) {
+                return redirect()->to('faculty/home');
+            }
+             else {
                 return redirect()->to('home');
             }
         } else {

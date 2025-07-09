@@ -88,21 +88,23 @@
                             <option value="">Select Semester</option>
                             <?php foreach ($semesters as $semester): ?>
                                 <option value="<?= $semester['semester_id'] ?>" <?= $semester['semester_id'] == $class['semester_id'] ? 'selected' : '' ?>>
-                                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear_id']) ?>
+                                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
+                
                     <!-- Instructor -->
                     <div class="mb-3">
                         <label>Instructor</label>
-                        <select name="faculty_id" class="form-select" required>
-                            <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                                <option value="<?= $facultyId ?>" <?= $facultyId == $class['faculty_id'] ? 'selected' : '' ?>><?= esc($instructorName) ?></option>
+                        <select name="user_id" class="form-select" required>
+                            <?php foreach ($instructors as $userId => $instructorName): ?>
+                                <option value="<?= $userId ?>" <?= $userId == $class['user_id'] ? 'selected' : '' ?>><?= esc($instructorName) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
+
 
                     <!-- Course -->
                     <div class="mb-3">
@@ -206,7 +208,7 @@
                     <option value="">Select Semester</option>
                     <?php foreach ($semesters as $semester): ?>
                         <option value="<?= $semester['semester_id'] ?>">
-                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear_id']) ?>
+                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
                         </option>
                     <?php endforeach; ?>
                    
@@ -215,15 +217,16 @@
                                                 
 
             <!-- Instructor -->
-            <div class="mb-3">
-                <label for="faculty_id" class="form-label">Instructor</label>
-                <select name="faculty_id" class="form-select" required>
-                <option value="">Select Instructor</option>
-                <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                    <option value="<?= $facultyId ?>"><?= esc($instructorName) ?></option>
-                <?php endforeach; ?>
-                </select>
-            </div>
+     <select name="user_id" class="form-select" required>
+    <option value="">Select Instructor</option>
+    <?php foreach ($instructors as $userId => $instructorName): ?>
+        <option value="<?= $userId ?>">
+            <?= esc($instructorName) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+
+
 
             <!-- Course -->  
             <div class="mb-3">
@@ -363,7 +366,7 @@
             document.getElementById('successMessage').textContent = successMessage;
             const successModal = new bootstrap.Modal(document.getElementById('successModal'));
             successModal.show();
-            setTimeout(() => successModal.hide(), 2500);  // Auto close after 2.5 seconds
+            setTimeout(() => successModal.hide(), 3000);  // Auto close after 3 seconds
         <?php elseif (session()->getFlashdata('error')): ?>
             const errorMessage = <?= json_encode(session()->getFlashdata('error')) ?>;
             document.getElementById('errorMessage').textContent = errorMessage;

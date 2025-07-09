@@ -599,3 +599,1324 @@ DEBUG - 2025-07-09 03:46:05 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2025-07-09 03:46:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2025-07-09 03:52:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2025-07-09 03:52:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 03:59:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 04:55:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 04:55:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 04:55:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 04:55:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 04:57:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 04:57:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:00:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:00:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:29:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 05:30:53 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`)) in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(416): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 05:30:53 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`))
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:faculty_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(416): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:30:53 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`))
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'4\', \'2\', \'TTh\', \'17:06\', \'20:00\', \'CLA\', \'LEC\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'4\', \'2\', \'TTh\', \'17:06\', \'20:00\', \'CLA\', \'LEC\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:faculty_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(416): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:30:53 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`))
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'4\', \'2\', \'TTh\', \'17:06\', \'20:00\', \'CLA\', \'LEC\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'4\', \'2\', \'TTh\', \'17:06\', \'20:00\', \'CLA\', \'LEC\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'4\', \'2\', \'TTh\', \'17:06\', \'20:00\', \'CLA\', \'LEC\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:faculty_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(416): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+ERROR - 2025-07-09 05:33:32 --> mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause' in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`....', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`....')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`....')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`....', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#14 {main}
+CRITICAL - 2025-07-09 05:33:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+[Method: GET, Route: admin/academics/classes]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:32 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:32 --> [Caused by] mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 05:33:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 05:33:36 --> mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause' in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`....', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`....')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`....')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`....', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#14 {main}
+CRITICAL - 2025-07-09 05:33:36 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+[Method: GET, Route: admin/academics/classes]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:36 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:36 --> [Caused by] mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+ERROR - 2025-07-09 05:33:38 --> mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause' in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`....', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`....')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`....')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`....', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#14 {main}
+CRITICAL - 2025-07-09 05:33:38 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+[Method: GET, Route: admin/academics/classes]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:38 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:38 --> [Caused by] mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 05:33:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:33:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 05:33:45 --> mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause' in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`....', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`....')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`....')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`....', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#14 {main}
+CRITICAL - 2025-07-09 05:33:45 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+[Method: GET, Route: admin/academics/classes]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+11 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:45 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:33:45 --> [Caused by] mysqli_sql_exception: Unknown column 'class.faculty_id' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `class`.*, `course`.`course_code`, `course`.`course_description`, `semesters`.`semester`, `schoolyears`.`schoolyear`, `users`.`fname`, `users`.`lname`
+FROM `class`
+LEFT JOIN `course` ON `course`.`course_id` = `class`.`course_id`
+LEFT JOIN `semesters` ON `semesters`.`semester_id` = `class`.`semester_id`
+LEFT JOIN `schoolyears` ON `schoolyears`.`schoolyear_id` = `semesters`.`schoolyear_id`
+LEFT JOIN `users` ON `users`.`user_id` = `class`.`faculty_id`', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(679): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\AdminController.php(383): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 05:34:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:36:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 05:37:16 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`)) in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(415): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 05:37:16 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`))
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:faculty_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:37:16 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`))
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'6\', \'4\', \'32\', \'TTh\', \'14:34\', \'17:06\', \'CHED 123\', \'LEC\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'6\', \'4\', \'32\', \'TTh\', \'14:34\', \'17:06\', \'CHED 123\', \'LEC\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:faculty_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:37:16 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `fk_class_faculty` FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`))
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'6\', \'4\', \'32\', \'TTh\', \'14:34\', \'17:06\', \'CHED 123\', \'LEC\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'6\', \'4\', \'32\', \'TTh\', \'14:34\', \'17:06\', \'CHED 123\', \'LEC\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'6\', \'4\', \'32\', \'TTh\', \'14:34\', \'17:06\', \'CHED 123\', \'LEC\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`faculty_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:faculty_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 05:37:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:40:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:40:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:40:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:40:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:42:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:42:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:43:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:43:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:43:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:43:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:43:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:44:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:44:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:44:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:48:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:49:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:49:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:49:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 05:52:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 05:53:04 --> mysqli_sql_exception: Column 'user_id' cannot be null in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(415): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 05:53:04 --> CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:53:04 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:53:04 --> [Caused by] mysqli_sql_exception: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+ERROR - 2025-07-09 05:56:21 --> mysqli_sql_exception: Column 'user_id' cannot be null in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(415): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 05:56:21 --> CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:56:21 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:56:21 --> [Caused by] mysqli_sql_exception: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'4\', \'2\', \'MWF\', \'15:54\', \'17:06\', \'CLD\', \'LAB\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(415): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 05:58:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 05:58:06 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:58:15 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:58:42 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:01 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:02 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:26 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:31 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:31 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:35 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 05:59:48 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(399): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:00:13 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:00:13 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:00:14 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:00:14 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:00:14 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:00:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:00:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:00:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:00:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 06:00:18 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:01:11 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:01:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 06:01:13 --> ErrorException: Undefined array key "schoolyear_id"
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 91.
+ 1 APPPATH\Views\admin\academics\classes.php(91): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "schoolyear_id"', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 91)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(398): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:01:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:01:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:01:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:01:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:01:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:01:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:02:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:03:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:04:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:04:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:08:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 06:08:56 --> mysqli_sql_exception: Column 'user_id' cannot be null in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(419): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 06:08:56 --> CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:08:56 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:08:56 --> [Caused by] mysqli_sql_exception: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+ERROR - 2025-07-09 06:10:32 --> mysqli_sql_exception: Column 'user_id' cannot be null in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(419): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 06:10:32 --> CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:10:32 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:10:32 --> [Caused by] mysqli_sql_exception: Column 'user_id' cannot be null
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (NULL, \'8\', \'32\', \'TTh\', \'14:35\', \'17:06\', \'CLD\', \'LAB\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:10:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:10:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:10:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:11:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:11:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 06:13:37 --> ErrorException: Undefined variable $class
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 223.
+ 1 APPPATH\Views\admin\academics\classes.php(223): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $class', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 223)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(402): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:13:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:13:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:13:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 06:13:55 --> ErrorException: Undefined variable $class
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 223.
+ 1 APPPATH\Views\admin\academics\classes.php(223): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $class', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 223)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(402): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:14:13 --> ErrorException: Undefined variable $class
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 223.
+ 1 APPPATH\Views\admin\academics\classes.php(223): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $class', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 223)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(402): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:14:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:14:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:14:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:14:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:14:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:14:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 06:14:25 --> ErrorException: Undefined variable $class
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 223.
+ 1 APPPATH\Views\admin\academics\classes.php(223): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $class', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 223)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(402): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:22:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:22:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:22:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:22:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:22:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:22:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:24:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:24:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2025-07-09 06:24:10 --> ErrorException: Undefined variable $class
+[Method: GET, Route: admin/academics/classes]
+in APPPATH\Views\admin\academics\classes.php on line 223.
+ 1 APPPATH\Views\admin\academics\classes.php(223): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $class', 'C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php', 223)
+ 2 SYSTEMPATH\View\View.php(224): include('C:\\xampp\\htdocs\\CCIS-portal\\app\\Views\\admin\\academics\\classes.php')
+ 3 SYSTEMPATH\View\View.php(227): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1173): CodeIgniter\View\View->render('admin/academics/classes', [], true)
+ 5 APPPATH\Controllers\AdminController.php(402): view('admin/academics/classes', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_classes()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:25:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:25:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:25:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:25:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:25:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:26:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:26:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:26:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:26:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-09 06:27:07 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `class_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `faculty` (`user_id`)) in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `cl...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `cl...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `cl...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `cl...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\CCIS-portal\system\BaseModel.php(843): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\CCIS-portal\system\Model.php(800): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(419): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+#9 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#10 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#15 {main}
+CRITICAL - 2025-07-09 06:27:07 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `class_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `faculty` (`user_id`))
+[Method: POST, Route: admin/academics/classes/add]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:27:07 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `class_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `faculty` (`user_id`))
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'43\', \'32\', \'MW\', \'10:00\', \'11:00\', \'CLA\', \'LEC\')')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'43\', \'32\', \'MW\', \'10:00\', \'11:00\', \'CLA\', \'LEC\')')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+14 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-09 06:27:07 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`ccis_portal`.`class`, CONSTRAINT `class_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `faculty` (`user_id`))
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'43\', \'32\', \'MW\', \'10:00\', \'11:00\', \'CLA\', \'LEC\')', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'43\', \'32\', \'MW\', \'10:00\', \'11:00\', \'CLA\', \'LEC\')')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (\'7\', \'43\', \'32\', \'MW\', \'10:00\', \'11:00\', \'CLA\', \'LEC\')')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `class` (`user_id`, `course_id`, `semester_id`, `class_day`, `class_start`, `class_end`, `class_room`, `class_type`) VALUES (:user_id:, :course_id:, :semester_id:, :class_day:, :class_start:, :class_end:, :class_room:, :class_type:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(843): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(800): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\AdminController.php(419): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->createClass()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+15 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-09 06:44:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:44:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:46:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:46:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:48:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-09 06:48:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

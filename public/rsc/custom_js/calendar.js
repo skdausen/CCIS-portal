@@ -2,54 +2,68 @@
 document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
 
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        height: 400,
-        events: announcements.map(a => ({
-            id: a.announcement_id, // ✅ Add the ID here
-            title: a.title,
-            start: a.event_datetime,
-            description: a.content,
-        })),
-        eventClick: function (info) {
-            const announcementId = info.event.id;
-            const announcement = announcements.find(a => a.announcement_id == announcementId);
+    if (calendarEl && typeof announcements !== 'undefined') {
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 400,
+            events: announcements.map(a => ({
+                id: a.announcement_id,
+                title: a.title,
+                start: a.event_datetime,
+                description: a.content,
+            })),
+            eventClick: function (info) {
+                const announcementId = info.event.id;
+                const announcement = announcements.find(a => a.announcement_id == announcementId);
 
-            if (announcement) {
-                // Set values in the modal
+                if (!announcement) return;
+
+                // Fill the view modal
                 document.getElementById('eventTitle').innerText = announcement.title;
 
                 const dateObj = new Date(announcement.event_datetime);
-                const formattedDate = dateObj.toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'long', day: 'numeric'
-                });
-                const formattedTime = dateObj.toLocaleTimeString('en-US', {
-                    hour: 'numeric', minute: '2-digit', hour12: true
-                });
-                document.getElementById('eventDate').innerText = `${formattedDate} at ${formattedTime}`;
+                document.getElementById('eventDate').innerText =
+                    dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) +
+                    ' at ' +
+                    dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
                 document.getElementById('eventDescription').innerText = announcement.content;
 
-                // Assign the ID to the delete form
-                document.getElementById('modalAnnouncementId').value = announcementId;
+                // ✅ Insert your safe block here (edit + delete only for admins)
+                const idInput = document.getElementById('modalAnnouncementId');
+                if (idInput) {
+                    idInput.value = announcementId;
+                }
 
-                // Set up Edit button
-                document.getElementById('editAnnouncementBtn').onclick = function () {
-                    document.getElementById('editAnnouncementId').value = announcement.announcement_id;
-                    document.getElementById('editTitle').value = announcement.title;
-                    document.getElementById('editContent').value = announcement.content;
-                    document.getElementById('editAudience').value = announcement.audience;
-                    document.getElementById('editEventDatetime').value = announcement.event_datetime.replace(' ', 'T');
+                const editBtn = document.getElementById('editAnnouncementBtn');
+                if (editBtn) {
+                    editBtn.onclick = function () {
+                        const idField = document.getElementById('editAnnouncementId');
+                        const titleField = document.getElementById('editTitle');
+                        const contentField = document.getElementById('editContent');
+                        const audienceField = document.getElementById('editAudience');
+                        const datetimeField = document.getElementById('editEventDatetime');
 
-                    const editModal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
-                    editModal.show();
-                };
+                        if (idField && titleField && contentField && audienceField && datetimeField) {
+                            idField.value = announcement.announcement_id;
+                            titleField.value = announcement.title;
+                            contentField.value = announcement.content;
+                            audienceField.value = announcement.audience;
+                            datetimeField.value = announcement.event_datetime.replace(' ', 'T');
 
-                // Show the modal
+                            const editModal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
+                            editModal.show();
+                        }
+                    };
+                }
+
+                // Show modal
                 const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
                 eventModal.show();
             }
-        }
-    });
 
-    calendar.render();
+                    });
+
+        calendar.render();
+    }
 });

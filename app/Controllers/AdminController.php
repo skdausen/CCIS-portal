@@ -43,18 +43,6 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Add User Form
-    public function addUserForm()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-
-        return view('templates/admin/admin_header')
-            . view('admin/add_users')
-            . view('templates/admin/admin_footer');
-    }
-
     // Create New User
     public function createUser()
     {
@@ -65,6 +53,9 @@ class AdminController extends BaseController
         $model = new LoginModel();
 
         $username = $this->request->getPost('username');
+        $fname = $this->request->getPost('fname');
+        $mname = $this->request->getPost('mname');
+        $lname = $this->request->getPost('lname');
         $email = $this->request->getPost('email');
         $role = $this->request->getPost('role');
 
@@ -86,26 +77,15 @@ class AdminController extends BaseController
             'role' => $role,
             'status' => 'inactive',
             'created_at' => date('Y-m-d H:i:s'),
+            'fname'         => $fname,
+            'mname'         => $mname,
+            'lname'         => $lname,
         ]);
 
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
 
-    // View Single User
-    public function viewUser($id)
-        {
-            $model = new LoginModel();
-            $user = $model->find($id);
-
-            if (!$user) {
-                return redirect()->to('admin/users')->with('error', 'User not found.');
-            }
-
-            return view('templates/admin/admin_header')
-                . view('admin/view_user', ['user' => $user])
-                . view('templates/admin/admin_footer');
-    }
-
+    //Adding Announcement
     public function saveAnnouncement()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -216,7 +196,6 @@ class AdminController extends BaseController
     }
 
     // CREATE SEMESTER
-// CREATE SEMESTER
     public function createSemester()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -389,33 +368,35 @@ class AdminController extends BaseController
         $facultyModel = new FacultyModel();
         $userModel = new LoginModel();
         $courseModel = new CourseModel();
-    $semesterModel = new SemesterModel();
+        $semesterModel = new SemesterModel();
 
         // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
         $classes = $classModel
-        ->select('class.*, 
-                  course.course_code, course.course_description, 
-                  semesters.semester, schoolyears.schoolyear,
-                  faculty.faculty_id, users.fname, users.lname')
-            ->join('course', 'course.course_id = class.course_id', 'left')
-            ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left') // ✅ Add this join
-        ->join('faculty', 'faculty.faculty_id = class.faculty_id', 'left')
-            ->join('users', 'users.user_id = faculty.user_id', 'left')
-            ->findAll();
+    ->select('class.*, 
+              course.course_code, course.course_description, 
+              semesters.semester, schoolyears.schoolyear,
+              users.user_id, users.fname, users.lname')
+    ->join('course', 'course.course_id = class.course_id', 'left')
+    ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
+    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+    ->join('users', 'users.user_id = class.user_id', 'left') // CHANGED HERE ✅
+    ->findAll();
+
+
 
         // ✅ Prepare instructors list
-        $faculty = $facultyModel->findAll();
-        $instructors = [];
-        foreach ($faculty as $f) {
-            $user = $userModel->find($f['user_id']);
-            if ($user) {
-                $instructors[$f['faculty_id']] = $user['fname'] . ' ' . $user['lname'];
-            }
+     $instructors = [];
+        $facultyUsers = $userModel->where('role', 'faculty')->findAll();
+
+        foreach ($facultyUsers as $user) {
+            $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
         }
 
+
         $courses = $courseModel->findAll();
-    $semesters = $semesterModel->findAll();
+        $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->findAll();
 
         return view('templates/admin/admin_header')
             . view('admin/academics/classes', [
@@ -436,10 +417,11 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
 
         $classModel->insert([
-            'faculty_id' => $this->request->getPost('faculty_id'),
+            // New
+            'user_id' => $this->request->getPost('user_id'),
             'course_id' => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
-        'class_day' => $this->request->getPost('class_day'),
+            'class_day' => $this->request->getPost('class_day'),
             'class_start' => $this->request->getPost('class_start'),
             'class_end' => $this->request->getPost('class_end'),
             'class_room' => $this->request->getPost('class_room'),
@@ -454,14 +436,15 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
 
         $data = [
-            'faculty_id'  => $this->request->getPost('faculty_id'),
-        'course_id'   => $this->request->getPost('course_id'),
+            // New
+            'user_id' => $this->request->getPost('user_id'),
+            'course_id'   => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
-        'class_day'   => $this->request->getPost('class_day'),
+            'class_day'   => $this->request->getPost('class_day'),
             'class_start' => $this->request->getPost('class_start'),
             'class_end'   => $this->request->getPost('class_end'),
             'class_room'  => $this->request->getPost('class_room'),
-            'class_type' => $this->request->getPost('class_type'),
+            'class_type'  => $this->request->getPost('class_type'),
         ];
 
         $classModel->update($class_id, $data);
@@ -474,7 +457,7 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
         $classModel->delete($class_id);
 
-    return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
+        return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
     }
 

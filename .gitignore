@@ -1,0 +1,4 @@
+# IGNORE EVERYTHING INSIDE writable/logs/
+writable/logs/
+writable/debugbar/
+

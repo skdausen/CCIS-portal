@@ -53,7 +53,7 @@
         const summaryChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Semesters', 'Courses', 'Classes', 'Faculty'],
+                labels: [ 'Semesters', 'Courses', 'Classes', 'Faculty'],
                 datasets: [{
                     label: 'Total Count',
                     data: [<?= $semestersCount ?>, <?= $coursesCount ?>, <?= $classesCount ?>, <?= $facultyCount ?>],

@@ -165,6 +165,9 @@
         </div>
     </div>
 </div>
+</div> <!-- End of container -->
+</div> <!-- End of main-container -->
+
 
 <!-- ✅ Trigger duplicate modal if backend sets an error -->
 <?php if (session()->getFlashdata('error')): ?>

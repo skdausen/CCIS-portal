@@ -168,21 +168,6 @@
 </div> <!-- End of container -->
 </div> <!-- End of main-container -->
 
-<!-- Success Modal -->  
-<div class="modal fade" id="successModal" tabindex="-1" data-success-message="<?= esc(session()->getFlashdata('success') ?? '') ?>">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Success</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="successMessage"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <!-- ✅ Trigger duplicate modal if backend sets an error -->
 <?php if (session()->getFlashdata('error')): ?>

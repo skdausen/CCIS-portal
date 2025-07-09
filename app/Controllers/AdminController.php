@@ -9,6 +9,7 @@ use App\Models\CourseModel;
 use App\Models\ClassModel;
 use App\Models\FacultyModel;
 use App\Models\AnnouncementModel;
+use App\Models\CurriculumModel;
 
 class AdminController extends BaseController
 {
@@ -478,10 +479,65 @@ class AdminController extends BaseController
     }
 
 
-    public function view_curriculums()
-    {
-        return view('templates/admin/admin_header')
-            . view('admin/academics/curriculums')
-            . view('templates/admin/admin_footer');
-    }
+//CURRICULUM
+public function view_curriculums()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculums', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
 }
+
+public function curriculum_old()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_old', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+
+public function curriculum_new()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_new', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+}
+

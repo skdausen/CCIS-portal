@@ -88,7 +88,7 @@
                             <option value="">Select Semester</option>
                             <?php foreach ($semesters as $semester): ?>
                                 <option value="<?= $semester['semester_id'] ?>" <?= $semester['semester_id'] == $class['semester_id'] ? 'selected' : '' ?>>
-                                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear_id']) ?>
+                                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -206,7 +206,7 @@
                     <option value="">Select Semester</option>
                     <?php foreach ($semesters as $semester): ?>
                         <option value="<?= $semester['semester_id'] ?>">
-                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear_id']) ?>
+                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
                         </option>
                     <?php endforeach; ?>
                    
@@ -363,7 +363,7 @@
             document.getElementById('successMessage').textContent = successMessage;
             const successModal = new bootstrap.Modal(document.getElementById('successModal'));
             successModal.show();
-            setTimeout(() => successModal.hide(), 2500);  // Auto close after 2.5 seconds
+            setTimeout(() => successModal.hide(), 3000);  // Auto close after 3 seconds
         <?php elseif (session()->getFlashdata('error')): ?>
             const errorMessage = <?= json_encode(session()->getFlashdata('error')) ?>;
             document.getElementById('errorMessage').textContent = errorMessage;

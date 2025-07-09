@@ -161,7 +161,7 @@
         </div>
         </div>
 
-        <!-- Edit Announcement Modal -->
+        <!-- ✏️ Edit Announcement Modal -->
         <div class="modal fade" id="editAnnouncementModal" tabindex="-1" aria-labelledby="editAnnouncementModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content shadow">
@@ -203,22 +203,6 @@
         </div>
     </div>
 </div>
-<?php if (session()->getFlashdata('success')): ?>
-<!-- Success Modal (centered modal for updates and deletes) -->
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content shadow-lg border-success">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="successModalLabel">Success</h5>
-        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center fs-5">
-        <?= session()->getFlashdata('success') ?>
-      </div>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
 
 <script>
     const announcements = <?= isset($announcements) ? json_encode($announcements) : '[]'; ?>;

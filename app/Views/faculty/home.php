@@ -37,7 +37,7 @@
                         <hr>
 
                         <!-- Nearest Upcoming Announcements -->
-                        <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
+                        <h6 class="text-purple mt-3">Nearing Announcements</h6>
                         <?php
                             $today = date('Y-m-d H:i:s');
                             $nearing = array_filter($announcements, function($a) use ($today) {

@@ -100,4 +100,8 @@ $routes->group('faculty', function ($routes) {
     // Faculty Home & Users
     $routes->get('home', 'FacultyController::facultyHome');
 
+    // Classes
+    $routes->get('classes', 'FacultyController::classes');
+//    $routes->get('classes/(:num)', 'FacultyController::viewClass/$1
+
 });

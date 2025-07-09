@@ -31,4 +31,11 @@ class ClassModel extends Model
                     ->join('semesters', 'semesters.semester_id = classes.semester_id')
                     ->findAll();
     }
+
+    // Get classes by faculty ID
+    public function getClassesByFaculty($facultyId)
+    {
+        return $this->where('faculty_id', $facultyId)
+                    ->findAll();
+    }
 }

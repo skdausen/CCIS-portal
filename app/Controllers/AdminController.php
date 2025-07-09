@@ -373,27 +373,25 @@ class AdminController extends BaseController
 
         // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
         $classes = $classModel
-        ->select('class.*, 
-                  course.course_code, course.course_description, 
-                  semesters.semester, schoolyears.schoolyear,
-                  faculty.faculty_id, users.fname, users.lname')
-            ->join('course', 'course.course_id = class.course_id', 'left')
-            ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left') // ✅ Add this join
-        ->join('faculty', 'faculty.faculty_id = class.faculty_id', 'left')
-            ->join('users', 'users.user_id = faculty.user_id', 'left')
-            ->findAll();
+    ->select('class.*, 
+              course.course_code, course.course_description, 
+              semesters.semester, schoolyears.schoolyear,
+              users.user_id, users.fname, users.lname')
+    ->join('course', 'course.course_id = class.course_id', 'left')
+    ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
+    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+    ->join('users', 'users.user_id = class.user_id', 'left') // CHANGED HERE ✅
+    ->findAll();
 
         // ✅ Prepare instructors list
-        $faculty = $facultyModel->findAll();
-        $instructors = [];
-        foreach ($faculty as $f) {
-            $user = $userModel->find($f['user_id']);
-            if ($user) {
-                $instructors[$f['faculty_id']] = $user['fname'] . ' ' . $user['lname'];
-            }
-        }
+     $instructors = [];
+        $facultyUsers = $userModel->where('role', 'faculty')->findAll();
 
+        foreach ($facultyUsers as $user) {
+            $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
+        }
+        // Get all courses and semesters
+        // This will be used in the class creation form
         $courses = $courseModel->findAll();
         $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
@@ -418,7 +416,8 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
 
         $classModel->insert([
-            'faculty_id' => $this->request->getPost('faculty_id'),
+            // New
+            'user_id' => $this->request->getPost('user_id'),
             'course_id' => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
             'class_day' => $this->request->getPost('class_day'),
@@ -436,7 +435,8 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
 
         $data = [
-            'faculty_id'  => $this->request->getPost('faculty_id'),
+            // New
+            'user_id' => $this->request->getPost('user_id'),
             'course_id'   => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
             'class_day'   => $this->request->getPost('class_day'),

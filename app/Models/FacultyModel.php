@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class FacultyModel extends Model
 {
-    protected $table = 'faculty';
-    protected $primaryKey = 'faculty_id';
-    protected $allowedFields = ['user_id', 'faculty_id', 'employment_status'];
+    protected $table = 'users';
+    protected $primaryKey = 'user_id';
+    protected $allowedFields = ['user_id', 'role'];
 }

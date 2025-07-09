@@ -9,7 +9,7 @@ class ClassModel extends Model
     protected $table = 'class';
     protected $primaryKey = 'class_id';
     protected $allowedFields = [
-    'faculty_id',
+    'user_id',
     'course_id',
     'semester_id',
     'class_day',

@@ -195,7 +195,6 @@ class AdminController extends BaseController
             . view('admin/academics/semesters', $data)
             . view('templates/admin/admin_footer');
     }
-// CREATE SEMESTER
 public function createSemester()
 {
     if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -204,13 +203,13 @@ public function createSemester()
 
     $semester = $this->request->getPost('semester');
     $schoolyearText = $this->request->getPost('schoolyear');
-    $status = $this->request->getPost('status'); // Should be "1" or "0" from the form
+    $status = $this->request->getPost('status');
 
-    if (!$semester || !$schoolyearText || !$status) {
+    if (!$semester || !$schoolyearText || $status === null) {
         return redirect()->back()->with('error', 'Please fill all fields.');
     }
 
-   $isActive = ($status == '1') ? 1 : 0;  // ✅ CORRECT
+    $isActive = ($status == '1') ? 1 : 0;
 
     $schoolYearModel = new SchoolYearModel();
     $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
@@ -228,16 +227,25 @@ public function createSemester()
         return redirect()->back()->with('error', '❌ Semester and school year combination already exists.');
     }
 
+    // ✔️ Prevent multiple active semesters
+    if ($isActive === 1) {
+        $activeSemester = $semesterModel->where('is_active', 1)->first();
+        if ($activeSemester) {
+            return redirect()->back()->with('error', '❌ Another active semester already exists. Please deactivate it first.');
+        }
+    }
+
     $semesterModel->insert([
         'semester' => $semester,
         'schoolyear_id' => $schoolyearId,
-        'is_active' => $isActive  // ✅ Save 1 or 0
+        'is_active' => $isActive
     ]);
 
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
 }
 
-// UPDATE SEMESTER
+
+
 public function updateSemester($id)
 {
     if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -246,13 +254,13 @@ public function updateSemester($id)
 
     $semester = $this->request->getPost('semester');
     $schoolyearText = $this->request->getPost('schoolyear');
-    $status = $this->request->getPost('status'); // Should be "1" or "0" from the form
+    $status = $this->request->getPost('status');
 
-    if (!$semester || !$schoolyearText || !$status) {
+    if (!$semester || !$schoolyearText || $status === null) {
         return redirect()->back()->with('error', 'Please fill all fields.');
     }
 
-   $isActive = ($status == '1') ? 1 : 0;  // ✅ CORRECT
+    $isActive = ($status == '1') ? 1 : 0;
 
     $schoolYearModel = new SchoolYearModel();
     $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
@@ -271,10 +279,21 @@ public function updateSemester($id)
         return redirect()->back()->with('error', 'Semester and school year combination already exists.');
     }
 
+    // ✔️ Prevent multiple active semesters
+    if ($isActive === 1) {
+        $activeSemester = $semesterModel
+            ->where('is_active', 1)
+            ->where('semester_id !=', $id) // exclude this semester
+            ->first();
+        if ($activeSemester) {
+            return redirect()->back()->with('error', 'Another active semester already exists. Please deactivate it first.');
+        }
+    }
+
     $semesterModel->update($id, [
         'semester' => $semester,
         'schoolyear_id' => $schoolyearId,
-        'is_active' => $isActive  // ✅ Save 1 or 0
+        'is_active' => $isActive
     ]);
 
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
@@ -282,16 +301,27 @@ public function updateSemester($id)
 
     // DELETE SEMESTER
     public function deleteSemester($id)
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-
-        $semesterModel = new SemesterModel();
-        $semesterModel->delete($id);
-
-        return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
+
+    $semesterModel = new SemesterModel();
+    $semester = $semesterModel->find($id);
+
+    if (!$semester) {
+        return redirect()->back()->with('error', 'Semester not found.');
+    }
+
+    if ($semester['is_active']) {
+        return redirect()->back()->with('error', 'Cannot delete an active semester.');
+    }
+
+    $semesterModel->delete($id);
+
+    return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
+}
+
 
     // View all courses (unchanged)
     public function view_courses()

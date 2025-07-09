@@ -150,14 +150,15 @@
                         <label class="form-label">School Year</label>
                         <input type="text" name="schoolyear" class="form-control" placeholder="e.g., 2025-2026" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select" required>
+                            <option value="1" <?= isset($semester) && $semester['is_active'] === 'Active' ? 'selected' : '' ?>>Active</option>
+                            <option value="0" <?= isset($semester) && $semester['is_active'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="mb-3">
-    <label>Status</label>
-    <select name="status" class="form-select" required>
-        <option value="1" <?= isset($semester) && $semester['is_active'] === 'Active' ? 'selected' : '' ?>>Active</option>
-        <option value="0" <?= isset($semester) && $semester['is_active'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
-    </select>
-</div>
+
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add</button>

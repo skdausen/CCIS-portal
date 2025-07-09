@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             setTimeout(() => {
                 successModal.hide();
-            }, 3000);
+            }, 2000);
         }
     }
 });

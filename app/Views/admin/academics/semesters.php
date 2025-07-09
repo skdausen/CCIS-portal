@@ -42,6 +42,7 @@
             <tr>
                 <th>Semester</th>
                 <th>School Year</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -51,16 +52,24 @@
                     <td><?= esc(ucfirst($semester['semester'])) ?></td>
                     <td><?= esc($semester['schoolyear']) ?></td>
                     <td>
+                        <<?php if (!empty($semester['is_active'])): ?>
+                        <span class="badge bg-success">Active</span>
+                    <?php else: ?>
+                        <span class="badge bg-secondary">Inactive</span>
+                    <?php endif; ?>
+
+                    </td>
+                    <td>
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $semester['semester_id'] ?>">Edit</button>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $semester['semester_id'] ?>">Delete</button>
                     </td>
                 </tr>
 
-                <!-- Edit Modal -->
+                <!-- Edit Modal (inside foreach) -->
                 <div class="modal fade" id="editModal<?= $semester['semester_id'] ?>" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <form method="post" action="<?= site_url('admin/academics/semesters/update/' . $semester['semester_id']) ?>" onsubmit="return checkDuplicate(this, <?= $semester['semester_id'] ?>)">
+                            <form method="post" action="<?= site_url('admin/academics/semesters/update/' . $semester['semester_id']) ?>">
                                 <?= csrf_field() ?>
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Semester</h5>
@@ -70,7 +79,6 @@
                                     <div class="mb-3">
                                         <label>Semester</label>
                                         <select name="semester" class="form-select" required>
-                                            <option value="">-- Select Semester --</option>
                                             <option value="first" <?= $semester['semester'] === 'first' ? 'selected' : '' ?>>First</option>
                                             <option value="second" <?= $semester['semester'] === 'second' ? 'selected' : '' ?>>Second</option>
                                             <option value="midyear" <?= $semester['semester'] === 'midyear' ? 'selected' : '' ?>>Midyear</option>
@@ -90,7 +98,7 @@
                     </div>
                 </div>
 
-                <!-- Delete Modal -->
+                <!-- Delete Modal (inside foreach) -->
                 <div class="modal fade" id="deleteModal<?= $semester['semester_id'] ?>" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <form method="post" action="<?= site_url('admin/academics/semesters/delete/' . $semester['semester_id']) ?>">
@@ -116,6 +124,8 @@
     </table>
 </div>
 
+
+               
 <!-- Add Semester Modal -->
 <div class="modal fade" id="addSemesterModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -141,6 +151,14 @@
                         <input type="text" name="schoolyear" class="form-control" placeholder="e.g., 2025-2026" required>
                     </div>
                 </div>
+                <div class="mb-3">
+    <label>Status</label>
+    <select name="status" class="form-select" required>
+        <option value="1" <?= isset($semester) && $semester['is_active'] === 'Active' ? 'selected' : '' ?>>Active</option>
+        <option value="0" <?= isset($semester) && $semester['is_active'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
+    </select>
+</div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

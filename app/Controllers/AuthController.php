@@ -46,34 +46,42 @@ class AuthController extends BaseController
 
         //  Verify password
         if (password_verify($password, $user['userpassword'])) {
-            //  Update login timestamp and set status to active
+            // Update login timestamp and set status to active
             $model->update($user['user_id'], [
                 'last_login' => date('Y-m-d H:i:s'),
                 'status'     => 'active'
             ]);
 
-            //  Set session data
+            // Set full session data
             $session->set([
-                'user_id'    => $user['user_id'],
-                'username'   => $user['username'],
-                'role'       => $user['role'],
-                'isLoggedIn' => true
+                'isLoggedIn'     => true,
+                'user_id'        => $user['user_id'],
+                'username'       => $user['username'],
+                'email'          => $user['email'],
+                'role'           => $user['role'],
+                'fname'          => $user['fname'],
+                'mname'          => $user['mname'],
+                'lname'          => $user['lname'],
+                'sex'            => $user['sex'],
+                'profile_img'    => $user['profile_img'],
+                'birthday'       => $user['birthday'],
+                'address'        => $user['address'],
+                'contact_number' => $user['contact_number'],
+                'last_login'     => date('Y-m-d H:i:s'), // updated login time
             ]);
 
-            //  Role-based redirect
+            // Redirect based on role
             if (in_array($user['role'], ['admin', 'superadmin'])) {
                 return redirect()->to('admin/home');
-            } 
-            else if (in_array($user['role'], ['faculty'])) {
+            } else if ($user['role'] === 'faculty') {
                 return redirect()->to('faculty/home');
-            }
-             else {
+            } else {
                 return redirect()->to('home');
             }
-        } else {
-            $session->setFlashdata('error', 'Incorrect password.');
-            return redirect()->to('auth/login')->withInput();
         }
+        // If password is incorrect
+        $session->setFlashdata('error', 'Incorrect password.');
+        return redirect()->to('auth/login')->withInput(); 
     }
 
 

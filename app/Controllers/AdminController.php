@@ -80,6 +80,7 @@ class AdminController extends BaseController
             'fname'         => $fname,
             'mname'         => $mname,
             'lname'         => $lname,
+            'profile_img'   => 'default.png', // Default profile image
         ]);
 
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');

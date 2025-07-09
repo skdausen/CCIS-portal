@@ -10,9 +10,10 @@ class UserModel extends Model
     protected $primaryKey = 'user_id';
     protected $allowedFields = [
         'username', 'fname', 'lname', 'mname', 'sex', 'address', 'birthday',
-        'email', 'userpassword', 'role',
-        'otp_code', 'otp_expiry', 'is_verified'
+        'email', 'userpassword', 'role', 'status', 'last_login', 'created_at',
+        'otp_code', 'otp_expiry', 'is_verified', 'contact_number', 'profile_img'
     ];
+
     protected $useTimestamps = false;
 
     public function getByEmail($email)

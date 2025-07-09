@@ -70,14 +70,14 @@
 
                     <!-- Edit Modal -->
                    <!-- Edit Modal (UPDATED to match Add Modal) -->
-<div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
-                <?= csrf_field() ?>
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Class</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
+                            <?= csrf_field() ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Class</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
@@ -94,15 +94,17 @@
                         </select>
                     </div>
 
+                
                     <!-- Instructor -->
                     <div class="mb-3">
                         <label>Instructor</label>
-                        <select name="faculty_id" class="form-select" required>
-                            <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                                <option value="<?= $facultyId ?>" <?= $facultyId == $class['faculty_id'] ? 'selected' : '' ?>><?= esc($instructorName) ?></option>
+                        <select name="user_id" class="form-select" required>
+                            <?php foreach ($instructors as $userId => $instructorName): ?>
+                                <option value="<?= $userId ?>" <?= $userId == $class['user_id'] ? 'selected' : '' ?>><?= esc($instructorName) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
+
 
                     <!-- Course -->
                     <div class="mb-3">
@@ -215,15 +217,16 @@
                                                 
 
             <!-- Instructor -->
-            <div class="mb-3">
-                <label for="faculty_id" class="form-label">Instructor</label>
-                <select name="faculty_id" class="form-select" required>
-                <option value="">Select Instructor</option>
-                <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                    <option value="<?= $facultyId ?>"><?= esc($instructorName) ?></option>
-                <?php endforeach; ?>
-                </select>
-            </div>
+     <select name="user_id" class="form-select" required>
+    <option value="">Select Instructor</option>
+    <?php foreach ($instructors as $userId => $instructorName): ?>
+        <option value="<?= $userId ?>">
+            <?= esc($instructorName) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+
+
 
             <!-- Course -->  
             <div class="mb-3">

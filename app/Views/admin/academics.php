@@ -64,28 +64,18 @@
                 responsive: true,
                 scales: {
                     x: {
-                        ticks: {
-                            color: 'white' // X-axis labels
-                        },
-                        grid: {
-                            color: '#E0E0E0 ' // X-axis grid lines
-                        }
+                        ticks: { color: 'white' },
+                        grid: { color: '#E0E0E0' }
                     },
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            color: 'white' // Y-axis labels
-                        },
-                        grid: {
-                            color: '#E0E0E0' // Y-axis grid lines
-                        }
+                        ticks: { color: 'white' },
+                        grid: { color: '#E0E0E0' }
                     }
                 },
                 plugins: {
                     legend: {
-                        labels: {
-                            color: 'white' // Legend text
-                        }
+                        labels: { color: 'white' }
                     }
                 }
             }

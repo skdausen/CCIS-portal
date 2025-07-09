@@ -38,16 +38,3 @@ eventModalEl.addEventListener('show.bs.modal', function (event) {
 });
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    const successModalEl = document.getElementById('successModal');
-    if (successModalEl) {
-        const modal = new bootstrap.Modal(successModalEl);
-        modal.show();
-
-        // Optional: hide automatically after 3 seconds
-        setTimeout(() => {
-            modal.hide();
-        }, 3000);
-    }
-});
-

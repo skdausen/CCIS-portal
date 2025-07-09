@@ -14,11 +14,10 @@ class SemesterModel extends Model
 // SemesterModel.php
     public function getSemWithDetails()
     {
-        return $this->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        return $this->select('semesters.semester_id, semesters.semester, semesters.is_active, schoolyears.schoolyear')
                     ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
                     ->findAll();
     }
-
     public function getSemestersBySchoolYear($schoolyearId)
     {
         return $this->where('schoolyear_id', $schoolyearId)->findAll();

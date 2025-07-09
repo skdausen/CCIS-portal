@@ -94,6 +94,15 @@
                     <p class="text-muted" id="eventDate"></p>
                     <p id="eventDescription"></p>
                 </div>
+                <div class="modal-footer">
+                    <?php if (in_array(session('role'), ['admin', 'superadmin'])) : ?>
+                        <button type="button" class="btn btn-warning" id="editAnnouncementBtn">Edit</button>
+                        <form id="deleteForm" method="post" action="<?= site_url('admin/deleteAnnouncement') ?>" class="d-inline">
+                            <input type="hidden" name="announcement_id" id="modalAnnouncementId">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
         </div>

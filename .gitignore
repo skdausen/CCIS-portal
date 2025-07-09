@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 writable/logs/
+=======
+# IGNORE EVERYTHING INSIDE writable/logs/
+writable/logs/
+writable/debugbar/
+
+>>>>>>> e1e2813b19b207dc9759663e0757f54d1460d9f0

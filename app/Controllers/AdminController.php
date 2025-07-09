@@ -9,6 +9,7 @@ use App\Models\CourseModel;
 use App\Models\ClassModel;
 use App\Models\FacultyModel;
 use App\Models\AnnouncementModel;
+use App\Models\CurriculumModel;
 
 class AdminController extends BaseController
 {
@@ -185,36 +186,39 @@ class AdminController extends BaseController
         $semesterModel = new SemesterModel();
 
         $data['semesters'] = $semesterModel
-            ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
-            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-            ->findAll();
+    ->select('semesters.semester_id, semesters.semester, semesters.is_active, schoolyears.schoolyear')
+    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+    ->findAll();
+
 
         return view('templates/admin/admin_header')
             . view('admin/academics/semesters', $data)
             . view('templates/admin/admin_footer');
     }
+// CREATE SEMESTER
+public function createSemester()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
+    }
 
-    // CREATE SEMESTER
-    public function createSemester()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
+    $semester = $this->request->getPost('semester');
+    $schoolyearText = $this->request->getPost('schoolyear');
+    $status = $this->request->getPost('status'); // Should be "1" or "0" from the form
 
-        $semester = $this->request->getPost('semester');
-        $schoolyearText = $this->request->getPost('schoolyear');
+    if (!$semester || !$schoolyearText || !$status) {
+        return redirect()->back()->with('error', 'Please fill all fields.');
+    }
 
-        if (!$semester || !$schoolyearText) {
-            return redirect()->back()->with('error', 'Please fill all fields.');
-        }
+   $isActive = ($status == '1') ? 1 : 0;  // ✅ CORRECT
 
-        $schoolYearModel = new SchoolYearModel();
-        $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-        $schoolyearId = $existingSchoolYear ? $existingSchoolYear['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+    $schoolYearModel = new SchoolYearModel();
+    $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+    $schoolyearId = $existingSchoolYear ? $existingSchoolYear['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
 
-        $semesterModel = new SemesterModel();
-    
-    // 🔍 Check if the semester-schoolyear combination already exists
+    $semesterModel = new SemesterModel();
+
+    // Check for duplicates
     $duplicate = $semesterModel
         ->where('semester', $semester)
         ->where('schoolyear_id', $schoolyearId)
@@ -224,36 +228,39 @@ class AdminController extends BaseController
         return redirect()->back()->with('error', '❌ Semester and school year combination already exists.');
     }
 
-    // ✔ Save if no duplicate
     $semesterModel->insert([
-            'semester' => $semester,
-            'schoolyear_id' => $schoolyearId,
-        ]);
+        'semester' => $semester,
+        'schoolyear_id' => $schoolyearId,
+        'is_active' => $isActive  // ✅ Save 1 or 0
+    ]);
 
-        return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
+    return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
+}
+
+// UPDATE SEMESTER
+public function updateSemester($id)
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
 
-    // UPDATE SEMESTER
-    public function updateSemester($id)
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
+    $semester = $this->request->getPost('semester');
+    $schoolyearText = $this->request->getPost('schoolyear');
+    $status = $this->request->getPost('status'); // Should be "1" or "0" from the form
 
-        $semester = $this->request->getPost('semester');
-        $schoolyearText = $this->request->getPost('schoolyear');
+    if (!$semester || !$schoolyearText || !$status) {
+        return redirect()->back()->with('error', 'Please fill all fields.');
+    }
 
-        if (!$semester || !$schoolyearText) {
-            return redirect()->back()->with('error', 'Please fill all fields.');
-        }
+   $isActive = ($status == '1') ? 1 : 0;  // ✅ CORRECT
 
-        $schoolYearModel = new SchoolYearModel();
-        $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-        $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+    $schoolYearModel = new SchoolYearModel();
+    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
 
-        $semesterModel = new SemesterModel();
-    
-    // 🔍 Check for duplicates excluding the current ID
+    $semesterModel = new SemesterModel();
+
+    // Check for duplicates excluding this ID
     $duplicate = $semesterModel
         ->where('semester', $semester)
         ->where('schoolyear_id', $schoolyearId)
@@ -265,13 +272,13 @@ class AdminController extends BaseController
     }
 
     $semesterModel->update($id, [
-            'semester' => $semester,
-            'schoolyear_id' => $schoolyearId,
-        ]);
+        'semester' => $semester,
+        'schoolyear_id' => $schoolyearId,
+        'is_active' => $isActive  // ✅ Save 1 or 0
+    ]);
 
-        return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
-    }
-
+    return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
+}
 
     // DELETE SEMESTER
     public function deleteSemester($id)
@@ -371,26 +378,26 @@ class AdminController extends BaseController
 
         // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
         $classes = $classModel
-        ->select('class.*, 
-                  course.course_code, course.course_description, 
-                  semesters.semester, schoolyears.schoolyear,
-                  faculty.faculty_id, users.fname, users.lname')
-            ->join('course', 'course.course_id = class.course_id', 'left')
-            ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left') // ✅ Add this join
-        ->join('faculty', 'faculty.faculty_id = class.faculty_id', 'left')
-            ->join('users', 'users.user_id = faculty.user_id', 'left')
-            ->findAll();
+    ->select('class.*, 
+              course.course_code, course.course_description, 
+              semesters.semester, schoolyears.schoolyear,
+              users.user_id, users.fname, users.lname')
+    ->join('course', 'course.course_id = class.course_id', 'left')
+    ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
+    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+    ->join('users', 'users.user_id = class.user_id', 'left') // CHANGED HERE ✅
+    ->findAll();
+
+
 
         // ✅ Prepare instructors list
-        $faculty = $facultyModel->findAll();
-        $instructors = [];
-        foreach ($faculty as $f) {
-            $user = $userModel->find($f['user_id']);
-            if ($user) {
-                $instructors[$f['faculty_id']] = $user['fname'] . ' ' . $user['lname'];
-            }
+     $instructors = [];
+        $facultyUsers = $userModel->where('role', 'faculty')->findAll();
+
+        foreach ($facultyUsers as $user) {
+            $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
         }
+
 
         $courses = $courseModel->findAll();
         $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
@@ -416,7 +423,8 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
 
         $classModel->insert([
-            'faculty_id' => $this->request->getPost('faculty_id'),
+            // New
+            'user_id' => $this->request->getPost('user_id'),
             'course_id' => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
             'class_day' => $this->request->getPost('class_day'),
@@ -434,7 +442,8 @@ class AdminController extends BaseController
         $classModel = new ClassModel();
 
         $data = [
-            'faculty_id'  => $this->request->getPost('faculty_id'),
+            // New
+            'user_id' => $this->request->getPost('user_id'),
             'course_id'   => $this->request->getPost('course_id'),
             'semester_id' => $this->request->getPost('semester_id'), 
             'class_day'   => $this->request->getPost('class_day'),
@@ -459,10 +468,65 @@ class AdminController extends BaseController
     }
 
 
-    public function view_curriculums()
-    {
-        return view('templates/admin/admin_header')
-            . view('admin/academics/curriculums')
-            . view('templates/admin/admin_footer');
-    }
+//CURRICULUM
+public function view_curriculums()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculums', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
 }
+
+public function curriculum_old()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_old', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+
+public function curriculum_new()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_new', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+}
+

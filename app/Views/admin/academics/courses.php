@@ -212,7 +212,7 @@
     </div>
 </div>
 
-<!-- ❌ Error Modal -->
+<!--  Error Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -223,13 +223,10 @@
             <div class="modal-body">
                 <p id="errorMessage"></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="location.reload()">Retry</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
 </div>
+
 
 <!-- ✅ Flash Message Script -->
 <?php if (session()->getFlashdata('success') || session()->getFlashdata('error')): ?>
@@ -242,11 +239,13 @@
             successModal.show();
             setTimeout(() => successModal.hide(), 2500);  // Auto close after 2.5 seconds
         <?php elseif (session()->getFlashdata('error')): ?>
-            const errorMessage = <?= json_encode(session()->getFlashdata('error')) ?>;
-            document.getElementById('errorMessage').textContent = errorMessage;
-            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-            errorModal.show();
-        <?php endif; ?>
+    const errorMessage = <?= json_encode(session()->getFlashdata('error')) ?>;
+    document.getElementById('errorMessage').textContent = errorMessage;
+    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    errorModal.show();
+    setTimeout(() => errorModal.hide(), 1500);  // Auto close after 1.5 seconds
+<?php endif; ?>
+
     });
 </script>
 <?php endif; ?>

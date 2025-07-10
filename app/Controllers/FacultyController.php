@@ -54,13 +54,13 @@ class FacultyController extends BaseController
         ];
 
         foreach ($classes as $class) {
-            $classDays = $class['class_day'];
+            $classDays = strtoupper($class['class_day']);
 
             // Step 3: Handle day combinations like "MWF", "TTh"
             $days = [];
             $i = 0;
             while ($i < strlen($classDays)) {
-                if ($classDays[$i] === 'T' && isset($classDays[$i+1]) && $classDays[$i+1] === 'h') {
+                if ($classDays[$i] === 'T' && isset($classDays[$i+1]) && $classDays[$i+1] === 'H') {
                     $days[] = 'Th';
                     $i += 2;
                 } else {

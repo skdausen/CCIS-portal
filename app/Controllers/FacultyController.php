@@ -127,7 +127,7 @@ class FacultyController extends BaseController
         $classModel = new ClassModel();
 
         $class = $classModel
-            ->select('class.*,course.course_code, course.course_description, s.semester, sy.schoolyear')
+            ->select('class.*, course.course_code, course.course_description, s.semester, sy.schoolyear')
             ->join('course', 'course.course_id = class.course_id')
             ->join('semesters s', 's.semester_id = class.semester_id')
             ->join('schoolyears sy', 'sy.schoolyear_id = s.schoolyear_id')

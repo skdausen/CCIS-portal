@@ -1,17 +1,22 @@
 <div class="container mt-5">
     <!-- Course Title -->
     <div class="text-center mb-4">
-        <h3 class="fw-bold">COURSE TITLE/DESCRIPTION</h3>
+        <h3 class="fw-bold"><?= esc($class['course_description'] ?? 'N/A') ?></h3>
     </div>
 
     <!-- Course Info -->
     <div class="row mb-3 justify-content-center">
         <div class="col-md-6">
-            <p><strong>Course Code:</strong> CS-123</p>
-            <p><strong>Schedule:</strong> Mon & Wed - 8:00 AM to 9:30 AM</p>
+            <p><strong>Course Code: </strong> <?= esc($class['course_code'] ?? 'N/A') ?></p>
+            <p><strong>Schedule: </strong> 
+                <?= esc($class['class_day'] ?? 'N/A') ?>
+                <?= isset($class['class_start'], $class['class_end']) 
+                ? date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end'])) 
+                : 'N/A' ?>                      
+            </p>
         </div>
         <div class="col-md-6 text-md-end">
-            <p><strong>Room:</strong> CLD</p>
+            <p><strong>Room: </strong> <?= esc($class['class_room'] ?? 'N/A') ?></p>
         </div>
     </div>
     <hr>
@@ -60,9 +65,3 @@
     </div>
 </div>
 
-<!-- Optional: Add this in your CSS to match the purple border -->
-<style>
-    .border-purple {
-        border-color: #a259ff !important; /* or use your system's accent purple */
-    }
-</style>

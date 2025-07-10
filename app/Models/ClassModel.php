@@ -55,8 +55,6 @@ class ClassModel extends Model
             ->findAll();
     }
 
-    // app/Models/ClassModel.php
-
     public function getFacultyScheduleByDay($facultyId, $semesterId)
     {
         return $this->select('class.*, course.course_code, course.course_description')

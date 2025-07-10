@@ -65,20 +65,22 @@
 
                         <!-- 🆕 Latest Announcement -->
                         <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
-                        <?php if ($latest) : ?>
-                            <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
-                            <small class="text-muted">
-                                <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
-                            </small>
-                            <p class="mt-2"><?= esc($latest['content']); ?></p>
-                        <?php else : ?>
-                            <p>No announcements for today.</p>
-                        <?php endif; ?>
+                        <div class="ms-3">
+                            <?php if ($latest) : ?>
+                                <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
+                                <small class="text-muted">
+                                    <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
+                                </small>
+                                <p class="mt-2"><?= esc($latest['content']); ?></p>
+                            <?php else : ?>
+                                <p>No announcements for today.</p>
+                            <?php endif; ?>
+                        </div>
 
                         <hr>
 
-                        <!-- 📌 Nearest Upcoming Announcements -->
-                        <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
+                        <!-- 📌 Nearest Events -->
+                        <h6 class="text-purple mt-3">📌 Nearing Events</h6>
                         <?php if (!empty($nearing)) : ?>
                             <ul class="list-group list-group-flush mt-2">
                                 <?php foreach ($nearing as $n) : ?>

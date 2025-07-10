@@ -24,50 +24,32 @@ class FacultyController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Classes
-    // public function classes()
-    // {
-    //     if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['faculty'])) {
-    //         return redirect()->to('auth/login');
-    //     }
-
-    //     // Fetch classes from the database
-    //     $classModel = new ClassModel();
-    //     $facultyId = session()->get('faculty_id'); // Assuming faculty_id is stored in session
-    //     $classes = $classModel->getClassesByFaculty($facultyId);
-
-    //     // If no classes found, you can handle it accordingly
-    //     if (empty($classes)) {
-    //         $classes = []; // Ensure $classes is an array even if empty
-    //     }
-
-    //     return view('templates/faculty/faculty_header')
-    //         . view('faculty/classes', ['classes' => $classes])
-    //         . view('templates/admin/admin_footer');
-    // }
-
     public function classes()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
             return redirect()->to('auth/login');
         }
 
-        $facultyId = session()->get('username');
+        $facultyId = session()->get('user_id');
 
         $classModel = new ClassModel();
         $semesterModel = new SemesterModel();
 
         $activeSemester = $semesterModel->where('is_active', 1)->first();
 
-        $classes = $classModel
-            ->where('faculty_id', $facultyId)
-            ->where('semester_id', $activeSemester['semester_id'])
-            ->findAll();
+        $semesterWithYear = $semesterModel
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->where('semesters.is_active', 1)
+            ->first();
+
+        // dd(get_class_methods($classModel));
+        $classes = $classModel->getFacultyClasses($facultyId, $activeSemester['semester_id']);
 
         return view('templates/faculty/faculty_header')
             . view('faculty/classes', [
                 'classes' => $classes,
-                'semester' => $activeSemester
+                'semester' => $semesterWithYear
             ])
             . view('templates/admin/admin_footer');
     }

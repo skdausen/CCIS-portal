@@ -17,8 +17,9 @@ class ClassModel extends Model
     'class_end',
     'class_room',
     'class_type',
-];
+    ];
 
+    
 
     // Optional: add timestamp support
     public $useTimestamps = false;
@@ -26,16 +27,32 @@ class ClassModel extends Model
     // JOIN courses and semesters to display names instead of IDs
     public function getClassWithDetails()
     {
-        return $this->select('classes.*, courses.course_code, courses.course_description, semesters.semester, semesters.schoolyear')
-                    ->join('courses', 'courses.course_id = classes.course_id')
-                    ->join('semesters', 'semesters.semester_id = classes.semester_id')
-                    ->findAll();
+        return $this->select('class.*, 
+                course.course_code, 
+                course.course_description, 
+                semesters.semester, 
+                semesters.schoolyear')
+            ->join('course', 'course.course_id = class.course_id')
+            ->join('semesters', 'semesters.semester_id = class.semester_id')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->findAll();
     }
 
-    // Get classes by faculty ID
-    public function getClassesByFaculty($facultyId)
+    public function getFacultyClasses($facultyId, $semesterId)
     {
-        return $this->where('faculty_id', $facultyId)
-                    ->findAll();
+        return $this->select('
+                class.*, 
+                course.course_description, 
+                semesters.semester, 
+                schoolyears.schoolyear
+            ')
+            ->join('course', 'course.course_id = class.course_id')
+            ->join('semesters', 'semesters.semester_id = class.semester_id')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->where('class.user_id', $facultyId)
+            ->where('class.semester_id', $semesterId)
+            ->findAll();
     }
+
+    
 }

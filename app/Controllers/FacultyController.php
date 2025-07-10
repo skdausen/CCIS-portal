@@ -19,8 +19,76 @@ class FacultyController extends BaseController
         $announcementModel = new AnnouncementModel();
         $announcements = $announcementModel->getAllWithUsernames();
 
+        $classModel = new \App\Models\ClassModel();
+        $semesterModel = new \App\Models\SemesterModel();
+
+        $activeSemester = $semesterModel->where('is_active', 1)->first();
+
+        // Get faculty classes
+        $facultyId = session()->get('user_id');
+        $classes = $classModel
+            ->select('class.*, course.course_description')
+            ->join('course', 'course.course_id = class.course_id')
+            ->where('class.user_id', $facultyId)
+            ->where('class.semester_id', $activeSemester['semester_id'])
+            ->findAll();
+
+        // Step 1: Map day codes to full names
+        $dayMap = [
+            'M' => 'Monday',
+            'T' => 'Tuesday',
+            'W' => 'Wednesday',
+            'Th' => 'Thursday',
+            'F' => 'Friday',
+            'S' => 'Saturday',
+        ];
+
+        // Step 2: Prepare schedule array
+        $schedule = [
+            'Monday' => [],
+            'Tuesday' => [],
+            'Wednesday' => [],
+            'Thursday' => [],
+            'Friday' => [],
+            'Saturday' => [],
+        ];
+
+        foreach ($classes as $class) {
+            $classDays = $class['class_day'];
+
+            // Step 3: Handle day combinations like "MWF", "TTh"
+            $days = [];
+            $i = 0;
+            while ($i < strlen($classDays)) {
+                if ($classDays[$i] === 'T' && isset($classDays[$i+1]) && $classDays[$i+1] === 'h') {
+                    $days[] = 'Th';
+                    $i += 2;
+                } else {
+                    $days[] = $classDays[$i];
+                    $i++;
+                }
+            }
+
+            // Step 4: Map to schedule
+            foreach ($days as $dayCode) {
+                $dayName = $dayMap[$dayCode] ?? null;
+                if ($dayName) {
+                    $schedule[$dayName][] = $class;
+                }
+            }
+        }
+
+        // Step 5: Sort classes in each day by start time
+        foreach ($schedule as $day => &$dayClasses) {
+            usort($dayClasses, function ($a, $b) {
+                return strtotime($a['class_start']) <=> strtotime($b['class_start']);
+            });
+        }
+
         return view('templates/faculty/faculty_header')
-            . view('faculty/home', ['announcements' => $announcements])
+            . view('faculty/home', [
+                'announcements' => $announcements,
+                'schedule' => $schedule,])
             . view('templates/admin/admin_footer');
     }
 

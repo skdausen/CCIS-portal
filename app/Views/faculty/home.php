@@ -3,6 +3,39 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
+    <div>
+        <h3>Weekly Class Schedule</h3>
+
+        <?php foreach ($schedule as $day => $classes): ?>
+            <h4><?= $day ?></h4>
+
+            <?php if (empty($classes)): ?>
+                <p><em>No classes.</em></p>
+            <?php else: ?>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Type</th>
+                            <th>Time</th>
+                            <th>Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($classes as $class): ?>
+                            <tr>
+                                <td><?= esc($class['course_description']) ?></td>
+                                <td><?= esc($class['class_type']) ?></td>
+                                <td><?= date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end'])) ?></td>
+                                <td><?= esc($class['class_room']) ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            <?php endif ?>
+        <?php endforeach ?>
+    </div>
+
     <!-- Calendar -->
     <div class="card mt-4 p-3 border-0" style="background-color:rgba(248, 249, 255, 0);">
         <div class="card-header bg-gray text-white d-flex justify-content-between align-items-center">

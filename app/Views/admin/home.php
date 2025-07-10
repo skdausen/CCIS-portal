@@ -25,38 +25,60 @@
                 <!-- Updates RIGHT -->
                 <div class="col-md-6">
                     <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
-                        <!-- Latest Announcement -->
-                        <h5 class="text-purple mb-3
-                        ">🆕 Latest Announcement</h5>
-                        <?php if (!empty($announcements)) : ?>
-                            <?php $latest = reset($announcements); ?>
-                            <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
-                            <small class="text-muted">
-                                <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
-                            </small>
-                            <p class="mt-2"><?= esc($latest['content']); ?></p>
-                        <?php else : ?>
-                            <p>No announcements yet.</p>
-                        <?php endif; ?>
-
-
-                        <hr>
-
-                        <!-- Nearest Upcoming Announcements -->
-                        <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
+                        <!-- 🔍 Filter Logic -->
                         <?php
-                            $today = date('Y-m-d H:i:s');
-                            $nearing = array_filter($announcements, function($a) use ($today) {
-                                return $a['event_datetime'] >= $today;
+                            $today = date('Y-m-d');
+                            $currentMonth = date('m');
+                            $currentYear = date('Y');
+
+                            // Get today's announcements
+                            $todaysAnnouncements = array_filter($announcements, function ($a) use ($today) {
+                                return date('Y-m-d', strtotime($a['event_datetime'])) === $today;
                             });
 
-                            usort($nearing, function($a, $b) {
+                            usort($todaysAnnouncements, function ($a, $b) {
+                                return strtotime($b['event_datetime']) - strtotime($a['event_datetime']);
+                            });
+
+                            $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
+
+                            // Get nearing announcements (this month, not today)
+                            $nearing = array_filter($announcements, function ($a) use ($today, $currentMonth, $currentYear) {
+                                $eventDate = strtotime($a['event_datetime']);
+                                $now = strtotime('now');
+                                $daysLater = strtotime('+11 days');
+
+                                return
+                                    $eventDate > $now &&
+                                    $eventDate <= $daysLater &&
+                                    date('Y-m-d', $eventDate) !== $today &&
+                                    date('m', $eventDate) === $currentMonth &&
+                                    date('Y', $eventDate) === $currentYear;
+                            });
+
+                            usort($nearing, function ($a, $b) {
                                 return strtotime($a['event_datetime']) - strtotime($b['event_datetime']);
                             });
 
                             $nearing = array_slice($nearing, 0, 3);
                         ?>
 
+                        <!-- 🆕 Latest Announcement -->
+                        <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
+                        <?php if ($latest) : ?>
+                            <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
+                            <small class="text-muted">
+                                <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
+                            </small>
+                            <p class="mt-2"><?= esc($latest['content']); ?></p>
+                        <?php else : ?>
+                            <p>No announcements for today.</p>
+                        <?php endif; ?>
+
+                        <hr>
+
+                        <!-- 📌 Nearest Upcoming Announcements -->
+                        <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
                         <?php if (!empty($nearing)) : ?>
                             <ul class="list-group list-group-flush mt-2">
                                 <?php foreach ($nearing as $n) : ?>
@@ -84,6 +106,7 @@
                         <?php endif; ?>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

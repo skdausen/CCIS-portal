@@ -52,7 +52,7 @@
                     <td><?= esc(ucfirst($semester['semester'])) ?></td>
                     <td><?= esc($semester['schoolyear']) ?></td>
                     <td>
-                        <<?php if (!empty($semester['is_active'])): ?>
+                        <?php if (!empty($semester['is_active'])): ?>
                         <span class="badge bg-success">Active</span>
                     <?php else: ?>
                         <span class="badge bg-secondary">Inactive</span>
@@ -88,6 +88,14 @@
                                         <label>School Year</label>
                                         <input type="text" name="schoolyear" class="form-control" value="<?= esc($semester['schoolyear']) ?>" required>
                                     </div>
+                                        <div class="mb-3">
+                                            <label>Status</label>
+                                            <select name="status" class="form-select" required>
+                                                <option value="1" <?= $semester['is_active'] == 1 ? 'selected' : '' ?>>Active</option>
+                                                <option value="0" <?= $semester['is_active'] == 0 ? 'selected' : '' ?>>Inactive</option>
+                                            </select>
+                                        </div>
+
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-success">Update</button>
@@ -150,14 +158,15 @@
                         <label class="form-label">School Year</label>
                         <input type="text" name="schoolyear" class="form-control" placeholder="e.g., 2025-2026" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select" required>
+                            <option value="1" <?= isset($semester) && $semester['is_active'] === 'Active' ? 'selected' : '' ?>>Active</option>
+                            <option value="0" <?= isset($semester) && $semester['is_active'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="mb-3">
-    <label>Status</label>
-    <select name="status" class="form-select" required>
-        <option value="1" <?= isset($semester) && $semester['is_active'] === 'Active' ? 'selected' : '' ?>>Active</option>
-        <option value="0" <?= isset($semester) && $semester['is_active'] === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
-    </select>
-</div>
+
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add</button>
@@ -262,3 +271,40 @@ function checkDuplicate(form, currentId = null) {
     return true; // Allow submission
 }
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const semesterFilter = document.getElementById('semesterFilter');
+    const searchInput = document.getElementById('searchInput');
+    const clearFilterBtn = document.getElementById('clearFilterBtn');
+    const rows = document.querySelectorAll('#semestersTable tbody tr');
+
+    function applyFilters() {
+        const semesterValue = semesterFilter.value.toLowerCase();
+        const searchValue = searchInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const semesterText = row.cells[0].textContent.trim().toLowerCase();
+            const schoolYearText = row.cells[1].textContent.trim().toLowerCase();
+
+            const matchesSemester = !semesterValue || semesterText === semesterValue;
+            const matchesSearch = !searchValue || schoolYearText.includes(searchValue);
+
+            if (matchesSemester && matchesSearch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    semesterFilter.addEventListener('change', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
+    clearFilterBtn.addEventListener('click', () => {
+        semesterFilter.value = '';
+        searchInput.value = '';
+        applyFilters();
+    });
+});
+</script>
+

@@ -42,6 +42,12 @@ $routes->get('password/reset', [Password::class, 'resetForm']);
 $routes->post('password/reset', [Password::class, 'resetPassword']);
 
 // ---------------------
+// PROFILE ROUTES                   
+// ---------------------
+$routes->get('profile', 'ProfileController::index');
+$routes->post('profile/update', 'ProfileController::update');
+
+// ---------------------
 // ADMIN ROUTES
 // ---------------------
 $routes->group('admin', function ($routes) {

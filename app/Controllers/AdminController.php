@@ -399,50 +399,74 @@ public function updateSemester($id)
 
 
     // Other academics views
-   public function view_classes()
-    {
-        $classModel = new ClassModel();
-        $facultyModel = new FacultyModel();
-        $userModel = new LoginModel();
-        $courseModel = new CourseModel();
-        $semesterModel = new SemesterModel();
+public function view_classes()
+{
+    $classModel = new ClassModel();
+    $facultyModel = new FacultyModel();
+    $userModel = new LoginModel();
+    $courseModel = new CourseModel();
+    $semesterModel = new SemesterModel();
 
-        // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
-        $classes = $classModel
-    ->select('class.*, 
-              course.course_code, course.course_description, 
-              semesters.semester, schoolyears.schoolyear,
-              users.user_id, users.fname, users.lname')
-    ->join('course', 'course.course_id = class.course_id', 'left')
-    ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
-    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-    ->join('users', 'users.user_id = class.user_id', 'left') // CHANGED HERE ✅
-    ->findAll();
+    $activeSemester = $semesterModel->getActiveSemester();
 
-        // ✅ Prepare instructors list
-     $instructors = [];
-        $facultyUsers = $userModel->where('role', 'faculty')->findAll();
+    // ✅ Get the selected semester_id from query string
+    $selectedSemesterId = $this->request->getGet('semester_id');
 
-        foreach ($facultyUsers as $user) {
-            $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
-        }
-        // Get all courses and semesters
-        // This will be used in the class creation form
-        $courses = $courseModel->findAll();
-        $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-        ->findAll();
-
-        return view('templates/admin/admin_header')
-            . view('admin/academics/classes', [
-                'classes' => $classes,
-                'instructors' => $instructors,
-                'courses' => $courses,
-                'semesters' => $semesters,
-        ])
-            . view('templates/admin/admin_footer');
+    // ✅ Decide what semester to show
+    if (!empty($selectedSemesterId)) {
+        $semesterToShow = $selectedSemesterId;
+    } elseif (!empty($activeSemester)) {
+        $semesterToShow = $activeSemester['semester_id'];
+    } else {
+        $semesterToShow = null; // No semester to show
     }
 
+    // ✅ Start the query
+    $builder = $classModel
+        ->select('class.*, 
+                  course.course_code, course.course_description, 
+                  semesters.semester, semesters.semester_id, schoolyears.schoolyear,
+                  users.user_id, users.fname, users.lname')
+        ->join('course', 'course.course_id = class.course_id', 'left')
+        ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->join('users', 'users.user_id = class.user_id', 'left');
+
+    // ✅ If a semester to show is available, filter by it
+    if (!empty($semesterToShow)) {
+        $builder->where('class.semester_id', $semesterToShow);
+        $classes = $builder->findAll();
+    } else {
+        // ✅ If no semester is available, return an empty array
+        $classes = [];
+    }
+
+    // Instructors list
+    $instructors = [];
+    $facultyUsers = $userModel->where('role', 'faculty')->findAll();
+    foreach ($facultyUsers as $user) {
+        $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
+    }
+
+    // All semesters for the dropdown
+    $semesters = $semesterModel
+        ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->orderBy('semesters.is_active', 'DESC')
+        ->orderBy('schoolyears.schoolyear', 'DESC')
+        ->orderBy('semesters.semester', 'ASC')
+        ->findAll();
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/classes', [
+            'classes' => $classes,
+            'instructors' => $instructors,
+            'courses' => $courseModel->findAll(),
+            'semesters' => $semesters,
+            'activeSemester' => $activeSemester,
+        ])
+        . view('templates/admin/admin_footer');
+}
 
 
 

@@ -13,29 +13,59 @@
     </div>
 
     <div class="container mt-5">
-        <!-- HEADER -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>Classes Management</h3>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Class</button>
-        </div>
 
-        <!-- FILTERS & SEARCH -->
-        <div class="row mb-3">
-            <div class="col-md-3 mb-2 d-flex">
-                <select id="instructorFilter" class="form-select">
-                    <option value="">Filter by Instructor</option>
-                    <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                        <option value="<?= strtolower(esc($instructorName)) ?>">
-                            <?= esc($instructorName) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
-            </div>
-            <div class="col-md-5 mb-2">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
-            </div>
-        </div>
+        <!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Classes Management</h3>
+    <button class="btn btn-success"
+        <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
+        Add New Class
+    </button>
+</div>
+
+       <!-- FILTERS & SEARCH -->
+<div class="row mb-3">
+    <!-- Instructor Filter -->
+    <div class="col-md-3 mb-2 d-flex">
+        <select id="instructorFilter" class="form-select">
+            <option value="">Filter by Instructor</option>
+            <?php foreach ($instructors as $facultyId => $instructorName): ?>
+                <option value="<?= strtolower(esc($instructorName)) ?>">
+                    <?= esc($instructorName) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
+    </div>
+
+    <!-- Search -->
+    <div class="col-md-5 mb-2">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+    </div>
+
+    <!-- Semester Filter -->
+    <div class="col-md-4 mb-2">
+      <select id="semesterFilter" class="form-select">
+    <option value="">Filter by Semester</option>
+    <?php foreach ($semesters as $semester): ?>
+        <option value="<?= esc($semester['semester_id']) ?>"
+            <?php
+                //  If a semester_id is in GET, select it
+                if (isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id']) {
+                    echo 'selected';
+                }
+                // Else, if no GET but this is the active semester, select it
+                elseif (!isset($_GET['semester_id']) && isset($activeSemester['semester_id']) && $activeSemester['semester_id'] == $semester['semester_id']) {
+                    echo 'selected';
+                }
+            ?>>
+            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+
+    </div>
+</div>
 
         <!-- CLASSES TABLE -->
         <div class="table-responsive">
@@ -81,18 +111,15 @@
                 </div>
 
                 <div class="modal-body">
-                    <!-- Semester -->
-                    <div class="mb-3">
-                        <label>Semester</label>
-                        <select name="semester_id" class="form-select" required>
-                            <option value="">Select Semester</option>
-                            <?php foreach ($semesters as $semester): ?>
-                                <option value="<?= $semester['semester_id'] ?>" <?= $semester['semester_id'] == $class['semester_id'] ? 'selected' : '' ?>>
-                                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                <!-- Semester (Auto-filled) -->
+<input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
+
+<div class="mb-3">
+    <label class="form-label">Semester</label>
+    <div class="form-control bg-light">
+        <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+    </div>
+</div>
 
                 
                     <!-- Instructor -->
@@ -202,18 +229,16 @@
 
         <div class="modal-body">
             <!-- Semester -->
-            <div class="mb-3">
-                <label for="semester_id" class="form-label">Semester</label>
-                <select name="semester_id" class="form-select" required>
-                    <option value="">Select Semester</option>
-                    <?php foreach ($semesters as $semester): ?>
-                        <option value="<?= $semester['semester_id'] ?>">
-                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                   
-                </select>
-            </div>
+<!-- Semester (Auto-filled) -->
+<input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
+
+<div class="mb-3">
+    <label class="form-label">Semester</label>
+    <div class="form-control bg-light">
+        <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+    </div>
+</div>
+
                                                 
 
             <!-- Instructor -->
@@ -277,7 +302,9 @@
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Add Class</button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal" <?= empty($activeSemester) ? 'disabled' : '' ?>>
+    Add New Class
+</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
       </div>
@@ -323,6 +350,36 @@
         filterRows();
     });
 </script>
+
+<!-- No Active Semester Modal -->
+<div class="modal fade" id="noSemesterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Warning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                No active semester found. Please activate a semester first before adding a class.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showNoSemesterModal() {
+    const noSemesterModal = new bootstrap.Modal(document.getElementById('noSemesterModal'));
+    noSemesterModal.show();
+
+    setTimeout(() => {
+        noSemesterModal.hide();
+    }, 1500); // Auto-hide after 1500 ms (1.5 seconds)
+}
+</script>
+
+
+
+
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">

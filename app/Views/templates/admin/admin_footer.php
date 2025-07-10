@@ -95,9 +95,9 @@
             <!-- PROFILE PHOTO -->
             <div class="col-12 text-center">
               <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profile_img') ?? 'default.png')) ?>"
-                   alt="Profile Picture"
-                   class="rounded-circle shadow"
-                   style="width: 120px; height: 120px; object-fit: cover;">
+                  alt="Profile Picture"
+                  class="rounded-circle shadow"
+                  style="width: 120px; height: 120px; object-fit: cover;">
               <div class="mt-2">
                 <label for="profile_img" class="form-label small text-muted">Change Photo</label>
                 <input type="file" name="profile_img" id="profile_img" class="form-control form-control-sm">
@@ -107,37 +107,47 @@
             <!-- First Name -->
             <div class="col-md-4">
               <label class="form-label">First Name</label>
-              <input type="text" name="fname" class="form-control" value="<?= esc(session('fname')) ?>" required>
+              <input type="text" name="fname" class="form-control" value="<?= esc(session('fname')) ?>" required placeholder="e.g. Juan">
             </div>
 
             <!-- Middle Name -->
             <div class="col-md-4">
               <label class="form-label">Middle Name</label>
-              <input type="text" name="mname" class="form-control" value="<?= esc(session('mname')) ?>">
+              <input type="text" name="mname" class="form-control" value="<?= esc(session('mname')) ?>" placeholder="Optional">
             </div>
 
             <!-- Last Name -->
             <div class="col-md-4">
               <label class="form-label">Last Name</label>
-              <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required>
+              <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
             </div>
 
             <!-- Email -->
             <div class="col-md-6">
               <label class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" value="<?= esc(session('email')) ?>" required>
+              <input type="email" name="email" class="form-control" value="<?= esc(session('email')) ?>" required placeholder="e.g. juan@example.com">
             </div>
 
             <!-- Contact -->
-            <div class="col-md-6">
-              <label class="form-label">Contact Number</label>
-              <input type="text" name="contact_number" class="form-control" value="<?= esc(session('contact_number')) ?>">
-            </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact Number</label>
+            <input type="text"
+                  name="contact_number"
+                  class="form-control"
+                  value="<?= esc(session('contact_number')) ?>"
+                  placeholder="e.g. 09123456789"
+                  pattern="^09\d{9}$"
+                  maxlength="11"
+                  title="Enter a valid 11-digit number starting with 09"
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                  required>
+          </div>
 
             <!-- Sex -->
             <div class="col-md-6">
               <label class="form-label">Sex</label>
               <select name="sex" class="form-select">
+                <option value="">-- Select --</option>
                 <option value="Male" <?= session('sex') === 'Male' ? 'selected' : '' ?>>Male</option>
                 <option value="Female" <?= session('sex') === 'Female' ? 'selected' : '' ?>>Female</option>
               </select>
@@ -146,13 +156,13 @@
             <!-- Birthday -->
             <div class="col-md-6">
               <label class="form-label">Birthday</label>
-              <input type="date" name="birthday" class="form-control" value="<?= esc(session('birthday')) ?>">
+              <input type="date" name="birthday" class="form-control" value="<?= esc(session('birthday')) ?>" placeholder="MM/DD/YYYY">
             </div>
 
             <!-- Address -->
             <div class="col-md-12">
               <label class="form-label">Address</label>
-              <textarea name="address" class="form-control" rows="2"><?= esc(session('address')) ?></textarea>
+              <textarea name="address" class="form-control" rows="2" placeholder="e.g. 123 Sampaguita St., Quezon City"><?= esc(session('address')) ?></textarea>
             </div>
           </div>
         </div>

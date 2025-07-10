@@ -56,7 +56,7 @@ class FacultyController extends BaseController
 
     public function viewClass($classId)
     {
-        $classModel = new \App\Models\ClassModel();
+        $classModel = new ClassModel();
 
         $class = $classModel
             ->select('class.*,course.course_code, course.course_description, s.semester, sy.schoolyear')

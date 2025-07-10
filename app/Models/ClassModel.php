@@ -55,5 +55,19 @@ class ClassModel extends Model
             ->findAll();
     }
 
+    // app/Models/ClassModel.php
+
+    public function getFacultyScheduleByDay($facultyId, $semesterId)
+    {
+        return $this->select('class.*, course.course_code, course.course_description')
+            ->join('course', 'course.course_id = class.course_id')
+            ->where('class.faculty_id', $facultyId)
+            ->where('class.semester_id', $semesterId)
+            ->orderBy('FIELD(class.class_day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")')
+            ->orderBy('class.class_start')
+            ->findAll();
+    }
+
+
     
 }

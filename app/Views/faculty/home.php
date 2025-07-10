@@ -3,129 +3,42 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
-<div class="row mt-5">
+    <div class="row mt-5">
     <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
-    <div class="col-md-6 px-3">
+    <div class="col-md-8 px-3">
         <h4 class="fw-bold mb-4">Your Weekly Schedule</h4>
-
-        <!-- MONDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Monday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- TUESDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Tuesday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 201</td>
-                        <td>Intermediate Programming</td>
-                        <td>3:00-4:00</td>
-                        <td>CLC</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- WEDNESDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Wednesday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- THURSDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Thursday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- FRIDAY -->
-        <div class="mb-4">       
-            <h6 class="fw-bold">Friday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="mb-4">
+                <?php foreach ($schedule as $day => $classes): ?>
+                    <h5 class="fw-bold mb-3"><?= $day ?></h5>
+                    <?php if (empty($classes)): ?>
+                        <p><em>No classes.</em></p>
+                    <?php else: ?>
+                        <table class="table table-bordered mb-3">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Type</th>
+                                    <th>Time</th>
+                                    <th>Room</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($classes as $class): ?>
+                                    <tr>
+                                        <td><?= esc($class['course_description']) ?></td>
+                                        <td><?= esc($class['class_type']) ?></td>
+                                        <td><?= date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end'])) ?></td>
+                                        <td><?= esc($class['class_room']) ?></td>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    <?php endif ?>
+                <?php endforeach ?>
+            </div>
     </div>
-
     <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
-    <div class="col-md-6 px-3">
+    <div class="col-md-4 px-3">
         <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>
         <div class="card p-3 border-0 bg-transparent">
             <div class="row">

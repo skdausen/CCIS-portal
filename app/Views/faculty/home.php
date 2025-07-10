@@ -7,13 +7,13 @@
     <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
     <div class="col-md-8 px-3">
         <h4 class="fw-bold mb-4">Your Weekly Schedule</h4>
-            <div class="mb-4">
+            <div class="card shadow-sm mb-5 p-4 bg-white">
                 <?php foreach ($schedule as $day => $classes): ?>
-                    <h5 class="fw-bold mb-3"><?= $day ?></h5>
+                    <h5 class="fw-bold mb-3 text-purple"><?= $day ?></h5>
                     <?php if (empty($classes)): ?>
                         <p><em>No classes.</em></p>
                     <?php else: ?>
-                        <table class="table table-bordered mb-3">
+                        <table class="table mb-3">
                             <thead>
                                 <tr>
                                     <th>Course</th>
@@ -34,6 +34,7 @@
                             </tbody>
                         </table>
                     <?php endif ?>
+                    <br>
                 <?php endforeach ?>
             </div>
     </div>

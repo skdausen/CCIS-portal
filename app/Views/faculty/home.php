@@ -3,20 +3,7 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
-    <!-- Views/faculty/home.php -->
-<div class="container mt-5">
-    <!-- <h2 class="fw-bold">Home</h2>
-    <hr> -->
-
-    <!-- FILTER & SEARCH BAR -->
-    <!-- <div class="d-flex align-items-center mb-4">
-        <select class="form-select w-auto me-2">
-            <option>All</option>
-        </select>
-        <input type="text" class="form-control" placeholder="Search">
-    </div> -->
-
-<div class="row">
+<div class="row mt-5">
     <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
     <div class="col-md-6 px-3">
         <h4 class="fw-bold mb-4">Your Weekly Schedule</h4>

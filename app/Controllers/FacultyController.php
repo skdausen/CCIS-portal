@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 
 use App\Models\AnnouncementModel;
+use App\Models\ClassModel;
+use App\Models\SemesterModel;
 
 class FacultyController extends BaseController
 {
@@ -22,4 +24,55 @@ class FacultyController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
+    public function classes()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
+        $facultyId = session()->get('user_id');
+
+        $classModel = new ClassModel();
+        $semesterModel = new SemesterModel();
+
+        $activeSemester = $semesterModel->where('is_active', 1)->first();
+
+        $semesterWithYear = $semesterModel
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->where('semesters.is_active', 1)
+            ->first();
+
+        // dd(get_class_methods($classModel));
+        $classes = $classModel->getFacultyClasses($facultyId, $activeSemester['semester_id']);
+
+        return view('templates/faculty/faculty_header')
+            . view('faculty/classes', [
+                'classes' => $classes,
+                'semester' => $semesterWithYear
+            ])
+            . view('templates/admin/admin_footer');
+    }
+
+    public function viewClass($classId)
+    {
+        $classModel = new \App\Models\ClassModel();
+
+        $class = $classModel
+            ->select('class.*,course.course_code, course.course_description, s.semester, sy.schoolyear')
+            ->join('course', 'course.course_id = class.course_id')
+            ->join('semesters s', 's.semester_id = class.semester_id')
+            ->join('schoolyears sy', 'sy.schoolyear_id = s.schoolyear_id')
+            ->where('class.class_id', $classId)
+            ->first();
+
+        if (!$class) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Class not found.');
+        }
+
+        return view('templates/faculty/faculty_header')
+            . view('faculty/view_class', ['class' => $class])
+            . view('templates/admin/admin_footer');
+
+    }
 }

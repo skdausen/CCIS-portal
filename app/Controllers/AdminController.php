@@ -178,24 +178,22 @@ class AdminController extends BaseController
 
         // Semesters List
         // SEMESTERS LIST
-    public function view_semesters()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-
-        $semesterModel = new SemesterModel();
-
-        $data['semesters'] = $semesterModel
-    ->select('semesters.semester_id, semesters.semester, semesters.is_active, schoolyears.schoolyear')
-    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-    ->findAll();
-
-
-        return view('templates/admin/admin_header')
-            . view('admin/academics/semesters', $data)
-            . view('templates/admin/admin_footer');
+  public function view_semesters()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
+
+    $semesterModel = new SemesterModel();
+
+    //  Call the method from the model that has the ORDER BY
+    $data['semesters'] = $semesterModel->getSemWithDetails();
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/semesters', $data)
+        . view('templates/admin/admin_footer');
+}
+
 // CREATE SEMESTER
 public function createSemester()
 {
@@ -228,7 +226,7 @@ public function createSemester()
         ->first();
 
     if ($duplicate) {
-        return redirect()->back()->with('error', '❌ Semester and school year combination already exists.');
+        return redirect()->back()->with('error', 'Semester and school year combination already exists.');
     }
 
     // Deactivate others if new semester is active
@@ -325,7 +323,6 @@ public function updateSemester($id)
 
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
 }
-
 
     // View all courses (unchanged)
     public function view_courses()

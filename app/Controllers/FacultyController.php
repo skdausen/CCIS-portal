@@ -53,4 +53,23 @@ class FacultyController extends BaseController
             ])
             . view('templates/admin/admin_footer');
     }
+
+    public function viewClass($classId)
+    {
+        $classModel = new \App\Models\ClassModel();
+
+        $class = $classModel
+            ->select('class.*, course.course_description, s.semester, sy.schoolyear')
+            ->join('course', 'course.course_id = class.course_id')
+            ->join('semesters s', 's.semester_id = class.semester_id')
+            ->join('schoolyears sy', 'sy.schoolyear_id = s.schoolyear_id')
+            ->where('class.class_id', $classId)
+            ->first();
+
+        if (!$class) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Class not found.');
+        }
+
+        return view('faculty/view_class', ['class' => $class]);
+    }
 }

@@ -112,6 +112,7 @@ $routes->group('faculty', function ($routes) {
 
     // Classes
     $routes->get('classes', 'FacultyController::classes');
-//    $routes->get('classes/(:num)', 'FacultyController::viewClass/$1
+    $routes->get('classes/view/(:num)', 'FacultyController::viewClass/$1');
+
 
 });

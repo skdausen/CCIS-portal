@@ -3,32 +3,158 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
-    <!-- Calendar -->
-    <div class="card mt-4 p-3 border-0" style="background-color:rgba(248, 249, 255, 0);">
-        <div class="card-header bg-gray text-white d-flex justify-content-between align-items-center">
-            <div>
-                Events & Announcements
-            </div>
+    <!-- Views/faculty/home.php -->
+<div class="container mt-5">
+    <!-- <h2 class="fw-bold">Home</h2>
+    <hr> -->
+
+    <!-- FILTER & SEARCH BAR -->
+    <!-- <div class="d-flex align-items-center mb-4">
+        <select class="form-select w-auto me-2">
+            <option>All</option>
+        </select>
+        <input type="text" class="form-control" placeholder="Search">
+    </div> -->
+
+<div class="row">
+    <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
+    <div class="col-md-6 px-3">
+        <h4 class="fw-bold mb-4">Your Weekly Schedule</h4>
+
+        <!-- MONDAY -->
+        <div class="mb-4">
+            <h6 class="fw-bold">Monday</h6>
+            <table class="table table-borderless">
+                <thead class="border-bottom border-purple">
+                    <tr>
+                        <th>Code</th>
+                        <th>Course</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS 101</td>
+                        <td>System Fundamentals</td>
+                        <td>8:00-9:00</td>
+                        <td>CLD</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="card-body">
+
+        <!-- TUESDAY -->
+        <div class="mb-4">
+            <h6 class="fw-bold">Tuesday</h6>
+            <table class="table table-borderless">
+                <thead class="border-bottom border-purple">
+                    <tr>
+                        <th>Code</th>
+                        <th>Course</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS 201</td>
+                        <td>Intermediate Programming</td>
+                        <td>3:00-4:00</td>
+                        <td>CLC</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- WEDNESDAY -->
+        <div class="mb-4">
+            <h6 class="fw-bold">Wednesday</h6>
+            <table class="table table-borderless">
+                <thead class="border-bottom border-purple">
+                    <tr>
+                        <th>Code</th>
+                        <th>Course</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS 101</td>
+                        <td>System Fundamentals</td>
+                        <td>8:00-9:00</td>
+                        <td>CLD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- THURSDAY -->
+        <div class="mb-4">
+            <h6 class="fw-bold">Thursday</h6>
+            <table class="table table-borderless">
+                <thead class="border-bottom border-purple">
+                    <tr>
+                        <th>Code</th>
+                        <th>Course</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS 101</td>
+                        <td>System Fundamentals</td>
+                        <td>8:00-9:00</td>
+                        <td>CLD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FRIDAY -->
+        <div class="mb-4">       
+            <h6 class="fw-bold">Friday</h6>
+            <table class="table table-borderless">
+                <thead class="border-bottom border-purple">
+                    <tr>
+                        <th>Code</th>
+                        <th>Course</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS 101</td>
+                        <td>System Fundamentals</td>
+                        <td>8:00-9:00</td>
+                        <td>CLD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
+    <div class="col-md-6 px-3">
+        <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>
+        <div class="card p-3 border-0 bg-transparent">
             <div class="row">
-                <!-- Calendar LEFT -->
-                <div class="col-md-6">
+                <!-- Calendar -->
+                <div class="col-12 mb-4">
                     <div id="calendar" class="calendar-sm"></div>
                 </div>
 
-                <!-- Updates RIGHT -->
-                <div class="col-md-6">
-                    <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
-                        <!-- Latest Announcement -->
-                        <h5 class="text-purple mb-3
-                        ">🆕 Latest Announcement</h5>
+                <!-- Announcements -->
+                <div class="col-12">
+                    <div class="p-3 border-0" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
+                        <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
                         <?php if (!empty($announcements)) : ?>
                             <?php $latest = reset($announcements); ?>
                             <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
-                            <small class="text-muted">
-                                <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
-                            </small>
+                            <small class="text-muted"><?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?></small>
                             <p class="mt-2"><?= esc($latest['content']); ?></p>
                         <?php else : ?>
                             <p>No announcements yet.</p>
@@ -36,7 +162,6 @@
 
                         <hr>
 
-                        <!-- Nearest Upcoming Announcements -->
                         <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
                         <?php
                             $today = date('Y-m-d H:i:s');
@@ -65,11 +190,8 @@
                                                 data-description="<?= esc($n['content']); ?>">
                                                 <?= esc($n['title']); ?>
                                             </button>
-                                            <br>
-                                        </strong>
-                                        <small class="text-muted">
-                                            <?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?>
-                                        </small>
+                                        </strong><br>
+                                        <small class="text-muted"><?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?></small>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -81,6 +203,9 @@
             </div>
         </div>
     </div>
+</div>
+
+</div>
         <!-- Modal for Announcement -->
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

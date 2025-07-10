@@ -1,6 +1,6 @@
 <!-- student_header.php -->
 <!DOCTYPE html>
-< lang="en">
+<html lang="en">
 <head>
     <title>AdaL CCIS Portal</title>
     <!-- Bootstrap -->
@@ -18,8 +18,6 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 </head>
-<>
-
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand ms-3" href="#">CCIS</a>
@@ -33,10 +31,10 @@
                         <a class="nav-link active" aria-current="page" href="<?= site_url('student/home') ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('student/classes') ?>">Schedules</a>
+                        <a class="nav-link" href="<?= site_url('student/schedule') ?>">Schedules</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('student/about') ?>">Grades</a>
+                        <a class="nav-link" href="<?= site_url('student/grades') ?>">Grades</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('student/about') ?>">About</a>

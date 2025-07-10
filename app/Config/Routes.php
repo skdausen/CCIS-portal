@@ -111,3 +111,16 @@ $routes->group('faculty', function ($routes) {
     $routes->get('home', 'FacultyController::facultyHome');
 
 });
+
+
+// ---------------------
+// STUDENT ROUTES
+// ---------------------
+$routes->group('student', function ($routes) {
+
+    // Student Home & Users
+    $routes->get('home', 'StudentController::studentHome');
+    $routes->get('schedule', 'StudentController::studentSchedule');
+    $routes->get('grades', 'StudentController::studentGrades');
+
+});

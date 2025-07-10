@@ -17,7 +17,7 @@ class FacultyController extends BaseController
         $announcementModel = new AnnouncementModel();
         $announcements = $announcementModel->getAllWithUsernames();
 
-        return view('templates/admin/admin_header')
+        return view('templates/faculty/faculty_header')
             . view('faculty/home', ['announcements' => $announcements])
             . view('templates/admin/admin_footer');
     }

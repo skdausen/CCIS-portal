@@ -70,18 +70,21 @@
         <!-- CLASSES TABLE -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Course</th>
-                        <th>Type</th>
-                        <th>Day</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                        <th>Instructor</th>
-                        <th>Semester</th>
+                        <thead class="table-light">
+                <tr>
+                    <th>Course</th>
+                    <th>Type</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Room</th>
+                    <th>Instructor</th>
+                    <th>Semester</th>
+                    <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
                         <th>Actions</th>
-                    </tr>
-                </thead>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+
                 <tbody>
                     <?php foreach ($classes as $class): ?>
                     <tr>
@@ -92,10 +95,14 @@
                         <td><?= esc($class['class_room']) ?></td>
                         <td><?= esc($class['fname'] . ' ' . $class['lname']) ?></td>
                         <td><?= esc($class['semester'] . ' ' . $class['schoolyear']) ?></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
-                        </td>
+                        <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+<td>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
+    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+</td>
+<?php endif; ?>
+
+
                     </tr>
 
                     <!-- Edit Modal -->
@@ -348,6 +355,21 @@
         });
 
         filterRows();
+    });
+</script>
+
+<script>
+    document.getElementById('semesterFilter').addEventListener('change', function () {
+        const selectedSemester = this.value;
+        const url = new URL(window.location.href);
+        
+        if (selectedSemester) {
+            url.searchParams.set('semester_id', selectedSemester);
+        } else {
+            url.searchParams.delete('semester_id');
+        }
+
+        window.location.href = url.toString();
     });
 </script>
 

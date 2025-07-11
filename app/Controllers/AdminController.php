@@ -495,12 +495,13 @@ public function view_classes()
         $classes = [];
     }
 
-    // Get instructors from faculty table
+    // Instructors list from faculty table
     $instructors = [];
     $facultyList = $facultyModel->findAll();
     foreach ($facultyList as $faculty) {
         $instructors[$faculty['ftb_id']] = $faculty['faculty_fname'] . ' ' . $faculty['faculty_lname'];
     }
+
 
     // Get all semesters for the dropdown
     $semesters = $semesterModel
@@ -524,60 +525,56 @@ public function view_classes()
 
 
 
+        // CREATE CLASS
+        public function createClass()
+        {
+            $classModel = new ClassModel();
 
-//CREATE CLASS
-    public function createClass()
-    {
-        $classModel = new ClassModel();
+            $classModel->insert([
+                'ftb_id'       => $this->request->getPost('ftb_id'),  // ✅ was user_id
+                'subject_id'   => $this->request->getPost('subject_id'),  // ✅ was course_id
+                'semester_id'  => $this->request->getPost('semester_id'),
+                'class_day'    => $this->request->getPost('class_day'),
+                'class_start'  => $this->request->getPost('class_start'),
+                'class_end'    => $this->request->getPost('class_end'),
+                'class_room'   => $this->request->getPost('class_room'),
+                'class_type'   => $this->request->getPost('class_type'),
+            ]);
 
-        $classModel->insert([
-            // New
-            'user_id' => $this->request->getPost('user_id'),
-            'course_id' => $this->request->getPost('course_id'),
-            'semester_id' => $this->request->getPost('semester_id'), 
-            'class_day' => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end' => $this->request->getPost('class_end'),
-            'class_room' => $this->request->getPost('class_room'),
-            'class_type' => $this->request->getPost('class_type'),
-    ]);
+            return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
+        }
 
-        return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
-    }
+        // UPDATE CLASS
+        public function updateClass($class_id)
+        {
+            $classModel = new ClassModel();
 
+            $data = [
+                'ftb_id'       => $this->request->getPost('ftb_id'),  // ✅ was user_id
+                'subject_id'   => $this->request->getPost('subject_id'),  // ✅ was course_id
+                'semester_id'  => $this->request->getPost('semester_id'),
+                'class_day'    => $this->request->getPost('class_day'),
+                'class_start'  => $this->request->getPost('class_start'),
+                'class_end'    => $this->request->getPost('class_end'),
+                'class_room'   => $this->request->getPost('class_room'),
+                'class_type'   => $this->request->getPost('class_type'),
+            ];
 
-//UPDATE CLASS
-    public function updateClass($class_id)
-    {
-        $classModel = new ClassModel();
+            $classModel->update($class_id, $data);
 
-        $data = [
-            // New
-            'user_id' => $this->request->getPost('user_id'),
-            'course_id'   => $this->request->getPost('course_id'),
-            'semester_id' => $this->request->getPost('semester_id'), 
-            'class_day'   => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end'   => $this->request->getPost('class_end'),
-            'class_room'  => $this->request->getPost('class_room'),
-            'class_type'  => $this->request->getPost('class_type'),
-        ];
-
-        $classModel->update($class_id, $data);
-
-        return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
-    }
+            return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
+        }
 
 
-//DELETE CLASS
-    public function deleteClass($class_id)
-    {
-        $classModel = new ClassModel();
-        $classModel->delete($class_id);
+        //DELETE CLASS
+            public function deleteClass($class_id)
+            {
+                $classModel = new ClassModel();
+                $classModel->delete($class_id);
 
-        return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
+                return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
-    }
+            }
 
 
 
@@ -589,7 +586,7 @@ public function view_curriculums()
     $semester = $this->request->getGet('semester');
 
     $curriculumModel = new CurriculumModel();
-    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+    $courses = $curriculumModel->getSubjects($yearLevel, $semester); //  UPDATED HERE
 
     $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
 
@@ -609,9 +606,9 @@ public function curriculum_old()
     $semester = $this->request->getGet('semester');
 
     $curriculumModel = new CurriculumModel();
-    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+    $courses = $curriculumModel->getSubjects($yearLevel, $semester); // ✅ UPDATED HERE
 
-    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear'];
 
     return view('templates/admin/admin_header')
         . view('admin/academics/curriculum_old', [
@@ -629,9 +626,9 @@ public function curriculum_new()
     $semester = $this->request->getGet('semester');
 
     $curriculumModel = new CurriculumModel();
-    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+    $courses = $curriculumModel->getSubjects($yearLevel, $semester); // ✅ UPDATED HERE
 
-    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear'];
 
     return view('templates/admin/admin_header')
         . view('admin/academics/curriculum_new', [

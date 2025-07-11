@@ -101,25 +101,31 @@ class AdminController extends BaseController
             'created_at'   => date('Y-m-d H:i:s'),
         ]);
 
+        // DEFAULT PROFILE IMAGE
+        $defaultImg = 'default.png';
+
         // INSERT INTO RELATED TABLES BASED ON ROLE
         if ($role === 'student') {
             $studentModel->insert([
                 'student_id' => $username,
-                'user_id'    => $userId // optional: if linked by user ID
+                'user_id'    => $userId, // optional: if linked by user ID
+                'profimg'    => $defaultImg
             ]);
         }
 
         if ($role === 'faculty') {
             $facultyModel->insert([
                 'faculty_id' => $username,
-                'user_id'    => $userId  // optional: if linked by user ID
+                'user_id'    => $userId,  // optional: if linked by user ID
+                'profimg'    => $defaultImg
             ]);
         }
 
         if ($role === 'admin') {
             $adminModel->insert([
                 'admin_id' => $username,
-                'user_id'    => $userId // optional: if linked by user ID
+                'user_id'    => $userId, // optional: if linked by user ID
+                'profimg'    => $defaultImg
             ]);
         }
 

@@ -81,12 +81,6 @@
             <form action="<?= site_url('admin/create-user') ?>" method="post">
                 <div class="modal-body">
 
-                    <?php if (session()->getFlashdata('success')): ?>
-                    <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-                    <?php elseif (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-                    <?php endif; ?>
-
                     <div class="mb-3">
                     <label for="username" class="form-label">Username:</label>
                     <input type="text" name="username" id="username" class="form-control" placeholder="Enter ID Number" required>

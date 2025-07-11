@@ -412,6 +412,77 @@ class AdminController extends BaseController
                 return redirect()->to('admin/academics/subjects')->with('error', 'Duplicate entry: Subject code already exists.');
             }
 
+<<<<<<< HEAD
+
+//CLASSES
+public function view_classes()
+{
+    $classModel = new ClassModel();
+    $facultyModel = new FacultyModel();
+    $subjectModel = new SubjectModel();
+    $semesterModel = new SemesterModel();
+
+    $activeSemester = $semesterModel->getActiveSemester();
+
+    // Get selected semester from query string
+    $selectedSemesterId = $this->request->getGet('semester_id');
+
+    // Determine which semester to show
+    if (!empty($selectedSemesterId)) {
+        $semesterToShow = $selectedSemesterId;
+    } elseif (!empty($activeSemester)) {
+        $semesterToShow = $activeSemester['semester_id'];
+    } else {
+        $semesterToShow = null;
+    }
+
+    // Build the query for classes with joined data
+    $builder = $classModel
+        ->select('classes.*, 
+                  subjects.subject_code, subjects.subject_name, 
+                  semesters.semester, semesters.semester_id, schoolyears.schoolyear,
+                  faculty.ftb_id, faculty.faculty_fname, faculty.faculty_lname')
+        ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')
+        ->join('semesters', 'semesters.semester_id = classes.semester_id', 'left')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');
+
+    // Apply semester filter
+    if (!empty($semesterToShow)) {
+        $builder->where('classes.semester_id', $semesterToShow);
+        $classes = $builder->findAll();
+    } else {
+        $classes = [];
+    }
+
+    // Instructors list from faculty table
+    $instructors = [];
+    $facultyList = $facultyModel->findAll();
+    foreach ($facultyList as $faculty) {
+        $instructors[$faculty['ftb_id']] = $faculty['faculty_fname'] . ' ' . $faculty['faculty_lname'];
+    }
+
+
+    // Get all semesters for the dropdown
+    $semesters = $semesterModel
+        ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->orderBy('semesters.is_active', 'DESC')
+        ->orderBy('schoolyears.schoolyear', 'DESC')
+        ->orderBy('semesters.semester', 'ASC')
+        ->findAll();
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/classes', [
+            'classes' => $classes,
+            'instructors' => $instructors,
+            'courses' => $subjectModel->findAll(), // ✅ This is now your subjects
+            'semesters' => $semesters,
+            'activeSemester' => $activeSemester,
+        ])
+        . view('templates/admin/admin_footer');
+}
+=======
             return redirect()->to('admin/academics/subjects')->with('error', 'An unexpected error occurred.');
         }
     }
@@ -458,6 +529,7 @@ class AdminController extends BaseController
 
         // Check if there are related classes first
         $relatedClasses = $classModel->where('subject_id', $subject_id)->countAllResults();
+>>>>>>> b3a9ff7e8cfd0abe2f95863324f14c828534b4af
 
         if ($relatedClasses > 0) {
             return redirect()->back()->with('error', 'Cannot delete. This subject has classes assigned to it.');
@@ -466,6 +538,12 @@ class AdminController extends BaseController
         // Delete subject
         $subjectModel->delete($subject_id);
 
+<<<<<<< HEAD
+        // CREATE CLASS
+        public function createClass()
+        {
+            $classModel = new ClassModel();
+=======
         return redirect()->back()->with('success', 'Subject deleted successfully.');
     }
 
@@ -547,40 +625,62 @@ class AdminController extends BaseController
     public function createClass()
     {
         $classModel = new ClassModel();
+>>>>>>> b3a9ff7e8cfd0abe2f95863324f14c828534b4af
 
-        $classModel->insert([
-            // New
-            'user_id' => $this->request->getPost('user_id'),
-            'course_id' => $this->request->getPost('course_id'),
-            'semester_id' => $this->request->getPost('semester_id'), 
-            'class_day' => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end' => $this->request->getPost('class_end'),
-            'class_room' => $this->request->getPost('class_room'),
-            'class_type' => $this->request->getPost('class_type'),
-    ]);
+            $classModel->insert([
+                'ftb_id'       => $this->request->getPost('ftb_id'),  // ✅ was user_id
+                'subject_id'   => $this->request->getPost('subject_id'),  // ✅ was course_id
+                'semester_id'  => $this->request->getPost('semester_id'),
+                'class_day'    => $this->request->getPost('class_day'),
+                'class_start'  => $this->request->getPost('class_start'),
+                'class_end'    => $this->request->getPost('class_end'),
+                'class_room'   => $this->request->getPost('class_room'),
+                'class_type'   => $this->request->getPost('class_type'),
+            ]);
 
-        return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
-    }
+            return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
+        }
+
+        // UPDATE CLASS
+        public function updateClass($class_id)
+        {
+            $classModel = new ClassModel();
+
+            $data = [
+                'ftb_id'       => $this->request->getPost('ftb_id'),  // ✅ was user_id
+                'subject_id'   => $this->request->getPost('subject_id'),  // ✅ was course_id
+                'semester_id'  => $this->request->getPost('semester_id'),
+                'class_day'    => $this->request->getPost('class_day'),
+                'class_start'  => $this->request->getPost('class_start'),
+                'class_end'    => $this->request->getPost('class_end'),
+                'class_room'   => $this->request->getPost('class_room'),
+                'class_type'   => $this->request->getPost('class_type'),
+            ];
+
+            $classModel->update($class_id, $data);
+
+            return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
+        }
 
 
+<<<<<<< HEAD
+        //DELETE CLASS
+            public function deleteClass($class_id)
+            {
+                $classModel = new ClassModel();
+                $classModel->delete($class_id);
+=======
     //UPDATE CLASS
     public function updateClass($class_id)
     {
         $classModel = new ClassModel();
+>>>>>>> b3a9ff7e8cfd0abe2f95863324f14c828534b4af
 
-        $data = [
-            // New
-            'user_id' => $this->request->getPost('user_id'),
-            'course_id'   => $this->request->getPost('course_id'),
-            'semester_id' => $this->request->getPost('semester_id'), 
-            'class_day'   => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end'   => $this->request->getPost('class_end'),
-            'class_room'  => $this->request->getPost('class_room'),
-            'class_type'  => $this->request->getPost('class_type'),
-        ];
+                return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
+<<<<<<< HEAD
+            }
+=======
         $classModel->update($class_id, $data);
 
         return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
@@ -596,6 +696,7 @@ class AdminController extends BaseController
         return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
     }
+>>>>>>> b3a9ff7e8cfd0abe2f95863324f14c828534b4af
 
 
     /********************************************** 
@@ -611,7 +712,12 @@ class AdminController extends BaseController
         $curriculumModel = new CurriculumModel();
         $courses = $curriculumModel->getCourses($yearLevel, $semester);
 
+<<<<<<< HEAD
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getSubjects($yearLevel, $semester); //  UPDATED HERE
+=======
         $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+>>>>>>> b3a9ff7e8cfd0abe2f95863324f14c828534b4af
 
         return view('templates/admin/admin_header')
             . view('admin/academics/curriculums', [
@@ -623,6 +729,58 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
+<<<<<<< HEAD
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculums', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+
+public function curriculum_old()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getSubjects($yearLevel, $semester); // ✅ UPDATED HERE
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear'];
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_old', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+
+public function curriculum_new()
+{
+    $yearLevel = $this->request->getGet('year_level');
+    $semester = $this->request->getGet('semester');
+
+    $curriculumModel = new CurriculumModel();
+    $courses = $curriculumModel->getSubjects($yearLevel, $semester); // ✅ UPDATED HERE
+
+    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear'];
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_new', [
+            'courses' => $courses,
+            'yearLevel' => $yearLevel,
+            'semester' => $semester,
+            'semesterOptions' => $semesterOptions,
+        ])
+        . view('templates/admin/admin_footer');
+}
+}
+=======
     public function curriculum_old()
     {
         $yearLevel = $this->request->getGet('year_level');
@@ -663,3 +821,4 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 }
+>>>>>>> b3a9ff7e8cfd0abe2f95863324f14c828534b4af

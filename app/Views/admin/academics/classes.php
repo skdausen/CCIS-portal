@@ -79,7 +79,7 @@
                 <tbody>
                     <?php foreach ($classes as $class): ?>
                     <tr>
-                        <td><?= esc($class['course_description']) ?></td>
+                        <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
                         <td><?= esc($class['class_type']) ?></td>
                         <td><?= esc($class['class_day']) ?></td>
                         <td><?= date("g:i A", strtotime($class['class_start'])) ?> - <?= date("g:i A", strtotime($class['class_end'])) ?></td>
@@ -123,25 +123,31 @@
                     <!-- Instructor -->
                     <div class="mb-3">
                         <label>Instructor</label>
-                        <select name="user_id" class="form-select" required>
-                            <?php foreach ($instructors as $userId => $instructorName): ?>
-                                <option value="<?= $userId ?>" <?= $userId == $class['user_id'] ? 'selected' : '' ?>><?= esc($instructorName) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-
-                    <!-- Course -->
-                    <div class="mb-3">
-                        <label>Course</label>
-                        <select name="course_id" class="form-select" required>
-                            <?php foreach ($courses as $course): ?>
-                                <option value="<?= $course['course_id'] ?>" <?= $course['course_id'] == $class['course_id'] ? 'selected' : '' ?>>
-                                    <?= esc($course['course_code']) ?> - <?= esc($course['course_description']) ?>
+                        <select name="ftb_id" class="form-select" required>
+                            <option value="">Select Instructor</option>
+                            <?php foreach ($instructors as $ftbId => $instructorName): ?>
+                                <option value="<?= $ftbId ?>" <?= isset($class['ftb_id']) && $ftbId == $class['ftb_id'] ? 'selected' : '' ?>>
+                                    <?= esc($instructorName) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
+
+
+
+                    <!-- Course -->
+                    <div class="mb-3">
+                    <label>Subject</label>
+                    <select name="subject_id" class="form-select" required>
+                        <option value="">Select Course</option>
+                        <?php foreach ($courses as $subject): ?>
+                            <option value="<?= $subject['subject_id'] ?>" <?= isset($class['subject_id']) && $subject['subject_id'] == $class['subject_id'] ? 'selected' : '' ?>>
+                                <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
 
                     <!-- Class Type -->
                     <div class="mb-3">
@@ -199,7 +205,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                        Are you sure you want to delete <strong><?= esc($class['course_description']) ?></strong>?
+                                       Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -238,31 +244,35 @@
 </div>
 
                                                 
+  <!-- Instructor -->
+  <div class="mb-3">
+    <label>Instructor</label>
+    <select name="ftb_id" class="form-select" required>
+        <option value="">Select Instructor</option>
+        <?php foreach ($instructors as $ftbId => $instructorName): ?>
+            <option value="<?= $ftbId ?>" <?= isset($class['ftb_id']) && $ftbId == $class['ftb_id'] ? 'selected' : '' ?>>
+                <?= esc($instructorName) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
 
-            <!-- Instructor -->
-     <select name="user_id" class="form-select" required>
-    <option value="">Select Instructor</option>
-    <?php foreach ($instructors as $userId => $instructorName): ?>
-        <option value="<?= $userId ?>">
-            <?= esc($instructorName) ?>
-        </option>
-    <?php endforeach; ?>
-</select>
 
 
 
-            <!-- Course -->  
+            <!-- Subject -->
             <div class="mb-3">
-                <label for="course_id" class="form-label">Course</label>
-                <select name="course_id" id="addCourseSelect" class="form-select" required>
-                    <option value="">Select Course</option>
-                    <?php foreach ($courses as $course): ?>
-                        <option value="<?= $course['course_id'] ?>">
-                            <?= esc($course['course_code']) ?> - <?= esc($course['course_description']) ?>
+                <label for="subject_id" class="form-label">Subject</label>
+                <select name="subject_id" id="addSubjectSelect" class="form-select" required>
+                    <option value="">Select Subject</option>
+                    <?php foreach ($courses as $subject): ?>
+                        <option value="<?= $subject['subject_id'] ?>">
+                            <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
             </div>
+
 
             <!-- Class Type -->
              <div class="mb-3">

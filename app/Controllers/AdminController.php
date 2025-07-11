@@ -140,6 +140,66 @@ class AdminController extends BaseController
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
 
+    // Controller method to get users with joined profile info
+    public function viewUsers()
+    {
+        $db = \Config\Database::connect();
+
+        $builder = $db->table('users u');
+        $builder->select('u.*, 
+                        COALESCE(s.fname, f.fname, a.fname) as fname,
+                        COALESCE(s.mname, f.mname, a.mname) as mname,
+                        COALESCE(s.lname, f.lname, a.lname) as lname,
+                        COALESCE(s.sex, f.sex, a.sex) as sex,
+                        COALESCE(s.birthdate, f.birthdate, a.birthdate) as birthday,
+                        COALESCE(s.address, f.address, a.address) as address,
+                        COALESCE(s.contactnum, f.contactnum, a.contactnum) as contact_number,
+                        COALESCE(s.profimg, f.profimg, a.profimg) as profimg');
+
+        $builder->join('students s', 'u.user_id = s.user_id', 'left');
+        $builder->join('faculty f',  'u.user_id = f.user_id',  'left');
+        $builder->join('admin a',    'u.user_id = a.user_id',  'left');
+
+        $query = $builder->get();
+        $data['users'] = $query->getResultArray();
+
+        return view('admin/users', $data);
+    }
+
+    public function getUser($id)
+    {
+        $userModel    = new UserModel();
+        $studentModel = new StudentModel();
+        $facultyModel = new FacultyModel();
+        $adminModel   = new AdminModel();
+
+        $user = $userModel->find($id);
+
+        if (!$user) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+        }
+
+        // Get extra info based on role
+        switch ($user['role']) {
+            case 'student':
+                $extra = $studentModel->where('user_id', $id)->first();
+                break;
+            case 'faculty':
+                $extra = $facultyModel->where('user_id', $id)->first();
+                break;
+            case 'admin':
+            case 'superadmin':
+                $extra = $adminModel->where('user_id', $id)->first();
+                break;
+            default:
+                $extra = [];
+        }
+
+        return $this->response->setJSON(array_merge($user, $extra ?? []));
+    }
+
+
+
 
     /********************************************** 
         ANNOUNCEMENT MANAGEMENT

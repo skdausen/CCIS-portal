@@ -230,6 +230,16 @@ body {
     background-color: #4d104a !important;
 }
 
+/* Custom styles foruser details */
+#detailProfileImg {
+    width: 120px; /* Fixed width for profile image */
+    height: 120px; /* Fixed height for profile image */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+}
+.custom-padding td,
+.custom-padding th {
+    padding: 0.3rem !important; /* or 0.2rem if you want it tighter */
+}
 
 /* Custom styles for the navbar to ensure proper alignment and full width */
 .navbar-nav.main-nav-links {

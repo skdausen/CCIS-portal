@@ -43,7 +43,7 @@ class Password extends BaseController
         $email = $this->request->getGet('email');
         // return view('password/verify_form', ['email' => $email]);
 
-         return view('templates/login_header')
+        return view('templates/login_header')
             . view('password/verify_form', ['email' => $email])
             . view('templates/login_footer');
     }

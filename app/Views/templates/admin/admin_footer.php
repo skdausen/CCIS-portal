@@ -226,7 +226,7 @@
               <!-- Birthday -->
               <div class="col-md-6">
                 <label class="form-label">Birthday</label>
-                <input type="date" name="birthdate" class="form-control" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY">
+                <input type="date" name="birthdate" id="birthdate" class="form-control" max="<?= date('Y-m-d', strtotime('-1 day')) ?>" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY" required>
               </div>
 
               <!-- Address -->

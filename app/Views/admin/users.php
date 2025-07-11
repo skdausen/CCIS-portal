@@ -105,21 +105,6 @@
                     </div>
 
                     <div class="mb-3">
-                    <label for="fname" class="form-label">First Name:</label>
-                    <input type="text" name="fname" id="fname" class="form-control" placeholder="e.g. Juan" required>
-                    </div>
-
-                    <div class="mb-3">
-                    <label for="mname" class="form-label">Middle Name:</label>
-                    <input type="text" name="mname" id="mname" class="form-control" placeholder="(Optional)">
-                    </div>
-
-                    <div class="mb-3">
-                    <label for="lname" class="form-label">Last Name:</label>
-                    <input type="text" name="lname" id="lname" class="form-control" placeholder="e.g. Dela Cruz" required>
-                    </div>
-
-                    <div class="mb-3">
                     <label for="role" class="form-label">Role:</label>
                     <select name="role" id="role" class="form-select" required>
                         <option value="">Select role</option>

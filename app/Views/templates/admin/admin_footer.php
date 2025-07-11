@@ -59,31 +59,38 @@
 
             <!-- DETAILS -->
             <div class="col-md-8">
-              <p><strong>Email:</strong> <?= esc(session('email')) ?></p>
-
-              <?php if (session('role') === 'student'): ?>
-                <p><strong>Full Name:</strong> <?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></p>
-                <p><strong>Sex:</strong> <?= esc(session('sex')) ?></p>
-                <p><strong>Birthday:</strong> <?= esc(session('birthday')) ?></p>
-                <p><strong>Address:</strong> <?= esc(session('address')) ?></p>
-                <p><strong>Contact Number:</strong> <?= esc(session('contact_number')) ?></p>
-
-              <?php elseif (session('role') === 'faculty'): ?>
-                <p><strong>Faculty Name:</strong> <?= esc(session('faculty_fname')) ?> <?= esc(session('faculty_mname')) ?> <?= esc(session('faculty_lname')) ?></p>
-                <p><strong>Sex:</strong> <?= esc(session('faculty_sex')) ?></p>
-                <p><strong>Birthday:</strong> <?= esc(session('faculty_birthdate')) ?></p>
-                <p><strong>Address:</strong> <?= esc(session('faculty_address')) ?></p>
-                <p><strong>Contact Number:</strong> <?= esc(session('faculty_contactnum')) ?></p>
-
-              <?php elseif (session('role') === 'admin'): ?>
-                <p><strong>Admin Name:</strong> <?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></p>
-                <p><strong>Sex:</strong> <?= esc(session('sex')) ?></p>
-                <p><strong>Birthday:</strong> <?= esc(session('birthday')) ?></p>
-                <p><strong>Address:</strong> <?= esc(session('address')) ?></p>
-                <p><strong>Contact Number:</strong> <?= esc(session('contact_number')) ?></p>
-              <?php endif; ?>
-
-              <p><strong>Last Login:</strong> <?= esc(session('last_login')) ?></p>
+              <table class="table table-bordered table-hover">
+                <tbody>
+                  <tr>
+                    <th>Email</th>
+                    <td><?= esc(session('email')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Full Name</th>
+                    <td><?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Sex</th>
+                    <td><?= esc(session('sex')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Birthday</th>
+                    <td><?= esc(session('birthday')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Address</th>
+                    <td><?= esc(session('address')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Contact Number</th>
+                    <td><?= esc(session('contactnum')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Last Login</th>
+                    <td><?= esc(session('last_login')) ?></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
           </div>

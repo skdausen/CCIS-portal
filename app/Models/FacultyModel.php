@@ -14,14 +14,14 @@ class FacultyModel extends Model
         'faculty_id',
         'user_id',
         'email',
-        'faculty_profimg',
-        'faculty_lname',
-        'faculty_fname',
-        'faculty_mname',
-        'faculty_sex',
-        'faculty_address',
-        'faculty_birthdate',
-        'faculty_contactnum'
+        'profimg',
+        'lname',
+        'fname',
+        'mname',
+        'sex',
+        'address',
+        'birthdate',
+        'contactnum'
     ];
 }
 

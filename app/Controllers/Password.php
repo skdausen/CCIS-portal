@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\LoginModel;
 use App\Models\UserModel;
 
 class Password extends BaseController

@@ -12,13 +12,13 @@ class StudentModel extends Model
         'student_id',
         'user_id',
         'email',
-        'student_profimg',
-        'student_lname',
-        'student_fname',
-        'student_mname',
-        'student_sex',
-        'student_address',
-        'student_birthdate',
-        'student_contactnum'
+        'profimg',
+        'lname',
+        'fname',
+        'mname',
+        'sex',
+        'address',
+        'birthdate',
+        'contactnum'
     ];
 }

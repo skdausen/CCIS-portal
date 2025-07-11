@@ -4,6 +4,9 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\AdminModel;
+use App\Models\FacultyModel;
+use App\Models\StudentModel;
 
 class AuthController extends BaseController
 {
@@ -22,7 +25,7 @@ class AuthController extends BaseController
     }
 
     // HANDLE LOGIN FORM SUBMISSION
-    public function authenticate()
+    public function authenticate2()
     {
         $session = session();
         $request = \Config\Services::request();
@@ -77,6 +80,70 @@ class AuthController extends BaseController
         $session->setFlashdata('error', 'Incorrect password.');
         return redirect()->to('auth/login')->withInput(); 
     }
+
+    public function authenticate()
+    {
+        $session = session();
+        $request = \Config\Services::request();
+        $userModel = new UserModel();
+        $studentModel = new StudentModel();
+        $facultyModel = new FacultyModel();
+        $adminModel = new AdminModel();
+
+        $username = $request->getPost('username');
+        $password = $request->getPost('password');
+
+        $user = $userModel->where('username', $username)->first();
+
+        if (!$user || !password_verify($password, $user['userpassword'])) {
+            return redirect()->to('auth/login')->with('error', 'Invalid credentials.')->withInput();
+        }
+
+        // Default data from users table
+        $sessionData = [
+            'user_id'     => $user['user_id'],
+            'username'    => $user['username'],
+            'email'       => $user['email'],
+            'role'        => $user['role'],
+            'last_login'  => $user['last_login'],
+            'isLoggedIn'  => true
+        ];
+
+        // 🔍 Load data based on role
+        if ($user['role'] === 'student') {
+            $details = $studentModel->where('student_id', $user['username'])->first();
+        } elseif ($user['role'] === 'faculty') {
+            $details = $facultyModel->where('faculty_id', $user['username'])->first();
+        } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
+            $details = $adminModel->where('admin_id', $user['username'])->first();
+        } else {
+            $details = [];
+        }
+
+        // 👇 Merge additional profile info
+        if (!empty($details)) {
+            $sessionData = array_merge($sessionData, [
+                'fname'             => $details['fname'] ?? null,
+                'mname'             => $details['mname'] ?? null,
+                'lname'             => $details['lname'] ?? null,
+                'sex'               => $details['sex'] ?? null,
+                'birthdate'         => $details['birthdate'] ?? null,
+                'address'           => $details['address'] ?? null,
+                'contactnum'        => $details['contactnum'] ?? null,
+                'profimg'      => $details['profimg'] ?? 'default.png',
+
+            ]);
+        }
+
+        // 💾 Save all to session
+        $session->set($sessionData);
+
+        // 🕒 Optionally update last_login
+        $userModel->update($user['user_id'], ['last_login' => date('Y-m-d H:i:s')]);
+
+        return redirect()->to('admin/home');
+    }
+
 
 
     // DISPLAY HOME PAGE (PROTECTED)

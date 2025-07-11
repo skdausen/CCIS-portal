@@ -26,7 +26,7 @@ class ProfileController extends BaseController
             'lname'           => $this->request->getPost('lname'),
             'email'           => $this->request->getPost('email'),
             'sex'             => $this->request->getPost('sex'),
-            'birthday'        => $this->request->getPost('birthday'),
+            'birthdate'        => $this->request->getPost('birthdate'),
             'address'         => $this->request->getPost('address'),
             'contactnum'     => $this->request->getPost('contactnum'),
         ];
@@ -49,10 +49,10 @@ class ProfileController extends BaseController
             'fname'       => $data['fname'],
             'mname'       => $data['mname'],
             'lname'       => $data['lname'],
-            'birthdate'   => $data['birthday'],
+            'birthdate'   => $data['birthdate'],
             'sex'         => $data['sex'],
             'address'     => $data['address'],
-            'contactnum'  => $data['contact_number'],
+            'contactnum'  => $data['contactnum'],
             'profimg'     => $data['profimg'] ?? session('profimg'),
         ];
 
@@ -63,16 +63,28 @@ class ProfileController extends BaseController
         if (!empty($roleData)) {
             switch ($role) {
                 case 'student':
-                    $studentModel->update($userId, $roleData);
+                    $student = $studentModel->where('user_id', $userId)->first();
+                    if ($student) {
+                        $studentModel->update($student['stb_id'], $roleData);
+                    }
                     break;
+
                 case 'faculty':
-                    $facultyModel->update($userId, $roleData);
+                    $faculty = $facultyModel->where('user_id', $userId)->first();
+                    if ($faculty) {
+                        $facultyModel->update($faculty['ftb_id'], $roleData);
+                    }
                     break;
+
                 case 'admin':
                 case 'superadmin':
-                    $adminModel->update($userId, $roleData);
+                    $admin = $adminModel->where('user_id', $userId)->first();
+                    if ($admin) {
+                        $adminModel->update($admin['atb_id'], $roleData);
+                    }
                     break;
             }
+
         }
 
         // Update session with new data

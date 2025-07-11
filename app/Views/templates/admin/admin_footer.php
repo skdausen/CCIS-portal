@@ -202,9 +202,9 @@
             <div class="col-md-6">
               <label class="form-label">Contact Number</label>
               <input type="text"
-                    name="contact_number"
+                    name="contactnum"
                     class="form-control"
-                    value="<?= esc(session('contact_number')) ?>"
+                    value="<?= esc(session('contactnum')) ?>"
                     placeholder="e.g. 09123456789"
                     pattern="^09\d{9}$"
                     maxlength="11"
@@ -226,7 +226,7 @@
               <!-- Birthday -->
               <div class="col-md-6">
                 <label class="form-label">Birthday</label>
-                <input type="date" name="birthday" class="form-control" value="<?= esc(session('birthday')) ?>" placeholder="MM/DD/YYYY">
+                <input type="date" name="birthdate" class="form-control" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY">
               </div>
 
               <!-- Address -->

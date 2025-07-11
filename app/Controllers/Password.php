@@ -2,8 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
-use CodeIgniter\Controller;
+use App\Models\LoginModel;
 
 class Password extends BaseController
 {
@@ -21,7 +20,7 @@ class Password extends BaseController
 
         $email = $this->request->getPost('email');
 
-        $userModel = new UserModel();
+        $userModel = new LoginModel();
         $user = $userModel->getByEmail($email);
 
         // Check if email exists in the database
@@ -54,7 +53,7 @@ class Password extends BaseController
         $email = $this->request->getPost('email');
         $otp = $this->request->getPost('otp');
 
-        $userModel = new UserModel();
+        $userModel = new LoginModel();
         if ($userModel->verifyOTP($email, $otp)) {
             $userModel->markVerified($email);
             return redirect()->to('/password/reset?email=' . urlencode($email));
@@ -79,7 +78,7 @@ class Password extends BaseController
         $email = $this->request->getPost('email');
         $password = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
 
-        $userModel = new UserModel();
+        $userModel = new LoginModel();
         $userModel->updatePassword($email, $password);
 
         return redirect()->to('auth/login')->with('message', 'Password changed successfully!');

@@ -1,4 +1,5 @@
 <?php
+// UserMModel.php
 
 namespace App\Models;
 
@@ -9,14 +10,35 @@ class UserModel extends Model
     protected $table = 'users';
     protected $primaryKey = 'user_id';
     protected $allowedFields = [
-        'username', 'fname', 'lname', 'mname', 'sex', 'address', 'birthday',
-        'email', 'userpassword', 'role', 'status', 'last_login', 'created_at',
-        'otp_code', 'otp_expiry', 'is_verified', 'contact_number', 'profile_img'
+        'username',
+        'email',       
+        'userpassword',
+        'role',
+        'status',
+        'created_at',
+        'last_login',
+        'otp_code',
+        'otp_expiry',
+        'is_verified'
     ];
 
     protected $useTimestamps = false;
 
-    public function getByEmail($email)
+    protected $returnType = 'array';
+
+    // ✅ Get user by username
+    public function getUserByUsername($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
+    // ✅ Check if a username already exists in the database
+    public function usernameExists($username)
+    {
+        return $this->where('username', $username)->countAllResults() > 0;
+    }
+
+        public function getByEmail($email)
     {
         return $this->where('email', $email)->first();
     }

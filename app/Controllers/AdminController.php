@@ -2,12 +2,14 @@
 // AdminController.php 
 namespace App\Controllers;
 
-use App\Models\LoginModel;
+use App\Models\UserModel;
 use App\Models\SemesterModel;
 use App\Models\SchoolYearModel;
 use App\Models\CourseModel; 
 use App\Models\ClassModel;
 use App\Models\FacultyModel;
+use App\Models\AdminModel;
+use App\Models\StudentModel;
 use App\Models\AnnouncementModel;
 use App\Models\CurriculumModel;
 
@@ -35,7 +37,7 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $model = new LoginModel();
+        $model = new UserModel();
         $data['users'] = $model->findAll();
 
         return view('templates/admin/admin_header')
@@ -44,47 +46,88 @@ class AdminController extends BaseController
     }
 
     // Create New User
+    
     public function createUser()
     {
+        // ALLOW ONLY admin or superadmin
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
             return redirect()->to('auth/login');
         }
 
-        $model = new LoginModel();
+        // LOAD MODELS
+        $userModel = new UserModel();
+        $studentModel = new StudentModel();
+        $facultyModel = new FacultyModel();
+        $adminModel = new AdminModel();
 
+        // GET POST INPUTS
         $username = $this->request->getPost('username');
-        $fname = $this->request->getPost('fname');
-        $mname = $this->request->getPost('mname');
-        $lname = $this->request->getPost('lname');
-        $email = $this->request->getPost('email');
-        $role = $this->request->getPost('role');
+        $email    = $this->request->getPost('email');
+        $role     = $this->request->getPost('role');
 
+        // DEFAULT PASSWORD
         $defaultPassword = 'ccis1234';
-        $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
+        $hashedPassword  = password_hash($defaultPassword, PASSWORD_DEFAULT);
 
-        if ($model->where('username', $username)->first()) {
+        // VALIDATE: USERNAME
+        if ($userModel->where('username', $username)->first()) {
             return redirect()->back()->with('error', 'Username already exists.');
         }
 
-        if ($model->where('email', $email)->first()) {
+        // VALIDATE: EMAIL
+        if ($userModel->where('email', $email)->first()) {
             return redirect()->back()->with('error', 'Email already exists.');
         }
 
-        $model->insert([
-            'username' => $username,
-            'email' => $email,
+        // START TRANSACTION
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // INSERT INTO `users` TABLE
+        $userId = $userModel->insert([
+            'username'     => $username,
+            'email'        => $email,
             'userpassword' => $hashedPassword,
-            'role' => $role,
-            'status' => 'inactive',
-            'created_at' => date('Y-m-d H:i:s'),
-            'fname'         => $fname,
-            'mname'         => $mname,
-            'lname'         => $lname,
-            'profile_img'   => 'default.png', // Default profile image
+            'role'         => $role,
+            'status'       => 'inactive',
+            'created_at'   => date('Y-m-d H:i:s'),
         ]);
+
+        // INSERT INTO RELATED TABLES BASED ON ROLE
+        if ($role === 'student') {
+            $studentModel->insert([
+                'student_id' => $username,
+                'user_id'    => $userId // optional: if linked by user ID
+            ]);
+        }
+
+        if ($role === 'faculty') {
+            $facultyModel->insert([
+                'faculty_id' => $username,
+                'user_id'    => $userId  // optional: if linked by user ID
+            ]);
+        }
+
+        if ($role === 'admin') {
+            $adminModel->insert([
+                'admin_id' => $username
+            ]);
+        }
+
+        // COMPLETE TRANSACTION
+        $db->transComplete();
+
+        // CHECK TRANSACTION STATUS
+        if ($db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Failed to create user. Please try again.');
+        }
 
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
+
+
+
+
 
     //Adding Announcement
     public function saveAnnouncement()
@@ -246,10 +289,6 @@ public function createSemester()
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
 }
 
-
-
-
-
 public function updateSemester($id)
 {
     if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -406,7 +445,7 @@ public function updateSemester($id)
     {
         $classModel = new ClassModel();
         $facultyModel = new FacultyModel();
-        $userModel = new LoginModel();
+        $userModel = new UserModel();
         $courseModel = new CourseModel();
         $semesterModel = new SemesterModel();
 

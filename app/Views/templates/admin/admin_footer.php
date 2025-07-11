@@ -60,13 +60,32 @@
             <!-- DETAILS -->
             <div class="col-md-8">
               <p><strong>Email:</strong> <?= esc(session('email')) ?></p>
-              <p><strong>Full Name:</strong> <?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></p>
-              <p><strong>Sex:</strong> <?= esc(session('sex')) ?></p>
-              <p><strong>Birthday:</strong> <?= esc(session('birthday')) ?></p>
-              <p><strong>Address:</strong> <?= esc(session('address')) ?></p>
-              <p><strong>Contact Number:</strong> <?= esc(session('contact_number')) ?></p>
+
+              <?php if (session('role') === 'student'): ?>
+                <p><strong>Full Name:</strong> <?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></p>
+                <p><strong>Sex:</strong> <?= esc(session('sex')) ?></p>
+                <p><strong>Birthday:</strong> <?= esc(session('birthday')) ?></p>
+                <p><strong>Address:</strong> <?= esc(session('address')) ?></p>
+                <p><strong>Contact Number:</strong> <?= esc(session('contact_number')) ?></p>
+
+              <?php elseif (session('role') === 'faculty'): ?>
+                <p><strong>Faculty Name:</strong> <?= esc(session('faculty_fname')) ?> <?= esc(session('faculty_mname')) ?> <?= esc(session('faculty_lname')) ?></p>
+                <p><strong>Sex:</strong> <?= esc(session('faculty_sex')) ?></p>
+                <p><strong>Birthday:</strong> <?= esc(session('faculty_birthdate')) ?></p>
+                <p><strong>Address:</strong> <?= esc(session('faculty_address')) ?></p>
+                <p><strong>Contact Number:</strong> <?= esc(session('faculty_contactnum')) ?></p>
+
+              <?php elseif (session('role') === 'admin'): ?>
+                <p><strong>Admin Name:</strong> <?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></p>
+                <p><strong>Sex:</strong> <?= esc(session('sex')) ?></p>
+                <p><strong>Birthday:</strong> <?= esc(session('birthday')) ?></p>
+                <p><strong>Address:</strong> <?= esc(session('address')) ?></p>
+                <p><strong>Contact Number:</strong> <?= esc(session('contact_number')) ?></p>
+              <?php endif; ?>
+
               <p><strong>Last Login:</strong> <?= esc(session('last_login')) ?></p>
             </div>
+
           </div>
         </div>
 
@@ -121,6 +140,33 @@
                 <label class="form-label">Last Name</label>
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
+
+              <?php if (session('role') === 'student'): ?>
+              <div class="col-md-6">
+                  <label for="program_id" class="form-label">Program:</label>
+                  <select name="program_id" id="program_id" class="form-select">
+                      <option value="">Select program</option>
+                      <?php foreach ($programs as $program): ?>
+                          <option value="<?= $program['program_id'] ?>" 
+                              <?= ($student['program_id'] ?? '') == $program['program_id'] ? 'selected' : '' ?>>
+                              <?= $program['program_name'] ?>
+                          </option>
+                      <?php endforeach; ?>
+                  </select>
+              </div>
+
+              <div class="col-md-6">
+                  <label for="year_level" class="form-label">Year Level:</label>
+                  <select name="year_level" id="year_level" class="form-select">
+                      <option value="">Select year level</option>
+                      <option value="1" <?= ($student['year_level'] ?? '') == 1 ? 'selected' : '' ?>>1st Year</option>
+                      <option value="2" <?= ($student['year_level'] ?? '') == 2 ? 'selected' : '' ?>>2nd Year</option>
+                      <option value="3" <?= ($student['year_level'] ?? '') == 3 ? 'selected' : '' ?>>3rd Year</option>
+                      <option value="4" <?= ($student['year_level'] ?? '') == 4 ? 'selected' : '' ?>>4th Year</option>
+                  </select>
+              </div>
+          <?php endif; ?>
+
 
               <!-- Email -->
               <div class="col-md-6">

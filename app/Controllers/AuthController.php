@@ -3,7 +3,7 @@
 
 namespace App\Controllers;
 
-use App\Models\LoginModel;
+use App\Models\UserModel;
 
 class AuthController extends BaseController
 {
@@ -26,7 +26,7 @@ class AuthController extends BaseController
     {
         $session = session();
         $request = \Config\Services::request();
-        $model = new LoginModel();
+        $model = new UserModel();
 
         $username = $request->getPost('username');
         $password = $request->getPost('password');
@@ -59,14 +59,6 @@ class AuthController extends BaseController
                 'username'       => $user['username'],
                 'email'          => $user['email'],
                 'role'           => $user['role'],
-                'fname'          => $user['fname'],
-                'mname'          => $user['mname'],
-                'lname'          => $user['lname'],
-                'sex'            => $user['sex'],
-                'profile_img'    => $user['profile_img'],
-                'birthday'       => $user['birthday'],
-                'address'        => $user['address'],
-                'contact_number' => $user['contact_number'],
                 'last_login'     => date('Y-m-d H:i:s'), // updated login time
             ]);
 
@@ -91,7 +83,7 @@ class AuthController extends BaseController
     public function home()
     {
         $session = session();
-        $model = new LoginModel();
+        $model = new UserModel();   
 
         if (!$session->get('isLoggedIn')) {
             return redirect()->to('auth/login');
@@ -112,7 +104,7 @@ class AuthController extends BaseController
     public function logout()
     {
         $userId = session()->get('user_id');
-        $model = new LoginModel();
+        $model = new UserModel();
 
         if ($userId) {
             // 📴 Set user status to inactive

@@ -6,7 +6,8 @@ use CodeIgniter\Model;
 
 class StudentModel extends Model
 {
-    protected $table = 'users';
-    protected $primaryKey = 'user_id';
-    protected $allowedFields = ['user_id', 'role'];
+    protected $table = 'students';
+    protected $primaryKey = 'student_id';
+    protected $allowedFields = ['user_id', 'program_id', 'year_level'];
+
 }

@@ -1,8 +1,7 @@
-    <div class="container-fluid vh-100 row">
-        <div class="row flex-grow-1 px-0">
+        <div class="row px-0 w-100 justify-content-center">
             <!-- LEFT: LOGIN FORM -->
-            <div class="col-md-6 d-flex align-items-center justify-content-center bg-white">
-                <div class="card shadow p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+                <div class="card shadow p-4" style="width: 100%; border-radius: 15px;">
                     <img src="<?= base_url('rsc/assets/cs-logo.png'); ?>" alt="" class="mb-3 mx-auto login-img">
                     
                     <h3 class="mb-3 text-center">Forgot Password</h3>
@@ -46,14 +45,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT: WELCOME & IMAGE -->
-            <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-gradient" style="background: linear-gradient(to bottom right, #e0f7fa, #b2ebf2);">
-            <div class="text-center px-4">
-                <h2 class="fw-bold">Welcome to AdaL</h2>
-                <p class="text-muted mb-5">Unlock a smarter experience with AdaL, your dedicated intelligent partner for seamless productivity.</p>
-                <img src="<?= base_url('rsc/assets/mascot.png'); ?>" alt="Mascot" class="img-fluid" style="max-width: 300px;">
-            </div>
-            </div>
         </div>
     </div>
 </div>

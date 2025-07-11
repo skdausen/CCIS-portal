@@ -6,7 +6,10 @@ use CodeIgniter\Model;
 
 class FacultyModel extends Model
 {
-    protected $table = 'users';
-    protected $primaryKey = 'user_id';
-    protected $allowedFields = ['user_id', 'role'];
+    protected $table            = 'faculty';
+    protected $primaryKey       = 'ftb_id';
+    protected $useAutoIncrement = true; // only if ftb_id is auto-increment
+    protected $returnType       = 'array'; // you can use 'object' too
+    protected $allowedFields    = ['faculty_id', 'user_id'];
 }
+

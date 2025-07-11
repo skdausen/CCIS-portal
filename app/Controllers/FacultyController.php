@@ -6,6 +6,8 @@ namespace App\Controllers;
 use App\Models\AnnouncementModel;
 use App\Models\ClassModel;
 use App\Models\SemesterModel;
+use App\Models\StudentModel;
+use App\Models\UserModel;
 
 class FacultyController extends BaseController
 {
@@ -19,8 +21,8 @@ class FacultyController extends BaseController
         $announcementModel = new AnnouncementModel();
         $announcements = $announcementModel->getAllWithUsernames();
 
-        $classModel = new \App\Models\ClassModel();
-        $semesterModel = new \App\Models\SemesterModel();
+        $classModel = new ClassModel();
+        $semesterModel = new SemesterModel();
 
         $activeSemester = $semesterModel->where('is_active', 1)->first();
 
@@ -125,6 +127,7 @@ class FacultyController extends BaseController
     public function viewClass($classId)
     {
         $classModel = new ClassModel();
+        $studentModel = new StudentModel();
 
         $class = $classModel
             ->select('class.*, course.course_code, course.course_description, s.semester, sy.schoolyear')
@@ -137,10 +140,35 @@ class FacultyController extends BaseController
         if (!$class) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Class not found.');
         }
+        // Get students enrolled in this class
+        $students = $studentModel->getStudentsByClass($classId);
+        if (!$students) {
+            $students = []; // Ensure $students is always an array
+        }
+        // If you want to handle the case where no students are enrolled, you can add a message or handle it accordingly    
 
         return view('templates/faculty/faculty_header')
-            . view('faculty/view_class', ['class' => $class])
+            . view('faculty/view_class', ['class' => $class, 'students' => $students])
             . view('templates/admin/admin_footer');
 
     }
+    public function addStudentToClass()
+    {
+        $classId = $this->request->getPost('class_id');
+        $username = $this->request->getPost('username');
+
+        $userModel = new UserModel();
+        $user = $userModel->where('username', $username)->first();
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found.');
+        }
+
+        $studentModel = new StudentModel();
+        $studentModel->addStudentToClass($classId, $user['user_id']);
+
+        return redirect()->back()->with('success', 'Student added successfully.');
+    }
+
+
 }

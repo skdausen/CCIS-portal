@@ -26,7 +26,7 @@
 
     <!-- USERS TABLE -->
     <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="usersTable">
+        <table class="table table-bordered table-hover custom-padding" id="usersTable">
             <thead class="table-light">
                 <tr>
                     <th>User ID</th>
@@ -135,7 +135,7 @@
 
             <!-- USER DETAILS -->
             <div class="col-md-8">
-                <table class="table table-sm custom-padding">
+                <table class="table table-sm table-hover custom-padding">
                 <tbody>
                     <tr>
                     <th>User ID</th>

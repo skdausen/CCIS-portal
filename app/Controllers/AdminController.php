@@ -460,7 +460,7 @@ public function view_classes()
 {
     $classModel = new ClassModel();
     $facultyModel = new FacultyModel();
-    $userModel = new LoginModel();
+    $userModel = new UserModel();
     $courseModel = new SubjectModel();
     $semesterModel = new SemesterModel();
 

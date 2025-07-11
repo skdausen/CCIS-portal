@@ -15,6 +15,13 @@
                 <?php if (session()->getFlashdata('error')): ?>
                 <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
                 <?php endif; ?>
+                
+                <?php if (session()->getFlashdata('success')) : ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?= session()->getFlashdata('success') ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
 
                 <form action="<?= site_url('auth/login') ?>" method="post" onsubmit="showSpinner()">
                 <?= csrf_field() ?>
@@ -52,5 +59,3 @@
         </div>
     </div>
 </div>
-
-

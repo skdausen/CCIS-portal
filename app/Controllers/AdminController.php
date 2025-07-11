@@ -191,34 +191,33 @@ class AdminController extends BaseController
     // Academics Main Page
    // App\Controllers\AdminController.php
 
-    public function index()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-
-        $schoolYearModel = new SchoolYearModel();
-        $semesterModel = new SemesterModel();
-        $courseModel = new SubjectModel();
-        $classModel = new ClassModel();
-        $facultyModel = new FacultyModel();
-
-        // Get counts
-        $data = [
-            'title' => 'Academics',
-            'schoolYearsCount' => $schoolYearModel->countAllResults(),
-            'semestersCount' => $semesterModel->countAllResults(),
-            'coursesCount' => $courseModel->countAllResults(),
-            'classesCount' => $classModel->countAllResults(),
-            'facultyCount' => $facultyModel->countAllResults(),
-            // Get 5 most recent courses
-            'recentCourses' => $courseModel->orderBy('course_id', 'DESC')->findAll(5),
-        ];
-
-        return view('templates/admin/admin_header', $data)
-            . view('admin/academics', $data)
-            . view('templates/admin/admin_footer');
+public function index()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
+
+    $schoolYearModel = new SchoolYearModel();
+    $semesterModel = new SemesterModel();
+    $subjectModel = new SubjectModel();
+    $classModel = new ClassModel();
+    $facultyModel = new FacultyModel();
+
+    $data = [
+        'title' => 'Academics',
+        'schoolYearsCount' => $schoolYearModel->countAllResults(),
+        'semestersCount' => $semesterModel->countAllResults(),
+        'subjectsCount' => $subjectModel->countAllResults(), // This is now subjects count
+        'classesCount' => $classModel->countAllResults(),
+        'facultyCount' => $facultyModel->countAllResults(),
+        'recentSubjects' => $subjectModel->orderBy('subject_id', 'DESC')->findAll(5), // Corrected variable name
+    ];
+
+    return view('templates/admin/admin_header', $data)
+        . view('admin/academics', $data)
+        . view('templates/admin/admin_footer');
+}
+
 
         // Semesters List
         // SEMESTERS LIST

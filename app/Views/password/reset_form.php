@@ -23,6 +23,18 @@
                             <input type="password" name="password" class="form-control" placeholder="New password" required>
                         </div>
 
+                        <div class="mb-3">
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Re-type New Password" required>
+                        </div>
+
+                        <div class="alert alert-danger d-none" id="passwordMismatch" role="alert">
+                            Passwords do not match
+                        </div>
+
+                        <div class="alert alert-danger d-none" id="passwordTooShort" role="alert">
+                            Password must be at least 8 characters long
+                        </div>
+
                         <button type="submit" class="btn btn-teal w-100">
                             <span class="spinner-border spinner-border-sm d-none" id="spinner" role="status"></span>
                             <span id="btnText">Reset Password</span>
@@ -47,3 +59,27 @@
         </div>
     </div>
 </div>
+
+<!-- confirm password -->
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.querySelector('input[name="password"]').value;
+    const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+
+    const alertMismatch = document.getElementById('passwordMismatch');
+    const alertShort = document.getElementById('passwordTooShort');
+
+    // Hide both alerts at the start
+    alertMismatch.classList.add('d-none');
+    alertShort.classList.add('d-none');
+
+    // Validation checks
+    if (password.length < 8) {
+        e.preventDefault();
+        alertShort.classList.remove('d-none');
+    } else if (password !== confirmPassword) {
+        e.preventDefault();
+        alertMismatch.classList.remove('d-none');
+    }
+});
+</script>

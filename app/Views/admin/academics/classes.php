@@ -24,9 +24,10 @@
 </div>
 
        <!-- FILTERS & SEARCH -->
+<!-- FILTERS & SEARCH -->
 <div class="row mb-3">
-    <!-- Instructor Filter -->
     <div class="col-md-3 mb-2 d-flex">
+        <!-- Instructor Filter -->
         <select id="instructorFilter" class="form-select">
             <option value="">Filter by Instructor</option>
             <?php foreach ($instructors as $facultyId => $instructorName): ?>
@@ -38,32 +39,22 @@
         <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
     </div>
 
-    <!-- Search -->
-    <div class="col-md-5 mb-2">
-        <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+    <div class="col-md-3 mb-2">
+        <!-- Semester Filter -->
+        <select id="semesterFilter" class="form-select">
+            <option value="">Filter by Semester</option>
+            <?php foreach ($semesters as $semester): ?>
+                <option value="<?= esc($semester['semester_id']) ?>"
+                    <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
+                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
     </div>
 
-    <!-- Semester Filter -->
     <div class="col-md-4 mb-2">
-      <select id="semesterFilter" class="form-select">
-    <option value="">Filter by Semester</option>
-    <?php foreach ($semesters as $semester): ?>
-        <option value="<?= esc($semester['semester_id']) ?>"
-            <?php
-                //  If a semester_id is in GET, select it
-                if (isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id']) {
-                    echo 'selected';
-                }
-                // Else, if no GET but this is the active semester, select it
-                elseif (!isset($_GET['semester_id']) && isset($activeSemester['semester_id']) && $activeSemester['semester_id'] == $semester['semester_id']) {
-                    echo 'selected';
-                }
-            ?>>
-            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
-        </option>
-    <?php endforeach; ?>
-</select>
-
+        <!-- Search Input -->
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
     </div>
 </div>
 

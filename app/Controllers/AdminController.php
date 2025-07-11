@@ -336,9 +336,11 @@ public function updateSemester($id)
     }
 
     // Create a new course (unchanged)
-    public function createCourse()
-    {
-        $courseModel = new CourseModel();
+   public function createCourse()
+{
+    $courseModel = new CourseModel();
+
+    try {
         $courseModel->insert([
             'course_code' => $this->request->getPost('course_code'),
             'course_description' => $this->request->getPost('course_description'),
@@ -347,7 +349,16 @@ public function updateSemester($id)
         ]);
 
         return redirect()->to('admin/academics/courses')->with('success', 'Course added successfully.');
+    } catch (\Exception $e) {
+        if (strpos($e->getMessage(), 'Duplicate') !== false || $e->getCode() == 1062) {
+            // MySQL duplicate entry error
+            return redirect()->to('admin/academics/courses')->with('error', 'Duplicate entry: Course code already exists.');
+        }
+
+        return redirect()->to('admin/academics/courses')->with('error', 'An unexpected error occurred.');
     }
+}
+
 
     // Show edit form
     public function editCourse($id)

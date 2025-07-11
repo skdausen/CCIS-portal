@@ -39,7 +39,6 @@
                     <th>User ID</th>
                     <th>Role</th>
                     <th>Username</th>
-                    <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -52,7 +51,6 @@
                             <td><?= esc($user['user_id']) ?></td>
                             <td><?= esc($user['role']) ?></td>
                             <td><?= esc($user['username']) ?></td>
-                            <td><?= esc($user['lname']) . ', ' . esc($user['fname']) . ' ' . esc($user['mname']) ?></td>
                             <td><?= esc($user['email']) ?></td>
                             <td>
                                 <?php if ($user['status'] === 'active'): ?>

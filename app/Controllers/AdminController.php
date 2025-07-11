@@ -257,47 +257,46 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $semester = $this->request->getPost('semester');
-        $schoolyearText = $this->request->getPost('schoolyear');
+        $semester = $this->request->getPost('semester'); // e.g., "1st"
+        $schoolyearText = $this->request->getPost('schoolyear'); // e.g., "2025-2026"
         $status = $this->request->getPost('status'); // "1" or "0"
+        $isActive = $status == '1' ? 1 : 0;
 
-        if (!$semester || !$schoolyearText || $status === null) {
-            return redirect()->back()->with('error', 'Please fill all fields.');
-        }
+        $schoolYearModel = new \App\Models\SchoolYearModel();
+        $semesterModel = new \App\Models\SemesterModel();
 
-        $isActive = ($status == '1') ? 1 : 0;
-
-        $schoolYearModel = new SchoolYearModel();
         $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
         $schoolyearId = $existingSchoolYear
             ? $existingSchoolYear['schoolyear_id']
             : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
 
-        $semesterModel = new SemesterModel();
+        // Debug schoolyearId
+        // dd($schoolyearId);
 
-        // Check for duplicate semester-schoolyear
         $duplicate = $semesterModel
             ->where('semester', $semester)
             ->where('schoolyear_id', $schoolyearId)
             ->first();
 
         if ($duplicate) {
-            return redirect()->back()->with('error', 'Semester and school year combination already exists.');
+            return redirect()->back()->with('error', 'That semester + school year already exists.');
         }
 
-        // Deactivate others if new semester is active
-        if ($isActive === 1) {
+        if ($isActive) {
             $semesterModel->where('is_active', 1)->set('is_active', 0)->update();
         }
 
-        // Save new semester
-        $semesterModel->insert([
+        $result = $semesterModel->insert([
             'semester' => $semester,
             'schoolyear_id' => $schoolyearId,
             'is_active' => $isActive
         ]);
 
-        return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
+        if (!$result) {
+            dd('Insert failed', $semesterModel->errors());
+        }
+
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester added!');
     }
 
     // UPDATE SEMESTER

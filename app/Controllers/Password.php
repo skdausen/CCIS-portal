@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\LoginModel;
+use App\Models\UserModel;
 
 class Password extends BaseController
 {
@@ -20,7 +21,7 @@ class Password extends BaseController
 
         $email = $this->request->getPost('email');
 
-        $userModel = new LoginModel();
+        $userModel = new UserModel();
         $user = $userModel->getByEmail($email);
 
         // Check if email exists in the database
@@ -53,7 +54,7 @@ class Password extends BaseController
         $email = $this->request->getPost('email');
         $otp = $this->request->getPost('otp');
 
-        $userModel = new LoginModel();
+        $userModel = new UserModel();
         if ($userModel->verifyOTP($email, $otp)) {
             $userModel->markVerified($email);
             return redirect()->to('/password/reset?email=' . urlencode($email));
@@ -78,7 +79,7 @@ class Password extends BaseController
         $email = $this->request->getPost('email');
         $password = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
 
-        $userModel = new LoginModel();
+        $userModel = new UserModel();
         $userModel->updatePassword($email, $password);
 
         return redirect()->to('auth/login')->with('message', 'Password changed successfully!');

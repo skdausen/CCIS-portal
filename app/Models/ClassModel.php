@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class ClassModel extends Model
 {
-    protected $table = 'class';
+    protected $table = 'classes';
     protected $primaryKey = 'class_id';
     protected $allowedFields = [
     'user_id',
@@ -32,8 +32,8 @@ class ClassModel extends Model
                 course.course_description, 
                 semesters.semester, 
                 semesters.schoolyear')
-            ->join('course', 'course.course_id = class.course_id')
-            ->join('semesters', 'semesters.semester_id = class.semester_id')
+            ->join('course', 'course.course_id = classes.course_id')
+            ->join('semesters', 'semesters.semester_id = classes.semester_id')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
             ->findAll();
     }
@@ -41,28 +41,28 @@ class ClassModel extends Model
     public function getFacultyClasses($facultyId, $semesterId)
     {
         return $this->select('
-                class.*, 
+                classes.*, 
                 course.course_code,
                 course.course_description, 
                 semesters.semester, 
                 schoolyears.schoolyear
             ')
             ->join('course', 'course.course_id = class.course_id')
-            ->join('semesters', 'semesters.semester_id = class.semester_id')
+            ->join('semesters', 'semesters.semester_id = classes.semester_id')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
-            ->where('class.user_id', $facultyId)
-            ->where('class.semester_id', $semesterId)
+            ->where('classes.user_id', $facultyId)
+            ->where('classes.semester_id', $semesterId)
             ->findAll();
     }
 
     public function getFacultyScheduleByDay($facultyId, $semesterId)
     {
-        return $this->select('class.*, course.course_code, course.course_description')
-            ->join('course', 'course.course_id = class.course_id')
-            ->where('class.faculty_id', $facultyId)
-            ->where('class.semester_id', $semesterId)
-            ->orderBy('FIELD(class.class_day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")')
-            ->orderBy('class.class_start')
+        return $this->select('classes.*, course.course_code, course.course_description')
+            ->join('course', 'course.course_id = classes.course_id')
+            ->where('classes.faculty_id', $facultyId)
+            ->where('classes.semester_id', $semesterId)
+            ->orderBy('FIELD(classes.class_day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")')
+            ->orderBy('classes.class_start')
             ->findAll();
     }
 

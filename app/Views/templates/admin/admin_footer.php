@@ -34,6 +34,23 @@
   </div>
   <?php endif; ?>
 
+  <?php if (session()->getFlashdata('error')): ?>
+  <!-- Error Modal -->
+  <div class="modal fade" id="errorModal" tabindex="-1" data-error-message="<?= esc(session()->getFlashdata('error')) ?>">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Error</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                  <p id="errorMessage"></p>
+              </div>
+          </div>
+      </div>
+  </div>
+  <?php endif; ?>
+
   <!-- PROFILE MODAL -->
   <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -75,7 +92,7 @@
                   </tr>
                   <tr>
                     <th>Birthday</th>
-                    <td><?= esc(session('birthday')) ?></td>
+                    <td><?= esc(session('birthdate')) ?></td>
                   </tr>
                   <tr>
                     <th>Address</th>
@@ -251,6 +268,9 @@
 
   <!-- Success Modal JS -->
   <script src="<?= base_url('rsc/custom_js/successModal.js') ?>"></script>
+
+  <!-- Error Modal JS -->
+  <script src="<?= base_url('rsc/custom_js/errorModal.js') ?>"></script>
 
 </body>
 </html>

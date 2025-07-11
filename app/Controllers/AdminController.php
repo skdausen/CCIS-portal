@@ -201,7 +201,6 @@ class AdminController extends BaseController
         ACADEMICS PAGE
      ***********************************************/
 
-    // Display the Academics page with counts and recent courses
     public function index()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -210,26 +209,25 @@ class AdminController extends BaseController
 
         $schoolYearModel = new SchoolYearModel();
         $semesterModel = new SemesterModel();
-        $courseModel = new SubjectModel();
+        $subjectModel = new SubjectModel();
         $classModel = new ClassModel();
         $facultyModel = new FacultyModel();
 
-        // Get counts
         $data = [
             'title' => 'Academics',
             'schoolYearsCount' => $schoolYearModel->countAllResults(),
             'semestersCount' => $semesterModel->countAllResults(),
-            'coursesCount' => $courseModel->countAllResults(),
+            'subjectsCount' => $subjectModel->countAllResults(), // This is now subjects count
             'classesCount' => $classModel->countAllResults(),
             'facultyCount' => $facultyModel->countAllResults(),
-            // Get 5 most recent courses
-            'recentCourses' => $courseModel->orderBy('course_id', 'DESC')->findAll(5),
+            'recentSubjects' => $subjectModel->orderBy('subject_id', 'DESC')->findAll(5), // Corrected variable name
         ];
 
         return view('templates/admin/admin_header', $data)
             . view('admin/academics', $data)
             . view('templates/admin/admin_footer');
     }
+
 
     /********************************************** 
         SEMESTERS MANAGEMENT
@@ -336,7 +334,7 @@ class AdminController extends BaseController
             return redirect()->back()->with('error', 'Semester and school year combination already exists.');
         }
 
-        // ✔️ Prevent multiple active semesters
+        // Prevent multiple active semesters
         if ($isActive === 1) {
             $activeSemester = $semesterModel
                 ->where('is_active', 1)

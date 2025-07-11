@@ -416,8 +416,7 @@ public function deleteSubject($subject_id)
 
 
 
-
-    // Other academics views
+//CLASSES
 public function view_classes()
 {
     $classModel = new ClassModel();
@@ -489,7 +488,7 @@ public function view_classes()
 
 
 
-
+//CREATE CLASS
     public function createClass()
     {
         $classModel = new ClassModel();
@@ -509,6 +508,8 @@ public function view_classes()
         return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
     }
 
+
+//UPDATE CLASS
     public function updateClass($class_id)
     {
         $classModel = new ClassModel();
@@ -530,6 +531,8 @@ public function view_classes()
         return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
     }
 
+
+//DELETE CLASS
     public function deleteClass($class_id)
     {
         $classModel = new ClassModel();
@@ -538,6 +541,8 @@ public function view_classes()
         return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
 
     }
+
+
 
 
 //CURRICULUM

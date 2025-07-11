@@ -53,7 +53,7 @@ class ProfileController extends BaseController
             'sex'         => $data['sex'],
             'address'     => $data['address'],
             'contactnum'  => $data['contact_number'],
-            'profimg'     => $data['profile_img'] ?? session('profile_img'),
+            'profimg'     => $data['profimg'] ?? session('profimg'),
         ];
 
         // Remove null/empty values

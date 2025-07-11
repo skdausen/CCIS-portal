@@ -8,6 +8,17 @@ class StudentModel extends Model
 {
     protected $table = 'students';
     protected $primaryKey = 'student_id';
-    protected $allowedFields = ['user_id', 'program_id', 'year_level'];
-
+        protected $allowedFields    = [
+        'student_id',
+        'user_id',
+        'email',
+        'student_profimg',
+        'student_lname',
+        'student_fname',
+        'student_mname',
+        'student_sex',
+        'student_address',
+        'student_birthdate',
+        'student_contactnum'
+    ];
 }

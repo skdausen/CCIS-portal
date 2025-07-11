@@ -61,7 +61,7 @@ class AdminController extends BaseController
         $adminModel = new AdminModel();
 
         // GET POST INPUTS
-        $username = $this->request->getPost('username');
+        $username = strtoupper($this->request->getPost('username'));
         $email    = $this->request->getPost('email');
         $role     = $this->request->getPost('role');
 

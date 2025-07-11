@@ -4,6 +4,9 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\AdminModel;
+use App\Models\FacultyModel;
+use App\Models\StudentModel;
 
 class AuthController extends BaseController
 {
@@ -22,7 +25,7 @@ class AuthController extends BaseController
     }
 
     // HANDLE LOGIN FORM SUBMISSION
-    public function authenticate()
+    public function authenticate2()
     {
         $session = session();
         $request = \Config\Services::request();
@@ -78,45 +81,121 @@ class AuthController extends BaseController
         return redirect()->to('auth/login')->withInput(); 
     }
 
-
-    // DISPLAY HOME PAGE (PROTECTED)
-    public function home()
+    public function authenticate()
     {
         $session = session();
-        $model = new UserModel();   
+        $request = \Config\Services::request();
 
-        if (!$session->get('isLoggedIn')) {
-            return redirect()->to('auth/login');
+        // Load models
+        $userModel    = new UserModel();
+        $studentModel = new StudentModel();
+        $facultyModel = new FacultyModel();
+        $adminModel   = new AdminModel();
+
+        // Get login form input
+        $username = $request->getPost('username');
+        $password = $request->getPost('password');
+
+        // Find user by username
+        $user = $userModel->where('username', $username)->first();
+
+        // User not found
+        if (!$user) {
+            $session->setFlashdata('error', 'User does not exist.');
+            return redirect()->to('auth/login')->withInput();
         }
 
-        $user = $model->find($session->get('user_id'));
-
-        // If user is not active, redirect
-        if (!$user || $user['status'] !== 'active') {
-            $session->destroy();
-            return redirect()->to('auth/login')->with('error', 'Session expired or unauthorized access.');
+        // If user is already marked as active
+        if ($user['status'] === 'active') {
+            $session->setFlashdata('error', 'User is already logged in elsewhere.');
+            return redirect()->to('auth/login')->withInput();
         }
 
-        return view('home');
+        // Check password
+        if (password_verify($password, $user['userpassword'])) {
+
+            // ✅ Update login timestamp and set status to active
+            $userModel->update($user['user_id'], [
+                'last_login' => date('Y-m-d H:i:s'),
+                'status'     => 'active'
+            ]);
+
+            // Session data from users table
+            $sessionData = [
+                'user_id'     => $user['user_id'],
+                'username'    => $user['username'],
+                'email'       => $user['email'],
+                'role'        => $user['role'],
+                'status'      => 'active', // already updated
+                'created_at'  => $user['created_at'],
+                'last_login'  => date('Y-m-d H:i:s'),
+                'isLoggedIn'  => true
+            ];
+
+            // 🔍 Load extra profile info from role-specific table
+            $details = [];
+            if ($user['role'] === 'student') {
+                $details = $studentModel->where('student_id', $user['username'])->first();
+            } elseif ($user['role'] === 'faculty') {
+                $details = $facultyModel->where('faculty_id', $user['username'])->first();
+            } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
+                $details = $adminModel->where('admin_id', $user['username'])->first();
+            }
+
+            // Merge additional fields into session
+            if (!empty($details)) {
+                $sessionData = array_merge($sessionData, [
+                    'fname'      => $details['fname'] ?? null,
+                    'mname'      => $details['mname'] ?? null,
+                    'lname'      => $details['lname'] ?? null,
+                    'sex'        => $details['sex'] ?? null,
+                    'birthdate'  => $details['birthdate'] ?? null,
+                    'address'    => $details['address'] ?? null,
+                    'contactnum' => $details['contactnum'] ?? null,
+                    'profimg'    => $details['profimg'] ?? 'default.png',
+                ]);
+            }
+
+            // 💾 Set session data
+            $session->set($sessionData);
+
+            // Redirect to home/dashboard
+            if ($user['role'] === 'student') {
+                return redirect()->to('admin/home');
+            } elseif ($user['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('student/home');
+            }
+            // return redirect()->to('admin/home');
+        } else {
+            // Wrong password
+            $session->setFlashdata('error', 'Incorrect Password.');
+            return redirect()->to('auth/login')->withInput();
+        }
     }
 
-    // LOGOUT FUNCTION
+    // LOGOUT USER
     public function logout()
     {
-        $userId = session()->get('user_id');
-        $model = new UserModel();
-
+        $session = session();               
+        $userModel = new UserModel();   
+        $userId = $session->get('user_id');
         if ($userId) {
-            // 📴 Set user status to inactive
-            $model->update($userId, ['status' => 'inactive']);
-        }
-
+            // Update user status to inactive
+            $userModel->update($userId, [
+                'status' => 'inactive'
+            ]);
+        }   
         // Destroy session
-        session()->destroy();
+        $session->destroy();    
 
-        // Redirect to login
-        return redirect()->to('auth/login');
-    }
+        // Redirect to login page                   
+
+        return redirect()->to('auth/login')->with('success', 'You have been logged out successfully.');     
+
+    }           
+}    
 
 
-}
+

@@ -28,15 +28,15 @@ class ProfileController extends BaseController
             'sex'             => $this->request->getPost('sex'),
             'birthday'        => $this->request->getPost('birthday'),
             'address'         => $this->request->getPost('address'),
-            'contact_number'  => $this->request->getPost('contact_number'),
+            'contactnum'     => $this->request->getPost('contactnum'),
         ];
 
         // Upload profile image if valid
-        $img = $this->request->getFile('profile_img');
+        $img = $this->request->getFile('profimg');
         if ($img && $img->isValid() && !$img->hasMoved()) {
             $newName = $img->getRandomName();
             $img->move('rsc/assets/uploads', $newName);
-            $data['profile_img'] = $newName;
+            $data['profimg'] = $newName;
         }
 
         // ✅ Only update email in users table
@@ -77,7 +77,7 @@ class ProfileController extends BaseController
 
         // Update session with new data
         session()->set(array_merge($data, [
-            'profile_img' => $data['profile_img'] ?? session('profile_img'),
+            'profimg' => $data['profimg'] ?? session('profimg'),
         ]));
 
         return redirect()->back()->with('success', 'Profile updated successfully!');

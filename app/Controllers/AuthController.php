@@ -160,7 +160,14 @@ class AuthController extends BaseController
             $session->set($sessionData);
 
             // Redirect to home/dashboard
-            return redirect()->to('admin/home');
+            if ($user['role'] === 'student') {
+                return redirect()->to('admin/home');
+            } elseif ($user['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('student/home');
+            }
+            // return redirect()->to('admin/home');
         } else {
             // Wrong password
             $session->setFlashdata('error', 'Incorrect Password.');

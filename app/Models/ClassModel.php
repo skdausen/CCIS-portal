@@ -10,7 +10,7 @@ class ClassModel extends Model
     protected $primaryKey = 'class_id';
     protected $allowedFields = [
     'user_id',
-    'course_id',
+    'subject_id',
     'semester_id',
     'class_day',
     'class_start',
@@ -27,8 +27,8 @@ class ClassModel extends Model
     // JOIN courses and semesters to display names instead of IDs
     public function getClassWithDetails()
     {
-        return $this->select('class.*, 
-                course.course_code, 
+        return $this->select('classes .*, 
+                subjects.subject_code, 
                 course.course_description, 
                 semesters.semester, 
                 semesters.schoolyear')

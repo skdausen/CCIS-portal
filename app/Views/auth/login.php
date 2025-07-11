@@ -7,9 +7,9 @@
           <p class="text-muted" style="font-size: 1rem;">Enter your credentials to access your account</p>
         </div>
 
-                <?php if (session()->getFlashdata('error')): ?>
-                <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-                <?php endif; ?>
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+        <?php endif; ?>
                 
                 <?php if (session()->getFlashdata('success')) : ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -18,39 +18,30 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="<?= site_url('auth/login') ?>" method="post" onsubmit="showSpinner()">
-                <?= csrf_field() ?>
-                <div class="mb-3">
-                    <input type="text" name="username" class="form-control" placeholder="Enter Username" required autofocus>
-                </div>
-                <div class="mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Enter Password" required>
-                </div>
-                <div class="d-flex mb-3">
-                    <div class="form-check mb-3 col-md-6">
-                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                        <label class="form-check-label small" for="remember">Remember me</label>
-                    </div>
-                    <div class="text-end col-md-6">
-                            <a href="<?= site_url('password/forgot') ?>" class="small text-muted">Forgot password?</a>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-teal w-100">
-                    <span class="spinner-border spinner-border-sm d-none" id="spinner" role="status"></span>
-                    <span id="btnText">LOGIN</span>
-                </button>
-                </form>
-            </div>
-            </div>
+        <form action="<?= site_url('auth/login') ?>" method="post" onsubmit="showSpinner()">
+          <?= csrf_field() ?>
+          <div class="mb-3">
+            <input type="text" name="username" class="form-control rounded-pill py-2" placeholder="Enter Username" required autofocus>
+          </div>
+          <div class="mb-3">
+            <input type="password" name="password" class="form-control rounded-pill py-2" placeholder="Enter Password" required>
+          </div>
 
-            <!-- RIGHT: WELCOME & IMAGE -->
-            <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-gradient" style="background: linear-gradient(to bottom right, #e0f7fa, #b2ebf2);">
-            <div class="text-center px-4">
-                <h2 class="fw-bold">Welcome to AdaL</h2>
-                <p class="text-muted mb-5">Unlock a smarter experience with AdaL, your dedicated intelligent partner for seamless productivity.</p>
-                <img src="<?= base_url('rsc/assets/mascot.png'); ?>" alt="Mascot" class="img-fluid" style="max-width: 300px;">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="remember" id="remember">
+              <label class="form-check-label" for="remember" style="font-size: 0.9rem;">Remember me</label>
             </div>
-            </div>
-        </div>
+            <a href="<?= site_url('password/forgot') ?>" class="small text-muted">Forgot?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 rounded-pill py-2" style="font-size: 1.05rem;">
+            <span class="spinner-border spinner-border-sm d-none" id="spinner" role="status"></span>
+            <span id="btnText">LOGIN</span>
+          </button>
+        </form>
+      </div>
     </div>
 </div>
+
+

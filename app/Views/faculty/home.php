@@ -5,39 +5,7 @@
 
     <div class="row mt-5">
     <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
-    <div class="col-md-8 px-3">
-        <h4 class="fw-bold mb-4">Your Weekly Schedule</h4>
-            <div class="card shadow-lg mb-5 p-4 bg-white" style="border-radius: 10px;">
-                <?php foreach ($schedule as $day => $classes): ?>
-                    <h5 class="fw-bold mb-3 text-purple"><?= $day ?></h5>
-                    <?php if (empty($classes)): ?>
-                        <p><em>No classes.</em></p>
-                    <?php else: ?>
-                        <table class="table mb-3">
-                            <thead>
-                                <tr>
-                                    <th>Course</th>
-                                    <th>Type</th>
-                                    <th>Time</th>
-                                    <th>Room</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($classes as $class): ?>
-                                    <tr>
-                                        <td><?= esc($class['course_description']) ?></td>
-                                        <td><?= esc($class['class_type']) ?></td>
-                                        <td><?= date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end'])) ?></td>
-                                        <td><?= esc($class['class_room']) ?></td>
-                                    </tr>
-                                <?php endforeach ?>
-                            </tbody>
-                        </table>
-                    <?php endif ?>
-                    <br>
-                <?php endforeach ?>
-            </div>
-    </div>
+
     <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
     <div class="col-md-4 px-3">
         <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>

@@ -24,73 +24,11 @@ class FacultyController extends BaseController
         $classModel = new ClassModel();
         $semesterModel = new SemesterModel();
 
-        $activeSemester = $semesterModel->where('is_active', 1)->first();
-
-        // Get faculty classes
-        $facultyId = session()->get('user_id');
-        $classes = $classModel
-            ->select('class.*, course.course_description')
-            ->join('course', 'course.course_id = class.course_id')
-            ->where('class.user_id', $facultyId)
-            ->where('class.semester_id', $activeSemester['semester_id'])
-            ->findAll();
-
-        // Step 1: Map day codes to full names
-        $dayMap = [
-            'M' => 'Monday',
-            'T' => 'Tuesday',
-            'W' => 'Wednesday',
-            'Th' => 'Thursday',
-            'F' => 'Friday',
-            'S' => 'Saturday',
-        ];
-
-        // Step 2: Prepare schedule array
-        $schedule = [
-            'Monday' => [],
-            'Tuesday' => [],
-            'Wednesday' => [],
-            'Thursday' => [],
-            'Friday' => [],
-            'Saturday' => [],
-        ];
-
-        foreach ($classes as $class) {
-            $classDays = strtoupper($class['class_day']);
-
-            // Step 3: Handle day combinations like "MWF", "TTh"
-            $days = [];
-            $i = 0;
-            while ($i < strlen($classDays)) {
-                if ($classDays[$i] === 'T' && isset($classDays[$i+1]) && $classDays[$i+1] === 'H') {
-                    $days[] = 'Th';
-                    $i += 2;
-                } else {
-                    $days[] = $classDays[$i];
-                    $i++;
-                }
-            }
-
-            // Step 4: Map to schedule
-            foreach ($days as $dayCode) {
-                $dayName = $dayMap[$dayCode] ?? null;
-                if ($dayName) {
-                    $schedule[$dayName][] = $class;
-                }
-            }
-        }
-
-        // Step 5: Sort classes in each day by start time
-        foreach ($schedule as $day => &$dayClasses) {
-            usort($dayClasses, function ($a, $b) {
-                return strtotime($a['class_start']) <=> strtotime($b['class_start']);
-            });
-        }
-
         return view('templates/faculty/faculty_header')
             . view('faculty/home', [
                 'announcements' => $announcements,
-                'schedule' => $schedule,])
+                // 'schedule' => $schedule,
+                ])
             . view('templates/admin/admin_footer');
     }
 
@@ -130,11 +68,11 @@ class FacultyController extends BaseController
         $studentModel = new StudentModel();
 
         $class = $classModel
-            ->select('class.*, course.course_code, course.course_description, s.semester, sy.schoolyear')
-            ->join('course', 'course.course_id = class.course_id')
-            ->join('semesters s', 's.semester_id = class.semester_id')
+            ->select('classes.*, course.course_code, course.course_description, s.semester, sy.schoolyear')
+            ->join('course', 'course.course_id = classes.course_id')
+            ->join('semesters s', 's.semester_id = classes.semester_id')
             ->join('schoolyears sy', 'sy.schoolyear_id = s.schoolyear_id')
-            ->where('class.class_id', $classId)
+            ->where('classes.class_id', $classId)
             ->first();
 
         if (!$class) {

@@ -118,7 +118,8 @@ class AdminController extends BaseController
 
         if ($role === 'admin') {
             $adminModel->insert([
-                'admin_id' => $username
+                'admin_id' => $username,
+                'user_id'    => $userId // optional: if linked by user ID
             ]);
         }
 

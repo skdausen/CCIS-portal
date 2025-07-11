@@ -459,52 +459,50 @@ public function view_classes()
 {
     $classModel = new ClassModel();
     $facultyModel = new FacultyModel();
-    $userModel = new UserModel();
-    $courseModel = new SubjectModel();
+    $subjectModel = new SubjectModel();
     $semesterModel = new SemesterModel();
 
     $activeSemester = $semesterModel->getActiveSemester();
 
-    // ✅ Get the selected semester_id from query string
+    // Get selected semester from query string
     $selectedSemesterId = $this->request->getGet('semester_id');
 
-    // ✅ Decide what semester to show
+    // Determine which semester to show
     if (!empty($selectedSemesterId)) {
         $semesterToShow = $selectedSemesterId;
     } elseif (!empty($activeSemester)) {
         $semesterToShow = $activeSemester['semester_id'];
     } else {
-        $semesterToShow = null; // No semester to show
+        $semesterToShow = null;
     }
 
-    // ✅ Start the query
+    // Build the query for classes with joined data
     $builder = $classModel
-        ->select('class.*, 
-                  course.course_code, course.course_description, 
+        ->select('classes.*, 
+                  subjects.subject_code, subjects.subject_name, 
                   semesters.semester, semesters.semester_id, schoolyears.schoolyear,
-                  users.user_id, users.fname, users.lname')
-        ->join('course', 'course.course_id = class.course_id', 'left')
-        ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
+                  faculty.ftb_id, faculty.faculty_fname, faculty.faculty_lname')
+        ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')
+        ->join('semesters', 'semesters.semester_id = classes.semester_id', 'left')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-        ->join('users', 'users.user_id = class.user_id', 'left');
+        ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');
 
-    // ✅ If a semester to show is available, filter by it
+    // Apply semester filter
     if (!empty($semesterToShow)) {
-        $builder->where('class.semester_id', $semesterToShow);
+        $builder->where('classes.semester_id', $semesterToShow);
         $classes = $builder->findAll();
     } else {
-        // ✅ If no semester is available, return an empty array
         $classes = [];
     }
 
-    // Instructors list
+    // Get instructors from faculty table
     $instructors = [];
-    $facultyUsers = $userModel->where('role', 'faculty')->findAll();
-    foreach ($facultyUsers as $user) {
-        $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
+    $facultyList = $facultyModel->findAll();
+    foreach ($facultyList as $faculty) {
+        $instructors[$faculty['ftb_id']] = $faculty['faculty_fname'] . ' ' . $faculty['faculty_lname'];
     }
 
-    // All semesters for the dropdown
+    // Get all semesters for the dropdown
     $semesters = $semesterModel
         ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
@@ -517,12 +515,13 @@ public function view_classes()
         . view('admin/academics/classes', [
             'classes' => $classes,
             'instructors' => $instructors,
-            'courses' => $courseModel->findAll(),
+            'courses' => $subjectModel->findAll(), // ✅ This is now your subjects
             'semesters' => $semesters,
             'activeSemester' => $activeSemester,
         ])
         . view('templates/admin/admin_footer');
 }
+
 
 
 

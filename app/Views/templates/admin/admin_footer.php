@@ -65,7 +65,7 @@
             <!-- PHOTO & BASIC INFO -->
             <div class="col-md-4 d-flex justify-content-center mb-3">
               <div class="text-center">
-                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profile_img') ?? 'default.png')) ?>" 
+                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>" 
                     alt="Profile Photo" 
                     class="rounded-circle shadow"
                     style="width: 120px; height: 120px; object-fit: cover;">
@@ -137,13 +137,13 @@
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
               <div class="col-12 text-center">
-                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profile_img') ?? 'default.png')) ?>"
+                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>"
                     alt="Profile Picture"
                     class="rounded-circle shadow"
                     style="width: 120px; height: 120px; object-fit: cover;">
                 <div class="mt-2">
-                  <label for="profile_img" class="form-label small text-muted">Change Photo</label>
-                  <input type="file" name="profile_img" id="profile_img" class="form-control form-control-sm">
+                  <label for="profimg" class="form-label small text-muted">Change Photo</label>
+                  <input type="file" name="profimg" id="profimg" class="form-control form-control-sm">
                 </div>
               </div>
 

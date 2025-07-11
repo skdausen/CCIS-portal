@@ -161,11 +161,11 @@ class AuthController extends BaseController
 
             // Redirect to home/dashboard
             if ($user['role'] === 'student') {
-                return redirect()->to('admin/home');
+                return redirect()->to('student/home');
             } elseif ($user['role'] === 'faculty') {
                 return redirect()->to('faculty/home');
             } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
-                return redirect()->to('student/home');
+                return redirect()->to('admin/home');
             }
             // return redirect()->to('admin/home');
         } else {

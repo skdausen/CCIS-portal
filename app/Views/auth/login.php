@@ -32,7 +32,7 @@
               <input class="form-check-input" type="checkbox" name="remember" id="remember">
               <label class="form-check-label" for="remember" style="font-size: 0.9rem;">Remember me</label>
             </div>
-            <a href="<?= site_url('password/forgot') ?>" class="small text-muted">Forgot?</a>
+            <a href="<?= site_url('password/forgot') ?>" class="small text-muted">Forgot Password?</a>
           </div>
 
           <button type="submit" class="btn btn-primary w-100 rounded-pill py-2" style="font-size: 1.05rem;">

@@ -3,6 +3,9 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\AdminModel;
+use App\Models\FacultyModel;
+use App\Models\StudentModel;
 
 class ProfileController extends BaseController
 {

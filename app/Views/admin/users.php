@@ -39,7 +39,6 @@
                     <th>User ID</th>
                     <th>Role</th>
                     <th>Username</th>
-                    <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -52,7 +51,6 @@
                             <td><?= esc($user['user_id']) ?></td>
                             <td><?= esc($user['role']) ?></td>
                             <td><?= esc($user['username']) ?></td>
-                            <td><?= esc($user['lname']) . ', ' . esc($user['fname']) . ' ' . esc($user['mname']) ?></td>
                             <td><?= esc($user['email']) ?></td>
                             <td>
                                 <?php if ($user['status'] === 'active'): ?>
@@ -104,21 +102,6 @@
                     <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
                     <input type="email" name="email" id="email" class="form-control" placeholder="Enter email address" required>
-                    </div>
-
-                    <div class="mb-3">
-                    <label for="fname" class="form-label">First Name:</label>
-                    <input type="text" name="fname" id="fname" class="form-control" placeholder="e.g. Juan" required>
-                    </div>
-
-                    <div class="mb-3">
-                    <label for="mname" class="form-label">Middle Name:</label>
-                    <input type="text" name="mname" id="mname" class="form-control" placeholder="(Optional)">
-                    </div>
-
-                    <div class="mb-3">
-                    <label for="lname" class="form-label">Last Name:</label>
-                    <input type="text" name="lname" id="lname" class="form-control" placeholder="e.g. Dela Cruz" required>
                     </div>
 
                     <div class="mb-3">

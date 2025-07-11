@@ -388,7 +388,7 @@ public function updateSemester($id)
         $relatedClasses = $classModel->where('course_id', $course_id)->countAllResults();
 
         if ($relatedClasses > 0) {
-            return redirect()->back()->with('error', '❌ Cannot delete. This course has classes assigned to it.');
+            return redirect()->back()->with('error', 'Cannot delete. This course has classes assigned to it.');
         }
 
         // Delete course

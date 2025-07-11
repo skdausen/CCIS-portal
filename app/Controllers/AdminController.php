@@ -5,11 +5,12 @@ namespace App\Controllers;
 use App\Models\LoginModel;
 use App\Models\SemesterModel;
 use App\Models\SchoolYearModel;
-use App\Models\CourseModel; 
+use App\Models\SubjectModel; 
 use App\Models\ClassModel;
 use App\Models\FacultyModel;
 use App\Models\AnnouncementModel;
 use App\Models\CurriculumModel;
+
 
 class AdminController extends BaseController
 {
@@ -155,7 +156,7 @@ class AdminController extends BaseController
 
         $schoolYearModel = new SchoolYearModel();
         $semesterModel = new SemesterModel();
-        $courseModel = new CourseModel();
+        $courseModel = new SubjectModel();
         $classModel = new ClassModel();
         $facultyModel = new FacultyModel();
 
@@ -324,89 +325,96 @@ public function updateSemester($id)
     return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
 }
 
-    // View all courses (unchanged)
-    public function view_courses()
-    {
-        $courseModel = new CourseModel();
-        $data['courses'] = $courseModel->findAll();
-
-        return view('templates/admin/admin_header')
-            . view('admin/academics/courses', $data)
-            . view('templates/admin/admin_footer');
-    }
-
-    // Create a new course (unchanged)
-   public function createCourse()
+   
+//SUBJECTS
+public function view_subjects()
 {
-    $courseModel = new CourseModel();
+    $subjectModel = new SubjectModel();
+    $data['subjects'] = $subjectModel->findAll();
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/subjects', $data)
+        . view('templates/admin/admin_footer');
+}
+
+// Create a new subject
+public function createSubject()
+{
+    $subjectModel = new SubjectModel();
 
     try {
-        $courseModel->insert([
-            'course_code' => $this->request->getPost('course_code'),
-            'course_description' => $this->request->getPost('course_description'),
+        $subjectModel->insert([
+            'subject_code' => $this->request->getPost('subject_code'),
+            'subject_name' => $this->request->getPost('subject_name'),
             'lec_units' => $this->request->getPost('lec_units'),
             'lab_units' => $this->request->getPost('lab_units'),
+            'total_units' => $this->request->getPost('lec_units') + $this->request->getPost('lab_units'),
         ]);
 
-        return redirect()->to('admin/academics/courses')->with('success', 'Course added successfully.');
+        return redirect()->to('admin/academics/subjects')->with('success', 'Subject added successfully.');
     } catch (\Exception $e) {
         if (strpos($e->getMessage(), 'Duplicate') !== false || $e->getCode() == 1062) {
-            // MySQL duplicate entry error
-            return redirect()->to('admin/academics/courses')->with('error', 'Duplicate entry: Course code already exists.');
+            return redirect()->to('admin/academics/subjects')->with('error', 'Duplicate entry: Subject code already exists.');
         }
 
-        return redirect()->to('admin/academics/courses')->with('error', 'An unexpected error occurred.');
+        return redirect()->to('admin/academics/subjects')->with('error', 'An unexpected error occurred.');
     }
 }
 
+// Show edit form
+public function editSubject($id)
+{
+    $subjectModel = new SubjectModel();
+    $subject = $subjectModel->find($id);
 
-    // Show edit form
-    public function editCourse($id)
-    {
-        $courseModel = new CourseModel();
-        $course = $courseModel->find($id);
-
-        if (!$course) {
-            return redirect()->to('admin/academics/courses')->with('error', 'Course not found.');
-        }
-
-        return view('templates/admin/admin_header')
-            . view('admin/academics/edit_course', ['course' => $course])
-            . view('templates/admin/admin_footer');
+    if (!$subject) {
+        return redirect()->to('admin/academics/subjects')->with('error', 'Subject not found.');
     }
 
-    // Update the course
-    public function updateCourse($id)
-    {
-        $courseModel = new CourseModel();
-        $courseModel->update($id, [
-            'course_code' => $this->request->getPost('course_code'),
-            'course_description' => $this->request->getPost('course_description'),
-            'lec_units' => $this->request->getPost('lec_units'),
-            'lab_units' => $this->request->getPost('lab_units'),
-        ]);
+    return view('templates/admin/admin_header')
+        . view('admin/academics/edit_subject', ['subject' => $subject])
+        . view('templates/admin/admin_footer');
+}
 
-        return redirect()->to('admin/academics/courses')->with('success', 'Course updated successfully.');
+// Update the subject
+public function updateSubject($id)
+{
+    $subjectModel = new SubjectModel();
+
+    $lec_units = $this->request->getPost('lec_units');
+    $lab_units = $this->request->getPost('lab_units');
+
+    $subjectModel->update($id, [
+        'subject_code' => $this->request->getPost('subject_code'),
+        'subject_name' => $this->request->getPost('subject_name'),
+        'lec_units' => $lec_units,
+        'lab_units' => $lab_units,
+        'total_units' => $lec_units + $lab_units,
+    ]);
+
+    return redirect()->to('admin/academics/subjects')->with('success', 'Subject updated successfully.');
+}
+
+// Delete a subject
+public function deleteSubject($subject_id)
+{
+    $subjectModel = new SubjectModel();
+    $classModel = new ClassModel();
+
+    // Check if there are related classes first
+    $relatedClasses = $classModel->where('subject_id', $subject_id)->countAllResults();
+
+    if ($relatedClasses > 0) {
+        return redirect()->back()->with('error', 'Cannot delete. This subject has classes assigned to it.');
     }
 
-    // Delete a course
-    public function deleteCourse($course_id)
-    {
-        $courseModel = new CourseModel();
-        $classModel = new ClassModel();
+    // Delete subject
+    $subjectModel->delete($subject_id);
 
-        // Check if there are related classes first
-        $relatedClasses = $classModel->where('course_id', $course_id)->countAllResults();
+    return redirect()->back()->with('success', 'Subject deleted successfully.');
+}
 
-        if ($relatedClasses > 0) {
-            return redirect()->back()->with('error', 'Cannot delete. This course has classes assigned to it.');
-        }
 
-        // Delete course
-        $courseModel->delete($course_id);
-
-        return redirect()->back()->with('success', 'Course deleted successfully.');
-    }
 
 
     // Other academics views
@@ -415,7 +423,7 @@ public function view_classes()
     $classModel = new ClassModel();
     $facultyModel = new FacultyModel();
     $userModel = new LoginModel();
-    $courseModel = new CourseModel();
+    $courseModel = new SubjectModel();
     $semesterModel = new SemesterModel();
 
     $activeSemester = $semesterModel->getActiveSemester();
@@ -593,4 +601,3 @@ public function curriculum_new()
         . view('templates/admin/admin_footer');
 }
 }
-

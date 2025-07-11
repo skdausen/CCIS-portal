@@ -238,7 +238,7 @@ body {
 }
 .custom-padding td,
 .custom-padding th {
-    padding: 0.3rem !important; /* or 0.2rem if you want it tighter */
+    padding: 0.3rem 0.8rem !important; /* or 0.2rem if you want it tighter */
 }
 
 /* Custom styles for the navbar to ensure proper alignment and full width */

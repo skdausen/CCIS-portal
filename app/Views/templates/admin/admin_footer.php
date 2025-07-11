@@ -76,7 +76,7 @@
 
             <!-- DETAILS -->
             <div class="col-md-8">
-              <table class="table table-bordered table-hover">
+              <table class="table table-sm table-hover custom-padding">
                 <tbody>
                   <tr>
                     <th>Email</th>
@@ -114,7 +114,7 @@
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit</button>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit</button>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>

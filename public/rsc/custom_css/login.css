@@ -1,0 +1,31 @@
+body {
+  background-image: url('../assets/bg.jpg'); /* adjust path if needed */
+  background-size: cover;         /* Ensures image covers entire area */
+  background-position: center;    /* Keeps image centered */
+  background-repeat: no-repeat;   /* Prevents tiling */
+  min-height: 100vh;              /* Full height */
+}
+img{
+    width: 80px;                   /* Adjusts logo size */
+    margin-bottom: 20px;           /* Space below the logo */
+}
+.btn-teal {
+  background-color: #26a69a;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  /* transition: background 0.3s; */
+}
+.btn-teal:hover {
+  background-color: #2bbbad;
+}
+
+.btn-teal:disabled {
+    background-color: #26a699b6 !important;
+    border-color: #26a699b6 !important;
+    color: white !important;
+    opacity: 0.8;
+}       
+.spinner-border {
+    display: none;
+}

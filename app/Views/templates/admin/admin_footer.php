@@ -34,6 +34,23 @@
   </div>
   <?php endif; ?>
 
+  <?php if (session()->getFlashdata('error')): ?>
+  <!-- Error Modal -->
+  <div class="modal fade" id="errorModal" tabindex="-1" data-error-message="<?= esc(session()->getFlashdata('error')) ?>">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Error</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                  <p id="errorMessage"></p>
+              </div>
+          </div>
+      </div>
+  </div>
+  <?php endif; ?>
+
   <!-- PROFILE MODAL -->
   <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -48,7 +65,7 @@
             <!-- PHOTO & BASIC INFO -->
             <div class="col-md-4 d-flex justify-content-center mb-3">
               <div class="text-center">
-                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profile_img') ?? 'default.png')) ?>" 
+                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>" 
                     alt="Profile Photo" 
                     class="rounded-circle shadow"
                     style="width: 120px; height: 120px; object-fit: cover;">
@@ -59,14 +76,40 @@
 
             <!-- DETAILS -->
             <div class="col-md-8">
-              <p><strong>Email:</strong> <?= esc(session('email')) ?></p>
-              <p><strong>Full Name:</strong> <?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></p>
-              <p><strong>Sex:</strong> <?= esc(session('sex')) ?></p>
-              <p><strong>Birthday:</strong> <?= esc(session('birthday')) ?></p>
-              <p><strong>Address:</strong> <?= esc(session('address')) ?></p>
-              <p><strong>Contact Number:</strong> <?= esc(session('contact_number')) ?></p>
-              <p><strong>Last Login:</strong> <?= esc(session('last_login')) ?></p>
+              <table class="table table-bordered table-hover">
+                <tbody>
+                  <tr>
+                    <th>Email</th>
+                    <td><?= esc(session('email')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Full Name</th>
+                    <td><?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Sex</th>
+                    <td><?= esc(session('sex')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Birthday</th>
+                    <td><?= esc(session('birthdate')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Address</th>
+                    <td><?= esc(session('address')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Contact Number</th>
+                    <td><?= esc(session('contactnum')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Last Login</th>
+                    <td><?= esc(session('last_login')) ?></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
           </div>
         </div>
 
@@ -94,13 +137,13 @@
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
               <div class="col-12 text-center">
-                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profile_img') ?? 'default.png')) ?>"
+                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>"
                     alt="Profile Picture"
                     class="rounded-circle shadow"
                     style="width: 120px; height: 120px; object-fit: cover;">
                 <div class="mt-2">
-                  <label for="profile_img" class="form-label small text-muted">Change Photo</label>
-                  <input type="file" name="profile_img" id="profile_img" class="form-control form-control-sm">
+                  <label for="profimg" class="form-label small text-muted">Change Photo</label>
+                  <input type="file" name="profimg" id="profimg" class="form-control form-control-sm">
                 </div>
               </div>
 
@@ -122,6 +165,33 @@
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
 
+              <?php if (session('role') === 'student'): ?>
+              <div class="col-md-6">
+                  <label for="program_id" class="form-label">Program:</label>
+                  <select name="program_id" id="program_id" class="form-select">
+                      <option value="">Select program</option>
+                      <?php foreach ($programs as $program): ?>
+                          <option value="<?= $program['program_id'] ?>" 
+                              <?= ($student['program_id'] ?? '') == $program['program_id'] ? 'selected' : '' ?>>
+                              <?= $program['program_name'] ?>
+                          </option>
+                      <?php endforeach; ?>
+                  </select>
+              </div>
+
+              <div class="col-md-6">
+                  <label for="year_level" class="form-label">Year Level:</label>
+                  <select name="year_level" id="year_level" class="form-select">
+                      <option value="">Select year level</option>
+                      <option value="1" <?= ($student['year_level'] ?? '') == 1 ? 'selected' : '' ?>>1st Year</option>
+                      <option value="2" <?= ($student['year_level'] ?? '') == 2 ? 'selected' : '' ?>>2nd Year</option>
+                      <option value="3" <?= ($student['year_level'] ?? '') == 3 ? 'selected' : '' ?>>3rd Year</option>
+                      <option value="4" <?= ($student['year_level'] ?? '') == 4 ? 'selected' : '' ?>>4th Year</option>
+                  </select>
+              </div>
+          <?php endif; ?>
+
+
               <!-- Email -->
               <div class="col-md-6">
                 <label class="form-label">Email</label>
@@ -132,9 +202,9 @@
             <div class="col-md-6">
               <label class="form-label">Contact Number</label>
               <input type="text"
-                    name="contact_number"
+                    name="contactnum"
                     class="form-control"
-                    value="<?= esc(session('contact_number')) ?>"
+                    value="<?= esc(session('contactnum')) ?>"
                     placeholder="e.g. 09123456789"
                     pattern="^09\d{9}$"
                     maxlength="11"
@@ -156,7 +226,7 @@
               <!-- Birthday -->
               <div class="col-md-6">
                 <label class="form-label">Birthday</label>
-                <input type="date" name="birthday" class="form-control" value="<?= esc(session('birthday')) ?>" placeholder="MM/DD/YYYY">
+                <input type="date" name="birthdate" class="form-control" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY">
               </div>
 
               <!-- Address -->
@@ -198,6 +268,9 @@
 
   <!-- Success Modal JS -->
   <script src="<?= base_url('rsc/custom_js/successModal.js') ?>"></script>
+
+  <!-- Error Modal JS -->
+  <script src="<?= base_url('rsc/custom_js/errorModal.js') ?>"></script>
 
 </body>
 </html>

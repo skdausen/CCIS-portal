@@ -76,6 +76,13 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/courses/update/(:num)', [AdminController::class, 'updateCourse/$1']);
     $routes->post('academics/courses/delete/(:num)', [AdminController::class, 'deleteCourse/$1']);
 
+    // SUBJECTS
+     $routes->get('academics/subjects', [AdminController::class, 'view_subjects']);
+     $routes->post('academics/subjects/create', [AdminController::class, 'createSubject']);
+     $routes->post('academics/subjects/update/(:num)', [AdminController::class, 'updateSubject/$1']);
+     $routes->post('academics/subjects/delete/(:num)', [AdminController::class, 'deleteSubject/$1']);
+
+
     // CLASSES
     $routes->get('academics/classes', [AdminController::class, 'view_classes']);
     $routes->post('academics/classes/add', [AdminController::class, 'createClass']); 
@@ -85,11 +92,11 @@ $routes->group('admin', function ($routes) {
 
     // CURRICULUM
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
+    $routes->post('academics/curriculums/create', 'AdminController::create');
     $routes->get('academics/curriculum_old', [AdminController::class, 'curriculum_old']);
     $routes->get('academics/curriculum_new', [AdminController::class, 'curriculum_new']);
 
 
-    $routes->get('academics/add_courses', [AdminController::class, 'add_courses']);
 
     
 
@@ -109,6 +116,11 @@ $routes->group('faculty', function ($routes) {
 
     // Faculty Home & Users
     $routes->get('home', 'FacultyController::facultyHome');
+    // Classes
+    $routes->get('classes', 'FacultyController::classes');
+    $routes->get('classes/view/(:num)', 'FacultyController::viewClass/$1');
+    $routes->post('addStudentToClass', 'FacultyController::addStudentToClass');
+    $routes->post('removeStudentFromClass', 'FacultyController::removeStudentFromClass');
 
 });
 
@@ -122,5 +134,4 @@ $routes->group('student', function ($routes) {
     $routes->get('home', 'StudentController::studentHome');
     $routes->get('schedule', 'StudentController::studentSchedule');
     $routes->get('grades', 'StudentController::studentGrades');
-
 });

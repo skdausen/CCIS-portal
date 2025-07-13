@@ -2,18 +2,23 @@
 // AdminController.php 
 namespace App\Controllers;
 
-use App\Models\LoginModel;
+use App\Models\UserModel;
 use App\Models\SemesterModel;
 use App\Models\SchoolYearModel;
-use App\Models\CourseModel; 
+use App\Models\SubjectModel; 
 use App\Models\ClassModel;
 use App\Models\FacultyModel;
+use App\Models\AdminModel;
+use App\Models\StudentModel;
 use App\Models\AnnouncementModel;
 use App\Models\CurriculumModel;
+use App\Models\ProgramModel;
 
 class AdminController extends BaseController
 {
-    // Admin Home
+    /********************************************** 
+        ADMIN HOME 
+     ***********************************************/
     public function adminHome()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -28,14 +33,19 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Users List
+
+    /********************************************** 
+        USER MANAGEMENT 
+     ***********************************************/
+
+    // Display all users
     public function users()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
             return redirect()->to('auth/login');
         }
 
-        $model = new LoginModel();
+        $model = new UserModel();
         $data['users'] = $model->findAll();
 
         return view('templates/admin/admin_header')
@@ -43,50 +53,93 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Create New User
+
+    // Display form to add a new user
     public function createUser()
     {
+        // ALLOW ONLY admin or superadmin
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
             return redirect()->to('auth/login');
         }
 
-        $model = new LoginModel();
+        // LOAD MODELS
+        $userModel = new UserModel();
+        $studentModel = new StudentModel();
+        $facultyModel = new FacultyModel();
+        $adminModel = new AdminModel();
 
-        $username = $this->request->getPost('username');
-        $fname = $this->request->getPost('fname');
-        $mname = $this->request->getPost('mname');
-        $lname = $this->request->getPost('lname');
-        $email = $this->request->getPost('email');
-        $role = $this->request->getPost('role');
+        // GET POST INPUTS
+        $username = strtoupper($this->request->getPost('username'));
+        $email    = $this->request->getPost('email');
+        $role     = $this->request->getPost('role');
 
+        // DEFAULT PASSWORD
         $defaultPassword = 'ccis1234';
-        $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
+        $hashedPassword  = password_hash($defaultPassword, PASSWORD_DEFAULT);
 
-        if ($model->where('username', $username)->first()) {
+        // VALIDATE: USERNAME
+        if ($userModel->where('username', $username)->first()) {
             return redirect()->back()->with('error', 'Username already exists.');
         }
 
-        if ($model->where('email', $email)->first()) {
+        // VALIDATE: EMAIL
+        if ($userModel->where('email', $email)->first()) {
             return redirect()->back()->with('error', 'Email already exists.');
         }
 
-        $model->insert([
-            'username' => $username,
-            'email' => $email,
+        // START TRANSACTION
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        // INSERT INTO `users` TABLE
+        $userId = $userModel->insert([
+            'username'     => $username,
+            'email'        => $email,
             'userpassword' => $hashedPassword,
-            'role' => $role,
-            'status' => 'inactive',
-            'created_at' => date('Y-m-d H:i:s'),
-            'fname'         => $fname,
-            'mname'         => $mname,
-            'lname'         => $lname,
-            'profile_img'   => 'default.png', // Default profile image
+            'role'         => $role,
+            'status'       => 'inactive',
+            'created_at'   => date('Y-m-d H:i:s'),
         ]);
+
+        // INSERT INTO RELATED TABLES BASED ON ROLE
+        if ($role === 'student') {
+            $studentModel->insert([
+                'student_id' => $username,
+                'user_id'    => $userId // optional: if linked by user ID
+            ]);
+        }
+
+        if ($role === 'faculty') {
+            $facultyModel->insert([
+                'faculty_id' => $username,
+                'user_id'    => $userId  // optional: if linked by user ID
+            ]);
+        }
+
+        if ($role === 'admin') {
+            $adminModel->insert([
+                'admin_id' => $username,
+                'user_id'    => $userId // optional: if linked by user ID
+            ]);
+        }
+
+        // COMPLETE TRANSACTION
+        $db->transComplete();
+
+        // CHECK TRANSACTION STATUS
+        if ($db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Failed to create user. Please try again.');
+        }
 
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
 
-    //Adding Announcement
+
+    /********************************************** 
+        ANNOUNCEMENT MANAGEMENT
+     ***********************************************/
+
+    // Display form to add a new announcement
     public function saveAnnouncement()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -108,6 +161,7 @@ class AdminController extends BaseController
         return redirect()->to('admin/home')->with('success', 'Announcement added!');
     }
 
+    // Update an existing announcement
     public function updateAnnouncement()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -128,7 +182,7 @@ class AdminController extends BaseController
         return redirect()->to('admin/home')->with('success', 'Announcement updated successfully.');
     }
 
-
+    // Delete an existing announcement
     public function deleteAnnouncement()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -144,8 +198,9 @@ class AdminController extends BaseController
     }
 
 
-    // Academics Main Page
-   // App\Controllers\AdminController.php
+    /********************************************** 
+        ACADEMICS PAGE
+     ***********************************************/
 
     public function index()
     {
@@ -155,20 +210,18 @@ class AdminController extends BaseController
 
         $schoolYearModel = new SchoolYearModel();
         $semesterModel = new SemesterModel();
-        $courseModel = new CourseModel();
+        $subjectModel = new SubjectModel();
         $classModel = new ClassModel();
         $facultyModel = new FacultyModel();
 
-        // Get counts
         $data = [
             'title' => 'Academics',
             'schoolYearsCount' => $schoolYearModel->countAllResults(),
             'semestersCount' => $semesterModel->countAllResults(),
-            'coursesCount' => $courseModel->countAllResults(),
+            'subjectsCount' => $subjectModel->countAllResults(), // This is now subjects count
             'classesCount' => $classModel->countAllResults(),
             'facultyCount' => $facultyModel->countAllResults(),
-            // Get 5 most recent courses
-            'recentCourses' => $courseModel->orderBy('course_id', 'DESC')->findAll(5),
+            'recentSubjects' => $subjectModel->orderBy('subject_id', 'DESC')->findAll(5), // Corrected variable name
         ];
 
         return view('templates/admin/admin_header', $data)
@@ -176,8 +229,12 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-        // Semesters List
-        // SEMESTERS LIST
+
+    /********************************************** 
+        SEMESTERS MANAGEMENT
+     ***********************************************/
+
+    // View all semesters with details
     public function view_semesters()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -186,379 +243,449 @@ class AdminController extends BaseController
 
         $semesterModel = new SemesterModel();
 
-        $data['semesters'] = $semesterModel
-    ->select('semesters.semester_id, semesters.semester, semesters.is_active, schoolyears.schoolyear')
-    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-    ->findAll();
-
+        //  Call the method from the model that has the ORDER BY
+        $data['semesters'] = $semesterModel->getSemWithDetails();
 
         return view('templates/admin/admin_header')
             . view('admin/academics/semesters', $data)
             . view('templates/admin/admin_footer');
     }
-// CREATE SEMESTER
-public function createSemester()
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
-    }
 
-    $semester = $this->request->getPost('semester');
-    $schoolyearText = $this->request->getPost('schoolyear');
-    $status = $this->request->getPost('status'); // "1" or "0"
-
-    if (!$semester || !$schoolyearText || $status === null) {
-        return redirect()->back()->with('error', 'Please fill all fields.');
-    }
-
-    $isActive = ($status == '1') ? 1 : 0;
-
-    $schoolYearModel = new SchoolYearModel();
-    $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-    $schoolyearId = $existingSchoolYear
-        ? $existingSchoolYear['schoolyear_id']
-        : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
-
-    $semesterModel = new SemesterModel();
-
-    // Check for duplicate semester-schoolyear
-    $duplicate = $semesterModel
-        ->where('semester', $semester)
-        ->where('schoolyear_id', $schoolyearId)
-        ->first();
-
-    if ($duplicate) {
-        return redirect()->back()->with('error', '❌ Semester and school year combination already exists.');
-    }
-
-    // Deactivate others if new semester is active
-    if ($isActive === 1) {
-        $semesterModel->where('is_active', 1)->set('is_active', 0)->update();
-    }
-
-    // Save new semester
-    $semesterModel->insert([
-        'semester' => $semester,
-        'schoolyear_id' => $schoolyearId,
-        'is_active' => $isActive
-    ]);
-
-    return redirect()->to('admin/academics/semesters')->with('success', 'Semester added successfully.');
-}
-
-
-
-
-
-public function updateSemester($id)
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
-    }
-
-    $semester = $this->request->getPost('semester');
-    $schoolyearText = $this->request->getPost('schoolyear');
-    $status = $this->request->getPost('status');
-
-    if (!$semester || !$schoolyearText || $status === null) {
-        return redirect()->back()->with('error', 'Please fill all fields.');
-    }
-
-    $isActive = ($status == '1') ? 1 : 0;
-
-    $schoolYearModel = new SchoolYearModel();
-    $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
-    $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
-
-    $semesterModel = new SemesterModel();
-
-    // Check for duplicates excluding this ID
-    $duplicate = $semesterModel
-        ->where('semester', $semester)
-        ->where('schoolyear_id', $schoolyearId)
-        ->where('semester_id !=', $id)
-        ->first();
-
-    if ($duplicate) {
-        return redirect()->back()->with('error', 'Semester and school year combination already exists.');
-    }
-
-    // ✔️ Prevent multiple active semesters
-    if ($isActive === 1) {
-        $activeSemester = $semesterModel
-            ->where('is_active', 1)
-            ->where('semester_id !=', $id) // exclude this semester
-            ->first();
-        if ($activeSemester) {
-            return redirect()->back()->with('error', 'Another active semester already exists. Please deactivate it first.');
+    // CREATE SEMESTER
+    public function createSemester()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
         }
+
+        $semester = $this->request->getPost('semester'); // e.g., "1st"
+        $schoolyearText = $this->request->getPost('schoolyear'); // e.g., "2025-2026"
+        $status = $this->request->getPost('status'); // "1" or "0"
+        $isActive = $status == '1' ? 1 : 0;
+
+        $schoolYearModel = new SchoolYearModel();
+        $semesterModel = new SemesterModel();
+
+        $existingSchoolYear = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+        $schoolyearId = $existingSchoolYear
+            ? $existingSchoolYear['schoolyear_id']
+            : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+
+        // Debug schoolyearId
+        // dd($schoolyearId);
+
+        $duplicate = $semesterModel
+            ->where('semester', $semester)
+            ->where('schoolyear_id', $schoolyearId)
+            ->first();
+
+        if ($duplicate) {
+            return redirect()->back()->with('error', 'That semester + school year already exists.');
+        }
+
+        if ($isActive) {
+            $semesterModel->where('is_active', 1)->set('is_active', 0)->update();
+        }
+
+        $result = $semesterModel->insert([
+            'semester' => $semester,
+            'schoolyear_id' => $schoolyearId,
+            'is_active' => $isActive
+        ]);
+
+        if (!$result) {
+            dd('Insert failed', $semesterModel->errors());
+        }
+
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester added!');
     }
 
-    $semesterModel->update($id, [
-        'semester' => $semester,
-        'schoolyear_id' => $schoolyearId,
-        'is_active' => $isActive
-    ]);
+    // UPDATE SEMESTER
+    public function updateSemester($id)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
 
-    return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
-}
+        $semester = $this->request->getPost('semester');
+        $schoolyearText = $this->request->getPost('schoolyear');
+        $status = $this->request->getPost('status');
+
+        if (!$semester || !$schoolyearText || $status === null) {
+            return redirect()->back()->with('error', 'Please fill all fields.');
+        }
+
+        $isActive = ($status == '1') ? 1 : 0;
+
+        $schoolYearModel = new SchoolYearModel();
+        $existing = $schoolYearModel->where('schoolyear', $schoolyearText)->first();
+        $schoolyearId = $existing ? $existing['schoolyear_id'] : $schoolYearModel->insert(['schoolyear' => $schoolyearText], true);
+
+        $semesterModel = new SemesterModel();
+
+        // Check for duplicates excluding this ID
+        $duplicate = $semesterModel
+            ->where('semester', $semester)
+            ->where('schoolyear_id', $schoolyearId)
+            ->where('semester_id !=', $id)
+            ->first();
+
+        if ($duplicate) {
+            return redirect()->back()->with('error', 'Semester and school year combination already exists.');
+        }
+
+        // Prevent multiple active semesters
+        if ($isActive === 1) {
+            $activeSemester = $semesterModel
+                ->where('is_active', 1)
+                ->where('semester_id !=', $id) // exclude this semester
+                ->first();
+            if ($activeSemester) {
+                return redirect()->back()->with('error', 'Another active semester already exists. Please deactivate it first.');
+            }
+        }
+
+        $semesterModel->update($id, [
+            'semester' => $semester,
+            'schoolyear_id' => $schoolyearId,
+            'is_active' => $isActive
+        ]);
+
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester updated successfully.');
+    }
 
     // DELETE SEMESTER
     public function deleteSemester($id)
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
+
+        $semesterModel = new SemesterModel();
+        $semester = $semesterModel->find($id);
+
+        if (!$semester) {
+            return redirect()->back()->with('error', 'Semester not found.');
+        }
+
+        if ($semester['is_active']) {
+            return redirect()->back()->with('error', 'Cannot delete an active semester.');
+        }
+
+        $semesterModel->delete($id);
+
+        return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
+    }
+
+    /********************************************** 
+        SUBJECTS MANAGEMENT
+     ***********************************************/
+
+    // View all subjects
+    public function view_subjects()
 {
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
+    $subjectModel = new SubjectModel();
+    $curriculumModel = new CurriculumModel();
+
+    $data['subjects'] = $subjectModel->findAll();
+    $data['curriculums'] = $curriculumModel->findAll(); 
+
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/subjects', $data)
+        . view('templates/admin/admin_footer');
+}
+
+    // Create a new subject
+   public function createSubject()
+{
+    $subjectModel = new SubjectModel();
+
+    $data = [
+        'subject_code' => $this->request->getPost('subject_code'),
+        'subject_name' => $this->request->getPost('subject_name'),
+        'subject_type' => $this->request->getPost('subject_type'),
+        'lec_units'    => $this->request->getPost('lec_units'),
+        'lab_units'    => $this->request->getPost('lab_units'),
+        'total_units'  => $this->request->getPost('lec_units') + $this->request->getPost('lab_units'),
+        'curriculum_id'  => $this->request->getPost('curriculum_id'),
+    ];
+
+    $success = $subjectModel->insert($data);
+
+    if (!$success) {
+        // Show errors from the model
+        dd($subjectModel->errors());
     }
 
-    $semesterModel = new SemesterModel();
-    $semester = $semesterModel->find($id);
-
-    if (!$semester) {
-        return redirect()->back()->with('error', 'Semester not found.');
-    }
-
-    if ($semester['is_active']) {
-        return redirect()->back()->with('error', 'Cannot delete an active semester.');
-    }
-
-    $semesterModel->delete($id);
-
-    return redirect()->to('admin/academics/semesters')->with('success', 'Semester deleted successfully.');
+    return redirect()->to('admin/academics/subjects')->with('success', 'Subject added.');
 }
 
 
-    // View all courses (unchanged)
-    public function view_courses()
-    {
-        $courseModel = new CourseModel();
-        $data['courses'] = $courseModel->findAll();
-
-        return view('templates/admin/admin_header')
-            . view('admin/academics/courses', $data)
-            . view('templates/admin/admin_footer');
-    }
-
-    // Create a new course (unchanged)
-    public function createCourse()
-    {
-        $courseModel = new CourseModel();
-        $courseModel->insert([
-            'course_code' => $this->request->getPost('course_code'),
-            'course_description' => $this->request->getPost('course_description'),
-            'lec_units' => $this->request->getPost('lec_units'),
-            'lab_units' => $this->request->getPost('lab_units'),
-        ]);
-
-        return redirect()->to('admin/academics/courses')->with('success', 'Course added successfully.');
-    }
-
     // Show edit form
-    public function editCourse($id)
+    public function editSubject($id)
     {
-        $courseModel = new CourseModel();
-        $course = $courseModel->find($id);
+        $subjectModel = new SubjectModel();
+        $subject = $subjectModel->find($id);
 
-        if (!$course) {
-            return redirect()->to('admin/academics/courses')->with('error', 'Course not found.');
+        if (!$subject) {
+            return redirect()->to('admin/academics/subjects')->with('error', 'Subject not found.');
         }
 
         return view('templates/admin/admin_header')
-            . view('admin/academics/edit_course', ['course' => $course])
+            . view('admin/academics/edit_subject', ['subject' => $subject])
             . view('templates/admin/admin_footer');
     }
 
-    // Update the course
-    public function updateCourse($id)
+    // Update the subject
+    public function updateSubject($id)
     {
-        $courseModel = new CourseModel();
-        $courseModel->update($id, [
-            'course_code' => $this->request->getPost('course_code'),
-            'course_description' => $this->request->getPost('course_description'),
-            'lec_units' => $this->request->getPost('lec_units'),
-            'lab_units' => $this->request->getPost('lab_units'),
+        $subjectModel = new SubjectModel();
+
+        $lec_units = $this->request->getPost('lec_units');
+        $lab_units = $this->request->getPost('lab_units');
+
+        $subjectModel->update($id, [
+            'subject_code' => $this->request->getPost('subject_code'),
+            'subject_name' => $this->request->getPost('subject_name'),
+            'subject_type'   => $this->request->getPost('subject_type'),
+            'lec_units' => $lec_units,
+            'lab_units' => $lab_units,
+            'total_units' => $lec_units + $lab_units,
         ]);
 
-        return redirect()->to('admin/academics/courses')->with('success', 'Course updated successfully.');
+        return redirect()->to('admin/academics/subjects')->with('success', 'Subject updated successfully.');
     }
 
-    // Delete a course
-    public function deleteCourse($course_id)
+    // Delete a subject
+    public function deleteSubject($subject_id)
     {
-        $courseModel = new CourseModel();
+        $subjectModel = new SubjectModel();
         $classModel = new ClassModel();
 
         // Check if there are related classes first
-        $relatedClasses = $classModel->where('course_id', $course_id)->countAllResults();
+        $relatedClasses = $classModel->where('subject_id', $subject_id)->countAllResults();
 
         if ($relatedClasses > 0) {
-            return redirect()->back()->with('error', '❌ Cannot delete. This course has classes assigned to it.');
+            return redirect()->back()->with('error', 'Cannot delete. This subject has classes assigned to it.');
         }
 
-        // Delete course
-        $courseModel->delete($course_id);
+        // Delete subject
+        $subjectModel->delete($subject_id);
 
-        return redirect()->back()->with('success', 'Course deleted successfully.');
+        return redirect()->back()->with('success', 'Subject deleted successfully.');
     }
 
+    /********************************************** 
+        CLASSES MANAGEMENT
+     ***********************************************/
+    
+    // View all classes with details
+    public function view_classes()
+{
+    $classModel = new ClassModel();
+    $facultyModel = new FacultyModel();
+    $userModel = new UserModel();
+    $subjectModel = new SubjectModel();
+    $semesterModel = new SemesterModel();
 
-    // Other academics views
-   public function view_classes()
-    {
-        $classModel = new ClassModel();
-        $facultyModel = new FacultyModel();
-        $userModel = new LoginModel();
-        $courseModel = new CourseModel();
-        $semesterModel = new SemesterModel();
+    $activeSemester = $semesterModel->getActiveSemester();
 
-        // ✅ Get all classes with JOINs on courses, semesters, schoolyears, faculty, and users
-        $classes = $classModel
-    ->select('class.*, 
-              course.course_code, course.course_description, 
-              semesters.semester, schoolyears.schoolyear,
-              users.user_id, users.fname, users.lname')
-    ->join('course', 'course.course_id = class.course_id', 'left')
-    ->join('semesters', 'semesters.semester_id = class.semester_id', 'left')
-    ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-    ->join('users', 'users.user_id = class.user_id', 'left') // CHANGED HERE ✅
-    ->findAll();
+    $selectedSemesterId = $this->request->getGet('semester_id');
 
-        // ✅ Prepare instructors list
-     $instructors = [];
-        $facultyUsers = $userModel->where('role', 'faculty')->findAll();
+    $semesterToShow = !empty($selectedSemesterId)
+        ? $selectedSemesterId
+        : (!empty($activeSemester) ? $activeSemester['semester_id'] : null);
 
-        foreach ($facultyUsers as $user) {
-            $instructors[$user['user_id']] = $user['fname'] . ' ' . $user['lname'];
-        }
-        // Get all courses and semesters
-        // This will be used in the class creation form
-        $courses = $courseModel->findAll();
-        $semesters = $semesterModel->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+    // Start the query - ✅ updated table & column names
+    $builder = $classModel
+    ->select('
+        classes.*, 
+        subjects.subject_code, subjects.subject_name, subjects.subject_type,  
+        semesters.semester, semesters.semester_id, schoolyears.schoolyear,
+        faculty.ftb_id, faculty.fname, faculty.lname
+    ')
+
+        ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')  
+        ->join('semesters', 'semesters.semester_id = classes.semester_id', 'left')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');         
+
+    if (!empty($semesterToShow)) {
+        $builder->where('classes.semester_id', $semesterToShow);
+        $classes = $builder->findAll();
+    } else {
+        $classes = [];
+    }
+
+    // Instructors list -
+    $facultyList = $facultyModel->findAll();
+    $instructors = [];
+    foreach ($facultyList as $faculty) {
+        $instructors[$faculty['ftb_id']] = $faculty['fname'] . ' ' . $faculty['lname'];
+    }
+
+    // All semesters for the dropdown
+    $semesters = $semesterModel
+        ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+        ->orderBy('semesters.is_active', 'DESC')
+        ->orderBy('schoolyears.schoolyear', 'DESC')
+        ->orderBy('semesters.semester', 'ASC')
         ->findAll();
 
-        return view('templates/admin/admin_header')
-            . view('admin/academics/classes', [
-                'classes' => $classes,
-                'instructors' => $instructors,
-                'courses' => $courses,
-                'semesters' => $semesters,
+    return view('templates/admin/admin_header')
+        . view('admin/academics/classes', [
+            'classes' => $classes,
+            'instructors' => $instructors,
+            'courses' => $subjectModel->findAll(),   //
+            'semesters' => $semesters,
+            'activeSemester' => $activeSemester,
         ])
-            . view('templates/admin/admin_footer');
-    }
+        . view('templates/admin/admin_footer');
+}
 
 
+// Create a new class
+public function createClass()
+{
+    $classModel = new ClassModel();
 
+    try {
+        $subjectId = $this->request->getPost('subject_id');
+        $ftbId = $this->request->getPost('ftb_id');
+        $semesterId = $this->request->getPost('semester_id');
+        $section = $this->request->getPost('section');
 
-
-    public function createClass()
-    {
-        $classModel = new ClassModel();
-
-        $classModel->insert([
-            // New
-            'user_id' => $this->request->getPost('user_id'),
-            'course_id' => $this->request->getPost('course_id'),
-            'semester_id' => $this->request->getPost('semester_id'), 
-            'class_day' => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end' => $this->request->getPost('class_end'),
-            'class_room' => $this->request->getPost('class_room'),
-            'class_type' => $this->request->getPost('class_type'),
-    ]);
-
-        return redirect()->to('admin/academics/classes')->with('success', 'Class created successfully.');
-    }
-
-    public function updateClass($class_id)
-    {
-        $classModel = new ClassModel();
-
-        $data = [
-            // New
-            'user_id' => $this->request->getPost('user_id'),
-            'course_id'   => $this->request->getPost('course_id'),
-            'semester_id' => $this->request->getPost('semester_id'), 
+        // Insert Lecture
+        $classData = [
+            'ftb_id'      => $ftbId,
+            'subject_id'  => $subjectId,
+            'semester_id' => $semesterId,
+            'section'     => $section,
             'class_day'   => $this->request->getPost('class_day'),
             'class_start' => $this->request->getPost('class_start'),
             'class_end'   => $this->request->getPost('class_end'),
             'class_room'  => $this->request->getPost('class_room'),
-            'class_type'  => $this->request->getPost('class_type'),
         ];
 
-        $classModel->update($class_id, $data);
+        if (!empty($classData['class_day']) && !empty($classData['class_start']) && !empty($classData['class_end'])) {
+            $classModel->insert($classData);
+        }
+
+        // Insert Lab if exists
+        if ($this->request->getPost('subject_type') === 'LEC with LAB') {
+            $labData = [
+                'ftb_id'      => $ftbId,
+                'subject_id'  => $subjectId,
+                'semester_id' => $semesterId,
+                'section'     => $section,
+                'class_day'   => $this->request->getPost('lab_day'),
+                'class_start' => $this->request->getPost('lab_start'),
+                'class_end'   => $this->request->getPost('lab_end'),
+                'class_room'  => $this->request->getPost('lab_room'),
+            ];
+
+            if (!empty($labData['class_day']) && !empty($labData['class_start']) && !empty($labData['class_end'])) {
+                $classModel->insert($labData);
+            }
+        }
+
+        return redirect()->to('admin/academics/classes')->with('success', 'Class added successfully.');
+    } catch (\Exception $e) {
+        dd($e->getMessage());
+    }
+}
+
+
+
+
+// Update an existing class
+public function updateClass($id)
+{
+    $classModel = new ClassModel();
+
+    try {
+        $classModel->update($id, [
+            'ftb_id'      => $this->request->getPost('ftb_id'),
+            'subject_id'  => $this->request->getPost('subject_id'),
+            'semester_id' => $this->request->getPost('semester_id'),
+            'class_day'   => $this->request->getPost('class_day'),
+            'class_start' => $this->request->getPost('class_start'),
+            'class_end'   => $this->request->getPost('class_end'),
+            'class_room'  => $this->request->getPost('class_room'),
+            'section'     => $this->request->getPost('section')
+        ]);
 
         return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
+    } catch (\Exception $e) {
+        return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while updating the class.');
     }
+}
 
-    public function deleteClass($class_id)
-    {
-        $classModel = new ClassModel();
-        $classModel->delete($class_id);
+// Delete a class
+public function deleteClass($id)
+{
+    $classModel = new ClassModel();
+
+    try {
+        $classModel->delete($id);
 
         return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
-
+    } catch (\Exception $e) {
+        return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while deleting the class.');
     }
+}
 
 
-//CURRICULUM
+
+    /********************************************** 
+        CURRICULUM MANAGEMENT
+     ***********************************************/
+
+    // View all curriculums
 public function view_curriculums()
 {
-    $yearLevel = $this->request->getGet('year_level');
-    $semester = $this->request->getGet('semester');
-
     $curriculumModel = new CurriculumModel();
-    $courses = $curriculumModel->getCourses($yearLevel, $semester);
+    $programModel = new ProgramModel();
+    $subjectModel = new SubjectModel();
 
-    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+    // Get all curriculums with program names
+    $curriculums = $curriculumModel->getCurriculumsWithProgramName();
+    $programs = $programModel->findAll();
+
+    // Get all subjects grouped by curriculum_id
+    $subjects = $subjectModel->findAll();
+    $curriculumSubjects = [];
+
+    foreach ($subjects as $subject) {
+        $curriculumId = $subject['curriculum_id'];
+        if (!isset($curriculumSubjects[$curriculumId])) {
+            $curriculumSubjects[$curriculumId] = [];
+        }
+        $curriculumSubjects[$curriculumId][] = $subject;
+    }
 
     return view('templates/admin/admin_header')
         . view('admin/academics/curriculums', [
-            'courses' => $courses,
-            'yearLevel' => $yearLevel,
-            'semester' => $semester,
-            'semesterOptions' => $semesterOptions,
+            'curriculums' => $curriculums,
+            'programs' => $programs,
+            'curriculumSubjects' => $curriculumSubjects,
         ])
         . view('templates/admin/admin_footer');
 }
 
-public function curriculum_old()
+public function create()
 {
-    $yearLevel = $this->request->getGet('year_level');
-    $semester = $this->request->getGet('semester');
-
     $curriculumModel = new CurriculumModel();
-    $courses = $curriculumModel->getCourses($yearLevel, $semester);
 
-    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
+    $data = [
+        'curriculum_name' => $this->request->getPost('curriculum_name'),
+        'program_id' => $this->request->getPost('program_id'),
+    ];
 
-    return view('templates/admin/admin_header')
-        . view('admin/academics/curriculum_old', [
-            'courses' => $courses,
-            'yearLevel' => $yearLevel,
-            'semester' => $semester,
-            'semesterOptions' => $semesterOptions,
-        ])
-        . view('templates/admin/admin_footer');
-}
+    $curriculumModel->insert($data);
 
-public function curriculum_new()
-{
-    $yearLevel = $this->request->getGet('year_level');
-    $semester = $this->request->getGet('semester');
-
-    $curriculumModel = new CurriculumModel();
-    $courses = $curriculumModel->getCourses($yearLevel, $semester);
-
-    $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
-
-    return view('templates/admin/admin_header')
-        . view('admin/academics/curriculum_new', [
-            'courses' => $courses,
-            'yearLevel' => $yearLevel,
-            'semester' => $semester,
-            'semesterOptions' => $semesterOptions,
-        ])
-        . view('templates/admin/admin_footer');
+    return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum added successfully.');
 }
 }
-

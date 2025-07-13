@@ -3,153 +3,22 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
-    <!-- Views/faculty/home.php -->
-<div class="container mt-5">
-    <!-- <h2 class="fw-bold">Home</h2>
-    <hr> -->
-
-    <!-- FILTER & SEARCH BAR -->
-    <!-- <div class="d-flex align-items-center mb-4">
-        <select class="form-select w-auto me-2">
-            <option>All</option>
-        </select>
-        <input type="text" class="form-control" placeholder="Search">
-    </div> -->
-
-<div class="row">
+    <div class="row mt-5">
     <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
-    <div class="col-md-6 px-3">
-        <h4 class="fw-bold mb-4">Your Weekly Schedule</h4>
-
-        <!-- MONDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Monday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- TUESDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Tuesday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 201</td>
-                        <td>Intermediate Programming</td>
-                        <td>3:00-4:00</td>
-                        <td>CLC</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- WEDNESDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Wednesday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- THURSDAY -->
-        <div class="mb-4">
-            <h6 class="fw-bold">Thursday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- FRIDAY -->
-        <div class="mb-4">       
-            <h6 class="fw-bold">Friday</h6>
-            <table class="table table-borderless">
-                <thead class="border-bottom border-purple">
-                    <tr>
-                        <th>Code</th>
-                        <th>Course</th>
-                        <th>Time</th>
-                        <th>Room</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CS 101</td>
-                        <td>System Fundamentals</td>
-                        <td>8:00-9:00</td>
-                        <td>CLD</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
     <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
-    <div class="col-md-6 px-3">
+    <div class="col-md-4 px-3">
         <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>
         <div class="card p-3 border-0 bg-transparent">
             <div class="row">
                 <!-- Calendar -->
                 <div class="col-12 mb-4">
-                    <div id="calendar" class="calendar-sm"></div>
+                    <div id="calendar" class="calendar-sm shadow-lg"></div>
                 </div>
 
                 <!-- Announcements -->
                 <div class="col-12">
-                    <div class="p-3 border-0" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
+                    <div class="p-3 border-0 shadow-lg" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
                         <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
                         <?php if (!empty($announcements)) : ?>
                             <?php $latest = reset($announcements); ?>

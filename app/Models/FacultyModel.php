@@ -6,7 +6,22 @@ use CodeIgniter\Model;
 
 class FacultyModel extends Model
 {
-    protected $table = 'users';
-    protected $primaryKey = 'user_id';
-    protected $allowedFields = ['user_id', 'role'];
+    protected $table            = 'faculty';
+    protected $primaryKey       = 'ftb_id';
+    // protected $useAutoIncrement = true; // ✅ Only if `ftb_id` is auto-increment in DB
+    // protected $returnType       = 'array'; // ✅ or use 'object' if preferred
+    protected $allowedFields    = [
+        'faculty_id',
+        'user_id',
+        'email',
+        'profimg',
+        'lname',
+        'fname',
+        'mname',
+        'sex',
+        'address',
+        'birthdate',
+        'contactnum'
+    ];
 }
+

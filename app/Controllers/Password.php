@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use CodeIgniter\Controller;
 
 class Password extends BaseController
 {
@@ -44,7 +43,7 @@ class Password extends BaseController
         $email = $this->request->getGet('email');
         // return view('password/verify_form', ['email' => $email]);
 
-         return view('templates/login_header')
+        return view('templates/login_header')
             . view('password/verify_form', ['email' => $email])
             . view('templates/login_footer');
     }
@@ -82,6 +81,7 @@ class Password extends BaseController
         $userModel = new UserModel();
         $userModel->updatePassword($email, $password);
 
-        return redirect()->to('auth/login')->with('message', 'Password changed successfully!');
+        session()->setFlashdata('success', 'Your password has been reset successfully');
+        return redirect()->to('/auth/login');
     }
 }

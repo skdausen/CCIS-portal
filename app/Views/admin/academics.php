@@ -5,7 +5,7 @@
             <div class="sidebar-title">Academics</div>
             <ul class="sidebar-nav">
                 <li><a href="<?=site_url('admin/academics/semesters')?>">Semesters</a></li>
-                <li><a href="<?=site_url('admin/academics/courses')?>">Courses</a></li>
+                <li><a href="<?=site_url('admin/academics/subjects')?>">Subjects</a></li>
                 <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
                 <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
                 
@@ -23,8 +23,8 @@
         </div>
         <div class="col-md-4">
             <div class="card text-center p-3 shadow-sm">
-                <h5>📚 Courses</h5>
-                <div class="fs-1"><?= $coursesCount ?></div>
+                <h5>📚 Subjects</h5>
+                <div class="fs-1"><?= $subjectsCount ?></div>
             </div>
         </div>
         <div class="col-md-4">
@@ -53,10 +53,10 @@
         const summaryChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [ 'Semesters', 'Courses', 'Classes', 'Faculty'],
+                labels: [ 'Semesters', 'Subjects', 'Classes', 'Faculty'],
                 datasets: [{
                     label: 'Total Count',
-                    data: [<?= $semestersCount ?>, <?= $coursesCount ?>, <?= $classesCount ?>, <?= $facultyCount ?>],
+                    data: [<?= $semestersCount ?>, <?= $subjectsCount ?>, <?= $classesCount ?>, <?= $facultyCount ?>],
                     backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6f42c1'],
                 }]
             },
@@ -84,14 +84,14 @@
 
 
 
-    <!-- Recently Added Courses -->
+    <!-- Recently Added Subjects -->
     <div class="mt-5">
-        <h4>Recently Added Courses</h4>
+        <h4>Recently Added Subjects</h4>
         <ul class="list-group">
-            <?php if (!empty($recentCourses)): ?>
-                <?php foreach ($recentCourses as $course): ?>
+            <?php if (!empty($recentSubjects)): ?>
+                <?php foreach ($recentSubjects as $subjects): ?>
                     <li class="list-group-item">
-                        <strong><?= esc($course['course_code']) ?></strong>: <?= esc($course['course_description']) ?>
+                        <strong><?= esc($subjects['subject_code']) ?></strong>: <?= esc($subjects['subject_name']) ?>
                     </li>
                 <?php endforeach; ?>
             <?php else: ?>

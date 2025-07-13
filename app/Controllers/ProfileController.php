@@ -3,42 +3,96 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\AdminModel;
+use App\Models\FacultyModel;
+use App\Models\StudentModel;
 
 class ProfileController extends BaseController
 {
     public function update()
     {
-        $session = session();
-        $userId = $session->get('user_id');
-        $model = new UserModel();
+        $userModel     = new UserModel();
+        $studentModel  = new StudentModel();
+        $facultyModel  = new FacultyModel();
+        $adminModel    = new AdminModel();
 
-        $file = $this->request->getFile('profile_img');
-        $newFilename = $session->get('profile_img'); // Default to existing filename
+        $userId = session('user_id');
+        $role   = session('role');
 
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            $newFilename = $file->getRandomName(); // Random unique name
-            $file->move('rsc/assets/uploads', $newFilename); // Upload to public folder
-        }
-
+        // Get all common input
         $data = [
-            'fname'          => $this->request->getPost('fname'),
-            'mname'          => $this->request->getPost('mname'),
-            'lname'          => $this->request->getPost('lname'),
-            'email'          => $this->request->getPost('email'),
-            'contact_number' => $this->request->getPost('contact_number'),
-            'address'        => $this->request->getPost('address'),
-            'sex'            => $this->request->getPost('sex'),
-            'birthday'       => $this->request->getPost('birthday'),
-            'profile_img'    => $newFilename
+            'fname'           => $this->request->getPost('fname'),
+            'mname'           => $this->request->getPost('mname'),
+            'lname'           => $this->request->getPost('lname'),
+            'email'           => $this->request->getPost('email'),
+            'sex'             => $this->request->getPost('sex'),
+            'birthdate'        => $this->request->getPost('birthdate'),
+            'address'         => $this->request->getPost('address'),
+            'contactnum'     => $this->request->getPost('contactnum'),
         ];
 
-        $model->update($userId, $data);
+        // Upload profile image if valid
+        $img = $this->request->getFile('profimg');
+        if ($img && $img->isValid() && !$img->hasMoved()) {
+            $newName = $img->getRandomName();
+            $img->move('rsc/assets/uploads', $newName);
+            $data['profimg'] = $newName;
+        }
 
-        // Update session data too
-        $session->set($data);
+        // ✅ Only update email in users table
+        $userModel->update($userId, [
+            'email' => $data['email']
+        ]);
+
+        // Role-specific data
+        $roleData = [
+            'fname'       => $data['fname'],
+            'mname'       => $data['mname'],
+            'lname'       => $data['lname'],
+            'birthdate'   => $data['birthdate'],
+            'sex'         => $data['sex'],
+            'address'     => $data['address'],
+            'contactnum'  => $data['contactnum'],
+            'profimg'     => $data['profimg'] ?? session('profimg'),
+        ];
+
+        // Remove null/empty values
+        $roleData = array_filter($roleData, fn($val) => $val !== null && $val !== '');
+
+        // ✅ Use correct model per role
+        if (!empty($roleData)) {
+            switch ($role) {
+                case 'student':
+                    $student = $studentModel->where('user_id', $userId)->first();
+                    if ($student) {
+                        $studentModel->update($student['stb_id'], $roleData);
+                    }
+                    break;
+
+                case 'faculty':
+                    $faculty = $facultyModel->where('user_id', $userId)->first();
+                    if ($faculty) {
+                        $facultyModel->update($faculty['ftb_id'], $roleData);
+                    }
+                    break;
+
+                case 'admin':
+                case 'superadmin':
+                    $admin = $adminModel->where('user_id', $userId)->first();
+                    if ($admin) {
+                        $adminModel->update($admin['atb_id'], $roleData);
+                    }
+                    break;
+            }
+
+        }
+
+        // Update session with new data
+        session()->set(array_merge($data, [
+            'profimg' => $data['profimg'] ?? session('profimg'),
+        ]));
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
-
 
 }

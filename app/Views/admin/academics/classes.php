@@ -8,80 +8,79 @@
             <li><a href="<?=site_url('admin/academics/subjects')?>">Subjects</a></li>
             <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
             <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
-           
         </ul>
     </div>
 
     <div class="container mt-5">
 
         <!-- HEADER -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Classes Management</h3>
-    <button class="btn btn-success"
-        <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
-        Add New Class
-    </button>
-</div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Classes Management</h3>
+            <button class="btn btn-success"
+                <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
+                Add New Class
+            </button>
+        </div>
 
-<!-- FILTERS & SEARCH -->
-<div class="row mb-3">
-    <div class="col-md-3 mb-2 d-flex">
-        <!-- Instructor Filter -->
-        <select id="instructorFilter" class="form-select">
-            <option value="">Filter by Instructor</option>
-            <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                <option value="<?= strtolower(esc($instructorName)) ?>">
-                    <?= esc($instructorName) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
-    </div>
+        <!-- FILTERS & SEARCH -->
+        <div class="row mb-3">
+            <div class="col-md-3 mb-2 d-flex">
+                <!-- Instructor Filter -->
+                <select id="instructorFilter" class="form-select">
+                    <option value="">Filter by Instructor</option>
+                    <?php foreach ($instructors as $facultyId => $instructorName): ?>
+                        <option value="<?= strtolower(esc($instructorName)) ?>">
+                            <?= esc($instructorName) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
+            </div>
 
-    <div class="col-md-3 mb-2">
-        <!-- Semester Filter -->
-        <select id="semesterFilter" class="form-select">
-            <option value="">Filter by Semester</option>
-            <?php foreach ($semesters as $semester): ?>
-                <option value="<?= esc($semester['semester_id']) ?>"
-                    <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
-                    <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
+            <div class="col-md-3 mb-2">
+                <!-- Semester Filter -->
+                <select id="semesterFilter" class="form-select">
+                    <option value="">Filter by Semester</option>
+                    <?php foreach ($semesters as $semester): ?>
+                        <option value="<?= esc($semester['semester_id']) ?>"
+                            <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
+                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-    <div class="col-md-4 mb-2">
-        <!-- Search Input -->
-        <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
-    </div>
-</div>
+            <div class="col-md-4 mb-2">
+                <!-- Search Input -->
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+            </div>
+        </div>
 
 
-<?php
-$groupedClasses = [];
+        <?php
+        $groupedClasses = [];
 
-foreach ($classes as $class) {
-    $key = $class['subject_code'] . '_' . $class['section'] . '_' . $class['semester_id'];
+        foreach ($classes as $class) {
+            $key = $class['subject_code'] . '_' . $class['section'] . '_' . $class['semester_id'];
 
-    if (!isset($groupedClasses[$key])) {
-        $groupedClasses[$key] = [
-            'course' => $class['subject_code'],
-            'type' => $class['subject_type'],
-            'days' => [],
-            'times' => [],
-            'rooms' => [],
-            'section' => $class['section'],
-            'instructor' => $class['fname'] . ' ' . $class['lname'],
-            'semester' => $class['semester'] . ' ' . $class['schoolyear'],
-        ];
-    }
+            if (!isset($groupedClasses[$key])) {
+                $groupedClasses[$key] = [
+                    'course' => $class['subject_code'],
+                    'type' => $class['subject_type'],
+                    'days' => [],
+                    'times' => [],
+                    'rooms' => [],
+                    'section' => $class['section'],
+                    'instructor' => $class['fname'] . ' ' . $class['lname'],
+                    'semester' => $class['semester'] . ' ' . $class['schoolyear'],
+                ];
+            }
 
-    $groupedClasses[$key]['days'][] = $class['class_day'];
-    $groupedClasses[$key]['times'][] = date('g:iA', strtotime($class['class_start'])) . '-' . date('g:iA', strtotime($class['class_end']));
-    $groupedClasses[$key]['rooms'][] = $class['class_room'];
-}
-?>
+            $groupedClasses[$key]['days'][] = $class['class_day'];
+            $groupedClasses[$key]['times'][] = date('g:iA', strtotime($class['class_start'])) . '-' . date('g:iA', strtotime($class['class_end']));
+            $groupedClasses[$key]['rooms'][] = $class['class_room'];
+        }
+        ?>
 
         <!-- CLASSES TABLE -->
         <div class="table-responsive">
@@ -114,17 +113,17 @@ foreach ($classes as $class) {
                         <td><?= esc($class['fname'] . ' ' . $class['lname']) ?></td>
                         <td><?= esc($class['semester'] . ' ' . $class['schoolyear']) ?></td>
                         <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-<td>
+    <td>
     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
     <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
-</td>
-<?php endif; ?>
+    </td>
+    <?php endif; ?>
 
 
                     </tr>
 
                 <!-- Edit Modal -->
-<div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
+    <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
@@ -219,7 +218,7 @@ foreach ($classes as $class) {
             </form>
         </div>
     </div>
-</div>
+    </div>
 
 
                     <!-- Delete Modal -->
@@ -233,7 +232,7 @@ foreach ($classes as $class) {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                       Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
+                                        Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -249,207 +248,129 @@ foreach ($classes as $class) {
         </div>
     </div>
 
-<!-- Add Class Modal -->
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="<?= site_url('admin/academics/classes/add') ?>" method="post">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Add New Class</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+    <!-- Add Class Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
+            <form action="<?= site_url('admin/academics/classes/add') ?>" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Add New Class</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
 
-                <div class="modal-body">
-                    <!-- Semester (Auto-filled) -->
-                    <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
+                    <div class="modal-body">
+                        <!-- Semester (Auto-filled) -->
+                        <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
 
-                    <div class="mb-3">
-                        <label class="form-label">Semester</label>
-                        <div class="form-control bg-light">
-                            <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+                        <div class="mb-3">
+                            <label class="form-label">Semester</label>
+                            <div class="form-control bg-light">
+                                <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Instructor -->
-                    <div class="mb-3">
-                        <label>Instructor</label>
-                        <select name="ftb_id" class="form-select" required>
-                            <option value="">Select Instructor</option>
-                            <?php foreach ($instructors as $ftbId => $instructorName): ?>
-                                <option value="<?= $ftbId ?>">
-                                    <?= esc($instructorName) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <!-- Section -->
-                    <div class="mb-3">
-                        <label for="section" class="form-label">Section</label>
-                        <input type="text" name="section" id="section" class="form-control" placeholder="Section e.g., A, B, C" required>
-                    </div>
-
-
-                    <!-- Subject -->
-                    <div class="mb-3">
-                        <label for="subject_id" class="form-label">Subject</label>
-                        <select name="subject_id" id="addSubjectSelect" class="form-select" required>
-                            <option value="">Select Subject</option>
-                            <?php foreach ($courses as $subject): ?>
-                                <option value="<?= $subject['subject_id'] ?>" data-type="<?= $subject['subject_type'] ?>">
-                                    <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <!-- Subject Type Display (Auto-filled) -->
-                    <div class="mb-3">
-                        <label class="form-label">Type</label>
-                        <input type="text" id="subjectTypeInput" name="subject_type" class="form-control" readonly placeholder="Subject Type">
-                    </div>
-
-                    <!-- Lecture Schedule -->
-                    <div id="lectureSchedule" class="schedule-section">
-                        <h6>Lecture Schedule</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label for="lecDay" class="form-label">Day/s</label>
-                                <input type="text" id="lecDay" name="class_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
+                                <!-- Instructor -->
+                                <label for="instructor" class="form-label">Instructor</label>
+                                <select name="ftb_id" class="form-select" required>
+                                    <option value="">Select Instructor</option>
+                                    <?php foreach ($instructors as $ftbId => $instructorName): ?>
+                                        <option value="<?= $ftbId ?>">
+                                            <?= esc($instructorName) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
+                            <!-- Section -->
                             <div class="col-md-6">
-                                <label for="lecRoom" class="form-label">Room</label>
-                                <input type="text" id="lecRoom" name="class_room" class="form-control" placeholder="e.g., Room 101">
+                                <label for="section" class="form-label">Section</label>
+                                <input type="text" name="section" id="section" class="form-control" placeholder="Section e.g., A, B, C" required>
                             </div>
                         </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="lecStart" class="form-label">Start Time</label>
-                                <input type="time" id="lecStart" name="class_start" class="form-control" placeholder="Lecture Start Time">
+
+                        <!-- Subject -->
+                        <div class="mb-3">
+                            <label for="subject_id" class="form-label">Subject</label>
+                            <select name="subject_id" id="addSubjectSelect" class="form-select" required>
+                                <option value="">Select Subject</option>
+                                <?php foreach ($courses as $subject): ?>
+                                    <option value="<?= $subject['subject_id'] ?>" data-type="<?= $subject['subject_type'] ?>">
+                                        <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Subject Type Display (Auto-filled) -->
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <input type="text" id="subjectTypeInput" name="subject_type" class="form-control" readonly placeholder="Subject Type">
+                        </div>
+
+                        <!-- Schedule -->
+                        <div class="row">
+                        <!-- Lecture Schedule -->
+                            <div id="lectureSchedule" class="col-md-12 col-md-6 schedule-section">
+                                <h6>Lecture Schedule</h6>
+                                <div class="mb-3">
+                                    <label for="lecDay" class="form-label">Day/s</label>
+                                    <input type="text" id="lecDay" name="class_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lecRoom" class="form-label">Room</label>
+                                    <input type="text" id="lecRoom" name="class_room" class="form-control" placeholder="e.g., Room 101" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lecStart" class="form-label">Start Time</label>
+                                    <input type="time" id="lecStart" name="class_start" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lecEnd" class="form-label">End Time</label>
+                                    <input type="time" id="lecEnd" name="class_end" class="form-control" required>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="lecEnd" class="form-label">End Time</label>
-                                <input type="time" id="lecEnd" name="class_end" class="form-control" placeholder="Lecture End Time">
+
+                        <!-- Lab Schedule -->
+                            <div id="labSchedule" class="col-md-6 schedule-section d-none">
+                                <h6>Lab Schedule</h6>
+                                <div class="mb-3">
+                                    <label for="labDay" class="form-label">Lab Day/s</label>
+                                    <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F" accept="text" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="labRoom" class="form-label">Lab Room</label>
+                                    <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="labStart" class="form-label">Lab Start Time</label>
+                                    <input type="time" id="labStart" name="lab_start" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="labEnd" class="form-label">Lab End Time</label>
+                                    <input type="time" id="labEnd" name="lab_end" class="form-control" required>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Lab Schedule -->
-                    <div id="labSchedule" class="schedule-section d-none">
-                    <h6>Lab Schedule</h6>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="labDay" class="form-label">Lab Day/s</label>
-                            <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="labRoom" class="form-label">Lab Room</label>
-                            <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
-                        </div>
-                    </div>
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="labStart" class="form-label">Lab Start Time</label>
-                            <input type="time" id="labStart" name="lab_start" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="labEnd" class="form-label">Lab End Time</label>
-                            <input type="time" id="labEnd" name="lab_end" class="form-control">
-                        </div>
-                    </div>
+                        
+                    </div> <!-- /.modal-body -->
 
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Add New Class</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
-                </div> <!-- /.modal-body -->
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Add New Class</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
+
 </div>
 
-  </div>
-</div>
-</div>
 
-<script>
-    const subjectSelect = document.getElementById('addSubjectSelect');
-const classTypeInput = document.getElementById('subjectTypeInput'); // ✅ Corrected
-const lectureSchedule = document.getElementById('lectureSchedule');
-const labSchedule = document.getElementById('labSchedule');
 
-subjectSelect.addEventListener('change', function () {
-    const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
-    const subjectType = selectedOption.getAttribute('data-type') || '';
-
-    classTypeInput.value = subjectType; // ✅ Now this works.
-
-    if (subjectType === 'LEC') {
-        lectureSchedule.classList.remove('d-none');
-        labSchedule.classList.add('d-none');
-    } else if (subjectType === 'LEC with LAB') {
-        lectureSchedule.classList.remove('d-none');
-        labSchedule.classList.remove('d-none');
-    } else {
-        lectureSchedule.classList.add('d-none');
-        labSchedule.classList.add('d-none');
-    }
-});
-</script>
-
-<!-- FILTER SCRIPT -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const instructorFilter = document.getElementById('instructorFilter');
-        const searchInput = document.getElementById('searchInput');
-        const clearBtn = document.getElementById('clearFilterBtn');
-        const rows = document.querySelectorAll('table tbody tr');
-
-       function filterRows() {
-    const instructorVal = instructorFilter.value.toLowerCase();
-    const searchVal = searchInput.value.toLowerCase();
-
-    rows.forEach(row => {
-        const course = row.cells[0].textContent.toLowerCase();
-        const room = row.cells[4].textContent.toLowerCase();
-        const instructor = row.cells[5].textContent.toLowerCase();  // Corrected from 4 ➡️ 5
-
-        const matchInstructor = !instructorVal || instructor.includes(instructorVal);
-        const matchSearch = !searchVal || course.includes(searchVal) || room.includes(searchVal);
-
-        row.style.display = matchInstructor && matchSearch ? '' : 'none';
-    });
-}
-
-        instructorFilter.addEventListener('change', filterRows);
-        searchInput.addEventListener('input', filterRows);
-        clearBtn.addEventListener('click', () => {
-            instructorFilter.value = '';
-            searchInput.value = '';
-            filterRows();
-        });
-
-        filterRows();
-    });
-</script>
-
-<script>
-    document.getElementById('semesterFilter').addEventListener('change', function () {
-        const selectedSemester = this.value;
-        const url = new URL(window.location.href);
-        
-        if (selectedSemester) {
-            url.searchParams.set('semester_id', selectedSemester);
-        } else {
-            url.searchParams.delete('semester_id');
-        }
-
-        window.location.href = url.toString();
-    });
-</script>
+<script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
 
 <!-- No Active Semester Modal -->
 <div class="modal fade" id="noSemesterModal" tabindex="-1">
@@ -466,21 +387,11 @@ subjectSelect.addEventListener('change', function () {
     </div>
 </div>
 
-<script>
-function showNoSemesterModal() {
-    const noSemesterModal = new bootstrap.Modal(document.getElementById('noSemesterModal'));
-    noSemesterModal.show();
-
-    setTimeout(() => {
-        noSemesterModal.hide();
-    }, 1500); // Auto-hide after 1500 ms (1.5 seconds)
-}
-</script>
 
 
 
 
-<!-- Success Modal -->
+<!-- Success Modal
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -495,7 +406,7 @@ function showNoSemesterModal() {
     </div>
 </div>
 
-<!--  Error Modal -->
+Error Modal
 <div class="modal fade" id="errorModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -512,24 +423,6 @@ function showNoSemesterModal() {
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!--  Flash Message Script -->
-<?php if (session()->getFlashdata('success') || session()->getFlashdata('error')): ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        <?php if (session()->getFlashdata('success')): ?>
-            const successMessage = <?= json_encode(session()->getFlashdata('success')) ?>;
-            document.getElementById('successMessage').textContent = successMessage;
-            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-            setTimeout(() => successModal.hide(), 3000);  // Auto close after 3 seconds
-        <?php elseif (session()->getFlashdata('error')): ?>
-            const errorMessage = <?= json_encode(session()->getFlashdata('error')) ?>;
-            document.getElementById('errorMessage').textContent = errorMessage;
-            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-            errorModal.show();
-        <?php endif; ?>
-    });
-</script>
-<?php endif; ?>

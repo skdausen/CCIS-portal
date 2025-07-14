@@ -132,8 +132,6 @@
     </div>
   </div>
 
-
-
   <!-- EDIT PROFILE MODAL (Styled like Profile View) -->
   <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">

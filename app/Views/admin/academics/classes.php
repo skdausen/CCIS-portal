@@ -76,11 +76,22 @@
                 ];
             }
 
-            $groupedClasses[$key]['days'][] = $class['class_day'];
-            $groupedClasses[$key]['times'][] = date('g:iA', strtotime($class['class_start'])) . '-' . date('g:iA', strtotime($class['class_end']));
-            $groupedClasses[$key]['rooms'][] = $class['class_room'];
-        }
-        ?>
+    // Lecture
+    if (!empty($class['lec_day'])) {
+        $groupedClasses[$key]['days'][] = 'Lec: ' . $class['lec_day'];
+        $groupedClasses[$key]['times'][] = 'Lec: ' . date('g:iA', strtotime($class['lec_start'])) . '-' . date('g:iA', strtotime($class['lec_end']));
+        $groupedClasses[$key]['rooms'][] = 'Lec: ' . $class['lec_room'];
+    }
+
+    // Laboratory (optional)
+    if (!empty($class['lab_day'])) {
+        $groupedClasses[$key]['days'][] = 'Lab: ' . $class['lab_day'];
+        $groupedClasses[$key]['times'][] = 'Lab: ' . date('g:iA', strtotime($class['lab_start'])) . '-' . date('g:iA', strtotime($class['lab_end']));
+        $groupedClasses[$key]['rooms'][] = 'Lab: ' . $class['lab_room'];
+    }
+}
+
+?>
 
         <!-- CLASSES TABLE -->
         <div class="table-responsive">
@@ -106,23 +117,41 @@
                     <tr>
                         <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
                         <td><?= esc($class['subject_type']) ?></td>
-                        <td><?= esc($class['class_day']) ?></td>
-                        <td><?= date("g:i A", strtotime($class['class_start'])) ?> - <?= date("g:i A", strtotime($class['class_end'])) ?></td>
-                        <td><?= esc($class['class_room']) ?></td>
+                        <td>
+                            <?= esc($class['lec_day'] ?? '-') ?>
+                            <?php if (!empty($class['lab_day'])): ?>
+                                <br>Lab: <?= esc($class['lab_day']) ?>
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?= !empty($class['lec_start']) && !empty($class['lec_end']) ? date("g:i A", strtotime($class['lec_start'])) . ' - ' . date("g:i A", strtotime($class['lec_end'])) : '-' ?>
+                            <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                                <br>Lab: <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?= esc($class['lec_room'] ?? '-') ?>
+                            <?php if (!empty($class['lab_room'])): ?>
+                                <br>Lab: <?= esc($class['lab_room']) ?>
+                            <?php endif; ?>
+                        </td>
+
                         <td><?= esc($class['section'] ?? 'N/A') ?></td>
                         <td><?= esc($class['fname'] . ' ' . $class['lname']) ?></td>
                         <td><?= esc($class['semester'] . ' ' . $class['schoolyear']) ?></td>
                         <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-    <td>
-    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
-    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
-    </td>
-    <?php endif; ?>
+                        <td>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+                        </td>
+                        <?php endif; ?>
 
 
                     </tr>
 
-                <!-- Edit Modal -->
+    <!-- Edit Modal -->
     <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -180,29 +209,51 @@
                         </select>
                     </div>
 
-                    <!-- Class Day -->
+                    <!-- Lecture Schedule -->
+                    <h6>Lecture Schedule</h6>
                     <div class="mb-3">
-                        <label>Day</label>
-                        <input type="text" name="class_day" class="form-control" value="<?= esc($class['class_day']) ?>" required>
+                        <label>Lecture Day</label>
+                        <input type="text" name="lec_day" class="form-control" value="<?= esc($class['lec_day'] ?? '') ?>" required>
                     </div>
 
-                    <!-- Start Time -->
                     <div class="mb-3">
-                        <label>Start Time</label>
-                        <input type="time" name="class_start" class="form-control" value="<?= esc($class['class_start']) ?>" required>
+                        <label>Lecture Start Time</label>
+                        <input type="time" name="lec_start" class="form-control" value="<?= esc($class['lec_start'] ?? '') ?>" required>
                     </div>
 
-                    <!-- End Time -->
                     <div class="mb-3">
-                        <label>End Time</label>
-                        <input type="time" name="class_end" class="form-control" value="<?= esc($class['class_end']) ?>" required>
+                        <label>Lecture End Time</label>
+                        <input type="time" name="lec_end" class="form-control" value="<?= esc($class['lec_end'] ?? '') ?>" required>
                     </div>
 
-                    <!-- Room -->
                     <div class="mb-3">
-                        <label>Room</label>
-                        <input type="text" name="class_room" class="form-control" value="<?= esc($class['class_room']) ?>" required>
+                        <label>Lecture Room</label>
+                        <input type="text" name="lec_room" class="form-control" value="<?= esc($class['lec_room'] ?? '') ?>" required>
                     </div>
+
+                    <?php if (($class['subject_type'] ?? '') === 'LEC with LAB'): ?>
+                        <h6>Laboratory Schedule</h6>
+                        <div class="mb-3">
+                            <label>Lab Day</label>
+                            <input type="text" name="lab_day" class="form-control" value="<?= esc($class['lab_day'] ?? '') ?>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Lab Start Time</label>
+                            <input type="time" name="lab_start" class="form-control" value="<?= esc($class['lab_start'] ?? '') ?>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Lab End Time</label>
+                            <input type="time" name="lab_end" class="form-control" value="<?= esc($class['lab_end'] ?? '') ?>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Lab Room</label>
+                            <input type="text" name="lab_room" class="form-control" value="<?= esc($class['lab_room'] ?? '') ?>">
+                        </div>
+                    <?php endif; ?>
+
 
                     <!-- Section -->
                     <div class="mb-3">
@@ -315,19 +366,19 @@
                                 <h6>Lecture Schedule</h6>
                                 <div class="mb-3">
                                     <label for="lecDay" class="form-label">Day/s</label>
-                                    <input type="text" id="lecDay" name="class_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
+                                    <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="lecRoom" class="form-label">Room</label>
-                                    <input type="text" id="lecRoom" name="class_room" class="form-control" placeholder="e.g., Room 101" required>
+                                    <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="lecStart" class="form-label">Start Time</label>
-                                    <input type="time" id="lecStart" name="class_start" class="form-control" required>
+                                    <input type="time" id="lecStart" name="lec_start" class="form-control" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="lecEnd" class="form-label">End Time</label>
-                                    <input type="time" id="lecEnd" name="class_end" class="form-control" required>
+                                    <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
                                 </div>
                             </div>
 

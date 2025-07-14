@@ -672,7 +672,7 @@ class AdminController extends BaseController
         $semester = $this->request->getGet('semester');
 
         $curriculumModel = new CurriculumModel();
-        $courses = $curriculumModel->getCourses($yearLevel, $semester);
+        $courses = $curriculumModel->getSubjects($yearLevel, $semester);
 
         $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
 

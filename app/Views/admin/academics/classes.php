@@ -117,22 +117,29 @@
                     <tr>
                         <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
                         <td><?= esc($class['subject_type']) ?></td>
+
                         <td>
-                            <?= esc($class['lec_day'] ?? '-') ?>
+                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '-' ?>
                             <?php if (!empty($class['lab_day'])): ?>
                                 <br>Lab: <?= esc($class['lab_day']) ?>
                             <?php endif; ?>
                         </td>
 
-                        <td>
-                            <?= !empty($class['lec_start']) && !empty($class['lec_end']) ? date("g:i A", strtotime($class['lec_start'])) . ' - ' . date("g:i A", strtotime($class['lec_end'])) : '-' ?>
+                       <td>
+                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                                Lec: <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+
                             <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
                                 <br>Lab: <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
                             <?php endif; ?>
                         </td>
 
+
                         <td>
-                            <?= esc($class['lec_room'] ?? '-') ?>
+                            <?= !empty($class['lec_room']) ? 'Lec: ' . esc($class['lec_room']) : '-' ?>
                             <?php if (!empty($class['lab_room'])): ?>
                                 <br>Lab: <?= esc($class['lab_room']) ?>
                             <?php endif; ?>

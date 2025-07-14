@@ -43,6 +43,7 @@
                     <tr>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
+                        <th>Subject Type</th>
                         <th>Lecture Units</th>
                         <th>Lab Units</th>
                         <th>Total Units</th>
@@ -54,6 +55,7 @@
                     <tr>
                         <td><?= esc($subject['subject_code']) ?></td>
                         <td><?= esc($subject['subject_name']) ?></td>
+                        <td><?= esc($subject['subject_type']) ?></td>
                         <td><?= esc($subject['lec_units']) ?></td>
                         <td><?= esc($subject['lab_units']) ?></td>
                         <td><?= esc($subject['total_units']) ?></td>
@@ -82,6 +84,15 @@
                                             <label>Subject Name</label>
                                             <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
                                         </div>
+
+                                        <div class="mb-3">
+                                            <label>Subject Type</label>
+                                            <select name="subject_type" class="form-select" required>
+                                                <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
+                                                <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
+                                            </select>
+                                        </div>
+
                                         <div class="mb-3">
                                             <label>Lecture Units</label>
                                             <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required>
@@ -127,43 +138,62 @@
         </div>
     </div>
 
-    <!-- Add Subject Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form method="post" action="<?= site_url('admin/academics/subjects/create') ?>">
-                    <?= csrf_field() ?>
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Subject</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label>Subject Code</label>
-                            <input type="text" name="subject_code" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Subject Name</label>
-                            <input type="text" name="subject_name" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Lecture Units</label>
-                            <input type="number" name="lec_units" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Lab Units</label>
-                            <input type="number" name="lab_units" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
+  <!-- Add Subject Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="<?= site_url('admin/academics/subjects/create') ?>" method="post">
+      <?= csrf_field() ?>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addModalLabel">Add New Subject</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-    </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label>Curriculum</label>
+                <select name="curriculum_id" class="form-select" required>
+                    <option value="">Select Curriculum</option>
+                    <?php foreach ($curriculums as $curr): ?>
+                    <option value="<?= $curr['curriculum_id'] ?>">
+                        <?= esc($curr['curriculum_name']) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+                </div>
+          <div class="mb-3">
+            <label>Subject Code</label>
+            <input type="text" name="subject_code" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label>Subject Name</label>
+            <input type="text" name="subject_name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label>Subject Type</label>
+            <select name="subject_type" class="form-select" id="add_subject_type" onchange="toggleAddUnits()" required>
+              <option value="LEC">LEC</option>
+              <option value="LEC with LAB">LEC with LAB</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Lecture Units</label>
+            <input type="number" name="lec_units" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label>Lab Units</label>
+            <input type="number" name="lab_units" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Add Subject</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
+
+
 
 <!-- FILTER SCRIPT -->
 <script>

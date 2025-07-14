@@ -92,7 +92,41 @@ class ProfileController extends BaseController
             'profimg' => $data['profimg'] ?? session('profimg'),
         ]));
 
-        return redirect()->back()->with('success', 'Profile updated successfully!');
+        return redirect()->back()->with('success', 'Profile updated successfully!')->with('open_modal', 'profileModal');
     }
+
+    public function update_password()
+    {
+        $userModel = new UserModel();
+        $session = session();
+
+        $userId = $session->get('user_id'); // or however you're storing it
+        $currentPassword = $this->request->getPost('current_password');
+        $newPassword = $this->request->getPost('password');
+        $confirmPassword = $this->request->getPost('confirm_password');
+
+        // Get the current hashed password from DB
+        $user = $userModel->find($userId);
+
+        if (!$user || !password_verify($currentPassword, $user['userpassword'])) {
+            return redirect()->back()->with('error', 'Current password is incorrect.')->with('open_modal', 'profileModal');
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            return redirect()->back()->with('error', 'New passwords do not match.')->with('open_modal', 'profileModal');
+        }
+
+        if (strlen($newPassword) < 8) {
+            return redirect()->back()->with('error', 'New password must be at least 8 characters.')->with('open_modal', 'profileModal');
+        }
+
+        // Update password
+        $userModel->update($userId, [
+            'userpassword' => password_hash($newPassword, PASSWORD_DEFAULT),
+        ]);
+
+        return redirect()->back()->with('success', 'Password updated successfully!')->with('open_modal', 'profileModal');
+    }
+
 
 }

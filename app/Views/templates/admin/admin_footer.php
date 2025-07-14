@@ -52,7 +52,7 @@
   <?php endif; ?>
 
   <!-- PROFILE MODAL -->
-  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -76,7 +76,7 @@
 
             <!-- DETAILS -->
             <div class="col-md-8">
-              <table class="table table-bordered table-hover">
+              <table class="table table-sm table-hover custom-padding">
                 <tbody>
                   <tr>
                     <th>Email</th>
@@ -106,6 +106,17 @@
                     <th>Last Login</th>
                     <td><?= esc(session('last_login')) ?></td>
                   </tr>
+                  <tr>
+                    <th>Account Created</th>
+                    <td><?= esc(session('created_at')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Password</th>
+                    <td class="d-flex justify-content-between align-items-center">
+                      <span id="maskedPassword"><?= str_repeat('•', 8) ?></span>
+                      <a href="#editPasswordModal" id="editPasswordLink" data-bs-toggle="modal" class="ms-2 text-decoration-none small">Change</a>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -114,7 +125,7 @@
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit</button>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
@@ -124,7 +135,7 @@
 
 
   <!-- EDIT PROFILE MODAL (Styled like Profile View) -->
-  <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <form action="<?= site_url('profile/update') ?>" method="post" enctype="multipart/form-data">
@@ -226,7 +237,7 @@
               <!-- Birthday -->
               <div class="col-md-6">
                 <label class="form-label">Birthday</label>
-                <input type="date" name="birthdate" class="form-control" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY">
+                <input type="date" name="birthdate" id="birthdate" class="form-control" max="<?= date('Y-m-d', strtotime('-1 day')) ?>" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY" required>
               </div>
 
               <!-- Address -->
@@ -246,6 +257,53 @@
     </div>
   </div>
 
+  <!-- EDIT PASSWORD MODAL -->
+<div class="modal fade" id="editPasswordModal" tabindex="-1" aria-labelledby="editPasswordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="<?= site_url('profile/update_password') ?>" method="post">
+        <?= csrf_field() ?>
+        <div class="modal-header">
+          <h5 class="modal-title" id="editPasswordModalLabel">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <input type="password" name="current_password" id="currentPassword" class="form-control" placeholder="Enter Current password" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">New Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter New password" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" name="confirm_password" id="confirmPassword" class="form-control" placeholder="Confirm New password" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<?php if (session()->getFlashdata('open_modal')): ?>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      var modalId = "<?= session()->getFlashdata('open_modal') ?>";
+      var modalElement = document.getElementById(modalId);
+      if (modalElement) {
+        var modal = new bootstrap.Modal(modalElement);
+        modal.show();
+      }
+    }, 1000); // Delay in milliseconds (1000ms = 1s)
+  });
+</script>
+<?php endif; ?>
 
 
   <!-- Bootstrap JS -->

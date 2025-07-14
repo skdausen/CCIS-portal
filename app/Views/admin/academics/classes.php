@@ -118,22 +118,29 @@ foreach ($classes as $class) {
                     <tr>
                         <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
                         <td><?= esc($class['subject_type']) ?></td>
+
                         <td>
-                            <?= esc($class['lec_day'] ?? '-') ?>
+                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '-' ?>
                             <?php if (!empty($class['lab_day'])): ?>
                                 <br>Lab: <?= esc($class['lab_day']) ?>
                             <?php endif; ?>
                         </td>
 
-                        <td>
-                            <?= !empty($class['lec_start']) && !empty($class['lec_end']) ? date("g:i A", strtotime($class['lec_start'])) . ' - ' . date("g:i A", strtotime($class['lec_end'])) : '-' ?>
+                       <td>
+                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                                Lec: <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+
                             <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
                                 <br>Lab: <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
                             <?php endif; ?>
                         </td>
 
+
                         <td>
-                            <?= esc($class['lec_room'] ?? '-') ?>
+                            <?= !empty($class['lec_room']) ? 'Lec: ' . esc($class['lec_room']) : '-' ?>
                             <?php if (!empty($class['lab_room'])): ?>
                                 <br>Lab: <?= esc($class['lab_room']) ?>
                             <?php endif; ?>
@@ -362,35 +369,53 @@ foreach ($classes as $class) {
                     <!-- Lecture Schedule -->
                     <div id="lectureSchedule" class="schedule-section">
                         <h6>Lecture Schedule</h6>
-                        <div class="mb-3">
-                            <input type="text" name="class_day" class="form-control" placeholder="Lecture Day/s e.g., M,T,W,Th,F">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="lecDay" class="form-label">Day/s</label>
+                                <input type="text" id="lecDay" name="class_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lecRoom" class="form-label">Room</label>
+                                <input type="text" id="lecRoom" name="class_room" class="form-control" placeholder="e.g., Room 101">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <input type="time" name="class_start" class="form-control" placeholder="Lecture Start Time">
-                        </div>
-                        <div class="mb-3">
-                            <input type="time" name="class_end" class="form-control" placeholder="Lecture End Time">
-                        </div>
-                        <div class="mb-3">
-                            <input type="text" name="class_room" class="form-control" placeholder="Lecture Room e.g., Room 101">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="lecStart" class="form-label">Start Time</label>
+                                <input type="time" id="lecStart" name="class_start" class="form-control" placeholder="Lecture Start Time">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lecEnd" class="form-label">End Time</label>
+                                <input type="time" id="lecEnd" name="class_end" class="form-control" placeholder="Lecture End Time">
+                            </div>
                         </div>
                     </div>
 
                     <!-- Lab Schedule -->
                     <div id="labSchedule" class="schedule-section d-none">
-                        <h6>Lab Schedule</h6>
-                        <div class="mb-3">
-                            <input type="text" name="lab_day" class="form-control" placeholder="Lab Day/s e.g., M,T,W,Th,F">
+                    <h6>Lab Schedule</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="labDay" class="form-label">Lab Day/s</label>
+                            <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
                         </div>
-                        <div class="mb-3">
-                            <input type="time" name="lab_start" class="form-control" placeholder="Lab Start Time">
+                        <div class="col-md-6">
+                            <label for="labRoom" class="form-label">Lab Room</label>
+                            <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
                         </div>
-                        <div class="mb-3">
-                            <input type="time" name="lab_end" class="form-control" placeholder="Lab End Time">
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="labStart" class="form-label">Lab Start Time</label>
+                            <input type="time" id="labStart" name="lab_start" class="form-control">
                         </div>
-                        <div class="mb-3">
-                            <input type="text" name="lab_room" class="form-control" placeholder="Lab Room e.g., Room 101">
+                        <div class="col-md-6">
+                            <label for="labEnd" class="form-label">Lab End Time</label>
+                            <input type="time" id="labEnd" name="lab_end" class="form-control">
                         </div>
+                    </div>
+
                     </div>
                 </div> <!-- /.modal-body -->
 

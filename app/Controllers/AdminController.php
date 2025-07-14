@@ -259,9 +259,12 @@ class AdminController extends BaseController
         }
 
         $semester = $this->request->getPost('semester'); // e.g., "1st"
-        $schoolyearText = $this->request->getPost('schoolyear'); // e.g., "2025-2026"
-        $status = $this->request->getPost('status'); // "1" or "0"
+        $semester = $this->request->getPost('semester');
+        $schoolyearText = str_replace(['–', '—'], '-', $this->request->getPost('schoolyear'));
+        $schoolyearText = preg_replace('/\s+/', '', trim($schoolyearText));
+        $status = $this->request->getPost('status');
         $isActive = $status == '1' ? 1 : 0;
+
 
         $schoolYearModel = new SchoolYearModel();
         $semesterModel = new SemesterModel();
@@ -308,7 +311,8 @@ class AdminController extends BaseController
         }
 
         $semester = $this->request->getPost('semester');
-        $schoolyearText = $this->request->getPost('schoolyear');
+        $schoolyearText = str_replace(['–', '—'], '-', $this->request->getPost('schoolyear'));
+        $schoolyearText = preg_replace('/\s+/', '', trim($schoolyearText));
         $status = $this->request->getPost('status');
 
         if (!$semester || !$schoolyearText || $status === null) {
@@ -556,40 +560,27 @@ public function createClass()
         $ftbId = $this->request->getPost('ftb_id');
         $semesterId = $this->request->getPost('semester_id');
         $section = $this->request->getPost('section');
+        $subjectType = $this->request->getPost('subject_type');
 
-        // Insert Lecture
-        $classData = [
+        $data = [
             'ftb_id'      => $ftbId,
             'subject_id'  => $subjectId,
             'semester_id' => $semesterId,
             'section'     => $section,
-            'class_day'   => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end'   => $this->request->getPost('class_end'),
-            'class_room'  => $this->request->getPost('class_room'),
+            'lec_day'     => $this->request->getPost('class_day'),
+            'lec_start'   => $this->request->getPost('class_start'),
+            'lec_end'     => $this->request->getPost('class_end'),
+            'lec_room'    => $this->request->getPost('class_room'),
         ];
 
-        if (!empty($classData['class_day']) && !empty($classData['class_start']) && !empty($classData['class_end'])) {
-            $classModel->insert($classData);
+        if ($subjectType === 'LEC with LAB') {
+            $data['lab_day']   = $this->request->getPost('lab_day');
+            $data['lab_start'] = $this->request->getPost('lab_start');
+            $data['lab_end']   = $this->request->getPost('lab_end');
+            $data['lab_room']  = $this->request->getPost('lab_room');
         }
 
-        // Insert Lab if exists
-        if ($this->request->getPost('subject_type') === 'LEC with LAB') {
-            $labData = [
-                'ftb_id'      => $ftbId,
-                'subject_id'  => $subjectId,
-                'semester_id' => $semesterId,
-                'section'     => $section,
-                'class_day'   => $this->request->getPost('lab_day'),
-                'class_start' => $this->request->getPost('lab_start'),
-                'class_end'   => $this->request->getPost('lab_end'),
-                'class_room'  => $this->request->getPost('lab_room'),
-            ];
-
-            if (!empty($labData['class_day']) && !empty($labData['class_start']) && !empty($labData['class_end'])) {
-                $classModel->insert($labData);
-            }
-        }
+        $classModel->insert($data);
 
         return redirect()->to('admin/academics/classes')->with('success', 'Class added successfully.');
     } catch (\Exception $e) {
@@ -606,22 +597,39 @@ public function updateClass($id)
     $classModel = new ClassModel();
 
     try {
-        $classModel->update($id, [
+        $subjectType = $this->request->getPost('subject_type');
+
+        $data = [
             'ftb_id'      => $this->request->getPost('ftb_id'),
             'subject_id'  => $this->request->getPost('subject_id'),
             'semester_id' => $this->request->getPost('semester_id'),
-            'class_day'   => $this->request->getPost('class_day'),
-            'class_start' => $this->request->getPost('class_start'),
-            'class_end'   => $this->request->getPost('class_end'),
-            'class_room'  => $this->request->getPost('class_room'),
-            'section'     => $this->request->getPost('section')
-        ]);
+            'section'     => $this->request->getPost('class_section'),
+            'lec_day'     => $this->request->getPost('class_day'),
+            'lec_start'   => $this->request->getPost('class_start'),
+            'lec_end'     => $this->request->getPost('class_end'),
+            'lec_room'    => $this->request->getPost('class_room'),
+        ];
+
+        if ($subjectType === 'LEC with LAB') {
+            $data['lab_day']   = $this->request->getPost('lab_day');
+            $data['lab_start'] = $this->request->getPost('lab_start');
+            $data['lab_end']   = $this->request->getPost('lab_end');
+            $data['lab_room']  = $this->request->getPost('lab_room');
+        } else {
+            $data['lab_day']   = null;
+            $data['lab_start'] = null;
+            $data['lab_end']   = null;
+            $data['lab_room']  = null;
+        }
+
+        $classModel->update($id, $data);
 
         return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
     } catch (\Exception $e) {
         return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while updating the class.');
     }
 }
+
 
 // Delete a class
 public function deleteClass($id)

@@ -13,11 +13,16 @@ class ClassModel extends Model
         'subject_id',
         'semester_id',
         'section',
-        'class_room',
-        'class_day',
-        'class_start',
-        'class_end',
+        'lec_room',
+        'lec_day',
+        'lec_start',
+        'lec_end',
+        'lab_room',
+        'lab_day',
+        'lab_start',
+        'lab_end',
     ];
+
 
     public $useTimestamps = false;
 
@@ -60,8 +65,8 @@ class ClassModel extends Model
             ->join('subjects', 'subjects.subject_id = classes.subject_id')
             ->where('classes.ftb_id', $facultyId)
             ->where('classes.semester_id', $semesterId)
-            ->orderBy('FIELD(classes.class_day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")')
-            ->orderBy('classes.class_start')
+            ->orderBy('FIELD(classes.lec_day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")')
+            ->orderBy('classes.lec_start')
             ->findAll();
     }
 }

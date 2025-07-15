@@ -46,12 +46,17 @@ class AdminController extends BaseController
         }
 
         $model = new UserModel();
-        $data['users'] = $model->findAll();
+        $curriculumModel = new \App\Models\CurriculumModel(); // ✅ Add this
+        $data = [
+            'users'       => $model->findAll(),
+            'curriculums' => $curriculumModel->findAll() // ✅ Include this
+        ];
 
         return view('templates/admin/admin_header')
-            . view('admin/users', $data)
+            . view('admin/users', $data) // ✅ Now this contains both `users` & `curriculums`
             . view('templates/admin/admin_footer');
     }
+
 
     // Display form to add a new user
     public function createUser()
@@ -70,7 +75,9 @@ class AdminController extends BaseController
         // GET POST INPUTS
         $username = strtoupper($this->request->getPost('username'));
         $email    = $this->request->getPost('email');
-        $role     = $this->request->getPost('role');
+        $role     = strtolower($this->request->getPost('role'));
+        $curriculumId = $this->request->getPost('curriculum_id'); // ✅ Only students will use this
+
 
         // DEFAULT PASSWORD
         $defaultPassword = 'ccis1234';
@@ -105,27 +112,38 @@ class AdminController extends BaseController
 
         // INSERT INTO RELATED TABLES BASED ON ROLE
         if ($role === 'student') {
-            $studentModel->insert([
-                'student_id' => $username,
-                'user_id'    => $userId, // optional: if linked by user ID
-                'profimg'    => $defaultImg
-            ]);
+            if (!$studentModel->insert([
+                'student_id'     => $username,
+                'user_id'        => $userId,
+                'curriculum_id'  => $curriculumId, // ✅ Save it here
+                'profimg'        => $defaultImg
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create student account.');
+            }
         }
 
+
         if ($role === 'faculty') {
-            $facultyModel->insert([
+            if (!$facultyModel->insert([
                 'faculty_id' => $username,
-                'user_id'    => $userId,  // optional: if linked by user ID
+                'user_id'    => $userId,
                 'profimg'    => $defaultImg
-            ]);
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create faculty account.');
+            }
         }
 
         if ($role === 'admin') {
-            $adminModel->insert([
-                'admin_id' => $username,
-                'user_id'    => $userId, // optional: if linked by user ID
+            if (!$adminModel->insert([
+                'admin_id'   => $username,
+                'user_id'    => $userId,
                 'profimg'    => $defaultImg
-            ]);
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create admin account.');
+            }
         }
 
         // COMPLETE TRANSACTION
@@ -135,9 +153,9 @@ class AdminController extends BaseController
         if ($db->transStatus() === false) {
             return redirect()->back()->with('error', 'Failed to create user. Please try again.');
         }
-
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
+
 
     // Controller method to get users with joined profile info
     public function viewUsers()

@@ -110,12 +110,9 @@ class FacultyController extends BaseController
 
         $db = \Config\Database::connect();
         $userId = session()->get('user_id');
-
-        // Get ftb_id
         $faculty = $db->table('faculty')->where('user_id', $userId)->get()->getRow();
         $ftbId = $faculty->ftb_id ?? null;
 
-        // Get all semesters
         $semesters = $db->table('semesters')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
             ->select('semesters.*, schoolyears.schoolyear')
@@ -123,37 +120,34 @@ class FacultyController extends BaseController
             ->orderBy('semesters.semester', 'DESC')
             ->get()->getResult();
 
-        // Determine selected semester (from GET or default to active)
-        $selectedSemesterId = $this->request->getGet('semester_id');
-        if (!$selectedSemesterId) {
-            $active = $db->table('semesters')->where('is_active', 1)->get()->getRow();
-            $selectedSemesterId = $active->semester_id ?? null;
-        }
-
-        // Get selected semester info
-        $selectedSemester = null;
-        foreach ($semesters as $sem) {
-            if ($sem->semester_id == $selectedSemesterId) {
-                $selectedSemester = $sem;
-                break;
-            }
-        }
-
-        // Get classes for the selected semester
-        $classes = $db->table('classes')
-            ->select('classes.*, subjects.subject_code, subjects.subject_name, subjects.subject_type')
-            ->join('subjects', 'subjects.subject_id = classes.subject_id')
-            ->where('classes.ftb_id', $ftbId)
-            ->where('classes.semester_id', $selectedSemesterId)
-            ->orderBy('classes.class_id', 'ASC')
-            ->get()
-            ->getResult();
+        $active = $db->table('semesters')->where('is_active', 1)->get()->getRow();
 
         return view('templates/faculty/faculty_header')
-            . view('faculty/classes', ['classes' => $classes,
-                'semesters' => $semesters, 
-                'selectedSemester' => $selectedSemester ])
+            . view('faculty/classes', [
+                'semesters' => $semesters,
+                'activeSemesterId' => $active->semester_id ?? null
+            ])
             . view('templates/admin/admin_footer');
+    }
+
+    public function getClassesBySemester()
+    {
+        $semesterId = $this->request->getGet('semester_id');
+        $userId = session()->get('user_id');
+        $db = \Config\Database::connect();
+
+        $faculty = $db->table('faculty')->where('user_id', $userId)->get()->getRow();
+        $ftbId = $faculty->ftb_id ?? null;
+
+        $classes = $db->table('classes')
+            ->select('classes.*, subjects.subject_code, subjects.subject_name, subjects.subject_type, classes.section')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->where('classes.ftb_id', $ftbId)
+            ->where('classes.semester_id', $semesterId)
+            ->orderBy('classes.class_id', 'ASC')
+            ->get()->getResult();
+
+        return $this->response->setJSON($classes);
     }
 
     private function expandDays($days)

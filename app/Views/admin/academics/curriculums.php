@@ -69,18 +69,54 @@
                 Edit
             </button>
         </div>
+
         <div class="card-body">
-            <?php if (!empty($curriculumSubjects[$curriculum['curriculum_id']])): ?>
-                <ul class="list-group">
+        <?php if (!empty($curriculumSubjects[$curriculum['curriculum_id']])): ?>
+
+            <?php
+                $totalLec = 0;
+                $totalLab = 0;
+                foreach ($curriculumSubjects[$curriculum['curriculum_id']] as $subject) {
+                    $totalLec += $subject['lec_units'];
+                    $totalLab += $subject['lab_units'];
+                }
+                $totalOverall = $totalLec + $totalLab;
+            ?>
+
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>LEC Units</th>
+                        <th>LAB Units</th>
+                        <th>Total Units</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <?php foreach ($curriculumSubjects[$curriculum['curriculum_id']] as $subject): ?>
-                        <li class="list-group-item"><?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?></li>
+                        <tr>
+                            <td><?= esc($subject['subject_code']) ?></td>
+                            <td><?= esc($subject['subject_name']) ?></td>
+                            <td><?= esc($subject['lec_units']) ?></td>
+                            <td><?= esc($subject['lab_units']) ?></td>
+                            <td><?= $subject['lec_units'] + $subject['lab_units'] ?></td>
+                        </tr>
                     <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p class="text-muted">No subjects assigned to this curriculum.</p>
-            <?php endif; ?>
-        </div>
-    </div>
+
+                    <tr class="fw-bold bg-light">
+                        <td colspan="2" class="text-end"></td>
+                        <td><?= $totalLec ?></td>
+                        <td><?= $totalLab ?></td>
+                        <td><?= $totalOverall ?></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        <?php else: ?>
+            <p class="text-muted">No subjects assigned to this curriculum.</p>
+        <?php endif; ?>
+ 
 
     <!-- 👇 Edit Modal (inside the same loop) -->
     <div class="modal fade" id="editModal<?= $curriculum['curriculum_id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $curriculum['curriculum_id'] ?>" aria-hidden="true">

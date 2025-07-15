@@ -46,7 +46,8 @@ class ClassModel extends Model
     {
         return $this->select('classes.*, 
                             subjects.subject_code, 
-                            subjects.subject_name, 
+                            subjects.subject_name,
+                            subjects.subject_type, 
                             semesters.semester, 
                             schoolyears.schoolyear')
             ->join('subjects', 'subjects.subject_id = classes.subject_id')

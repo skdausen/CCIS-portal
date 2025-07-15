@@ -23,4 +23,6 @@ class StudentModel extends Model
         'program_id',
         'year_level'
     ];
+
 }
+

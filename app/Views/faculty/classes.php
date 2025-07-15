@@ -40,7 +40,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const filtered = classes.filter(c => 
             c.subject_name.toLowerCase().includes(search) ||
             c.subject_code.toLowerCase().includes(search) ||
-            c.subject_type.toLowerCase().includes(search)
+            c.subject_type.toLowerCase().includes(search) ||
+            c.section.toLowerCase().includes(search)
         );
 
         if (filtered.length === 0) {

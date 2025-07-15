@@ -100,6 +100,7 @@ class ProfileController extends BaseController
                 $programName = $program['program_name'];
             }
         }
+        
 
         // Update session with new data
         session()->set(array_merge($data, [

@@ -21,7 +21,7 @@ class FacultyModel extends Model
         'address',
         'birthdate',
         'contactnum',
-        'employee_status',
+        'employee_status'
     ];
 }
 

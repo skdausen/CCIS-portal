@@ -91,14 +91,32 @@
                     <td><?= esc(session('sex')) ?></td>
                   </tr>
                   <?php if (session('role') === 'student'): ?>
-                  <tr>
-                    <th>Program</th>
-                    <td><?= esc(session('program')) ?></td>
-                  </tr>
-                  <tr>
-                    <th>Year Level</th>
-                    <td><?= esc(session('year_level')) ?></td>
-                  </tr>
+                    <tr>
+                      <th>Program</th>
+                      <td><?= esc(session('program')) ?></td>
+                    </tr>
+                    <tr>
+                      <th>Year Level</th>
+                      <td><?= esc(session('year_level')) ?></td>
+                    </tr>
+                  <?php endif; ?>
+
+                  <?php if (session('role') === 'faculty'): ?>
+                    <tr>
+                        <th>Employee Status</th>
+                        <td>    
+                          <?php
+                            $status = session('employee_status');
+                            if ($status === 'Full-time') {
+                                echo 'Regular';
+                            } elseif ($status === 'Part-time') {
+                                echo 'Part-Time';
+                            } else {
+                                echo 'N/A';
+                            }
+                          ?>
+                        </td>
+                    </tr>
                   <?php endif; ?>
                   <tr>
                     <th>Birthday</th>
@@ -144,7 +162,7 @@
 
   <!-- EDIT PROFILE MODAL (Styled like Profile View) -->
   <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <form action="<?= site_url('profile/update') ?>" method="post" enctype="multipart/form-data">
           <div class="modal-header">
@@ -152,7 +170,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
 
-          <div class="modal-body">
+          <div class="modal-body overflow-y-auto">
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
               <div class="col-12 text-center">
@@ -202,10 +220,10 @@
                   <label for="year_level" class="form-label">Year Level:</label>
                   <select name="year_level" id="year_level" class="form-select">
                       <option value="">Select year level</option>
-                      <option value="1" <?= ($student['year_level'] ?? '') == 1 ? 'selected' : '' ?>>1st Year</option>
-                      <option value="2" <?= ($student['year_level'] ?? '') == 2 ? 'selected' : '' ?>>2nd Year</option>
-                      <option value="3" <?= ($student['year_level'] ?? '') == 3 ? 'selected' : '' ?>>3rd Year</option>
-                      <option value="4" <?= ($student['year_level'] ?? '') == 4 ? 'selected' : '' ?>>4th Year</option>
+                      <option value="1" <?= ($student['year_level'] ?? '') == 'first year' ? 'selected' : '' ?>>1st Year</option>
+                      <option value="2" <?= ($student['year_level'] ?? '') == 'second year' ? 'selected' : '' ?>>2nd Year</option>
+                      <option value="3" <?= ($student['year_level'] ?? '') == 'third year' ? 'selected' : '' ?>>3rd Year</option>
+                      <option value="4" <?= ($student['year_level'] ?? '') == 'fourth year' ? 'selected' : '' ?>>4th Year</option>
                   </select>
               </div>
           <?php endif; ?>
@@ -247,6 +265,18 @@
                 <label class="form-label">Birthday</label>
                 <input type="date" name="birthdate" id="birthdate" class="form-control" max="<?= date('Y-m-d', strtotime('-1 day')) ?>" value="<?= esc(session('birthdate')) ?>" placeholder="MM/DD/YYYY" required>
               </div>
+
+              <?php if (session('role') === 'faculty'): ?>
+              <div class="col-md-12">
+                <label for="employee_status" class="form-label">Employee Status:</label>
+                <select name="employee_status" id="employee_status" class="form-select">
+                  <option value="">Select status</option>
+                  <option value="Full-time" <?= (isset($faculty['employee_status']) && $faculty['employee_status'] === 'Full-time') ? 'selected' : '' ?>>Regular</option>
+                  <option value="Part-time" <?= (isset($faculty['employee_status']) && $faculty['employee_status'] === 'Part-time') ? 'selected' : '' ?>>Part-Time</option>
+                </select>
+              </div>
+              <?php endif; ?>
+
 
               <!-- Address -->
               <div class="col-md-12">

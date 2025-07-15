@@ -42,7 +42,7 @@
 
         <!-- Subjects Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" id="subjectsTable">
+            <table class="table table-bordered table-hover custom-padding" id="subjectsTable">
                 <thead class="table-light">
                     <tr>
                         <th>Subject Code</th>
@@ -64,8 +64,8 @@
                         <td><?= esc($subject['lab_units']) ?></td>
                         <td><?= esc($subject['total_units']) ?></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
                         </td>
                     </tr>
 

@@ -1,9 +1,8 @@
 <div class="container mt-5">
     <h2 class="mb-3">My Classes</h2>
-    <div class="row">
-        <div class="row col-md-12">
-            <div class="mb-3">
-                <label for="semesterSelect">Semester:</label>
+        <div class="row mb-3">
+            <label for="semesterSelect">Semester:</label>
+            <div class="col-md-6 mb-2">
                 <select id="semesterSelect" class="form-select">
                     <?php foreach ($semesters as $sem): ?>
                         <option value="<?= $sem->semester_id ?>" <?= ($sem->semester_id == $activeSemesterId) ? 'selected' : '' ?>>
@@ -12,10 +11,10 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="mb-3">
-                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search subject...">
+            <div class="col-md-6 mb-2">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search subject...">
             </div>
-            <div class="d-flex justify-content-end mb-3">
+            <div class="d-flex justify-content-end">
                 <div class="form-check form-switch">
                     <label class="form-check-label me-2" for="cardToggle">Show as Cards</label>
                     <input class="form-check-input toggle-green" type="checkbox" id="cardToggle">
@@ -23,12 +22,11 @@
             </div>
         </div>
         <div class="col-md-12">
-                <div id="classesContainer"></div>
+            <div id="classesContainer"></div>
         </div>
-                <nav>
-                    <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
-                </nav>
-    </div>
+            <nav>
+                <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+            </nav>
 </div>
 
 

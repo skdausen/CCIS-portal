@@ -172,98 +172,8 @@
             </div>
         </div>
 
-        <!-- Duplicate Alert Modal -->
-        <div class="modal fade" id="duplicateModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title">Warning</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="duplicateMessage">The semester and school year combination already exists. Please try again.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div> <!-- End of container -->
 </div> <!-- End of main-container -->
-
-
-<!-- Trigger duplicate modal if backend sets an error -->
-<?php if (session()->getFlashdata('error')): ?>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateModal'));
-        document.getElementById('duplicateMessage').innerText = "<?= esc(session()->getFlashdata('error')) ?>";
-        duplicateModal.show();
-        setTimeout(() => { duplicateModal.hide(); }, 1500);
-    });
-</script>
-<?php endif; ?>
-
-<!-- Duplicate Check Script -->
-<script>
-    function checkDuplicate(form, currentId = null) {
-    const semester = form.querySelector('[name="semester"]').value.trim().toLowerCase();
-    const schoolyear = form.querySelector('[name="schoolyear"]').value.trim().toLowerCase();
-
-    let isDuplicate = false;
-
-    document.querySelectorAll('#semestersTable tbody tr').forEach(row => {
-        const rowSemester = row.cells[0].textContent.trim().toLowerCase();
-        const rowSchoolYear = row.cells[1].textContent.trim().toLowerCase();
-        const rowId = row.getAttribute('data-id');
-
-        if (semester === rowSemester && schoolyear === rowSchoolYear && rowId !== String(currentId || '')) {
-            isDuplicate = true;
-        }
-    });
-
-    if (isDuplicate) {
-        const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateModal'));
-        duplicateModal.show();
-        setTimeout(() => { duplicateModal.hide(); }, 1500);
-        return false; // Prevent form submit
-    }
-
-    return true; // Allow form submit
-    }
-</script>
-
-<!-- Duplicate Check Script -->
-<script>
-    function checkDuplicate(form, currentId = null) {
-        const semester = form.querySelector('[name="semester"]').value.trim().toLowerCase();
-        const schoolyear = form.querySelector('[name="schoolyear"]').value.trim().toLowerCase();
-
-        let isDuplicate = false;
-
-        document.querySelectorAll('#semestersTable tbody tr').forEach(row => {
-            const rowSemester = row.cells[0].textContent.trim().toLowerCase();
-            const rowSchoolYear = row.cells[1].textContent.trim().toLowerCase();
-            const rowId = row.getAttribute('data-id');
-
-            if (semester === rowSemester && schoolyear === rowSchoolYear && rowId !== String(currentId || '')) {
-                isDuplicate = true;
-            }
-        });
-
-        if (isDuplicate) {
-            const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateModal'));
-            duplicateModal.show();
-
-            // Auto-close after 1.5 seconds
-            setTimeout(() => {
-                duplicateModal.hide();
-            }, 1500);
-
-            return false; // Prevent form submission
-        }
-
-        return true; // Allow submission
-    }
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -290,7 +200,6 @@
                 }
             });
         }
-
         semesterFilter.addEventListener('change', applyFilters);
         searchInput.addEventListener('input', applyFilters);
         clearFilterBtn.addEventListener('click', () => {

@@ -354,7 +354,7 @@ class AdminController extends BaseController
             ->first();
 
         if ($duplicate) {
-            return redirect()->back()->with('error', 'That semester + school year already exists.');
+            return redirect()->back()->with('error', 'That semester & school year already exists.');
         }
 
         if ($isActive) {

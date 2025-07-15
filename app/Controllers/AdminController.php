@@ -734,7 +734,7 @@ public function view_curriculums()
 
     $yearlevel_sem = $this->request->getGet('yearlevel_sem');
     $selectedCurriculum = $this->request->getGet('curriculum_id');
-    $search = $this->request->getGet('search'); // ✅ Get the search input
+    $search = $this->request->getGet('search'); //  Get the search input
 
     $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();

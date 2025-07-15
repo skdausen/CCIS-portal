@@ -437,3 +437,42 @@ body {
         margin: auto;
     }
 
+
+.fixed-columns th,
+.fixed-columns td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.fixed-columns th:nth-child(1),
+.fixed-columns td:nth-child(1) {
+    width: 150px;
+}
+
+.fixed-columns th:nth-child(2),
+.fixed-columns td:nth-child(2) {
+    width: auto; /* Let Subject Name use the flexible space */
+    text-align: left;
+}
+
+.fixed-columns th:nth-child(3),
+.fixed-columns td:nth-child(3),
+.fixed-columns th:nth-child(4),
+.fixed-columns td:nth-child(4),
+.fixed-columns th:nth-child(5),
+.fixed-columns td:nth-child(5) {
+    width: 100px;
+    white-space: nowrap;
+}
+
+.curriculum-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: black;
+}
+
+.semester-heading {
+    font-size: 1.3rem;  /* Slightly bigger than before */
+    font-weight: 400;
+    color: black
+}

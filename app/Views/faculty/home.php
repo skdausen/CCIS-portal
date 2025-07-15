@@ -9,22 +9,42 @@
         <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
         <div class="card p-3 shadow-sm">
             <?php foreach ($schedule as $day => $entries): ?>
-                <h4><?= $day ?></h4>
+                <h5 class="mt-3"><?= esc(strtoupper($day)) ?></h5>
+
                 <?php if (count($entries) > 0): ?>
-                    <ul>
-                        <?php foreach ($entries as $entry): ?>
-                            <li>
-                                <strong><?= esc($entry['subject_code']) ?> - <?= esc($entry['subject_name']) ?> (<?= $entry['type'] ?>)</strong><br>
-                                <?= date('h:i A', strtotime($entry['start'])) ?> to <?= date('h:i A', strtotime($entry['end'])) ?><br>
-                                Room: <?= esc($entry['room']) ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm align-middle text-center custom-padding">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Subject Code</th>
+                                    <th>Subject Name</th>
+                                    <th>Type</th>
+                                    <th>Time</th>
+                                    <th>Room</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($entries as $entry): ?>
+                                    <tr>
+                                        <td><?= esc($entry['subject_code']) ?></td>
+                                        <td><?= esc($entry['subject_name']) ?></td>
+                                        <td><?= esc(ucfirst($entry['type'])) ?></td>
+                                        <td>
+                                            <?= date('h:i A', strtotime($entry['start'])) ?>
+                                            – <?= date('h:i A', strtotime($entry['end'])) ?>
+                                        </td>
+                                        <td><?= esc($entry['room']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
                     <p><em>No classes.</em></p>
                 <?php endif; ?>
             <?php endforeach; ?>
         </div>
+    </div>
 
     <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
     <div class="col-md-4 px-3">
@@ -39,32 +59,62 @@
                 <!-- Announcements -->
                 <div class="col-12">
                     <div class="p-3 border-0 shadow-lg" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
-                        <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
-                        <?php if (!empty($announcements)) : ?>
-                            <?php $latest = reset($announcements); ?>
-                            <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
-                            <small class="text-muted"><?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?></small>
-                            <p class="mt-2"><?= esc($latest['content']); ?></p>
-                        <?php else : ?>
-                            <p>No announcements yet.</p>
-                        <?php endif; ?>
-
-                        <hr>
-
-                        <h6 class="text-purple mt-3">📌 Nearing Announcements</h6>
+                        <!-- 🔍 Filter Logic -->
                         <?php
-                            $today = date('Y-m-d H:i:s');
-                            $nearing = array_filter($announcements, function($a) use ($today) {
-                                return $a['event_datetime'] >= $today;
+                            $today = date('Y-m-d');
+                            $currentMonth = date('m');
+                            $currentYear = date('Y');
+
+                            // Get today's announcements
+                            $todaysAnnouncements = array_filter($announcements, function ($a) use ($today) {
+                                return date('Y-m-d', strtotime($a['event_datetime'])) === $today;
                             });
 
-                            usort($nearing, function($a, $b) {
+                            usort($todaysAnnouncements, function ($a, $b) {
+                                return strtotime($b['event_datetime']) - strtotime($a['event_datetime']);
+                            });
+
+                            $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
+
+                            // Get nearing announcements (this month, not today)
+                            $nearing = array_filter($announcements, function ($a) use ($today, $currentMonth, $currentYear) {
+                                $eventDate = strtotime($a['event_datetime']);
+                                $now = strtotime('now');
+                                $daysLater = strtotime('+11 days');
+
+                                return
+                                    $eventDate > $now &&
+                                    $eventDate <= $daysLater &&
+                                    date('Y-m-d', $eventDate) !== $today &&
+                                    date('m', $eventDate) === $currentMonth &&
+                                    date('Y', $eventDate) === $currentYear;
+                            });
+
+                            usort($nearing, function ($a, $b) {
                                 return strtotime($a['event_datetime']) - strtotime($b['event_datetime']);
                             });
 
                             $nearing = array_slice($nearing, 0, 3);
                         ?>
 
+                        <!-- 🆕 Latest Announcement -->
+                        <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
+                        <div class="ms-3">
+                            <?php if ($latest) : ?>
+                                <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
+                                <small class="text-muted">
+                                    <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
+                                </small>
+                                <p class="mt-2"><?= esc($latest['content']); ?></p>
+                            <?php else : ?>
+                                <p>No announcements for today.</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <hr>
+
+                        <!-- 📌 Nearest Events -->
+                        <h6 class="text-purple mt-3">📌 Nearing Events</h6>
                         <?php if (!empty($nearing)) : ?>
                             <ul class="list-group list-group-flush mt-2">
                                 <?php foreach ($nearing as $n) : ?>
@@ -79,8 +129,11 @@
                                                 data-description="<?= esc($n['content']); ?>">
                                                 <?= esc($n['title']); ?>
                                             </button>
-                                        </strong><br>
-                                        <small class="text-muted"><?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?></small>
+                                            <br>
+                                        </strong>
+                                        <small class="text-muted">
+                                            <?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?>
+                                        </small>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -97,28 +150,28 @@
 </div>
         <!-- Modal for Announcement -->
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content shadow">
-                <div class="modal-header text-dark">
-                    <h5 class="modal-title" id="eventModalLabel">Announcement Details</h5>
-                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5 id="eventTitle"></h5>
-                    <p class="text-muted" id="eventDate"></p>
-                    <p id="eventDescription"></p>
-                </div>
-                <div class="modal-footer">
-                    <?php if (in_array(session('role'), ['admin', 'superadmin'])) : ?>
-                        <button type="button" class="btn btn-warning" id="editAnnouncementBtn">Edit</button>
-                        <form id="deleteForm" method="post" action="<?= site_url('admin/deleteAnnouncement') ?>" class="d-inline">
-                            <input type="hidden" name="announcement_id" id="modalAnnouncementId">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    <?php endif; ?>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow">
+                    <div class="modal-header text-dark">
+                        <h5 class="modal-title" id="eventModalLabel">Announcement Details</h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 id="eventTitle"></h5>
+                        <p class="text-muted" id="eventDate"></p>
+                        <p id="eventDescription"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <?php if (in_array(session('role'), ['admin', 'superadmin'])) : ?>
+                            <button type="button" class="btn btn-warning" id="editAnnouncementBtn">Edit</button>
+                            <form id="deleteForm" method="post" action="<?= site_url('admin/deleteAnnouncement') ?>" class="d-inline">
+                                <input type="hidden" name="announcement_id" id="modalAnnouncementId">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
 </div>
 

@@ -346,7 +346,19 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.03);
 }
 
-/* Custom styles for buttons, backgrounds, and text */
+/* Only for faculty and student */
+.faculty #calendar,
+.student #calendar {
+    font-size: 0.75rem;
+}
+
+.faculty #latest-update,
+.student #latest-update {
+    font-size: 0.85rem;
+}
+
+
+/* Custom styles for toggles, buttons, backgrounds, and text */
 .bg-gray {
     background-color: #343a40 !important;
     color: white !important;
@@ -366,7 +378,20 @@ body {
     background-color: #4d104a !important;
 }
 
-/* Custom styles foruser details */
+.toggle-green {
+    accent-color: #198754; /* Bootstrap success green */
+}
+
+.toggle-green:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+.toggle-green:focus {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+
+/* Custom styles for user details */
 #detailProfileImg {
     width: 120px; /* Fixed width for profile image */
     height: 120px; /* Fixed height for profile image */

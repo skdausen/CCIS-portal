@@ -1,24 +1,37 @@
-<h2>My Classes</h2>
-
-<div class="mb-3">
-    <label for="semesterSelect">Semester:</label>
-    <select id="semesterSelect" class="form-select">
-        <?php foreach ($semesters as $sem): ?>
-            <option value="<?= $sem->semester_id ?>" <?= ($sem->semester_id == $activeSemesterId) ? 'selected' : '' ?>>
-                <?= $sem->semester ?> - <?= $sem->schoolyear ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
+<div class="container mt-5">
+    <h2 class="mb-3">My Classes</h2>
+    <div class="row">
+        <div class="row col-md-12">
+            <div class="mb-3">
+                <label for="semesterSelect">Semester:</label>
+                <select id="semesterSelect" class="form-select">
+                    <?php foreach ($semesters as $sem): ?>
+                        <option value="<?= $sem->semester_id ?>" <?= ($sem->semester_id == $activeSemesterId) ? 'selected' : '' ?>>
+                            <?= $sem->semester ?> - <?= $sem->schoolyear ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search subject...">
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <div class="form-check form-switch">
+                    <label class="form-check-label me-2" for="cardToggle">Show as Cards</label>
+                    <input class="form-check-input toggle-green" type="checkbox" id="cardToggle">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+                <div id="classesContainer"></div>
+        </div>
+                <nav>
+                    <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+                </nav>
+    </div>
 </div>
 
-<input type="text" id="searchInput" class="form-control mb-3" placeholder="Search subject...">
 
-<div class="form-check form-switch mb-3">
-    <input class="form-check-input" type="checkbox" id="cardToggle">
-    <label class="form-check-label" for="cardToggle">Show as Cards</label>
-</div>
-
-<div id="classesContainer" class="table-responsive"></div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -26,23 +39,81 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById('searchInput');
     const cardToggle = document.getElementById('cardToggle');
     const container = document.getElementById('classesContainer');
+    const pagination = document.getElementById('pagination');
+
+    let currentPage = 1;
+    const itemsPerPage = 9;
+    let allClasses = [];
 
     function fetchClasses() {
         const semesterId = semesterSelect.value;
         fetch(`<?= base_url('faculty/classes/ajax') ?>?semester_id=${semesterId}`)
             .then(res => res.json())
-            .then(data => renderClasses(data));
+            .then(data => {
+                allClasses = data;
+                currentPage = 1;
+                renderClasses();
+            });
     }
 
-    function renderClasses(classes) {
+    function paginate(items, page, perPage) {
+        const start = (page - 1) * perPage;
+        return items.slice(start, start + perPage);
+    }
+
+    function renderPagination(totalItems) {
+        const pageCount = Math.ceil(totalItems / itemsPerPage);
+        let html = '';
+
+        if (pageCount <= 1) {
+            pagination.innerHTML = '';
+            return;
+        }
+
+        html += `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+            </li>`;
+
+        for (let i = 1; i <= pageCount; i++) {
+            html += `
+                <li class="page-item ${currentPage === i ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>`;
+        }
+
+        html += `
+            <li class="page-item ${currentPage === pageCount ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+            </li>`;
+
+        pagination.innerHTML = html;
+
+        document.querySelectorAll('#pagination .page-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = parseInt(this.dataset.page);
+                if (!isNaN(page)) {
+                    currentPage = page;
+                    renderClasses();
+                }
+            });
+        });
+    }
+
+    function renderClasses() {
         const search = searchInput.value.toLowerCase();
         const useCards = cardToggle.checked;
-        const filtered = classes.filter(c => 
+
+        const filtered = allClasses.filter(c => 
             c.subject_name.toLowerCase().includes(search) ||
             c.subject_code.toLowerCase().includes(search) ||
             c.subject_type.toLowerCase().includes(search) ||
             c.section.toLowerCase().includes(search)
         );
+
+        const paginated = paginate(filtered, currentPage, itemsPerPage);
+        renderPagination(filtered.length);
 
         if (filtered.length === 0) {
             container.innerHTML = "<div class='alert alert-warning'>No classes found.</div>";
@@ -51,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (useCards) {
             let html = '<div class="row">';
-            filtered.forEach(c => {
+            paginated.forEach(c => {
                 html += `
                 <div class="col-md-4 mb-3">
                     <div class="card h-100 shadow">
@@ -69,15 +140,17 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <p>
                                     <strong>Lab:</strong> ${c.lab_day ?? 'N/A'}, ${c.lab_start ?? ''} - ${c.lab_end ?? ''}<br>
                                     Room: ${c.lab_room ?? ''}
-                                </p>
-                            ` : ''}
-                            <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-primary">View</a>
+                                </p>` : ''}
+                        </div>
+                        <div class="card-footer text-end">
+                            <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-outline-primary">View</a>
                         </div>
                     </div>
                 </div>`;
             });
             html += '</div>';
             container.innerHTML = html;
+
         } else {
             let html = `
             <table class="table table-striped">
@@ -93,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     </tr>
                 </thead>
                 <tbody>`;
-            filtered.forEach(c => {
+            paginated.forEach(c => {
                 html += `<tr>
                     <td>${c.subject_code}</td>
                     <td>${c.subject_name}</td>
@@ -104,7 +177,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>
                         <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-primary">View</a>
                     </td>
-
                 </tr>`;
             });
             html += '</tbody></table>';
@@ -113,9 +185,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     semesterSelect.addEventListener('change', fetchClasses);
-    searchInput.addEventListener('input', fetchClasses);
-    cardToggle.addEventListener('change', fetchClasses);
+    searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        renderClasses();
+    });
+    cardToggle.addEventListener('change', renderClasses);
 
     fetchClasses();
 });
 </script>
+

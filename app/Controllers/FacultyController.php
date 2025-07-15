@@ -105,33 +105,54 @@ class FacultyController extends BaseController
     public function classes()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
-            return redirect()->to('auth/login');
+        return redirect()->to('auth/login');
         }
 
+        $db = \Config\Database::connect();
         $userId = session()->get('user_id');
 
-        // Get the faculty's ftb_id from the faculty table
-        $db = \Config\Database::connect();
+        // Get ftb_id
         $faculty = $db->table('faculty')->where('user_id', $userId)->get()->getRow();
+        $ftbId = $faculty->ftb_id ?? null;
 
-        if (!$faculty) {
-            return redirect()->back()->with('error', 'Faculty record not found.');
+        // Get all semesters
+        $semesters = $db->table('semesters')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'DESC')
+            ->get()->getResult();
+
+        // Determine selected semester (from GET or default to active)
+        $selectedSemesterId = $this->request->getGet('semester_id');
+        if (!$selectedSemesterId) {
+            $active = $db->table('semesters')->where('is_active', 1)->get()->getRow();
+            $selectedSemesterId = $active->semester_id ?? null;
         }
 
-        $ftbId = $faculty->ftb_id;
+        // Get selected semester info
+        $selectedSemester = null;
+        foreach ($semesters as $sem) {
+            if ($sem->semester_id == $selectedSemesterId) {
+                $selectedSemester = $sem;
+                break;
+            }
+        }
 
-        $classModel = new ClassModel();
-        $classes = $classModel->getFacultyClasses($ftbId); // now passing ftb_id
-
-        $semesterModel = new SemesterModel();
-        $activeSemester = $semesterModel
-            ->select('semesters.*, schoolyears.schoolyear')
-            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
-            ->where('semesters.is_active', 1)
-            ->first();
+        // Get classes for the selected semester
+        $classes = $db->table('classes')
+            ->select('classes.*, subjects.subject_code, subjects.subject_name, subjects.subject_type')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->where('classes.ftb_id', $ftbId)
+            ->where('classes.semester_id', $selectedSemesterId)
+            ->orderBy('classes.class_id', 'ASC')
+            ->get()
+            ->getResult();
 
         return view('templates/faculty/faculty_header')
-            . view('faculty/classes', ['classes' => $classes, 'semester' => $activeSemester ])
+            . view('faculty/classes', ['classes' => $classes,
+                'semesters' => $semesters, 
+                'selectedSemester' => $selectedSemester ])
             . view('templates/admin/admin_footer');
     }
 

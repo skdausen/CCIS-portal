@@ -1,57 +1,55 @@
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">My Classes</h2>
-        <p>
-            <strong>Semester:</strong> <?= esc($semester['semester']) ?><br>
-            <strong>School Year:</strong> <?= esc($semester['schoolyear']) ?>
-        </p>
-    </div>
+<h2>My Classes - <?= esc($selectedSemester->semester ?? '') ?>, A.Y. <?= esc($selectedSemester->schoolyear ?? '') ?></h2>
 
-    <div class="table-responsive shadow-sm rounded">
-        <?php if (!empty($classes)): ?>
-        <table class="table">
-            <thead>
+<form method="get" class="mb-3">
+    <label for="semester_id">Select Semester:</label>
+    <select name="semester_id" id="semester_id" class="form-select" onchange="this.form.submit()">
+        <?php foreach ($semesters as $semester): ?>
+            <option value="<?= $semester->semester_id ?>" <?= ($semester->semester_id == $selectedSemester->semester_id) ? 'selected' : '' ?>>
+                <?= $semester->semester ?> - <?= $semester->schoolyear ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</form>
+
+<?php if (count($classes) > 0): ?>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Type</th>
+                <th>Lecture Schedule</th>
+                <th>Lab Schedule</th>
+                <th>Section</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($classes as $class): ?>
                 <tr>
-                    <th>Subject</th>
-                    <th>Type</th>
-                    <th>Day, Time, Room</th>
-                    <th>Section</th>
-                    <th>Actions</th>
+                    <td><?= esc($class->subject_code) ?></td>
+                    <td><?= esc($class->subject_name) ?></td>
+                    <td><?= esc($class->subject_type) ?></td>
+                    <td>
+                        <?= !empty($class->lec_day) ? esc($class->lec_day) . ', ' . date('h:i A', strtotime($class->lec_start)) . ' - ' . date('h:i A', strtotime($class->lec_end)) : 'N/A' ?><br>
+                        Room: <?= esc($class->lec_room) ?>
+                    </td>
+                    <td>
+                        <?php if ($class->subject_type === 'LEC with LAB'): ?>
+                            <?= !empty($class->lab_day) ? esc($class->lab_day) . ', ' . date('h:i A', strtotime($class->lab_start)) . ' - ' . date('h:i A', strtotime($class->lab_end)) : 'N/A' ?><br>
+                            Room: <?= esc($class->lab_room) ?>
+                        <?php else: ?>
+                            N/A
+                        <?php endif; ?>
+                    </td>
+                    <td><?= esc($class->section) ?></td>
+                    <td>
+                        <a href="<?= base_url('faculty/class/' . $class->class_id) ?>" class="btn btn-sm btn-primary">View</a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($classes as $class): ?>
-                    <tr>
-                        <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
-                        <td><?= esc($class['subject_type']) ?></td>
-
-                        <td>
-                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '' ?>
-                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
-                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
-                            <?= !empty($class['lec_room']) ? '' . esc($class['lec_room']) : '' ?>
-                            <?php else: ?>
-                                -
-                            <?php endif; ?>
-                            <?php if (!empty($class['lab_day'])): ?>
-                                <br>Lab: <?= esc($class['lab_day']) ?>
-                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
-                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
-                                <?php endif; ?>
-                                <?php if (!empty($class['lab_room'])): ?>
-                                <?= esc($class['lab_room']) ?>
-                            <?php endif; ?>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= esc($class['section'] ?? 'N/A') ?></td>
-                        <td><button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#<?= $class['class_id'] ?>">View</button></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p>No classes found for the current semester.</p>
-    <?php endif; ?>
-
-    </div>
-</div>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <div class="alert alert-warning">No classes found for the selected semester.</div>
+<?php endif; ?>

@@ -27,6 +27,7 @@ class FacultyController extends BaseController
         $db = \Config\Database::connect();
         $faculty = $db->table('faculty')->where('user_id', $userId)->get()->getRow();
         $ftbId = $faculty->ftb_id ?? null;
+        $facultyName = $faculty->fname . ' ' . $faculty->lname;
 
         // Get current active semester
         $semester = $db->table('semesters')
@@ -96,7 +97,7 @@ class FacultyController extends BaseController
             . view('faculty/home', [
                 'announcements' => $announcements,
                 'schedule' => $schedule,
-                'semester' => $semester
+                'facultyName' => $facultyName,
                 ])
             . view('templates/admin/admin_footer');
     }

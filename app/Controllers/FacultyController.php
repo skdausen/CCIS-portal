@@ -150,6 +150,62 @@ class FacultyController extends BaseController
         return $this->response->setJSON($classes);
     }
 
+    public function viewClass($classId)
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
+        $classModel = new \App\Models\ClassModel();
+        $studentModel = new \App\Models\StudentModel();
+
+        $class = $classModel
+            ->select('classes.*, subjects.subject_code, subjects.subject_name, subjects.subject_type, s.semester, sy.schoolyear')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->join('semesters s', 's.semester_id = classes.semester_id')
+            ->join('schoolyears sy', 'sy.schoolyear_id = s.schoolyear_id')
+            ->where('classes.class_id', $classId)
+            ->first();
+
+        if (!$class) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Class not found.');
+        }
+
+        // Get enrolled students
+        $students = $studentModel->getStudentsByClass($classId);
+        
+        $allStudents = $studentModel
+        ->select('students.stb_id, students.student_id, students.fname, students.lname, students.mname, students.year_level, programs.program_name')
+        ->join('programs', 'programs.program_id = students.program_id')
+        ->findAll();
+
+        return view('templates/faculty/faculty_header')
+            . view('faculty/view_class', [
+                'class' => $class,
+                'students' => $students ?? [],
+                'allStudents' => $allStudents
+            ])
+            . view('templates/admin/admin_footer');
+    }
+
+    public function enrollStudents($classId)
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
+        $studentIds = $this->request->getPost('student_ids');
+        $scheduleModel = new \App\Models\StudentScheduleModel();
+
+        if ($scheduleModel->enrollStudents($classId, $studentIds)) {
+            return redirect()->back()->with('success', 'Students successfully enrolled to class.');
+        } else {
+            return redirect()->back()->with('error', 'No new students were enrolled.');
+        }
+    }
+
+
+
     private function expandDays($days)
     {
         $dayMap = [

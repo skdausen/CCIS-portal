@@ -15,7 +15,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Subjects Management</h3>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
 
 
@@ -33,12 +32,17 @@
         <div class="col-md-5 mb-2">
             <input type="text" id="searchInput" class="form-control" placeholder="Search by code or description...">
         </div>
+        
+        <div class="col-md-4 mb-2 d-flex justify-content-end">
+            <!-- Add Subject Button -->
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
+        </div>
     </div>
 
 
         <!-- Subjects Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" id="subjectsTable">
+            <table class="table table-bordered table-hover custom-padding" id="subjectsTable">
                 <thead class="table-light">
                     <tr>
                         <th>Subject Code</th>
@@ -60,8 +64,8 @@
                         <td><?= esc($subject['lab_units']) ?></td>
                         <td><?= esc($subject['total_units']) ?></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
                         </td>
                     </tr>
 
@@ -194,14 +198,17 @@
               <option value="LEC with LAB">LEC with LAB</option>
             </select>
           </div>
-          <div class="mb-3">
-            <label>Lecture Units</label>
-            <input type="number" name="lec_units" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label>Lab Units</label>
-            <input type="number" name="lab_units" class="form-control" required>
-          </div>
+          
+            <div class="mb-3">
+                <label>Lecture Units</label>
+                <input type="number" id="lec_units" name="lec_units" class="form-control" required min="0">
+            </div>
+
+            <div class="mb-3" id="lab_units_group" style="display: none;">
+                <label>Lab Units</label>
+                <input type="number" id="lab_units" name="lab_units" class="form-control" min="0" value="0">
+            </div>
+
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Add Subject</button>
@@ -318,4 +325,85 @@
 
         filterRows();
     });
+</script>
+\<script>
+function toggleAddUnits() {
+    const typeSelect = document.getElementById('add_subject_type');
+    const labGroup = document.getElementById('lab_units_group');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (typeSelect.value === 'LEC') {
+        labGroup.style.display = 'none';
+        labInput.value = '';
+    } else {
+        labGroup.style.display = 'block';
+    }
+}
+
+document.getElementById('add_subject_type').addEventListener('change', toggleAddUnits);
+
+// Form validation before submit
+document.querySelector('#addModal form').addEventListener('submit', function(e) {
+    const typeSelect = document.getElementById('add_subject_type');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (lecInput.value === '' || parseFloat(lecInput.value) < 0) {
+        alert('Lecture Units must not be empty or negative.');
+        e.preventDefault();
+        return;
+    }
+
+    if (typeSelect.value === 'LEC with LAB') {
+        if (labInput.value === '' || parseFloat(labInput.value) < 0) {
+            alert('Lab Units must not be empty or negative.');
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+// Run once on page load (optional for safety)
+toggleAddUnits();
+</script>
+
+<script>
+function toggleAddUnits() {
+    const typeSelect = document.getElementById('add_subject_type');
+    const labGroup = document.getElementById('lab_units_group');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (typeSelect.value === 'LEC') {
+        labGroup.style.display = 'none';
+        labInput.value = 0; // Automatically sets Lab units to 0 for LEC
+    } else {
+        labGroup.style.display = 'block';
+    }
+}
+
+// Prevent submitting with empty or negative units
+document.querySelector('#addModal form').addEventListener('submit', function(e) {
+    const typeSelect = document.getElementById('add_subject_type');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (lecInput.value === '' || parseFloat(lecInput.value) < 0) {
+        alert('Lecture Units must not be empty or negative.');
+        e.preventDefault();
+        return;
+    }
+
+    if (typeSelect.value === 'LEC with LAB') {
+        if (labInput.value === '' || parseFloat(labInput.value) < 0) {
+            alert('Lab Units must not be empty or negative.');
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+document.getElementById('add_subject_type').addEventListener('change', toggleAddUnits);
+document.addEventListener('DOMContentLoaded', toggleAddUnits);
 </script>

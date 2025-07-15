@@ -90,6 +90,16 @@
                     <th>Sex</th>
                     <td><?= esc(session('sex')) ?></td>
                   </tr>
+                  <?php if (session('role') === 'student'): ?>
+                  <tr>
+                    <th>Program</th>
+                    <td><?= esc(session('program')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Year Level</th>
+                    <td><?= esc(session('year_level')) ?></td>
+                  </tr>
+                  <?php endif; ?>
                   <tr>
                     <th>Birthday</th>
                     <td><?= esc(session('birthdate')) ?></td>

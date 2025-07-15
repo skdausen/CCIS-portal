@@ -15,7 +15,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Semesters Management</h3>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSemesterModal">Add New Semester</button>
         </div>
 
         <!-- FILTERS & SEARCH -->
@@ -32,11 +31,14 @@
             <div class="col-md-5 mb-2">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by School Year...">
             </div>
+            <div class="col-md-4 mb-2 d-flex justify-content-end">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSemesterModal">Add New Semester</button>
+            </div>
         </div>
 
         <!-- SEMESTERS TABLE -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" id="semestersTable">
+            <table class="table table-bordered table-hover custom-padding" id="semestersTable">
                 <thead class="table-light">
                     <tr>
                         <th>Semester</th>
@@ -58,8 +60,8 @@
                             <?php endif; ?>
                         </td>
                         <td>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $semester['semester_id'] ?>">Edit</button>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $semester['semester_id'] ?>">Delete</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $semester['semester_id'] ?>">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $semester['semester_id'] ?>">Delete</button>
                         </td>
                     </tr>
 

@@ -6,6 +6,7 @@ use App\Models\UserModel;
 use App\Models\AdminModel;
 use App\Models\FacultyModel;
 use App\Models\StudentModel;
+use App\Models\ProgramModel;
 
 class ProfileController extends BaseController
 {
@@ -54,6 +55,9 @@ class ProfileController extends BaseController
             'address'     => $data['address'],
             'contactnum'  => $data['contactnum'],
             'profimg'     => $data['profimg'] ?? session('profimg'),
+            'program_id'  => $this->request->getPost('program_id'),
+            'year_level'  => $this->request->getPost('year_level'),
+            'employee_status' => $this->request->getPost('employee_status') ?? null, // Only for faculty/admin
         ];
 
         // Remove null/empty values
@@ -86,11 +90,26 @@ class ProfileController extends BaseController
             }
 
         }
+        $programName = null;
+        $programId = $this->request->getPost('program_id');
+
+        if ($role === 'student' && $programId) {
+            $programModel = new ProgramModel();
+            $program = $programModel->find($programId);
+            if ($program) {
+                $programName = $program['program_name'];
+            }
+        }
 
         // Update session with new data
         session()->set(array_merge($data, [
-            'profimg' => $data['profimg'] ?? session('profimg'),
+            'profimg'     => $data['profimg'] ?? session('profimg'),
+            'program_id'  => $this->request->getPost('program_id'),
+            'program'     => $programName,
+            'year_level'  => $this->request->getPost('year_level'),
+            'employee_status' => $this->request->getPost('employee_status') // Only for faculty
         ]));
+
 
         return redirect()->back()->with('success', 'Profile updated successfully!')->with('open_modal', 'profileModal');
     }

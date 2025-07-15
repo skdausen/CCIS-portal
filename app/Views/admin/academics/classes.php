@@ -16,10 +16,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Classes Management</h3>
-            <button class="btn btn-success"
-                <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
-                Add New Class
-            </button>
         </div>
 
         <!-- FILTERS & SEARCH -->
@@ -53,6 +49,14 @@
             <div class="col-md-4 mb-2">
                 <!-- Search Input -->
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+            </div>
+
+            <div class="col-md-2 mb-2 d-flex justify-content-end">
+                <!-- Add Class Button -->
+                <button class="btn btn-success"
+                    <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
+                    Add New Class
+                </button>
             </div>
         </div>
 
@@ -95,14 +99,12 @@
 
         <!-- CLASSES TABLE -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover custom-padding">
                         <thead class="table-light">
                 <tr>
                     <th>Subject</th>
                     <th>Type</th>
-                    <th>Day</th>
-                    <th>Time</th>
-                    <th>Room</th>
+                    <th>Day, Time, Room</th>
                     <th>Section</th>
                     <th>Instructor</th>
                     <th>Semester</th>
@@ -117,34 +119,32 @@
                     <tr>
                         <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
                         <td><?= esc($class['subject_type']) ?></td>
+
                         <td>
-                            <?= esc($class['lec_day'] ?? '-') ?>
+                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '' ?>
+                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                            <?= !empty($class['lec_room']) ? '' . esc($class['lec_room']) : '' ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
                             <?php if (!empty($class['lab_day'])): ?>
                                 <br>Lab: <?= esc($class['lab_day']) ?>
+                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                                <?php endif; ?>
+                                <?php if (!empty($class['lab_room'])): ?>
+                                <?= esc($class['lab_room']) ?>
+                            <?php endif; ?>
                             <?php endif; ?>
                         </td>
-
-                        <td>
-                            <?= !empty($class['lec_start']) && !empty($class['lec_end']) ? date("g:i A", strtotime($class['lec_start'])) . ' - ' . date("g:i A", strtotime($class['lec_end'])) : '-' ?>
-                            <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
-                                <br>Lab: <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
-                            <?php endif; ?>
-                        </td>
-
-                        <td>
-                            <?= esc($class['lec_room'] ?? '-') ?>
-                            <?php if (!empty($class['lab_room'])): ?>
-                                <br>Lab: <?= esc($class['lab_room']) ?>
-                            <?php endif; ?>
-                        </td>
-
                         <td><?= esc($class['section'] ?? 'N/A') ?></td>
                         <td><?= esc($class['fname'] . ' ' . $class['lname']) ?></td>
                         <td><?= esc($class['semester'] . ' ' . $class['schoolyear']) ?></td>
                         <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
                         <td>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
                         </td>
                         <?php endif; ?>
 
@@ -442,7 +442,7 @@
 
 
 
-<!-- Success Modal
+<!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -457,7 +457,7 @@
     </div>
 </div>
 
-Error Modal
+<!-- Error Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -474,6 +474,49 @@ Error Modal
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
-<!--  Flash Message Script -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const subjectSelect = document.getElementById('addSubjectSelect');
+        const subjectTypeInput = document.getElementById('subjectTypeInput');
+        const labScheduleSection = document.getElementById('labSchedule');
+
+        const labFields = [
+            'labDay',
+            'labRoom',
+            'labStart',
+            'labEnd'
+        ].map(id => document.getElementById(id));
+
+        subjectSelect.addEventListener('change', function () {
+            const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
+            const subjectType = selectedOption.getAttribute('data-type');
+
+            subjectTypeInput.value = subjectType;
+
+            if (subjectType === 'LEC with LAB') {
+                labScheduleSection.classList.remove('d-none');
+                labFields.forEach(field => field.setAttribute('required', 'required'));
+            } else {
+                labScheduleSection.classList.add('d-none');
+                labFields.forEach(field => {
+                    field.removeAttribute('required');
+                    field.value = ''; // Optional: clear lab fields when hiding
+                });
+            }
+        });
+
+        // On page load, make sure lab fields are hidden if LEC is preselected
+        const initialSelected = subjectSelect.options[subjectSelect.selectedIndex];
+        if (initialSelected) {
+            const subjectType = initialSelected.getAttribute('data-type');
+            subjectTypeInput.value = subjectType;
+            if (subjectType !== 'LEC with LAB') {
+                labScheduleSection.classList.add('d-none');
+                labFields.forEach(field => field.removeAttribute('required'));
+            }
+        }
+    });
+</script>

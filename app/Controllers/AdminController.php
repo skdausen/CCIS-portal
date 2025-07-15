@@ -175,7 +175,7 @@ class AdminController extends BaseController
         $user = $userModel->find($id);
 
         if (!$user) {
-            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+            return redirect()->to('#')->with('error', 'User not found');
         }
 
         // Get extra info based on role
@@ -194,17 +194,16 @@ class AdminController extends BaseController
                 $extra = [];
         }
 
-        return $this->response->setJSON(array_merge($user, $extra ?? []));
-        //         return $this->response->setJSON(array_merge($user, [
-        //     'contactnum'  => $extra['contactnum'] ?? null,
-        //     'fname'       => $extra['fname'] ?? null,
-        //     'mname'       => $extra['mname'] ?? null,
-        //     'lname'       => $extra['lname'] ?? null,
-        //     'sex'         => $extra['sex'] ?? null,
-        //     'birthdate'   => $extra['birthdate'] ?? null,
-        //     'address'     => $extra['address'] ?? null,
-        //     'profimg'     => $extra['profimg'] ?? null,
-        // ]));
+        return $this->response->setJSON(array_merge($user, [
+            'contactnum'  => $extra['contactnum'] ?? null,
+            'fname'       => $extra['fname'] ?? null,
+            'mname'       => $extra['mname'] ?? null,
+            'lname'       => $extra['lname'] ?? null,
+            'sex'         => $extra['sex'] ?? null,
+            'birthdate'   => $extra['birthdate'] ?? null,
+            'address'     => $extra['address'] ?? null,
+            'profimg'     => $extra['profimg'] ?? null,
+        ]));
     }
 
 

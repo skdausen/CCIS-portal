@@ -59,6 +59,7 @@ $routes->group('admin', function ($routes) {
     $routes->get('users', 'AdminController::users');
     $routes->get('add-user', 'AdminController::addUserForm');
     $routes->post('create-user', 'AdminController::createUser');
+    $routes->get('user/(:num)', 'AdminController::getUser/$1');
 
     // Academics Home
     $routes->get('academics', [AdminController::class, 'index']);

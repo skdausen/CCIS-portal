@@ -15,7 +15,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Subjects Management</h3>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
 
 
@@ -32,6 +31,11 @@
         </div>
         <div class="col-md-5 mb-2">
             <input type="text" id="searchInput" class="form-control" placeholder="Search by code or description...">
+        </div>
+        
+        <div class="col-md-4 mb-2 d-flex justify-content-end">
+            <!-- Add Subject Button -->
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
     </div>
 

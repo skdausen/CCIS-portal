@@ -16,10 +16,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Classes Management</h3>
-            <button class="btn btn-success"
-                <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
-                Add New Class
-            </button>
         </div>
 
         <!-- FILTERS & SEARCH -->
@@ -53,6 +49,14 @@
             <div class="col-md-4 mb-2">
                 <!-- Search Input -->
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+            </div>
+
+            <div class="col-md-2 mb-2 d-flex justify-content-end">
+                <!-- Add Class Button -->
+                <button class="btn btn-success"
+                    <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
+                    Add New Class
+                </button>
             </div>
         </div>
 

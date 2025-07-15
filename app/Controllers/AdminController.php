@@ -14,6 +14,7 @@ use App\Models\AnnouncementModel;
 use App\Models\CurriculumModel;
 use App\Models\ProgramModel;
 
+
 class AdminController extends BaseController
 {
     /********************************************** 
@@ -33,7 +34,6 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-
     /********************************************** 
         USER MANAGEMENT 
      ***********************************************/
@@ -52,7 +52,6 @@ class AdminController extends BaseController
             . view('admin/users', $data)
             . view('templates/admin/admin_footer');
     }
-
 
     // Display form to add a new user
     public function createUser()
@@ -263,11 +262,9 @@ class AdminController extends BaseController
         return redirect()->to('admin/home')->with('success', 'Announcement deleted successfully.');
     }
 
-
     /********************************************** 
         ACADEMICS PAGE
      ***********************************************/
-
     public function index()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -294,7 +291,6 @@ class AdminController extends BaseController
             . view('admin/academics', $data)
             . view('templates/admin/admin_footer');
     }
-
 
     /********************************************** 
         SEMESTERS MANAGEMENT

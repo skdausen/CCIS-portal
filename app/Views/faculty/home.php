@@ -5,6 +5,26 @@
 
     <div class="row mt-5">
     <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
+    <div class="col-md-8">
+        <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
+        <div class="card p-3 shadow-sm">
+            <?php foreach ($schedule as $day => $entries): ?>
+                <h4><?= $day ?></h4>
+                <?php if (count($entries) > 0): ?>
+                    <ul>
+                        <?php foreach ($entries as $entry): ?>
+                            <li>
+                                <strong><?= esc($entry['subject_code']) ?> - <?= esc($entry['subject_name']) ?> (<?= $entry['type'] ?>)</strong><br>
+                                <?= date('h:i A', strtotime($entry['start'])) ?> to <?= date('h:i A', strtotime($entry['end'])) ?><br>
+                                Room: <?= esc($entry['room']) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p><em>No classes.</em></p>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
 
     <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
     <div class="col-md-4 px-3">

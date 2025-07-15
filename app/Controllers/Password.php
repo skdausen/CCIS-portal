@@ -66,8 +66,6 @@ class Password extends BaseController
     {
         $email = $this->request->getGet('email');
 
-        // return view('password/reset_form', ['email' => $email]);
-
         return view('templates/login_header')
             . view('password/reset_form', ['email' => $email])
             . view('templates/login_footer');

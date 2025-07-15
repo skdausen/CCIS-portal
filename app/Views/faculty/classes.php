@@ -1,45 +1,57 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">
-            Your Classes - <?= esc(($semester['semester'] ?? '') . ' Semester A.Y. ' . ($semester['schoolyear'] ?? '')) ?>
-        </h2>
+        <h2 class="fw-bold text-dark">My Classes</h2>
+        <p>
+            <strong>Semester:</strong> <?= esc($semester['semester']) ?><br>
+            <strong>School Year:</strong> <?= esc($semester['schoolyear']) ?>
+        </p>
     </div>
 
     <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle table-bordered">
-            <thead class="table-light text-center">
+        <?php if (!empty($classes)): ?>
+        <table class="table">
+            <thead>
                 <tr>
-                    <th scope="col">Course Code</th>
-                    <th scope="col">Course Description</th>
-                    <th scope="col">Class Type</th>
-                    <th scope="col">Class Day</th>
-                    <th scope="col">Class Time</th>
-                    <th scope="col">Class Room</th>
-                    <th scope="col">Actions</th>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Day, Time, Room</th>
+                    <th>Section</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody class="text-center">
-                <?php foreach ($classes as $class) : ?>
+            <tbody>
+                <?php foreach ($classes as $class): ?>
                     <tr>
-                        <td><?= esc($class['course_code'] ?? 'N/A') ?></td>
-                        <td><?= esc($class['course_description'] ?? 'N/A') ?></td>
-                        <td><?= esc($class['class_type'] ?? 'N/A') ?></td>
-                        <td><?= esc($class['class_day'] ?? 'N/A') ?></td>
+                        <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
+                        <td><?= esc($class['subject_type']) ?></td>
+
                         <td>
-                            <?= isset($class['class_start'], $class['class_end']) 
-                                ? date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end'])) 
-                                : 'N/A' ?>
+                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '' ?>
+                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                            <?= !empty($class['lec_room']) ? '' . esc($class['lec_room']) : '' ?>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                            <?php if (!empty($class['lab_day'])): ?>
+                                <br>Lab: <?= esc($class['lab_day']) ?>
+                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                                <?php endif; ?>
+                                <?php if (!empty($class['lab_room'])): ?>
+                                <?= esc($class['lab_room']) ?>
+                            <?php endif; ?>
+                            <?php endif; ?>
                         </td>
-                        <td><?= esc($class['class_room'] ?? 'N/A') ?></td>
-                        <td>
-                            <a href="<?= site_url('faculty/classes/view/' . $class['class_id']) ?>" 
-                               class="btn btn-sm btn-outline-primary">
-                                Manage Class
-                            </a>
-                        </td> 
+                        <td><?= esc($class['section'] ?? 'N/A') ?></td>
+                        <td><button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#<?= $class['class_id'] ?>">View</button></td>
                     </tr>
-                <?php endforeach ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
+    <?php else: ?>
+        <p>No classes found for the current semester.</p>
+    <?php endif; ?>
+
     </div>
 </div>

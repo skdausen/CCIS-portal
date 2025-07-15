@@ -99,7 +99,8 @@ $routes->group('admin', function ($routes) {
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
     $routes->post('academics/curriculums/create', 'AdminController::create');
     $routes->post('academics/curriculums/update/(:num)', 'AdminController::update_curriculum/$1');
-
+    $routes->get('academics/curriculums/view/(:num)', 'AdminController::view_curriculum_detail/$1');
+    
 
 
 

@@ -467,29 +467,33 @@ class AdminController extends BaseController
 }
 
     // Create a new subject
-   public function createSubject()
-{
-    $subjectModel = new SubjectModel();
+    public function createSubject()
+    {
+        $subjectModel = new SubjectModel();
 
-    $data = [
-        'subject_code' => $this->request->getPost('subject_code'),
-        'subject_name' => $this->request->getPost('subject_name'),
-        'subject_type' => $this->request->getPost('subject_type'),
-        'lec_units'    => $this->request->getPost('lec_units'),
-        'lab_units'    => $this->request->getPost('lab_units'),
-        'total_units'  => $this->request->getPost('lec_units') + $this->request->getPost('lab_units'),
-        'curriculum_id'  => $this->request->getPost('curriculum_id'),
-    ];
+        $lec_units = $this->request->getPost('lec_units');
+        $lab_units = $this->request->getPost('lab_units');
 
-    $success = $subjectModel->insert($data);
+        $data = [
+            'subject_code'   => $this->request->getPost('subject_code'),
+            'subject_name'   => $this->request->getPost('subject_name'),
+            'subject_type'   => $this->request->getPost('subject_type'),
+            'lec_units'      => $lec_units,
+            'lab_units'      => $lab_units,
+            'total_units'    => $lec_units + $lab_units,
+            'curriculum_id'  => $this->request->getPost('curriculum_id'),
+            'yearlevel_sem'  => $this->request->getPost('yearlevel_sem'),
+        ];
 
-    if (!$success) {
-        // Show errors from the model
-        dd($subjectModel->errors());
+        $success = $subjectModel->insert($data);
+
+        if (!$success) {
+            dd($subjectModel->errors());
+        }
+
+        return redirect()->to('admin/academics/subjects')->with('success', 'Subject added.');
     }
 
-    return redirect()->to('admin/academics/subjects')->with('success', 'Subject added.');
-}
 
 
     // Show edit form
@@ -507,7 +511,7 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Update the subject
+    //update
     public function updateSubject($id)
     {
         $subjectModel = new SubjectModel();
@@ -515,14 +519,18 @@ class AdminController extends BaseController
         $lec_units = $this->request->getPost('lec_units');
         $lab_units = $this->request->getPost('lab_units');
 
-        $subjectModel->update($id, [
-            'subject_code' => $this->request->getPost('subject_code'),
-            'subject_name' => $this->request->getPost('subject_name'),
+        $data = [
+            'subject_code'   => $this->request->getPost('subject_code'),
+            'subject_name'   => $this->request->getPost('subject_name'),
             'subject_type'   => $this->request->getPost('subject_type'),
-            'lec_units' => $lec_units,
-            'lab_units' => $lab_units,
-            'total_units' => $lec_units + $lab_units,
-        ]);
+            'lec_units'      => $lec_units,
+            'lab_units'      => $lab_units,
+            'total_units'    => $lec_units + $lab_units,
+            'curriculum_id'  => $this->request->getPost('curriculum_id'),
+            'yearlevel_sem'  => $this->request->getPost('yearlevel_sem'), // ✅ This was missing
+        ];
+
+        $subjectModel->update($id, $data);
 
         return redirect()->to('admin/academics/subjects')->with('success', 'Subject updated successfully.');
     }
@@ -726,6 +734,7 @@ public function view_curriculums()
 
     $yearlevel_sem = $this->request->getGet('yearlevel_sem');
     $selectedCurriculum = $this->request->getGet('curriculum_id');
+    $search = $this->request->getGet('search'); // ✅ Get the search input
 
     $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();
@@ -746,11 +755,19 @@ public function view_curriculums()
         $curriculumSubjects[$curriculumId][] = $subject;
     }
 
-    // ✅ Only show the selected curriculum in cards
+    // Only show the selected curriculum in cards
     $curriculumsToDisplay = $curriculums;
+
     if (!empty($selectedCurriculum)) {
         $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($selectedCurriculum) {
             return $curriculum['curriculum_id'] == $selectedCurriculum;
+        });
+    }
+
+    // If search is used, filter by name (ignore selectedCurriculum if search is active)
+    if (!empty($search)) {
+        $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($search) {
+            return stripos($curriculum['curriculum_name'], $search) !== false;
         });
     }
 
@@ -762,9 +779,11 @@ public function view_curriculums()
             'curriculumSubjects' => $curriculumSubjects,
             'selectedFilter' => $yearlevel_sem,
             'selectedCurriculum' => $selectedCurriculum,
+            'search' => $search, // 
         ])
         . view('templates/admin/admin_footer');
 }
+
 
 //create curriculum
         public function create()
@@ -794,5 +813,46 @@ public function update_curriculum($curriculum_id)
     $curriculumModel->update($curriculum_id, $data);
 
     return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum updated successfully.');
+}
+
+
+public function view_curriculum_detail($curriculum_id)
+{
+    $curriculumModel = new CurriculumModel();
+    $subjectModel = new SubjectModel();
+    $programModel = new ProgramModel();
+
+    // Fetch curriculum and validate existence
+    $curriculum = $curriculumModel->find($curriculum_id);
+    if (!$curriculum) {
+        throw new \CodeIgniter\Exceptions\PageNotFoundException('Curriculum not found');
+    }
+
+    // Get program name
+    $program = $programModel->find($curriculum['program_id']);
+    $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
+
+    // Get filter from query string
+    $selectedFilter = $this->request->getGet('yearlevel_sem');
+
+    // Fetch and optionally filter subjects
+    $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->findAll();
+    $filteredSubjects = array_filter($subjects, function ($subject) use ($selectedFilter) {
+        return empty($selectedFilter) || $subject['yearlevel_sem'] === $selectedFilter;
+    });
+
+    $data = [
+        'curriculum'          => $curriculum,
+        'program'             => $program,
+        'subjects'            => $subjects,
+        'programs'            => $programModel->findAll(),
+        'curriculumsToDisplay'=> [$curriculum],
+        'curriculumSubjects'  => [$curriculum_id => $filteredSubjects],
+        'selectedFilter'      => $selectedFilter,
+    ];
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_detail', $data)
+        . view('templates/admin/admin_footer');
 }
 }

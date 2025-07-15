@@ -12,7 +12,7 @@
         </ul>
     </div>
 
-    <div class="container mt-5">
+        <div class="container mt-5">
 
       <!-- Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -22,141 +22,26 @@
     </button>
 </div>
 
-
       <!-- Filters -->
-<form method="get" class="mb-4">
-    <div class="row g-2">
+<form method="get" action="<?= site_url('admin/academics/curriculums') ?>" class="mb-4">
+    <div class="row g-2 align-items-center">
         <div class="col-md-4">
-            <select name="curriculum_id" class="form-select" onchange="this.form.submit()">
-                <option value="">Filter by Curriculum</option>
-                <?php foreach ($curriculums as $curriculumOption): ?>
-                    <option value="<?= $curriculumOption['curriculum_id'] ?>"
-                        <?= $selectedCurriculum == $curriculumOption['curriculum_id'] ? 'selected' : '' ?>>
-                        <?= esc($curriculumOption['curriculum_name']) ?> (<?= esc($curriculumOption['program_name']) ?>)
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="col-md-4">
-            <select name="yearlevel_sem" class="form-select" onchange="this.form.submit()">
-                <option value="">Filter by Year Level & Semester</option>
-                <option value="Y1S1" <?= $selectedFilter == 'Y1S1' ? 'selected' : '' ?>>1st Year - 1st Semester</option>
-                <option value="Y1S2" <?= $selectedFilter == 'Y1S2' ? 'selected' : '' ?>>1st Year - 2nd Semester</option>
-                <option value="Y2S1" <?= $selectedFilter == 'Y2S1' ? 'selected' : '' ?>>2nd Year - 1st Semester</option>
-                <option value="Y2S2" <?= $selectedFilter == 'Y2S2' ? 'selected' : '' ?>>2nd Year - 2nd Semester</option>
-                <option value="Y3S1" <?= $selectedFilter == 'Y3S1' ? 'selected' : '' ?>>3rd Year - 1st Semester</option>
-                <option value="Y3S2" <?= $selectedFilter == 'Y3S2' ? 'selected' : '' ?>>3rd Year - 2nd Semester</option>
-                <option value="Y3S3" <?= $selectedFilter == 'Y3S3' ? 'selected' : '' ?>>3rd Year - Midyear</option>
-                <option value="Y4S1" <?= $selectedFilter == 'Y4S1' ? 'selected' : '' ?>>4th Year - 1st Semester</option>
-                <option value="Y4S2" <?= $selectedFilter == 'Y4S2' ? 'selected' : '' ?>>4th Year - 2nd Semester</option>
-            </select>
+            <input type="text" name="search" class="form-control" placeholder="Search Curriculum Name..." value="<?= esc($search ?? '') ?>">
         </div>
 
         <div class="col-md-2">
-            <button type="button" id="clearFilterBtn" class="btn btn-secondary">Clear</button>
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+
+        <div class="col-md-2">
+            <button type="button" id="clearFilterBtn" class="btn btn-secondary w-100">Clear</button>
         </div>
     </div>
 </form>
 
-<?php foreach ($curriculumsToDisplay as $curriculum): ?>
-    <div class="card mb-4">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <div>
-                <strong><?= esc($curriculum['curriculum_name']) ?></strong> (<?= esc($curriculum['program_name']) ?>)
-            </div>
-            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal<?= $curriculum['curriculum_id'] ?>">
-                Edit
-            </button>
-        </div>
-
-        <div class="card-body">
-        <?php if (!empty($curriculumSubjects[$curriculum['curriculum_id']])): ?>
-
-            <?php
-                $totalLec = 0;
-                $totalLab = 0;
-                foreach ($curriculumSubjects[$curriculum['curriculum_id']] as $subject) {
-                    $totalLec += $subject['lec_units'];
-                    $totalLab += $subject['lab_units'];
-                }
-                $totalOverall = $totalLec + $totalLab;
-            ?>
-
-            <table class="table table-bordered">
-                <thead class="table-light">
-                    <tr>
-                        <th>Subject Code</th>
-                        <th>Subject Name</th>
-                        <th>LEC Units</th>
-                        <th>LAB Units</th>
-                        <th>Total Units</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($curriculumSubjects[$curriculum['curriculum_id']] as $subject): ?>
-                        <tr>
-                            <td><?= esc($subject['subject_code']) ?></td>
-                            <td><?= esc($subject['subject_name']) ?></td>
-                            <td><?= esc($subject['lec_units']) ?></td>
-                            <td><?= esc($subject['lab_units']) ?></td>
-                            <td><?= $subject['lec_units'] + $subject['lab_units'] ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-
-                    <tr class="fw-bold bg-light">
-                        <td colspan="2" class="text-end"></td>
-                        <td><?= $totalLec ?></td>
-                        <td><?= $totalLab ?></td>
-                        <td><?= $totalOverall ?></td>
-                    </tr>
-                </tbody>
-            </table>
-
-        <?php else: ?>
-            <p class="text-muted">No subjects assigned to this curriculum.</p>
-        <?php endif; ?>
- 
-
-    <!-- 👇 Edit Modal (inside the same loop) -->
-    <div class="modal fade" id="editModal<?= $curriculum['curriculum_id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $curriculum['curriculum_id'] ?>" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form method="post" action="<?= site_url('admin/academics/curriculums/update/' . $curriculum['curriculum_id']) ?>">
-                    <?= csrf_field() ?>
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Curriculum</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label>Curriculum Name</label>
-                            <input type="text" name="curriculum_name" class="form-control" value="<?= esc($curriculum['curriculum_name']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Program</label>
-                            <select name="program_id" class="form-select" required>
-                                <option value="" disabled>Select Program</option>
-                                <?php foreach ($programs as $program): ?>
-                                    <option value="<?= $program['program_id'] ?>" <?= $program['program_id'] == $curriculum['program_id'] ? 'selected' : '' ?>>
-                                        <?= esc($program['program_name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-<?php endforeach; ?>
 
 
-<!-- Add Curriculum Modal -->
+<!-- Add Curriculum Modal (Centered) -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -164,9 +49,8 @@
                 <?= csrf_field() ?>
                 <div class="modal-header">
                     <h5 class="modal-title" id="addModalLabel">Add New Curriculum</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="curriculum_name" class="form-label">Curriculum Name</label>
@@ -195,9 +79,27 @@
     </div>
 </div>
 
+<?php foreach ($curriculumsToDisplay as $curriculum): ?>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>
+                <a href="<?= site_url('admin/academics/curriculums/view/' . $curriculum['curriculum_id']) ?>">
+                    <?= esc($curriculum['curriculum_name']) ?>
+                </a>
+            </h5>
+            <p class="mb-0"><?= esc($curriculum['program_name']) ?></p>
+        </div>
+    </div>
+<?php endforeach; ?>
+
+
+
+
 
 <script>
 document.getElementById('clearFilterBtn').addEventListener('click', function() {
     window.location.href = "<?= site_url('admin/academics/curriculums') ?>";
 });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

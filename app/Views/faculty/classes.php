@@ -101,7 +101,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${c.section ?? 'N/A'}</td>
                     <td>${c.lec_day ?? ''}, ${c.lec_start ?? ''} - ${c.lec_end ?? ''}<br>Room: ${c.lec_room ?? ''}</td>
                     <td>${c.subject_type === 'LEC with LAB' ? `${c.lab_day ?? ''}, ${c.lab_start ?? ''} - ${c.lab_end ?? ''}<br>Room: ${c.lab_room ?? ''}` : 'N/A'}</td>
-                    <td><a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-primary">View</a></td>
+                    <td>
+                        <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-primary">View</a>
+                    </td>
+
                 </tr>`;
             });
             html += '</tbody></table>';

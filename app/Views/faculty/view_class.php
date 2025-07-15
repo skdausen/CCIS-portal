@@ -1,137 +1,176 @@
 <div class="container mt-5">
     <!-- Course Title -->
     <div class="text-center mb-4">
-        <h3 class="fw-bold"><?= esc($class['course_description'] ?? 'N/A') ?></h3>
+        <h2><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></h2>
     </div>
 
     <!-- Course Info -->
     <div class="row mb-3 justify-content-center">
         <div class="col-md-6">
-            <p><strong>Course Code: </strong> <?= esc($class['course_code'] ?? 'N/A') ?></p>
-            <p><strong>Schedule: </strong> 
-                <?= esc($class['class_day'] ?? 'N/A') ?>
-                <?= isset($class['class_start'], $class['class_end']) 
-                ? date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end'])) 
-                : 'N/A' ?>                      
-            </p>
+            <p><strong>Section:</strong> <?= esc($class['section']) ?></p>
+            <p><strong>Type:</strong> <?= esc($class['subject_type']) ?></p>
+            <p><strong>Semester:</strong> <?= esc($class['semester']) ?>, A.Y <?= esc($class['schoolyear']) ?></p>
         </div>
         <div class="col-md-6 text-md-end">
-            <p><strong>Room: </strong> <?= esc($class['class_room'] ?? 'N/A') ?></p>
+            <p><strong>Schedule: </strong> 
+                <ul>
+                  <li><strong>Lecture:</strong> <?= esc($class['lec_day']) ?>, <?= esc($class['lec_start']) ?> - <?= esc($class['lec_end']) ?> (Room <?= esc($class['lec_room']) ?>)</li>
+                  <?php if ($class['subject_type'] === 'LEC with LAB'): ?>
+                  <li><strong>Lab:</strong> <?= esc($class['lab_day']) ?>, <?= esc($class['lab_start']) ?> - <?= esc($class['lab_end']) ?> (Room <?= esc($class['lab_room']) ?>)</li>
+                  <?php endif; ?>
+              </ul>                     
+            </p>
         </div>
     </div>
     <hr>
 
     <!-- Students Section -->
     <div class="d-flex justify-content-between align-items-center mb-2">
-        <h6 class="text-uppercase fw-bold text-muted mb-0">Students:</h6>
+        <h6 class="text-uppercase fw-bold text-muted mb-0">Enrolled Students:</h6>
         <div>
-            <a href="#" class="btn btn-success btn-sm me-2"
-                data-bs-toggle="modal"
-                data-bs-target="#manageStudentModal">
-                Manage Student
-            </a>
+            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
+                Manage Students
+            </button>
             <a href="#" class="btn btn-success btn-sm">Manage Grades</a>
         </div>
     </div>
 
     <!-- Students Table -->
-    <div class="table-responsive mt-3">
-        <table class="table table-borderless align-middle">
-            <thead class="border-bottom border-purple text-uppercase small text-muted">
-                <tr>
-                    <th>ID Number</th>
-                    <th>Name</th>
-                    <th>Year</th>
-                    <th>Program</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>NLP-00-00000</td>
-                    <td>Dela Cruz, Juan A.</td>
-                    <td>Third Year</td>
-                    <td>BSCS</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="container">
+      <?php if (empty($students)): ?>
+          <div class="alert alert-warning">No students enrolled in this class.</div>
+      <?php else: ?>
+          <div class="table-responsive">
+              <table class="table table-striped table-bordered">
+                  <thead class="table-dark">
+                      <tr>
+                          <th>ID Number</th>
+                          <th>Full Name</th>
+                          <th>Year Level</th>
+                          <th>Program</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <?php foreach ($students as $s): ?>
+                      <tr>
+                          <td><?= esc($s['student_id']) ?></td>
+                          <td><?= esc($s['lname']) ?>, <?= esc($s['fname']) ?> <?= esc($s['mname']) ?></td>
+                          <td><?= esc($s['year_level']) ?></td>
+                          <td><?= esc($s['program_name']) ?></td>
+                      </tr>
+                      <?php endforeach; ?>
+                  </tbody>
+              </table>
+          </div>
+      <?php endif; ?>
     </div>
 </div>
 
-<!-- Manage Student Modal -->
-<div class="modal fade" id="manageStudentModal" tabindex="-1" aria-labelledby="manageStudentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title fw-bold" id="manageStudentModalLabel">Manage Student</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- COURSE DETAILS -->
-        <div class="text-center mb-4">
-            <h5 class="fw-bold"><?= esc($class['course_description'] ?? 'N/A') ?></h5>
+<!-- Modal -->
+<div class="modal fade" id="manageStudentsModal" tabindex="-1" aria-labelledby="manageStudentsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/enroll') ?>" method="post">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="manageStudentsModalLabel">Enroll Students</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <p><strong>Course Code:</strong> <?= esc($class['course_code'] ?? 'N/A') ?></p>
-            <p><strong>Schedule:</strong> 
-              <?= esc($class['class_day'] ?? 'N/A') ?>
-              <?= isset($class['class_start'], $class['class_end'])
-                  ? date("g:i A", strtotime($class['class_start'])) . ' - ' . date("g:i A", strtotime($class['class_end']))
-                  : 'N/A' ?>
-            </p>
+        <div class="modal-body">
+          <!-- 🔎 Filter bar -->
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <input type="text" id="studentSearch" class="form-control" placeholder="Search by name or ID number...">
+            </div>
+            <div class="col-md-4">
+              <select id="filterProgram" class="form-select">
+                <option value="">All Programs</option>
+                <?php 
+                  $programs = array_unique(array_column($allStudents, 'program_name'));
+                  foreach ($programs as $program): ?>
+                    <option value="<?= esc($program) ?>"><?= esc($program) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select id="filterYear" class="form-select">
+                <option value="">All Year Levels</option>
+                <?php 
+                  $years = array_unique(array_column($allStudents, 'year_level'));
+                  sort($years);
+                  foreach ($years as $year): ?>
+                    <option value="<?= esc($year) ?>">Year <?= esc($year) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
           </div>
-          <div class="col-md-6 text-md-end">
-            <p><strong>Room:</strong> <?= esc($class['class_room'] ?? 'N/A') ?></p>
+
+          <!-- Table -->
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered" id="studentsTable">
+              <thead class="table-dark">
+                <tr>
+                  <th>Select</th>
+                  <th>ID Number</th>
+                  <th>Full Name</th>
+                  <th>Year Level</th>
+                  <th>Program</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($allStudents as $student): ?>
+                  <tr>
+                    <td><input type="checkbox" name="student_ids[]" value="<?= esc($student['stb_id']) ?>"></td>
+                    <td class="id-number"><?= esc($student['student_id']) ?></td>
+                    <td class="name"><?= esc($student['lname']) ?>, <?= esc($student['fname']) ?> <?= esc($student['mname']) ?></td>
+                    <td class="year"><?= esc($student['year_level']) ?></td>
+                    <td class="program"><?= esc($student['program_name']) ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <hr>
 
-        <!-- ADD STUDENT FORM -->
-        <form action="<?= site_url('faculty/addStudentToClass') ?>" method="post" class="d-flex mb-4">
-          <input type="hidden" name="class_id" value="<?= esc($class['class_id']) ?>">
-          <input type="text" name="username" class="form-control me-2" placeholder="Student ID" required>
-          <button type="submit" class="btn btn-success">Add Student</button>
-        </form>
-
-        <!-- STUDENT LIST -->
-        <div class="table-responsive">
-          <table class="table table-borderless align-middle">
-            <thead class="border-bottom border-purple text-uppercase small text-muted">
-              <tr>
-                <th>ID Number</th>
-                <th>Name</th>
-                <th>Year</th>
-                <th>Program</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($students as $student): ?>
-              <tr>
-                <td><?= esc($student['username']) ?></td>
-                <td><?= esc($student['fname'] . ' ' . $student['mname'] . ' ' . $student['lname']) ?></td>
-                <td><?= esc($student['year_level']) ?></td>
-                <td><?= esc($student['program_name']) ?></td>
-                <td>
-                  <form action="<?= site_url('faculty/removeStudentFromClass') ?>" method="post">
-                    <input type="hidden" name="class_id" value="<?= esc($class['class_id']) ?>">
-                    <input type="hidden" name="student_id" value="<?= esc($student['user_id']) ?>">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                  </form>
-                </td>
-              </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
-        </div>
-        <hr>
-        <div class="text-center mt-5">
-          <button class="btn btn-success" data-bs-dismiss="modal">Done</button>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Enroll Selected</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>
+
+<script>
+  function filterStudents() {
+    const search = document.getElementById('studentSearch').value.toLowerCase();
+    const selectedProgram = document.getElementById('filterProgram').value.toLowerCase();
+    const selectedYear = document.getElementById('filterYear').value.toLowerCase();
+
+    const rows = document.querySelectorAll('#studentsTable tbody tr');
+
+    rows.forEach(row => {
+      const name = row.querySelector('.name').textContent.toLowerCase();
+      const id = row.querySelector('.id-number').textContent.toLowerCase();
+      const year = row.querySelector('.year').textContent.toLowerCase();
+      const program = row.querySelector('.program').textContent.toLowerCase();
+
+      const matchesSearch = name.includes(search) || id.includes(search);
+      const matchesProgram = !selectedProgram || program === selectedProgram;
+      const matchesYear = !selectedYear || year === selectedYear;
+
+      if (matchesSearch && matchesProgram && matchesYear) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // Add event listeners
+  document.getElementById('studentSearch').addEventListener('keyup', filterStudents);
+  document.getElementById('filterProgram').addEventListener('change', filterStudents);
+  document.getElementById('filterYear').addEventListener('change', filterStudents);
+</script>
 

@@ -3,16 +3,15 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use CodeIgniter\Controller;
 
 class Password extends BaseController
 {
     public function forgot()
     {
         // return view('password/forgot_form');
-        return view('templates/header')
+        return view('templates/login_header')
             . view('password/forgot_form')
-            . view('templates/footer');
+            . view('templates/login_footer');
     }
 
     public function sendOTP()
@@ -44,9 +43,9 @@ class Password extends BaseController
         $email = $this->request->getGet('email');
         // return view('password/verify_form', ['email' => $email]);
 
-         return view('templates/header')
+        return view('templates/login_header')
             . view('password/verify_form', ['email' => $email])
-            . view('templates/footer');
+            . view('templates/login_footer');
     }
 
     public function verifyOTP()
@@ -67,11 +66,9 @@ class Password extends BaseController
     {
         $email = $this->request->getGet('email');
 
-        // return view('password/reset_form', ['email' => $email]);
-
-        return view('templates/header')
+        return view('templates/login_header')
             . view('password/reset_form', ['email' => $email])
-            . view('templates/footer');
+            . view('templates/login_footer');
     }
 
     public function resetPassword()
@@ -82,6 +79,7 @@ class Password extends BaseController
         $userModel = new UserModel();
         $userModel->updatePassword($email, $password);
 
-        return redirect()->to('auth/login')->with('message', 'Password changed successfully!');
+        session()->setFlashdata('success', 'Your password has been reset successfully');
+        return redirect()->to('/auth/login');
     }
 }

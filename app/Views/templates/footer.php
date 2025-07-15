@@ -1,7 +1,5 @@
 <!-- footer.php    -->
-    <!--  Logout Modal (Put this before closing body tag) -->
-    <!-- Trigger Button should be somewhere in the navbar or sidebar -->
-    <!-- Modal HTML -->
+
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -20,8 +18,9 @@
     </div>
 
     <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
-    <script type="text/javascript" src="<?php echo base_url("rsc/bootstrap-5.3.7/js/bootstrap.js"); ?>"></script>
     <script src="<?php echo base_url("rsc/custom_js/preventBackHistory.js"); ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 </html>

@@ -442,7 +442,7 @@
 
 
 
-<!-- Success Modal
+<!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -457,7 +457,7 @@
     </div>
 </div>
 
-Error Modal
+<!-- Error Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -474,6 +474,49 @@ Error Modal
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
-<!--  Flash Message Script -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const subjectSelect = document.getElementById('addSubjectSelect');
+        const subjectTypeInput = document.getElementById('subjectTypeInput');
+        const labScheduleSection = document.getElementById('labSchedule');
+
+        const labFields = [
+            'labDay',
+            'labRoom',
+            'labStart',
+            'labEnd'
+        ].map(id => document.getElementById(id));
+
+        subjectSelect.addEventListener('change', function () {
+            const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
+            const subjectType = selectedOption.getAttribute('data-type');
+
+            subjectTypeInput.value = subjectType;
+
+            if (subjectType === 'LEC with LAB') {
+                labScheduleSection.classList.remove('d-none');
+                labFields.forEach(field => field.setAttribute('required', 'required'));
+            } else {
+                labScheduleSection.classList.add('d-none');
+                labFields.forEach(field => {
+                    field.removeAttribute('required');
+                    field.value = ''; // Optional: clear lab fields when hiding
+                });
+            }
+        });
+
+        // On page load, make sure lab fields are hidden if LEC is preselected
+        const initialSelected = subjectSelect.options[subjectSelect.selectedIndex];
+        if (initialSelected) {
+            const subjectType = initialSelected.getAttribute('data-type');
+            subjectTypeInput.value = subjectType;
+            if (subjectType !== 'LEC with LAB') {
+                labScheduleSection.classList.add('d-none');
+                labFields.forEach(field => field.removeAttribute('required'));
+            }
+        }
+    });
+</script>

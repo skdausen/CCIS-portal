@@ -12,7 +12,7 @@ class CurriculumModel extends Model
 public function getCurriculumsWithProgramName()
 {
     return $this->db->table('curriculums AS c')
-        ->select('c.curriculum_id, c.curriculum_name, p.program_name')
+        ->select('c.curriculum_id, c.curriculum_name, c.program_id, p.program_name') // <-- added c.program_id
         ->join('programs AS p', 'p.program_id = c.program_id')
         ->orderBy('c.curriculum_name', 'ASC')
         ->get()

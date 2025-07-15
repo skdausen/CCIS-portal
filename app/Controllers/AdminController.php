@@ -717,21 +717,27 @@ public function deleteClass($id)
         CURRICULUM MANAGEMENT
      ***********************************************/
 
-    // View all curriculums
+        //View Curriculums
 public function view_curriculums()
 {
     $curriculumModel = new CurriculumModel();
     $programModel = new ProgramModel();
     $subjectModel = new SubjectModel();
 
-    // Get all curriculums with program names
-    $curriculums = $curriculumModel->getCurriculumsWithProgramName();
+    $yearlevel_sem = $this->request->getGet('yearlevel_sem');
+    $selectedCurriculum = $this->request->getGet('curriculum_id');
+
+    $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();
 
-    // Get all subjects grouped by curriculum_id
-    $subjects = $subjectModel->findAll();
-    $curriculumSubjects = [];
+    // Get all subjects first
+    if (!empty($yearlevel_sem)) {
+        $subjects = $subjectModel->where('yearlevel_sem', $yearlevel_sem)->findAll();
+    } else {
+        $subjects = $subjectModel->findAll();
+    }
 
+    $curriculumSubjects = [];
     foreach ($subjects as $subject) {
         $curriculumId = $subject['curriculum_id'];
         if (!isset($curriculumSubjects[$curriculumId])) {
@@ -740,16 +746,28 @@ public function view_curriculums()
         $curriculumSubjects[$curriculumId][] = $subject;
     }
 
+    // ✅ Only show the selected curriculum in cards
+    $curriculumsToDisplay = $curriculums;
+    if (!empty($selectedCurriculum)) {
+        $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($selectedCurriculum) {
+            return $curriculum['curriculum_id'] == $selectedCurriculum;
+        });
+    }
+
     return view('templates/admin/admin_header')
         . view('admin/academics/curriculums', [
-            'curriculums' => $curriculums,
+            'curriculums' => $curriculums, // for dropdown
+            'curriculumsToDisplay' => $curriculumsToDisplay, // for cards
             'programs' => $programs,
             'curriculumSubjects' => $curriculumSubjects,
+            'selectedFilter' => $yearlevel_sem,
+            'selectedCurriculum' => $selectedCurriculum,
         ])
         . view('templates/admin/admin_footer');
 }
 
-public function create()
+//create curriculum
+        public function create()
 {
     $curriculumModel = new CurriculumModel();
 
@@ -761,5 +779,20 @@ public function create()
     $curriculumModel->insert($data);
 
     return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum added successfully.');
+}
+
+//update curriculum
+public function update_curriculum($curriculum_id)
+{
+    $curriculumModel = new CurriculumModel();
+
+    $data = [
+        'curriculum_name' => $this->request->getPost('curriculum_name'),
+        'program_id' => $this->request->getPost('program_id'),
+    ];
+
+    $curriculumModel->update($curriculum_id, $data);
+
+    return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum updated successfully.');
 }
 }

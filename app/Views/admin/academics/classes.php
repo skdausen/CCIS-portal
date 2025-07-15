@@ -16,10 +16,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Classes Management</h3>
-            <button class="btn btn-success"
-                <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
-                Add New Class
-            </button>
         </div>
 
         <!-- FILTERS & SEARCH -->
@@ -53,6 +49,14 @@
             <div class="col-md-4 mb-2">
                 <!-- Search Input -->
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+            </div>
+
+            <div class="col-md-2 mb-2 d-flex justify-content-end">
+                <!-- Add Class Button -->
+                <button class="btn btn-success"
+                    <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
+                    Add New Class
+                </button>
             </div>
         </div>
 
@@ -100,9 +104,7 @@
                 <tr>
                     <th>Subject</th>
                     <th>Type</th>
-                    <th>Day</th>
-                    <th>Time</th>
-                    <th>Room</th>
+                    <th>Day, Time, Room</th>
                     <th>Section</th>
                     <th>Instructor</th>
                     <th>Semester</th>
@@ -119,32 +121,23 @@
                         <td><?= esc($class['subject_type']) ?></td>
 
                         <td>
-                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '-' ?>
-                            <?php if (!empty($class['lab_day'])): ?>
-                                <br>Lab: <?= esc($class['lab_day']) ?>
-                            <?php endif; ?>
-                        </td>
-
-                       <td>
+                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc($class['lec_day']) : '' ?>
                             <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
-                                Lec: <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                            <?= !empty($class['lec_room']) ? '' . esc($class['lec_room']) : '' ?>
                             <?php else: ?>
                                 -
                             <?php endif; ?>
-
-                            <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
-                                <br>Lab: <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                            <?php if (!empty($class['lab_day'])): ?>
+                                <br>Lab: <?= esc($class['lab_day']) ?>
+                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                                <?php endif; ?>
+                                <?php if (!empty($class['lab_room'])): ?>
+                                <?= esc($class['lab_room']) ?>
+                            <?php endif; ?>
                             <?php endif; ?>
                         </td>
-
-
-                        <td>
-                            <?= !empty($class['lec_room']) ? 'Lec: ' . esc($class['lec_room']) : '-' ?>
-                            <?php if (!empty($class['lab_room'])): ?>
-                                <br>Lab: <?= esc($class['lab_room']) ?>
-                            <?php endif; ?>
-                        </td>
-
                         <td><?= esc($class['section'] ?? 'N/A') ?></td>
                         <td><?= esc($class['fname'] . ' ' . $class['lname']) ?></td>
                         <td><?= esc($class['semester'] . ' ' . $class['schoolyear']) ?></td>

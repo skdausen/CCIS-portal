@@ -15,7 +15,6 @@
         <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Subjects Management</h3>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
 
 
@@ -32,6 +31,11 @@
         </div>
         <div class="col-md-5 mb-2">
             <input type="text" id="searchInput" class="form-control" placeholder="Search by code or description...">
+        </div>
+        
+        <div class="col-md-4 mb-2 d-flex justify-content-end">
+            <!-- Add Subject Button -->
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
     </div>
 
@@ -65,51 +69,84 @@
                         </td>
                     </tr>
 
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editModal<?= $subject['subject_id'] ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <form method="post" action="<?= site_url('admin/academics/subjects/update/' . $subject['subject_id']) ?>">
-                                    <?= csrf_field() ?>
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Edit Subject</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label>Subject Code</label>
-                                            <input type="text" name="subject_code" class="form-control" value="<?= esc($subject['subject_code']) ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Subject Name</label>
-                                            <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
-                                        </div>
+                   <!-- Edit Modal -->
+<div class="modal fade" id="editModal<?= $subject['subject_id'] ?>" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="<?= site_url('admin/academics/subjects/update/' . $subject['subject_id']) ?>">
+                <?= csrf_field() ?>
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Subject</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
 
-                                        <div class="mb-3">
-                                            <label>Subject Type</label>
-                                            <select name="subject_type" class="form-select" required>
-                                                <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
-                                                <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label>Lecture Units</label>
-                                            <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Lab Units</label>
-                                            <input type="number" name="lab_units" class="form-control" value="<?= esc($subject['lab_units']) ?>" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Update</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label>Curriculum</label>
+                        <select name="curriculum_id" class="form-select" required>
+                            <option value="">Select Curriculum</option>
+                            <?php foreach ($curriculums as $curr): ?>
+                                <option value="<?= $curr['curriculum_id'] ?>" <?= $curr['curriculum_id'] == $subject['curriculum_id'] ? 'selected' : '' ?>>
+                                    <?= esc($curr['curriculum_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
+
+                    <div class="mb-3">
+                        <label>Year Level & Semester</label>
+                        <select name="yearlevel_sem" class="form-select" required>
+                            <option value="">Select Year Level & Semester</option>
+                            <option value="Y1S1" <?= $subject['yearlevel_sem'] == 'Y1S1' ? 'selected' : '' ?>>1st Year - 1st Semester</option>
+                            <option value="Y1S2" <?= $subject['yearlevel_sem'] == 'Y1S2' ? 'selected' : '' ?>>1st Year - 2nd Semester</option>
+                            <option value="Y2S1" <?= $subject['yearlevel_sem'] == 'Y2S1' ? 'selected' : '' ?>>2nd Year - 1st Semester</option>
+                            <option value="Y2S2" <?= $subject['yearlevel_sem'] == 'Y2S2' ? 'selected' : '' ?>>2nd Year - 2nd Semester</option>
+                            <option value="Y3S1" <?= $subject['yearlevel_sem'] == 'Y3S1' ? 'selected' : '' ?>>3rd Year - 1st Semester</option>
+                            <option value="Y3S2" <?= $subject['yearlevel_sem'] == 'Y3S2' ? 'selected' : '' ?>>3rd Year - 2nd Semester</option>
+                            <option value="Y3S3" <?= $subject['yearlevel_sem'] == 'Y3S3' ? 'selected' : '' ?>>3rd Year - Midyear</option>
+                            <option value="Y4S1" <?= $subject['yearlevel_sem'] == 'Y4S1' ? 'selected' : '' ?>>4th Year - 1st Semester</option>
+                            <option value="Y4S2" <?= $subject['yearlevel_sem'] == 'Y4S2' ? 'selected' : '' ?>>4th Year - 2nd Semester</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Subject Code</label>
+                        <input type="text" name="subject_code" class="form-control" value="<?= esc($subject['subject_code']) ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Subject Name</label>
+                        <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Subject Type</label>
+                        <select name="subject_type" class="form-select edit-subject-type" data-id="<?= $subject['subject_id'] ?>" onchange="toggleEditUnits(<?= $subject['subject_id'] ?>)" required>
+                            <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
+                            <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Lecture Units</label>
+                        <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required min="0">
+                    </div>
+
+                    <div class="mb-3 edit-lab-units-group-<?= $subject['subject_id'] ?>" style="<?= $subject['subject_type'] == 'LEC with LAB' ? '' : 'display: none;' ?>">
+                        <label>Lab Units</label>
+                        <input type="number" name="lab_units" class="form-control" min="0" value="<?= esc($subject['lab_units']) ?>">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
                     <!-- Delete Modal -->
                     <div class="modal fade" id="deleteModal<?= $subject['subject_id'] ?>" tabindex="-1">
@@ -402,4 +439,16 @@ document.querySelector('#addModal form').addEventListener('submit', function(e) 
 
 document.getElementById('add_subject_type').addEventListener('change', toggleAddUnits);
 document.addEventListener('DOMContentLoaded', toggleAddUnits);
+</script>
+
+<script>
+function toggleEditUnits(id) {
+    const subjectType = document.querySelector(`select.edit-subject-type[data-id="${id}"]`).value;
+    const labUnitsGroup = document.querySelector(`.edit-lab-units-group-${id}`);
+    if (subjectType === 'LEC with LAB') {
+        labUnitsGroup.style.display = '';
+    } else {
+        labUnitsGroup.style.display = 'none';
+    }
+}
 </script>

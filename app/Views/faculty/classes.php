@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } else {
             let html = `
-            <table class="table table-striped">
+            <table class="table table-striped custom-padding">
                 <thead>
                     <tr>
                         <th>Subject Code</th>

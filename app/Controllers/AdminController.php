@@ -14,8 +14,7 @@ use App\Models\AnnouncementModel;
 use App\Models\CurriculumModel;
 
 
-class AdminController extends BaseController
-{
+class AdminController extends BaseController {
     /********************************************** 
         ADMIN HOME 
      ***********************************************/
@@ -32,7 +31,6 @@ class AdminController extends BaseController
             . view('admin/home', ['announcements' => $announcements])
             . view('templates/admin/admin_footer');
     }
-
 
     /********************************************** 
         USER MANAGEMENT 
@@ -52,7 +50,6 @@ class AdminController extends BaseController
             . view('admin/users', $data)
             . view('templates/admin/admin_footer');
     }
-
 
     // Display form to add a new user
     public function createUser()
@@ -134,7 +131,6 @@ class AdminController extends BaseController
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
 
-
     /********************************************** 
         ANNOUNCEMENT MANAGEMENT
      ***********************************************/
@@ -197,11 +193,9 @@ class AdminController extends BaseController
         return redirect()->to('admin/home')->with('success', 'Announcement deleted successfully.');
     }
 
-
     /********************************************** 
         ACADEMICS PAGE
      ***********************************************/
-
     public function index()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
@@ -228,7 +222,6 @@ class AdminController extends BaseController
             . view('admin/academics', $data)
             . view('templates/admin/admin_footer');
     }
-
 
     /********************************************** 
         SEMESTERS MANAGEMENT
@@ -606,7 +599,7 @@ class AdminController extends BaseController
         $semester = $this->request->getGet('semester');
 
         $curriculumModel = new CurriculumModel();
-        $courses = $curriculumModel->getCourses($yearLevel, $semester);
+        $courses = $curriculumModel->getSubjects($yearLevel, $semester);
 
         $semesterOptions = ['1st Sem', '2nd Sem', 'Midyear']; // adjust this if needed
 

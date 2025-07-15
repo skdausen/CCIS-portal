@@ -346,6 +346,18 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.03);
 }
 
+/* Only for faculty and student */
+.faculty #calendar,
+.student #calendar {
+    font-size: 0.75rem;
+}
+
+.faculty #latest-update,
+.student #latest-update {
+    font-size: 0.85rem;
+}
+
+
 /* Custom styles for buttons, backgrounds, and text */
 .bg-gray {
     background-color: #343a40 !important;

@@ -195,6 +195,16 @@ class AdminController extends BaseController
         }
 
         return $this->response->setJSON(array_merge($user, $extra ?? []));
+        //         return $this->response->setJSON(array_merge($user, [
+        //     'contactnum'  => $extra['contactnum'] ?? null,
+        //     'fname'       => $extra['fname'] ?? null,
+        //     'mname'       => $extra['mname'] ?? null,
+        //     'lname'       => $extra['lname'] ?? null,
+        //     'sex'         => $extra['sex'] ?? null,
+        //     'birthdate'   => $extra['birthdate'] ?? null,
+        //     'address'     => $extra['address'] ?? null,
+        //     'profimg'     => $extra['profimg'] ?? null,
+        // ]));
     }
 
 

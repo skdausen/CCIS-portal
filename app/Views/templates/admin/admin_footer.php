@@ -144,7 +144,7 @@
 
   <!-- EDIT PROFILE MODAL (Styled like Profile View) -->
   <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <form action="<?= site_url('profile/update') ?>" method="post" enctype="multipart/form-data">
           <div class="modal-header">
@@ -152,7 +152,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
 
-          <div class="modal-body">
+          <div class="modal-body overflow-y-auto">
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
               <div class="col-12 text-center">

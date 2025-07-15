@@ -633,10 +633,10 @@ public function createClass()
             'subject_id'  => $subjectId,
             'semester_id' => $semesterId,
             'section'     => $section,
-            'lec_day'     => $this->request->getPost('class_day'),
-            'lec_start'   => $this->request->getPost('class_start'),
-            'lec_end'     => $this->request->getPost('class_end'),
-            'lec_room'    => $this->request->getPost('class_room'),
+            'lec_day'     => $this->request->getPost('lec_day'),
+            'lec_start'   => $this->request->getPost('lec_start'),
+            'lec_end'     => $this->request->getPost('lec_end'),
+            'lec_room'    => $this->request->getPost('lec_room'),
         ];
 
         if ($subjectType === 'LEC with LAB') {
@@ -670,10 +670,10 @@ public function updateClass($id)
             'subject_id'  => $this->request->getPost('subject_id'),
             'semester_id' => $this->request->getPost('semester_id'),
             'section'     => $this->request->getPost('class_section'),
-            'lec_day'     => $this->request->getPost('class_day'),
-            'lec_start'   => $this->request->getPost('class_start'),
-            'lec_end'     => $this->request->getPost('class_end'),
-            'lec_room'    => $this->request->getPost('class_room'),
+            'lec_day'     => $this->request->getPost('lec_day'),
+            'lec_start'   => $this->request->getPost('lec_start'),
+            'lec_end'     => $this->request->getPost('lec_end'),
+            'lec_room'    => $this->request->getPost('lec_room'),
         ];
 
         if ($subjectType === 'LEC with LAB') {

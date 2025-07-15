@@ -194,14 +194,17 @@
               <option value="LEC with LAB">LEC with LAB</option>
             </select>
           </div>
-          <div class="mb-3">
-            <label>Lecture Units</label>
-            <input type="number" name="lec_units" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label>Lab Units</label>
-            <input type="number" name="lab_units" class="form-control" required>
-          </div>
+          
+            <div class="mb-3">
+                <label>Lecture Units</label>
+                <input type="number" id="lec_units" name="lec_units" class="form-control" required min="0">
+            </div>
+
+            <div class="mb-3" id="lab_units_group" style="display: none;">
+                <label>Lab Units</label>
+                <input type="number" id="lab_units" name="lab_units" class="form-control" min="0" value="0">
+            </div>
+
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Add Subject</button>
@@ -318,4 +321,85 @@
 
         filterRows();
     });
+</script>
+\<script>
+function toggleAddUnits() {
+    const typeSelect = document.getElementById('add_subject_type');
+    const labGroup = document.getElementById('lab_units_group');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (typeSelect.value === 'LEC') {
+        labGroup.style.display = 'none';
+        labInput.value = '';
+    } else {
+        labGroup.style.display = 'block';
+    }
+}
+
+document.getElementById('add_subject_type').addEventListener('change', toggleAddUnits);
+
+// Form validation before submit
+document.querySelector('#addModal form').addEventListener('submit', function(e) {
+    const typeSelect = document.getElementById('add_subject_type');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (lecInput.value === '' || parseFloat(lecInput.value) < 0) {
+        alert('Lecture Units must not be empty or negative.');
+        e.preventDefault();
+        return;
+    }
+
+    if (typeSelect.value === 'LEC with LAB') {
+        if (labInput.value === '' || parseFloat(labInput.value) < 0) {
+            alert('Lab Units must not be empty or negative.');
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+// Run once on page load (optional for safety)
+toggleAddUnits();
+</script>
+
+<script>
+function toggleAddUnits() {
+    const typeSelect = document.getElementById('add_subject_type');
+    const labGroup = document.getElementById('lab_units_group');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (typeSelect.value === 'LEC') {
+        labGroup.style.display = 'none';
+        labInput.value = 0; // Automatically sets Lab units to 0 for LEC
+    } else {
+        labGroup.style.display = 'block';
+    }
+}
+
+// Prevent submitting with empty or negative units
+document.querySelector('#addModal form').addEventListener('submit', function(e) {
+    const typeSelect = document.getElementById('add_subject_type');
+    const lecInput = document.getElementById('lec_units');
+    const labInput = document.getElementById('lab_units');
+
+    if (lecInput.value === '' || parseFloat(lecInput.value) < 0) {
+        alert('Lecture Units must not be empty or negative.');
+        e.preventDefault();
+        return;
+    }
+
+    if (typeSelect.value === 'LEC with LAB') {
+        if (labInput.value === '' || parseFloat(labInput.value) < 0) {
+            alert('Lab Units must not be empty or negative.');
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+document.getElementById('add_subject_type').addEventListener('change', toggleAddUnits);
+document.addEventListener('DOMContentLoaded', toggleAddUnits);
 </script>

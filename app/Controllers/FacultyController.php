@@ -38,74 +38,31 @@ class FacultyController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $facultyId = session()->get('user_id');
+        $userId = session()->get('user_id');
 
-        $classModel = new ClassModel();
-        $semesterModel = new SemesterModel();
+        // Get the faculty's ftb_id from the faculty table
+        $db = \Config\Database::connect();
+        $faculty = $db->table('faculty')->where('user_id', $userId)->get()->getRow();
 
-        $activeSemester = $semesterModel->where('is_active', 1)->first();
+        if (!$faculty) {
+            return redirect()->back()->with('error', 'Faculty record not found.');
+        }
 
-        $semesterWithYear = $semesterModel
+        $ftbId = $faculty->ftb_id;
+
+        $classModel = new \App\Models\ClassModel();
+        $classes = $classModel->getFacultyClasses($ftbId); // now passing ftb_id
+
+        $semesterModel = new \App\Models\SemesterModel();
+        $activeSemester = $semesterModel
             ->select('semesters.*, schoolyears.schoolyear')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
             ->where('semesters.is_active', 1)
             ->first();
 
-        // dd(get_class_methods($classModel));
-        $classes = $classModel->getFacultyClasses($facultyId, $activeSemester['semester_id']);
-
         return view('templates/faculty/faculty_header')
-            . view('faculty/classes', [
-                'classes' => $classes,
-                'semester' => $semesterWithYear
-            ])
+            . view('faculty/classes', ['classes' => $classes, 'semester' => $activeSemester ])
             . view('templates/admin/admin_footer');
-    }
-
-    public function viewClass($classId)
-    {
-        $classModel = new ClassModel();
-        $studentModel = new StudentModel();
-
-        $class = $classModel
-            ->select('classes.*, course.course_code, course.course_description, s.semester, sy.schoolyear')
-            ->join('course', 'course.course_id = classes.course_id')
-            ->join('semesters s', 's.semester_id = classes.semester_id')
-            ->join('schoolyears sy', 'sy.schoolyear_id = s.schoolyear_id')
-            ->where('classes.class_id', $classId)
-            ->first();
-
-        if (!$class) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Class not found.');
-        }
-        // Get students enrolled in this class
-        $students = $studentModel->getStudentsByClass($classId);
-        if (!$students) {
-            $students = []; // Ensure $students is always an array
-        }
-        // If you want to handle the case where no students are enrolled, you can add a message or handle it accordingly    
-
-        return view('templates/faculty/faculty_header')
-            . view('faculty/view_class', ['class' => $class, 'students' => $students])
-            . view('templates/admin/admin_footer');
-
-    }
-    public function addStudentToClass()
-    {
-        $classId = $this->request->getPost('class_id');
-        $username = $this->request->getPost('username');
-
-        $userModel = new UserModel();
-        $user = $userModel->where('username', $username)->first();
-
-        if (!$user) {
-            return redirect()->back()->with('error', 'User not found.');
-        }
-
-        $studentModel = new StudentModel();
-        $studentModel->addStudentToClass($classId, $user['user_id']);
-
-        return redirect()->back()->with('success', 'Student added successfully.');
     }
 
 

@@ -11,8 +11,10 @@ class SubjectModel extends Model
     protected $allowedFields = [
         'subject_code',
         'subject_name',
+        'subject_type',
         'lec_units',
         'lab_units',
-        'total_units'
+        'total_units',
+        'curriculum_id',
     ];
 }

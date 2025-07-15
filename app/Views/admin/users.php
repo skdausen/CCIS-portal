@@ -1,5 +1,5 @@
 <!-- users.php -->
-<div class="container mt-5">
+<div class="container mt-5 users-page" data-base-url="<?= base_url() ?>">
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-2">👥 List of Users</h3>
@@ -26,7 +26,7 @@
 
     <!-- USERS TABLE -->
     <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="usersTable">
+        <table class="table table-bordered table-hover custom-padding" id="usersTable">
             <thead class="table-light">
                 <tr>
                     <th>User ID</th>
@@ -55,7 +55,7 @@
                             <td>
                                 <a href="#" 
                                 class="btn btn-sm btn-outline-primary viewUserBtn"
-                                data-user='<?= json_encode($user) ?>'>
+                                data-user-id="<?= esc($user['user_id']) ?>">
                                 View
                                 </a>
                             </td>
@@ -80,12 +80,6 @@
         </div>
             <form action="<?= site_url('admin/create-user') ?>" method="post">
                 <div class="modal-body">
-
-                    <?php if (session()->getFlashdata('success')): ?>
-                    <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-                    <?php elseif (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-                    <?php endif; ?>
 
                     <div class="mb-3">
                     <label for="username" class="form-label">Username:</label>
@@ -129,29 +123,73 @@
             <h5 class="modal-title" id="viewUserModalLabel">👤 User Details</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
-            <!-- USER INFO WILL BE INSERTED HERE VIA JS -->
-            <div id="userDetailsContent">
-            <p><strong>User ID:</strong> <span id="detailUserID"></span></p>
-            <p><strong>Role:</strong> <span id="detailRole"></span></p>
-            <p><strong>Username:</strong> <span id="detailUsername"></span></p>
-            <p><strong>Email:</strong> <span id="detailEmail"></span></p>
-            <p><strong>Status:</strong> <span id="detailStatus"></span></p>
-            <p><strong>Full Name:</strong> <span id="detailFullname"></span></p>
-            <p><strong>Sex:</strong> <span id="detailSex"></span></p>
-            <p><strong>Birthday:</strong> <span id="detailBirthday"></span></p>
-            <p><strong>Address:</strong> <span id="detailAddress"></span></p>
-            <p><strong>Contact Number:</strong> <span id="detailContact"></span></p>
-            <p><strong>Created At:</strong> <span id="detailCreated"></span></p>
-            <p><strong>Last Login:</strong> <span id="detailLogin"></span></p>
+            <div class="row g-4 align-items-center">
+            <!-- PROFILE IMAGE -->
+            <div class="col-md-4 text-center">
+                <img id="detailProfileImg" src="" alt="Profile Image" class="rounded-circle shadow" style="object-fit: cover;">
+                <p class="fw-bold mt-2" id="detailUsername"></p>
+                <small class="text-muted" id="detailRole"></small>
+            </div>
+
+            <!-- USER DETAILS -->
+            <div class="col-md-8">
+                <table class="table table-sm table-hover custom-padding">
+                <tbody>
+                    <tr>
+                    <th>User ID</th>
+                    <td id="detailUserID"></td>
+                    </tr>
+                    <tr>
+                    <th>Email</th>
+                    <td id="detailEmail"></td>
+                    </tr>
+                    <tr>
+                    <th>Status</th>
+                    <td id="detailStatus"></td>
+                    </tr>
+                    <tr>
+                    <th>Full Name</th>
+                    <td id="detailFullname"></td>
+                    </tr>
+                    <tr>
+                    <th>Sex</th>
+                    <td id="detailSex"></td>
+                    </tr>
+                    <tr>
+                    <th>Birthday</th>
+                    <td id="detailBirthday"></td>
+                    </tr>
+                    <tr>
+                    <th>Address</th>
+                    <td id="detailAddress"></td>
+                    </tr>
+                    <tr>
+                    <th>Contact Number</th>
+                    <td id="detailContact"></td>
+                    </tr>
+                    <tr>
+                    <th>Created At</th>
+                    <td id="detailCreated"></td>
+                    </tr>
+                    <tr>
+                    <th>Last Login</th>
+                    <td id="detailLogin"></td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
             </div>
         </div>
+
         <div class="modal-footer">
             <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
         </div>
     </div>
     </div>
+
 
 </div>
 

@@ -13,12 +13,16 @@ class ClassModel extends Model
         'subject_id',
         'semester_id',
         'section',
-        'class_room',
-        'class_day',
-        'class_start',
-        'class_end',
-        'class_type',
+        'lec_room',
+        'lec_day',
+        'lec_start',
+        'lec_end',
+        'lab_room',
+        'lab_day',
+        'lab_start',
+        'lab_end',
     ];
+
 
     public $useTimestamps = false;
 
@@ -26,10 +30,11 @@ class ClassModel extends Model
     public function getClassWithDetails()
     {
         return $this->select('classes.*, 
-                subjects.subject_code, 
-                subjects.subject_name, 
-                semesters.semester, 
-                schoolyears.schoolyear')
+                    subjects.subject_code, 
+                    subjects.subject_name, 
+                    subjects.subject_type, 
+                    semesters.semester, 
+                    schoolyears.schoolyear')
             ->join('subjects', 'subjects.subject_id = classes.subject_id')
             ->join('semesters', 'semesters.semester_id = classes.semester_id')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
@@ -37,30 +42,18 @@ class ClassModel extends Model
     }
 
     // Get all classes for a faculty in a semester
-    public function getFacultyClasses($facultyId, $semesterId)
+    public function getFacultyClasses($ftbId)
     {
         return $this->select('classes.*, 
-                subjects.subject_code, 
-                subjects.subject_name, 
-                semesters.semester, 
-                schoolyears.schoolyear')
+                            subjects.subject_code, 
+                            subjects.subject_name, 
+                            semesters.semester, 
+                            schoolyears.schoolyear')
             ->join('subjects', 'subjects.subject_id = classes.subject_id')
             ->join('semesters', 'semesters.semester_id = classes.semester_id')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
-            ->where('classes.ftb_id', $facultyId)
-            ->where('classes.semester_id', $semesterId)
-            ->findAll();
-    }
-
-    // Get faculty schedule ordered by day and time
-    public function getFacultyScheduleByDay($facultyId, $semesterId)
-    {
-        return $this->select('classes.*, subjects.subject_code, subjects.subject_name')
-            ->join('subjects', 'subjects.subject_id = classes.subject_id')
-            ->where('classes.ftb_id', $facultyId)
-            ->where('classes.semester_id', $semesterId)
-            ->orderBy('FIELD(classes.class_day, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")')
-            ->orderBy('classes.class_start')
+            ->where('classes.ftb_id', $ftbId)
+            ->where('semesters.is_active', 1)
             ->findAll();
     }
 }

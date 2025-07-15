@@ -1,47 +1,86 @@
- <!-- Main Container -->
-    <div class="main-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-title">Academics</div>
-            <ul class="sidebar-nav">
-                <li><a href="<?=site_url('admin/academics/semesters')?>">Semesters</a></li>
-                <li><a href="<?=site_url('admin/academics/subjects')?>">Subjects</a></li>
-                <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
-                <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
-            </ul>
-        </div>
-<div class="container mt-5">
-        <!-- HEADER -->
+<!-- Main Container -->
+<div class="main-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-title">Academics</div>
+        <ul class="sidebar-nav">
+            <li><a href="<?= site_url('admin/academics/semesters') ?>">Semesters</a></li>
+            <li><a href="<?= site_url('admin/academics/subjects') ?>">Subjects</a></li>
+            <li><a href="<?= site_url('admin/academics/curriculums') ?>">Curriculum</a></li>
+            <li><a href="<?= site_url('admin/academics/classes') ?>">Classes</a></li>
+        </ul>
+    </div>
+
+    <div class="container mt-5">
+
+        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Curriculum Courses</h3>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+                Add New Curriculum
+            </button>
         </div>
- 
-<!-- CURRICULUM CARDS -->
-<div class="d-flex justify-content-center my-5">
-    <div class="row g-4" style="max-width: 1000px; width: 100%;">
-        <div class="col-12 col-md-6">
-            <div class="card text-white text-center p-5" style="background-color: #007bff; border-radius: .5rem; height: 450px;">
-                <div class="d-flex flex-column justify-content-between h-100">
-                    <div>
-                        <h3 class="card-title mb-4">Old Curriculum</h3>
-                        <p class="card-text fs-5">View the courses for the Old Curriculum.</p>
-                    </div>
-                    <a href="<?= site_url('admin/academics/curriculum_old') ?>" class="btn btn-light btn-lg">View</a>
+
+        <!-- Curriculum and Subjects List -->
+        <?php foreach ($curriculums as $curriculum): ?>
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <strong><?= esc($curriculum['curriculum_name']) ?></strong> (<?= esc($curriculum['program_name']) ?>)
+                </div>
+                <div class="card-body">
+                    <?php if (!empty($curriculumSubjects[$curriculum['curriculum_id']])): ?>
+                        <ul class="list-group">
+                            <?php foreach ($curriculumSubjects[$curriculum['curriculum_id']] as $subject): ?>
+                                <li class="list-group-item">
+                                    <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p class="text-muted">No subjects assigned to this curriculum.</p>
+                    <?php endif; ?>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="card text-white text-center p-5" style="background-color: #28a745; border-radius: .5rem; height: 450px;">
-                <div class="d-flex flex-column justify-content-between h-100">
-                    <div>
-                        <h3 class="card-title mb-4">New Curriculum</h3>
-                        <p class="card-text fs-5">View the courses for the New Curriculum.</p>
-                    </div>
-                    <a href="<?= site_url('admin/academics/curriculum_new') ?>" class="btn btn-light btn-lg">View</a>
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </div>
 
+<!-- Add Curriculum Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="<?= site_url('admin/academics/curriculums/create') ?>">
+                <?= csrf_field() ?>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Add New Curriculum</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="curriculum_name" class="form-label">Curriculum Name</label>
+                        <input type="text" name="curriculum_name" id="curriculum_name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="program_id" class="form-label">Program</label>
+                        <select name="program_id" id="program_id" class="form-select" required>
+                            <option value="" selected disabled>Select Program</option>
+                            <?php foreach ($programs as $program): ?>
+                                <option value="<?= $program['program_id'] ?>">
+                                    <?= esc($program['program_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

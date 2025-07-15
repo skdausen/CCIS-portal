@@ -84,9 +84,14 @@ $routes->group('admin', function ($routes) {
 
     // CURRICULUM
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
-    $routes->get('academics/curriculum_old', [AdminController::class, 'curriculum_old']);
-    $routes->get('academics/curriculum_new', [AdminController::class, 'curriculum_new']);
-    $routes->get('academics/add_courses', [AdminController::class, 'add_courses']);
+    $routes->post('academics/curriculums/create', 'AdminController::create');
+    $routes->post('academics/curriculums/update/(:num)', 'AdminController::update_curriculum/$1');
+    $routes->get('academics/curriculums/view/(:num)', 'AdminController::view_curriculum_detail/$1');
+    
+
+
+
+    
 
     // 📢 Announcement management
     $routes->post('saveAnnouncement', 'AdminController::saveAnnouncement');

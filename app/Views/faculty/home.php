@@ -1,6 +1,6 @@
 <!-- Views/faculty/home.php -->
 <div class="container mt-5">
-    <h2>Welcome, <?= session('username'); ?>!</h2>
+    <h2>Welcome, <?= $facultyName ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
     <div class="row mt-5">

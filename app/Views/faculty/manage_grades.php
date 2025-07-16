@@ -20,7 +20,9 @@
             <?php
             $allowedGrades = ['1.00', '1.25', '1.50', '1.75', '2.00', '2.25', '2.50', '2.75', '3.00', '5.00'];
             ?>
-            <?php foreach ($students as $s): $sem = $g['sem_grade'] ?? '';?>
+            <?php foreach ($students as $s): 
+                $sem = $s['sem_grade'] ?? '';
+                ?>
             <tr>
                 <td><?= esc($s['student_id']) ?></td>
                 <td><?= esc("{$s['lname']}, {$s['fname']} {$s['mname']}") ?></td>

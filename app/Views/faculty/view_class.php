@@ -2,7 +2,7 @@
   <div class="col-md-12 mb-4">
     <div class="d-flex align-items-center justify-content-between">
       <!-- Back Arrow -->
-      <a href="<?= base_url('faculty/classes') ?>" class="btn btn-link text-decoration-none">
+      <a href="<?= base_url('faculty/classes') ?>" class="btn btn-link text-muted text-decoration-none">
         <i class="fas fa-arrow-left fs-3"></i>
       </a>
 
@@ -39,10 +39,10 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="text-uppercase fw-bold text-muted mb-0">Enrolled Students:</h6>
         <div>
-            <button type="button" class="btn btn-success btn-sm me-2 mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
+            <button type="button" class="btn btn-outline-success btn-sm me-2 mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
                 Manage Students
             </button>
-            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-success btn-sm mb-3">
+            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-outline-success btn-sm mb-3">
               Manage Grades
             </a>
         </div>
@@ -156,8 +156,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Enroll Selected</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-outline-success">Enroll Selected</button>
+          <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 py-2 px-3" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </form>

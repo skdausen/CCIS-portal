@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </p>` : ''}
                         </div>
                         <div class="card-footer text-end">
-                            <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-outline-primary">View</a>
+                            <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-outline-primary">Manage Class</a>
                         </div>
                     </div>
                 </div>`;
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } else {
             let html = `
-            <table class="table table-bordered table-striped custom-padding">
+            <table class="table table-bordered custom-padding">
                 <thead>
                     <tr>
                         <th>Subject Code</th>

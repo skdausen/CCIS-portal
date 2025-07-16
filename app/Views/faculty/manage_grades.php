@@ -53,8 +53,8 @@
 
                 <!-- ✅ Card Footer Inside the Form but Outside the Table -->
                 <div class="card-footer bg-white border-0 d-flex justify-content-end mt-3">
-                    <button type="submit" class="btn btn-success btn-sm me-2">Save Grades</button>
-                    <a href="<?= base_url('faculty/class/' . $class['class_id']) ?>" class="btn btn-secondary btn-sm px-3 py-1 rounded-1">Back</a>
+                    <button type="submit" class="btn btn-outline-success btn-sm me-2">Save Grades</button>
+                    <a href="<?= base_url('faculty/class/' . $class['class_id']) ?>" class="btn btn btn-outline-secondary btn-thin btn-sm px-3 py-1 rounded-1">Back</a>
                 </div>
             </form>
         </div>

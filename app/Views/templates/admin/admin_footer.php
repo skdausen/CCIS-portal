@@ -10,8 +10,8 @@
           Are you sure you want to log out?
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <a href="<?= site_url('auth/logout') ?>" class="btn btn-danger">Confirm Logout</a>
+          <button class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
+          <a href="<?= site_url('auth/logout') ?>" class="btn btn-outline-danger">Confirm Logout</a>
         </div>
       </div>
     </div>
@@ -153,8 +153,8 @@
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+          <button class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -287,8 +287,8 @@
           </div>
 
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-success">Save Changes</button>
+            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
           </div>
         </form>
       </div>
@@ -320,8 +320,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+          <button type="button" class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
         </div>
       </form>
     </div>

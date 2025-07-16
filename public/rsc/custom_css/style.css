@@ -383,6 +383,15 @@ body {
     background-color: #4d104a !important;
 }
 
+.btn-thin {
+    border-color: #343a40;
+    color: #495057;
+    font-weight: 400;         /* NORMAL WEIGHT */
+    padding: 0.25rem 0.5rem;  /* THINNER LOOK */
+    font-size: 0.9rem;        /* SLIGHTLY SMALLER */
+}
+
+
 .toggle-green {
     accent-color: #198754; /* Bootstrap success green */
 }

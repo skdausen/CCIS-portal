@@ -76,8 +76,8 @@
                     document.getElementById('detailEmail').textContent = user.email;
                     document.getElementById('detailStatus').textContent = user.status;
                     document.getElementById('detailFullname').textContent = capitalizeWords(fullName);
-                    document.getElementById('detailSex').textContent = user.sex ?? '-';
-                    document.getElementById('detailBirthday').textContent = user.birthdate ?? '-';
+                    // document.getElementById('detailSex').textContent = user.sex ?? '-';
+                    // document.getElementById('detailBirthday').textContent = user.birthdate ?? '-';
                     document.getElementById('detailAddress').textContent = capitalizeWords(user.address ?? '-');
                     document.getElementById('detailContact').textContent = user.contactnum ?? '-';
                     document.getElementById('detailCreated').textContent = user.created_at;

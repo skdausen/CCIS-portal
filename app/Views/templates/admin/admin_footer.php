@@ -220,10 +220,10 @@
                   <label for="year_level" class="form-label">Year Level:</label>
                   <select name="year_level" id="year_level" class="form-select">
                       <option value="">Select year level</option>
-                      <option value="1" <?= ($student['year_level'] ?? '') == 'first year' ? 'selected' : '' ?>>1st Year</option>
-                      <option value="2" <?= ($student['year_level'] ?? '') == 'second year' ? 'selected' : '' ?>>2nd Year</option>
-                      <option value="3" <?= ($student['year_level'] ?? '') == 'third year' ? 'selected' : '' ?>>3rd Year</option>
-                      <option value="4" <?= ($student['year_level'] ?? '') == 'fourth year' ? 'selected' : '' ?>>4th Year</option>
+                      <option value="1" <?= ($student['year_level'] ?? '') == 'First Year' ? 'selected' : '' ?>>1st Year</option>
+                      <option value="2" <?= ($student['year_level'] ?? '') == 'Second Year' ? 'selected' : '' ?>>2nd Year</option>
+                      <option value="3" <?= ($student['year_level'] ?? '') == 'Third Year' ? 'selected' : '' ?>>3rd Year</option>
+                      <option value="4" <?= ($student['year_level'] ?? '') == 'Fourth Year' ? 'selected' : '' ?>>4th Year</option>
                   </select>
               </div>
           <?php endif; ?>

@@ -167,13 +167,6 @@
                     <td id="detailFullname"></td>
                     </tr>
                     <tr>
-                    <th>Sex</th>
-                    <td id="detailSex"></td>
-                    </tr>
-                    <tr>
-                    <th>Birthday</th>
-                    <td id="detailBirthday"></td>
-                    </tr>
                     <tr>
                     <th>Address</th>
                     <td id="detailAddress"></td>
@@ -183,7 +176,7 @@
                     <td id="detailContact"></td>
                     </tr>
                     <tr>
-                    <th>Created At</th>
+                    <th>Account Created</th>
                     <td id="detailCreated"></td>
                     </tr>
                     <tr>

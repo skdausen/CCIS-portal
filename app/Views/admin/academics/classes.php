@@ -138,7 +138,7 @@
                             <?php endif; ?>
                             <?php endif; ?>
                         </td>
-                        <td><?= ucwords(esc($class['section'] ?? 'N/A')) ?></td>
+                        <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
                         <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
                         <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
                         <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>

@@ -348,7 +348,6 @@ class AdminController extends BaseController
         }
 
         $semester = $this->request->getPost('semester'); // e.g., "1st"
-        $semester = $this->request->getPost('semester');
         $schoolyearText = str_replace(['–', '—'], '-', $this->request->getPost('schoolyear'));
         $schoolyearText = preg_replace('/\s+/', '', trim($schoolyearText));
         $status = $this->request->getPost('status');
@@ -656,7 +655,7 @@ public function createClass()
         $subjectId = $this->request->getPost('subject_id');
         $ftbId = $this->request->getPost('ftb_id');
         $semesterId = $this->request->getPost('semester_id');
-        $section = $this->request->getPost('section');
+        $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
 
         $data = [
@@ -664,17 +663,17 @@ public function createClass()
             'subject_id'  => $subjectId,
             'semester_id' => $semesterId,
             'section'     => $section,
-            'lec_day'     => $this->request->getPost('lec_day'),
+            'lec_day'     => strtoupper($this->request->getPost('lec_day')),
             'lec_start'   => $this->request->getPost('lec_start'),
             'lec_end'     => $this->request->getPost('lec_end'),
-            'lec_room'    => $this->request->getPost('lec_room'),
+            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
         ];
 
         if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = $this->request->getPost('lab_day');
+            $data['lab_day']   = strtoupper($this->request->getPost('lab_day'));
             $data['lab_start'] = $this->request->getPost('lab_start');
             $data['lab_end']   = $this->request->getPost('lab_end');
-            $data['lab_room']  = $this->request->getPost('lab_room');
+            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
         }
 
         $classModel->insert($data);
@@ -700,18 +699,18 @@ public function updateClass($id)
             'ftb_id'      => $this->request->getPost('ftb_id'),
             'subject_id'  => $this->request->getPost('subject_id'),
             'semester_id' => $this->request->getPost('semester_id'),
-            'section'     => $this->request->getPost('class_section'),
-            'lec_day'     => $this->request->getPost('lec_day'),
+            'section'     => strtoupper($this->request->getPost('class_section')),
+            'lec_day'     => strtoupper($this->request->getPost('lec_day')),
             'lec_start'   => $this->request->getPost('lec_start'),
             'lec_end'     => $this->request->getPost('lec_end'),
-            'lec_room'    => $this->request->getPost('lec_room'),
+            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
         ];
 
         if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = $this->request->getPost('lab_day');
+            $data['lab_day']   = strtoupper($this->request->getPost('lab_day'));
             $data['lab_start'] = $this->request->getPost('lab_start');
             $data['lab_end']   = $this->request->getPost('lab_end');
-            $data['lab_room']  = $this->request->getPost('lab_room');
+            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
         } else {
             $data['lab_day']   = null;
             $data['lab_start'] = null;

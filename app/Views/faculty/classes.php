@@ -2,7 +2,7 @@
     <h2 class="mb-3">My Classes</h2>
         <div class="row mb-3">
             <label for="semesterSelect">Semester:</label>
-            <div class="col-md-6 mb-2">
+            <div class="col-md-4 mb-2">
                 <select id="semesterSelect" class="form-select">
                     <?php foreach ($semesters as $sem): ?>
                         <option value="<?= $sem->semester_id ?>" <?= ($sem->semester_id == $activeSemesterId) ? 'selected' : '' ?>>
@@ -11,7 +11,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-6 mb-2">
+            <div class="col-md-4 mb-2">
                     <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search subject...">
             </div>
             <div class="d-flex justify-content-end">
@@ -128,11 +128,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             <h5 class="card-title">${c.subject_code} - ${c.subject_name}</h5>
                             <p class="card-text">
                                 <strong>Type:</strong> ${c.subject_type}<br>
-                                <strong>Section:</strong> ${c.section ?? 'N/A'}
+                                <strong>Section:</strong> ${(c.section ?? 'N/A').toUpperCase()}
                             </p>
                             <p>
                                 <strong>Lecture:</strong> ${c.lec_day ?? 'N/A'}, ${c.lec_start ?? ''} - ${c.lec_end ?? ''}<br>
-                                Room: ${c.lec_room ?? ''}
+                                Room: ${(c.lec_room).toUpperCase() ?? ''}
                             </p>
                             ${c.subject_type === 'LEC with LAB' ? `
                                 <p>
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } else {
             let html = `
-            <table class="table table-striped custom-padding">
+            <table class="table table-bordered table-striped custom-padding">
                 <thead>
                     <tr>
                         <th>Subject Code</th>
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <th>Section</th>
                         <th>Lecture</th>
                         <th>Lab</th>
-                        <th></th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -169,13 +169,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${c.subject_code}</td>
                     <td>${c.subject_name}</td>
                     <td>${c.subject_type}</td>
-                    <td>${c.section ?? 'N/A'}</td>
-                    <td>${c.lec_day ?? ''}, ${c.lec_start ?? ''} - ${c.lec_end ?? ''}<br>Room: ${c.lec_room ?? ''}</td>
-                    <td>${c.subject_type === 'LEC with LAB' ? `${c.lab_day ?? ''}, ${c.lab_start ?? ''} - ${c.lab_end ?? ''}<br>Room: ${c.lab_room ?? ''}` : 'N/A'}</td>
+                    <td>${(c.section ?? 'N/A').toUpperCase()}</td>
+                    <td>${c.lec_day ?? ''}, ${c.lec_start ?? ''} - ${c.lec_end ?? ''}<br>Room: ${c.lec_room.toUpperCase() ?? ''}</td>
+                    <td>${c.subject_type === 'LEC with LAB' ? `${c.lab_day ?? ''}, ${c.lab_start ?? ''} - ${c.lab_end ?? ''}<br>Room: ${c.lab_room.toUpperCase() ?? ''}` : 'N/A'}</td>
                     <td>
-                        <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-primary">View</a>
+                        <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-outline-primary">Manage Class</a>
                     </td>
-
                 </tr>`;
             });
             html += '</tbody></table>';

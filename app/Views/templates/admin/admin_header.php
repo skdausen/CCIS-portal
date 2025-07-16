@@ -41,9 +41,6 @@
                 </ul>
                 <!-- Icons on the far right -->
                 <ul class="navbar-nav icon-nav-links me-3">
-                    <li class="nav-item me-3">
-                        <a class="nav-link" href="#"><i class="fas fa-bell mt-2"></i></a>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle profile-dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- Placeholder for user profile image -->

@@ -79,9 +79,9 @@
                                         <div class="mb-3">
                                             <label>Semester</label>
                                             <select name="semester" class="form-select" required>
-                                                <option value="first semester" <?= $semester['semester'] === 'first semester' ? 'selected' : '' ?>>First Semester</option>
-                                                <option value="second semester" <?= $semester['semester'] === 'second semester' ? 'selected' : '' ?>>Second Semester</option>
-                                                <option value="midyear" <?= $semester['semester'] === 'midyear' ? 'selected' : '' ?>>Midyear</option>
+                                                <option value="first semester" <?= $semester['semester'] === 'First Semester' ? 'selected' : '' ?>>First Semester</option>
+                                                <option value="second semester" <?= $semester['semester'] === 'Second Semester' ? 'selected' : '' ?>>Second Semester</option>
+                                                <option value="midyear" <?= $semester['semester'] === 'Midyear' ? 'selected' : '' ?>>Midyear</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">
@@ -176,37 +176,6 @@
 </div> <!-- End of main-container -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const semesterFilter = document.getElementById('semesterFilter');
-        const searchInput = document.getElementById('searchInput');
-        const clearFilterBtn = document.getElementById('clearFilterBtn');
-        const rows = document.querySelectorAll('#semestersTable tbody tr');
-
-        function applyFilters() {
-            const semesterValue = semesterFilter.value.toLowerCase();
-            const searchValue = searchInput.value.toLowerCase();
-
-            rows.forEach(row => {
-                const semesterText = row.cells[0].textContent.trim().toLowerCase();
-                const schoolYearText = row.cells[1].textContent.trim().toLowerCase();
-
-                const matchesSemester = !semesterValue || semesterText === semesterValue;
-                const matchesSearch = !searchValue || schoolYearText.includes(searchValue);
-
-                if (matchesSemester && matchesSearch) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-        semesterFilter.addEventListener('change', applyFilters);
-        searchInput.addEventListener('input', applyFilters);
-        clearFilterBtn.addEventListener('click', () => {
-            semesterFilter.value = '';
-            searchInput.value = '';
-            applyFilters();
-        });
-    });
+    
 </script>
 

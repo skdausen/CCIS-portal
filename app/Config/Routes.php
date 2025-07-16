@@ -115,7 +115,8 @@ $routes->group('faculty', function ($routes) {
     $routes->get('class/(:num)', 'FacultyController::viewClass/$1');
     $routes->post('class/(:num)/enroll', 'FacultyController::enrollStudents/$1');
     $routes->post('class/(:num)/remove-student/(:num)', 'FacultyController::removeStudent/$1/$2');
-
+    $routes->get('class/(:num)/grades', 'FacultyController::manageGrades/$1');
+    $routes->post('class/(:num)/grades/save', 'FacultyController::saveGrades/$1');
     
 });
 
@@ -129,6 +130,7 @@ $routes->group('student', function ($routes) {
     $routes->get('home', 'StudentController::studentHome');
     $routes->get('curriculum', 'StudentController::studentCurriculum');
     $routes->get('grades', 'StudentController::studentGrades');
+    $routes->get('grades', 'StudentController::getGrades');
     $routes->get('home', 'StudentController::studentSchedule');
     
 });

@@ -1,13 +1,19 @@
 <div class="container mt-5">
-    <div>
-      <a href="<?= base_url('faculty/classes') ?>" class="btn btn-secondary mb-3">
-        ← Back to My Classes
+  <div class="col-md-12 mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+      <!-- Back Arrow -->
+      <a href="<?= base_url('faculty/classes') ?>" class="btn btn-link text-decoration-none">
+        <i class="fas fa-arrow-left fs-3"></i>
       </a>
+
+      <!-- Centered Title (auto-margins center it visually) -->
+      <h2 class="flex-grow-1 text-center mb-0"><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></h2>
+
+      <!-- Invisible filler to keep title centered -->
+      <span style="width: 42px;"></span>
     </div>
-    <!-- Course Title -->
-    <div class="text-center mb-4">
-        <h2><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></h2>
-    </div>
+  </div>
+  <hr>
 
     <!-- Course Info -->
     <div class="row mb-3 justify-content-center">
@@ -33,10 +39,12 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="text-uppercase fw-bold text-muted mb-0">Enrolled Students:</h6>
         <div>
-            <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
+            <button type="button" class="btn btn-success btn-sm me-2 mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
                 Manage Students
             </button>
-            <a href="#" class="btn btn-success btn-sm">Manage Grades</a>
+            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-success btn-sm mb-3">
+              Manage Grades
+            </a>
         </div>
     </div>
 

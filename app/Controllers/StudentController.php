@@ -109,27 +109,65 @@ class StudentController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    public function studentCurriculum()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
-            return redirect()->to('auth/login');
-        }
-
-        return view('templates/student/student_header')
-            . view('student/curriculum')
-            . view('templates/admin/admin_footer');
+public function studentGrades()
+{
+    if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
+        return redirect()->to('auth/login');
     }
-    public function studentGrades()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
-            return redirect()->to('auth/login');
-        }
-        return view('templates/student/student_header')
-            . view('student/grades')
-            . view('templates/admin/admin_footer');
-        
-    }   
-    
+
+    $db = \Config\Database::connect();
+    $userId = session()->get('user_id');
+
+    // Get student record
+    $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
+    if (!$student) {
+        return redirect()->to('auth/login');
+    }
+
+    $stbId = $student->stb_id;
+
+    // Get filters from GET
+    $selectedSemester = $this->request->getGet('semester_id');
+    $selectedYear = $this->request->getGet('year_level');
+
+    // Get all semesters
+    $semesters = $db->table('semesters')
+        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+        ->select('semesters.*, schoolyears.schoolyear')
+        ->orderBy('schoolyears.schoolyear', 'DESC')
+        ->orderBy('semesters.semester', 'DESC')
+        ->get()->getResult();
+
+    // Build grade query
+    $builder = $db->table('student_schedules ss')
+        ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade')
+        ->join('classes c', 'c.class_id = ss.class_id')
+        ->join('subjects s', 's.subject_id = c.subject_id')
+        ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+        ->where('ss.stb_id', $stbId);
+
+    if (!empty($selectedSemester)) {
+        $builder->where('c.semester_id', $selectedSemester);
+    }
+
+    if (!empty($selectedYear)) {
+        $builder->where('c.year_level', $selectedYear); // assuming `classes` table has `year_level`
+    }
+
+    $grades = $builder->get()->getResult();
+
+    return view('templates/student/student_header')
+        . view('student/grades', [
+            'grades' => $grades,
+            'semesters' => $semesters,
+            'selectedSemester' => $selectedSemester,
+            'selectedYear' => $selectedYear,
+        ])
+        . view('templates/admin/admin_footer');
+}
+
+
+
     private function expandDays($days)
     {
         $dayMap = [
@@ -155,5 +193,70 @@ class StudentController extends BaseController
 
         return $result;
     }
+
+    public function getGrades()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
+            return redirect()->to('auth/login');
+        }
+
+        $userId = session()->get('user_id');
+        $db = \Config\Database::connect();
+
+        // Get current student
+        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
+        if (!$student) {
+            return redirect()->to('auth/login');
+        }
+
+        $stbId = $student->stb_id;
+
+        // Get selected semester from GET
+        $selectedSemester = $this->request->getGet('semester_id');
+
+        // Get list of all semesters for the filter dropdown
+        $semesters = $db->table('semesters')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'DESC')
+            ->get()->getResult();
+
+        // Build grades query
+        $gradesQuery = $db->table('student_schedules ss')
+            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->where('ss.stb_id', $stbId);
+
+        if ($selectedSemester) {
+            $gradesQuery->where('c.semester_id', $selectedSemester);
+        }
+
+        $grades = $gradesQuery->get()->getResult();
+
+        return view('templates/student/student_header')
+            . view('student/grades', [
+                'grades' => $grades,
+                'semesters' => $semesters,
+                'selectedSemester' => $selectedSemester
+            ])
+            . view('templates/admin/admin_footer');
+    }
+
+
+    public function studentCurriculum()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
+            return redirect()->to('auth/login');
+        }
+
+        return view('templates/student/student_header')
+            . view('student/curriculum')
+            . view('templates/admin/admin_footer');
+    }
+
+
 
 }

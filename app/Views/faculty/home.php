@@ -6,7 +6,7 @@
         <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
         <div class="col-md-8">
             <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
-            <div class="card p-3 shadow-sm">
+            <div class="card p-3 shadow">
                 <?php foreach ($schedule as $day => $entries): ?>
                     <h5 class="mt-3"><?= esc(strtoupper($day)) ?></h5>
 
@@ -52,7 +52,7 @@
                 <div class="row">
                     <!-- Calendar -->
                     <div class="col-12 mb-4">
-                        <div id="calendar" class="calendar-sm shadow-lg"></div>
+                        <div id="calendar" class="calendar-sm shadow"></div>
                     </div>
 
                     <?php
@@ -76,7 +76,7 @@
 
                     <!-- Announcements -->
                     <div class="col-12">
-                        <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #fff; border-radius: 8px; font-size: 0.85rem;">
+                        <div class="p-3 border-0 shadow" id="latest-update" style="background-color: #fff; border-radius: 8px; font-size: 0.85rem;">
                             
                             <!-- 🆕 Latest Announcement -->
                             <h6 class="text-purple mb-2 fw-semibold" style="font-size: 1rem;">🆕 Latest Announcement</h6>

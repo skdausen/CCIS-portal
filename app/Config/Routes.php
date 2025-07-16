@@ -114,7 +114,8 @@ $routes->group('faculty', function ($routes) {
     $routes->get('classes/ajax', 'FacultyController::getClassesBySemester'); // AJAX handler
     $routes->get('class/(:num)', 'FacultyController::viewClass/$1');
     $routes->post('class/(:num)/enroll', 'FacultyController::enrollStudents/$1');
-    $routes->post('removeStudentFromClass', 'FacultyController::removeStudentFromClass');
+    $routes->post('class/(:num)/remove-student/(:num)', 'FacultyController::removeStudent/$1/$2');
+
     
 });
 

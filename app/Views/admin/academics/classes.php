@@ -97,27 +97,27 @@
 
 ?>
 
-        <!-- CLASSES TABLE -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                        <thead class="table-light">
-                <tr>
-                    <th>Subject</th>
-                    <th>Type</th>
-                    <th>Day, Time, Room</th>
-                    <th>Section</th>
-                    <th>Instructor</th>
-                    <th>Semester</th>
-                    <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-                        <th>Actions</th>
-                    <?php endif; ?>
-                </tr>
-            </thead>
+<!-- CLASSES TABLE -->
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Day, Time, Room</th>
+                <th>Section</th>
+                <th>Instructor</th>
+                <th>Semester</th>
+                <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+                    <th>Actions</th>
+                <?php endif; ?>
+            </tr>
+        </thead>
 
-                <tbody>
-                    <?php foreach ($classes as $class): ?>
-                    <tr>
-                        <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
+        <tbody>
+            <?php foreach ($classes as $class): ?>
+            <tr>
+                 <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
                         <td><?= esc($class['subject_type']) ?></td>
 
                         <td>
@@ -145,25 +145,28 @@
                         <td>
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
                             <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
-                        </td>
-                        <?php endif; ?>
+                </td>
+                <?php endif; ?>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-
-                    </tr>
-
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
-                <?= csrf_field() ?>
+<!-- ✅ OUTSIDE THE TABLE: Edit and Delete Modals -->
+<?php foreach ($classes as $class): ?>
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
+        <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
+            <?= csrf_field() ?>
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Class</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <!-- Semester (Auto-filled) -->
                     <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
 
                     <div class="mb-3">
@@ -173,133 +176,101 @@
                         </div>
                     </div>
 
-                    <!-- Instructor -->
-                    <div class="mb-3">
-                        <label>Instructor</label>
-                        <select name="ftb_id" class="form-select" required>
-                            <option value="">Select Instructor</option>
-                            <?php foreach ($instructors as $ftbId => $instructorName): ?>
-                                <option value="<?= $ftbId ?>" <?= isset($class['ftb_id']) && $ftbId == $class['ftb_id'] ? 'selected' : '' ?>>
-                                    <?= esc($instructorName) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Instructor</label>
+                            <select name="ftb_id" class="form-select" required>
+                                <option value="">Select Instructor</option>
+                                <?php foreach ($instructors as $ftbId => $instructorName): ?>
+                                    <option value="<?= $ftbId ?>" <?= $ftbId == $class['ftb_id'] ? 'selected' : '' ?>>
+                                        <?= esc($instructorName) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Section</label>
+                            <input type="text" name="section" class="form-control" value="<?= esc($class['section']) ?>" required>
+                        </div>
                     </div>
 
-                    <!-- Subject -->
-                    <div class="mb-3">
-                        <label>Subject</label>
-                        <select name="subject_id" class="form-select" required>
-                            <option value="">Select Subject</option>
-                            <?php foreach ($courses as $subject): ?>
-                                <option value="<?= $subject['subject_id'] ?>" <?= isset($class['subject_id']) && $subject['subject_id'] == $class['subject_id'] ? 'selected' : '' ?>>
-                                    <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="mb-3 position-relative">
+                        <label class="form-label">Subject</label>
+                       <input type="text" class="form-control edit-subject-search mb-2"
+                            data-id="<?= $class['class_id'] ?>"
+                            placeholder="Search Subject..." 
+                            value="<?= esc($class['subject_code'] . ' - ' . $class['subject_name']) ?>" required>
+
+                        <input type="hidden" name="subject_id" class="edit-subject-id"
+                            data-id="<?= $class['class_id'] ?>"
+                            value="<?= esc($class['subject_id']) ?>" required>
+
+                        <input type="text" name="subject_type"
+                            class="form-control edit-subject-type"
+                            data-id="<?= $class['class_id'] ?>" readonly
+                            value="<?= esc($class['subject_type']) ?>" required>
+
+                        <ul class="list-group position-absolute w-100 shadow edit-suggestions"
+                            data-id="<?= $class['class_id'] ?>"
+                            style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
                     </div>
 
-                    <!-- Class Type -->
-                    <div class="mb-3">
-                        <label>Type</label>
-                        <select name="subject_type" class="form-select" required>
-                            <option value="">Select Type</option>
-                            <option value="LEC" <?= $class['subject_type'] == 'LEC' ? 'selected' : '' ?>>Lecture (Lec)</option>
-                            <option value="LEC with LAB" <?= $class['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>Lec with Lab</option>
-                        </select>
-                    </div>
-
-                    <!-- Lecture Schedule -->
-                    <h6>Lecture Schedule</h6>
-                    <div class="mb-3">
-                        <label>Lecture Day</label>
-                        <input type="text" name="lec_day" class="form-control" value="<?= esc($class['lec_day'] ?? '') ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Lecture Start Time</label>
-                        <input type="time" name="lec_start" class="form-control" value="<?= esc($class['lec_start'] ?? '') ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Lecture End Time</label>
-                        <input type="time" name="lec_end" class="form-control" value="<?= esc($class['lec_end'] ?? '') ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Lecture Room</label>
-                        <input type="text" name="lec_room" class="form-control" value="<?= esc($class['lec_room'] ?? '') ?>" required>
-                    </div>
-
-                    <?php if (($class['subject_type'] ?? '') === 'LEC with LAB'): ?>
-                        <h6>Laboratory Schedule</h6>
-                        <div class="mb-3">
-                            <label>Lab Day</label>
-                            <input type="text" name="lab_day" class="form-control" value="<?= esc($class['lab_day'] ?? '') ?>">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Lecture Schedule</h6>
+                            <input type="text" name="lec_day" value="<?= esc($class['lec_day']) ?>" class="form-control mb-2" placeholder="Day/s" required>
+                            <input type="text" name="lec_room" value="<?= esc($class['lec_room']) ?>" class="form-control mb-2" placeholder="Room" required>
+                            <input type="time" name="lec_start" value="<?= esc($class['lec_start']) ?>" class="form-control mb-2" required>
+                            <input type="time" name="lec_end" value="<?= esc($class['lec_end']) ?>" class="form-control mb-2" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label>Lab Start Time</label>
-                            <input type="time" name="lab_start" class="form-control" value="<?= esc($class['lab_start'] ?? '') ?>">
+                        <div class="col-md-6 edit-lab-schedule <?= $class['subject_type'] == 'LEC with LAB' ? '' : 'd-none' ?>" data-id="<?= $class['class_id'] ?>">
+                            <h6>Lab Schedule</h6>
+                           <input type="text" name="lab_day" value="<?= esc($class['lab_day']) ?>" class="form-control mb-2" placeholder="Lab Day/s" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                            <input type="text" name="lab_room" value="<?= esc($class['lab_room']) ?>" class="form-control mb-2" placeholder="Lab Room" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                            <input type="time" name="lab_start" value="<?= esc($class['lab_start']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                            <input type="time" name="lab_end" value="<?= esc($class['lab_end']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+
                         </div>
-
-                        <div class="mb-3">
-                            <label>Lab End Time</label>
-                            <input type="time" name="lab_end" class="form-control" value="<?= esc($class['lab_end'] ?? '') ?>">
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Lab Room</label>
-                            <input type="text" name="lab_room" class="form-control" value="<?= esc($class['lab_room'] ?? '') ?>">
-                        </div>
-                    <?php endif; ?>
-
-
-                    <!-- Section -->
-                    <div class="mb-3">
-                        <label>Section</label>
-                        <input type="text" name="class_section" class="form-control" value="<?= esc($class['class_section'] ?? '') ?>" required>
                     </div>
-                </div> <!-- /.modal-body -->
+                </div>
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Update</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
-    </div>
+</div>
 
 
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal<?= $class['class_id'] ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <form method="post" action="<?= site_url('admin/academics/classes/delete/' . $class['class_id']) ?>">
-                                <?= csrf_field() ?>
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Confirm Delete</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal<?= $class['class_id'] ?>" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="<?= site_url('admin/academics/classes/delete/' . $class['class_id']) ?>">
+            <?= csrf_field() ?>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
+<?php endforeach; ?>
 
-    <!-- Add Class Modal -->
+
+<!-- ✅ ADD CLASS MODAL (Remains after everything) -->
+<!-- Add Class Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
             <form action="<?= site_url('admin/academics/classes/add') ?>" method="post">
@@ -339,70 +310,68 @@
                                 <input type="text" name="section" id="section" class="form-control" placeholder="Section e.g., A, B, C" required>
                             </div>
                         </div>
+                        
+                         <!-- Subject -->
+                       <div class="mb-3 position-relative">
+                            <label for="subjectSearchInput" class="form-label">Subject</label>
+                            <input type="text" id="subjectSearchInput" class="form-control" placeholder="Search Subject Code or Name..." autocomplete="off" required>
+                            <input type="hidden" name="subject_id" id="subjectIdInput">
 
-                        <!-- Subject -->
-                        <div class="mb-3">
-                            <label for="subject_id" class="form-label">Subject</label>
-                            <select name="subject_id" id="addSubjectSelect" class="form-select" required>
-                                <option value="">Select Subject</option>
-                                <?php foreach ($courses as $subject): ?>
-                                    <option value="<?= $subject['subject_id'] ?>" data-type="<?= $subject['subject_type'] ?>">
-                                        <?= esc($subject['subject_code']) ?> - <?= esc($subject['subject_name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <ul id="subjectSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
                         </div>
 
-                        <!-- Subject Type Display (Auto-filled) -->
                         <div class="mb-3">
                             <label class="form-label">Type</label>
                             <input type="text" id="subjectTypeInput" name="subject_type" class="form-control" readonly placeholder="Subject Type">
                         </div>
 
-                        <!-- Schedule -->
-                        <div class="row">
-                        <!-- Lecture Schedule -->
-                            <div id="lectureSchedule" class="col-md-12 col-md-6 schedule-section">
-                                <h6>Lecture Schedule</h6>
-                                <div class="mb-3">
-                                    <label for="lecDay" class="form-label">Day/s</label>
-                                    <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lecRoom" class="form-label">Room</label>
-                                    <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lecStart" class="form-label">Start Time</label>
-                                    <input type="time" id="lecStart" name="lec_start" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lecEnd" class="form-label">End Time</label>
-                                    <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
-                                </div>
-                            </div>
+                        <ul id="subjectSuggestions" class="list-group position-absolute" style="z-index: 1050;"></ul>
 
-                        <!-- Lab Schedule -->
-                            <div id="labSchedule" class="col-md-6 schedule-section d-none">
-                                <h6>Lab Schedule</h6>
-                                <div class="mb-3">
-                                    <label for="labDay" class="form-label">Lab Day/s</label>
-                                    <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F" accept="text" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="labRoom" class="form-label">Lab Room</label>
-                                    <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="labStart" class="form-label">Lab Start Time</label>
-                                    <input type="time" id="labStart" name="lab_start" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="labEnd" class="form-label">Lab End Time</label>
-                                    <input type="time" id="labEnd" name="lab_end" class="form-control" required>
-                                </div>
+
+                        <!-- Schedule -->
+                     <div class="row">
+                        <!-- Lecture Schedule -->
+                        <div id="lectureSchedule" class="col-md-6">
+                            <h6>Lecture Schedule</h6>
+                            <div class="mb-3">
+                                <label for="lecDay" class="form-label">Day/s</label>
+                                <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lecRoom" class="form-label">Room</label>
+                                <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lecStart" class="form-label">Start Time</label>
+                                <input type="time" id="lecStart" name="lec_start" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lecEnd" class="form-label">End Time</label>
+                                <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
                             </div>
                         </div>
+
+                        <!-- Lab Schedule -->
+                        <div id="labSchedule" class="col-md-6 d-none">
+                            <h6>Lab Schedule</h6>
+                            <div class="mb-3">
+                                <label for="labDay" class="form-label">Lab Day/s</label>
+                                <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
+                            </div>
+                            <div class="mb-3">
+                                <label for="labRoom" class="form-label">Lab Room</label>
+                                <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
+                            </div>
+                            <div class="mb-3">
+                                <label for="labStart" class="form-label">Lab Start Time</label>
+                                <input type="time" id="labStart" name="lab_start" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="labEnd" class="form-label">Lab End Time</label>
+                                <input type="time" id="labEnd" name="lab_end" class="form-control">
+                            </div>
+                        </div>
+                    </div>
 
 
                         
@@ -418,6 +387,10 @@
     </div>
 
 </div>
+
+
+
+
 
 
 
@@ -477,46 +450,293 @@
 </div>
 
 
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const subjectSelect = document.getElementById('addSubjectSelect');
-        const subjectTypeInput = document.getElementById('subjectTypeInput');
-        const labScheduleSection = document.getElementById('labSchedule');
+    const subjects = <?= json_encode(array_map(function($subject) {
+        return [
+            'id' => $subject['subject_id'],
+            'code' => $subject['subject_code'],
+            'name' => $subject['subject_name'],
+            'type' => $subject['subject_type']
+        ];
+    }, $courses)); ?>;
+</script>
 
-        const labFields = [
-            'labDay',
-            'labRoom',
-            'labStart',
-            'labEnd'
-        ].map(id => document.getElementById(id));
 
-        subjectSelect.addEventListener('change', function () {
-            const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
-            const subjectType = selectedOption.getAttribute('data-type');
+<script>
+    // Data for subject search
+    const subjects = <?= json_encode(array_map(function ($subject) {
+        return [
+            'id' => $subject['subject_id'],
+            'code' => $subject['subject_code'],
+            'name' => $subject['subject_name'],
+            'type' => $subject['subject_type']
+        ];
+    }, $courses)); ?>;
+</script>
 
-            subjectTypeInput.value = subjectType;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-            if (subjectType === 'LEC with LAB') {
-                labScheduleSection.classList.remove('d-none');
-                labFields.forEach(field => field.setAttribute('required', 'required'));
-            } else {
-                labScheduleSection.classList.add('d-none');
-                labFields.forEach(field => {
-                    field.removeAttribute('required');
-                    field.value = ''; // Optional: clear lab fields when hiding
+    // ----- ADD CLASS SUBJECT SEARCH -----
+    const searchInput = document.getElementById('subjectSearchInput');
+    const subjectIdInput = document.getElementById('subjectIdInput');
+    const subjectTypeInput = document.getElementById('subjectTypeInput');
+    const suggestionsList = document.getElementById('subjectSuggestions');
+    const labScheduleSection = document.getElementById('labSchedule');
+    const labFields = ['labDay', 'labRoom', 'labStart', 'labEnd'].map(id => document.getElementById(id));
+
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.toLowerCase();
+        const filteredSubjects = subjects.filter(sub =>
+            sub.code.toLowerCase().includes(query) || sub.name.toLowerCase().includes(query)
+        );
+
+        suggestionsList.innerHTML = '';
+        filteredSubjects.forEach(sub => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item', 'list-group-item-action');
+            li.textContent = `${sub.code} - ${sub.name}`;
+            li.dataset.id = sub.id;
+            li.dataset.type = sub.type;
+            li.addEventListener('click', () => {
+                searchInput.value = `${sub.code} - ${sub.name}`;
+                subjectIdInput.value = sub.id;
+                subjectTypeInput.value = sub.type;
+                suggestionsList.innerHTML = '';
+
+                if (sub.type === 'LEC with LAB') {
+                    labScheduleSection.classList.remove('d-none');
+                    labFields.forEach(field => field.setAttribute('required', 'required'));
+                } else {
+                    labScheduleSection.classList.add('d-none');
+                    labFields.forEach(field => {
+                        field.removeAttribute('required');
+                        field.value = '';
+                    });
+                }
+            });
+            suggestionsList.appendChild(li);
+        });
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+            suggestionsList.innerHTML = '';
+        }
+    });
+
+
+    // ----- EDIT CLASS SUBJECT SEARCH (MULTIPLE MODALS) -----
+    document.querySelectorAll('.edit-subject-search').forEach(input => {
+        const classId = input.dataset.id;
+        const hiddenInput = document.querySelector(`.edit-subject-id[data-id="${classId}"]`);
+        const typeInput = document.querySelector(`.edit-subject-type[data-id="${classId}"]`);
+        const suggestionList = document.querySelector(`.edit-suggestions[data-id="${classId}"]`);
+        const labSection = document.querySelector(`.edit-lab-schedule[data-id="${classId}"]`);
+
+        input.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            const filteredSubjects = subjects.filter(sub =>
+                sub.code.toLowerCase().includes(query) || sub.name.toLowerCase().includes(query)
+            );
+
+            suggestionList.innerHTML = '';
+            filteredSubjects.forEach(sub => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.textContent = `${sub.code} - ${sub.name}`;
+                li.dataset.id = sub.id;
+                li.dataset.type = sub.type;
+                li.addEventListener('click', () => {
+                    input.value = `${sub.code} - ${sub.name}`;
+                    hiddenInput.value = sub.id;
+                    typeInput.value = sub.type;
+                    suggestionList.innerHTML = '';
+
+                    if (sub.type === 'LEC with LAB') {
+                        labSection.classList.remove('d-none');
+                    } else {
+                        labSection.classList.add('d-none');
+                        labSection.querySelectorAll('input').forEach(input => input.value = '');
+                    }
                 });
+                suggestionList.appendChild(li);
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
+                suggestionList.innerHTML = '';
             }
         });
 
-        // On page load, make sure lab fields are hidden if LEC is preselected
-        const initialSelected = subjectSelect.options[subjectSelect.selectedIndex];
-        if (initialSelected) {
-            const subjectType = initialSelected.getAttribute('data-type');
-            subjectTypeInput.value = subjectType;
-            if (subjectType !== 'LEC with LAB') {
-                labScheduleSection.classList.add('d-none');
-                labFields.forEach(field => field.removeAttribute('required'));
-            }
+        if (typeInput.value === 'LEC with LAB') {
+            labSection.classList.remove('d-none');
         }
     });
+
+
+    // ----- TIME INPUT FOCUS (Optional UX Tweak) -----
+    const lecEnd = document.getElementById('lecEnd');
+    const lecStart = document.getElementById('lecStart');
+    lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
+
+    const labEnd = document.getElementById('labEnd');
+    const labStart = document.getElementById('labStart');
+    labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
+
+    document.querySelectorAll('.edit-lab-schedule').forEach(section => {
+        const lecStart = section.querySelector('input[name="lec_start"]');
+        const lecEnd = section.querySelector('input[name="lec_end"]');
+        const labStart = section.querySelector('input[name="lab_start"]');
+        const labEnd = section.querySelector('input[name="lab_end"]');
+
+        lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
+        labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
+    });
+
+});
 </script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput = document.getElementById('subjectSearchInput');
+    const subjectIdInput = document.getElementById('subjectIdInput');
+    const subjectTypeInput = document.getElementById('subjectTypeInput');
+    const suggestionsList = document.getElementById('subjectSuggestions');
+    const labScheduleSection = document.getElementById('labSchedule');
+    const labFields = ['labDay', 'labRoom', 'labStart', 'labEnd'].map(id => document.getElementById(id));
+
+    function showSuggestions(filteredSubjects) {
+        suggestionsList.innerHTML = '';
+        filteredSubjects.forEach(sub => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item', 'list-group-item-action');
+            li.textContent = `${sub.code} - ${sub.name}`;
+            li.dataset.id = sub.id;
+            li.dataset.type = sub.type;
+            li.addEventListener('click', () => {
+                searchInput.value = `${sub.code} - ${sub.name}`;
+                subjectIdInput.value = sub.id;
+                subjectTypeInput.value = sub.type;
+                suggestionsList.innerHTML = '';
+
+                if (sub.type === 'LEC with LAB') {
+                    labScheduleSection.classList.remove('d-none');
+                    labFields.forEach(field => field.setAttribute('required', 'required'));
+                } else {
+                    labScheduleSection.classList.add('d-none');
+                    labFields.forEach(field => {
+                        field.removeAttribute('required');
+                        field.value = '';
+                    });
+                }
+            });
+            suggestionsList.appendChild(li);
+        });
+    }
+
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.toLowerCase();
+        const filteredSubjects = subjects.filter(sub =>
+            sub.code.toLowerCase().includes(query) ||
+            sub.name.toLowerCase().includes(query)
+        );
+        if (query.length === 0) {
+            suggestionsList.innerHTML = '';
+        } else {
+            showSuggestions(filteredSubjects);
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+            suggestionsList.innerHTML = '';
+        }
+    });
+});
+</script>
+
+
+<script>
+
+document.querySelectorAll('.edit-subject-search').forEach(input => {
+    const classId = input.dataset.id;
+    const hiddenInput = document.querySelector(`.edit-subject-id[data-id="${classId}"]`);
+    const typeInput = document.querySelector(`.edit-subject-type[data-id="${classId}"]`);
+    const suggestionList = document.querySelector(`.edit-suggestions[data-id="${classId}"]`);
+    const labSection = document.querySelector(`.edit-lab-schedule[data-id="${classId}"]`);
+
+    input.addEventListener('input', function () {
+        const query = this.value.toLowerCase();
+        const filteredSubjects = subjects.filter(sub =>
+            sub.code.toLowerCase().includes(query) || sub.name.toLowerCase().includes(query)
+        );
+
+        suggestionList.innerHTML = '';
+        filteredSubjects.forEach(sub => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item', 'list-group-item-action');
+            li.textContent = `${sub.code} - ${sub.name}`;
+            li.dataset.id = sub.id;
+            li.dataset.type = sub.type;
+            li.addEventListener('click', () => {
+                input.value = `${sub.code} - ${sub.name}`;
+                hiddenInput.value = sub.id;
+                typeInput.value = sub.type;
+                suggestionList.innerHTML = '';
+
+                if (sub.type === 'LEC with LAB') {
+                    labSection.classList.remove('d-none');
+                } else {
+                    labSection.classList.add('d-none');
+                    labSection.querySelectorAll('input').forEach(input => input.value = '');
+                }
+            });
+            suggestionList.appendChild(li);
+        });
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
+            suggestionList.innerHTML = '';
+        }
+    });
+
+    if (typeInput.value === 'LEC with LAB') {
+        labSection.classList.remove('d-none');
+    }
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Lecture Time
+    const lecStart = document.getElementById('lecStart');
+    const lecEnd = document.getElementById('lecEnd');
+
+    lecEnd.addEventListener('focus', function () {
+        if (!lecStart.value) {
+            lecStart.focus();
+        }
+    });
+
+    // Lab Time
+    const labStart = document.getElementById('labStart');
+    const labEnd = document.getElementById('labEnd');
+
+    labEnd.addEventListener('focus', function () {
+        if (!labStart.value) {
+            labStart.focus();
+        }
+    });
+});
+
+</script>
+
+

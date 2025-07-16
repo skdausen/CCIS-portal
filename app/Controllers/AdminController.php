@@ -677,7 +677,7 @@ public function updateClass($id)
             'ftb_id'      => $this->request->getPost('ftb_id'),
             'subject_id'  => $this->request->getPost('subject_id'),
             'semester_id' => $this->request->getPost('semester_id'),
-            'section'     => $this->request->getPost('class_section'),
+            'section'     => $this->request->getPost('section'),
             'lec_day'     => $this->request->getPost('lec_day'),
             'lec_start'   => $this->request->getPost('lec_start'),
             'lec_end'     => $this->request->getPost('lec_end'),
@@ -708,6 +708,8 @@ public function updateClass($id)
 // Delete a class
 public function deleteClass($id)
 {
+
+
     $classModel = new ClassModel();
 
     try {
@@ -718,6 +720,7 @@ public function deleteClass($id)
         return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while deleting the class.');
     }
 }
+
 
 
 

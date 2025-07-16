@@ -57,4 +57,20 @@ class ClassModel extends Model
             ->where('semesters.is_active', 1)
             ->findAll();
     }
+
+    public function getSingleClassWithDetails($classId)
+    {
+        return $this->select('classes.*, 
+                    subjects.subject_code, 
+                    subjects.subject_name, 
+                    subjects.subject_type, 
+                    semesters.semester, 
+                    schoolyears.schoolyear')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->join('semesters', 'semesters.semester_id = classes.semester_id')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->where('classes.class_id', $classId)
+            ->first();
+    }
+
 }

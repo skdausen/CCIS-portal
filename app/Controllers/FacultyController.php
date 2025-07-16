@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Models\AnnouncementModel;
 use App\Models\StudentScheduleModel;
 use App\Models\ClassModel;
+use App\Models\GradeModel;
 use App\Models\SemesterModel;
 use App\Models\StudentModel;
 use App\Models\UserModel;
@@ -227,6 +228,68 @@ class FacultyController extends BaseController
 
         return redirect()->to('faculty/class/' . $classId)->with('success', 'Student removed successfully');
     }
+
+    public function manageGrades($classId)
+    {
+        $classModel = new ClassModel();
+        $studentScheduleModel = new StudentScheduleModel();
+        $studentModel = new StudentModel();
+        $gradeModel = new GradeModel();
+
+        // Get class details
+        $class = $classModel
+            ->select('classes.*, subjects.subject_code, subjects.subject_name')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->find($classId);
+
+        // Get enrolled students with existing grades (if any)
+        $students = $studentModel->select('students.*, grades.mt_grade, grades.fn_grade, grades.sem_grade')
+            ->join('student_schedules', 'student_schedules.stb_id = students.stb_id')
+            ->join('grades', 'grades.stb_id = students.stb_id AND grades.class_id = student_schedules.class_id', 'left')
+            ->where('student_schedules.class_id', $classId)
+            ->findAll();
+
+        return view('faculty/manage_grades', [
+            'class' => $class,
+            'students' => $students,
+        ]);
+    }
+
+    public function saveGrades($classId)
+    {
+        $gradeModel = new GradeModel();
+
+        $gradesInput = $this->request->getPost('grades');
+
+        foreach ($gradesInput as $stb_id => $gradeData) {
+            $mt = isset($gradeData['mt_grade']) ? $gradeData['mt_grade'] : null;
+            $fn = isset($gradeData['fn_grade']) ? $gradeData['fn_grade'] : null;
+
+            $data = [
+                'stb_id' => $stb_id,
+                'class_id' => $classId,
+                'mt_grade' => $mt,
+                'fn_grade' => $fn,
+                'sem_grade' => (isset($mt, $fn) && is_numeric($mt) && is_numeric($fn)) 
+                                ? number_format(($mt + $fn) / 2, 2) 
+                                : null
+            ];
+
+            // Check if grade already exists
+            $existing = $gradeModel->where('stb_id', $stb_id)
+                                ->where('class_id', $classId)
+                                ->first();
+
+            if ($existing) {
+                $gradeModel->update($existing['grade_id'], $data);
+            } else {
+                $gradeModel->insert($data);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Grades saved successfully!');
+    }
+
 
 
 

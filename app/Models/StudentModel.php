@@ -34,6 +34,14 @@ class StudentModel extends Model
             ->findAll();
     }
 
+    public function getEnrolledStudentsWithGrades($classId)
+    {
+        return $this->select('students.stb_id, students.student_id, students.fname, students.mname, students.lname, grades.mt_grade, grades.fn_grade, grades.sem_grade, grades.grade_id')
+            ->join('student_schedules', 'student_schedules.stb_id = students.stb_id')
+            ->join('grades', 'grades.stb_id = students.stb_id AND grades.class_id = student_schedules.class_id', 'left')
+            ->where('student_schedules.class_id', $classId)
+            ->findAll();
+    }
 
 
 }

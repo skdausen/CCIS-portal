@@ -37,7 +37,9 @@
             <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
                 Manage Students
             </button>
-            <a href="#" class="btn btn-success btn-sm">Manage Grades</a>
+            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-primary mb-3">
+              Manage Grades
+            </a>
         </div>
     </div>
 

@@ -90,7 +90,7 @@
                     <th>Sex</th>
                     <td><?= esc(session('sex')) ?></td>
                   </tr>
-                  <?php if (session('role') === 'student'): ?>
+                  <?php if (session('role') === 'student' && isset($programs)): ?>
                     <tr>
                       <th>Program</th>
                       <td><?= esc(session('program')) ?></td>
@@ -202,7 +202,7 @@
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
 
-              <?php if (session('role') === 'student'): ?>
+              <?php if (session('role') === 'student' && isset($programs)): ?>
               <div class="col-md-6">
                   <label for="program_id" class="form-label">Program:</label>
                   <select name="program_id" id="program_id" class="form-select">

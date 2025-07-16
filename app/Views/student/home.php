@@ -6,6 +6,45 @@
         <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
         <div class="col-md-8">
             <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
+            <div class="card p-3 shadow-sm">
+                <?php foreach ($schedule as $day => $entries): ?>
+                    <h5 class="mt-4"><?= esc(strtoupper($day)) ?></h5>
+
+                    <?php if (!empty($entries)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped custom-padding">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Subject Code</th>
+                                        <th>Subject Name</th>
+                                        <th>Type</th>
+                                        <th>Time</th>
+                                        <th>Room</th>
+                                        <th>Instructor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($entries as $entry): ?>
+                                        <tr>
+                                            <td><?= esc($entry['subject_code']) ?></td>
+                                            <td><?= esc($entry['subject_name']) ?></td>
+                                            <td><?= esc(ucfirst($entry['type'])) ?></td>
+                                            <td>
+                                                <?= date('h:i A', strtotime($entry['start'])) ?>
+                                                – <?= date('h:i A', strtotime($entry['end'])) ?>
+                                            </td>
+                                            <td><?= esc($entry['room']) ?></td>
+                                            <td><?= esc($entry['instructor'] ?? 'N/A') ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted"><em>No classes.</em></p>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
 
         <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->

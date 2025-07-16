@@ -46,14 +46,14 @@ class AdminController extends BaseController
         }
 
         $model = new UserModel();
-        $curriculumModel = new \App\Models\CurriculumModel(); // ✅ Add this
+        $curriculumModel = new CurriculumModel(); 
         $data = [
             'users'       => $model->findAll(),
-            'curriculums' => $curriculumModel->findAll() // ✅ Include this
+            'curriculums' => $curriculumModel->findAll() 
         ];
 
         return view('templates/admin/admin_header')
-            . view('admin/users', $data) // ✅ Now this contains both `users` & `curriculums`
+            . view('admin/users', $data) 
             . view('templates/admin/admin_footer');
     }
 
@@ -76,7 +76,7 @@ class AdminController extends BaseController
         $username = strtoupper($this->request->getPost('username'));
         $email    = $this->request->getPost('email');
         $role     = strtolower($this->request->getPost('role'));
-        $curriculumId = $this->request->getPost('curriculum_id'); // ✅ Only students will use this
+        $curriculumId = $this->request->getPost('curriculum_id'); 
 
 
         // DEFAULT PASSWORD
@@ -115,7 +115,7 @@ class AdminController extends BaseController
             if (!$studentModel->insert([
                 'student_id'     => $username,
                 'user_id'        => $userId,
-                'curriculum_id'  => $curriculumId, // ✅ Save it here
+                'curriculum_id'  => $curriculumId,
                 'profimg'        => $defaultImg
             ])) {
                 $db->transRollback();

@@ -1,14 +1,13 @@
 <div class="container mt-5">
+    <div>
+      <a href="<?= base_url('faculty/classes') ?>" class="btn btn-secondary mb-3">
+        ← Back to My Classes
+      </a>
+    </div>
     <!-- Course Title -->
     <div class="text-center mb-4">
         <h2><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></h2>
     </div>
-
-  <div>
-    <a href="<?= base_url('faculty/classes') ?>" class="btn btn-secondary mb-3">
-      ← Back to My Classes
-    </a>
-  </div>
 
     <!-- Course Info -->
     <div class="row mb-3 justify-content-center">
@@ -19,7 +18,7 @@
         </div>
         <div class="col-md-6 text-md-end">
             <p><strong>Schedule: </strong> 
-                <ul>
+                <ul class="list-unstyled">
                   <li><strong>Lecture:</strong> <?= esc($class['lec_day']) ?>, <?= esc($class['lec_start']) ?> - <?= esc($class['lec_end']) ?> (Room <?= esc($class['lec_room']) ?>)</li>
                   <?php if ($class['subject_type'] === 'LEC with LAB'): ?>
                   <li><strong>Lab:</strong> <?= esc($class['lab_day']) ?>, <?= esc($class['lab_start']) ?> - <?= esc($class['lab_end']) ?> (Room <?= esc($class['lab_room']) ?>)</li>
@@ -34,7 +33,7 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="text-uppercase fw-bold text-muted mb-0">Enrolled Students:</h6>
         <div>
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
+            <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
                 Manage Students
             </button>
             <a href="#" class="btn btn-success btn-sm">Manage Grades</a>
@@ -47,7 +46,7 @@
           <div class="alert alert-warning">No students enrolled in this class.</div>
       <?php else: ?>
           <div class="table-responsive">
-              <table class="table table-bordered">
+              <table class="table table-bordered table-sm custom-padding">
                 <thead class="table-dark">
                   <tr>
                     <th>ID Number</th>
@@ -65,7 +64,7 @@
                       <td><?= esc($student['year_level']) ?></td>
                       <td><?= esc($student['program_name']) ?></td>
                       <td>
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmRemoveModal"
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmRemoveModal"
                           data-stbid="<?= $student['stb_id'] ?>" data-name="<?= esc("{$student['lname']}, {$student['fname']}") ?>">
                           Remove
                         </button>

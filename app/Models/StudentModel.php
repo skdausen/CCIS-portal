@@ -34,7 +34,5 @@ class StudentModel extends Model
             ->findAll();
     }
 
-
-
 }
 

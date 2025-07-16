@@ -31,7 +31,7 @@
                         <a class="nav-link active" aria-current="page" href="<?= site_url('student/home') ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('student/schedule') ?>">Schedules</a>
+                        <a class="nav-link" href="<?= site_url('student/curriculum') ?>">Curriculum</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('student/grades') ?>">Grades</a>

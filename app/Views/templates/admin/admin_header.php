@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="<?= base_url('rsc/custom_css/style.css'); ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- FullCalendar Styles from correct path -->
+    <!-- FullCalendar Styles  -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 
 

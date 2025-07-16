@@ -207,7 +207,7 @@ class FacultyController extends BaseController
         }
 
         $studentIds = $this->request->getPost('student_ids');
-        $scheduleModel = new \App\Models\StudentScheduleModel();
+        $scheduleModel = new StudentScheduleModel();
 
         if ($scheduleModel->enrollStudents($classId, $studentIds)) {
             return redirect()->back()->with('success', 'Students successfully enrolled to class.');
@@ -227,9 +227,6 @@ class FacultyController extends BaseController
 
         return redirect()->to('faculty/class/' . $classId)->with('success', 'Student removed successfully');
     }
-
-
-
 
     private function expandDays($days)
     {

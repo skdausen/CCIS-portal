@@ -12,7 +12,7 @@
 
                     <?php if (count($entries) > 0): ?>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-sm align-middle text-center custom-padding">
+                            <table class="table table-bordered table-sm align-middle custom-padding">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Subject Code</th>

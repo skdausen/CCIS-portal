@@ -17,7 +17,7 @@
       <!-- Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3>Curriculum Courses</h3>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addModal">
         Add New Curriculum
     </button>
 </div>
@@ -30,11 +30,11 @@
         </div>
 
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
+            <button type="submit" class="btn btn-outline-success w-100">Search</button>
         </div>
 
         <div class="col-md-2">
-            <button type="button" id="clearFilterBtn" class="btn btn-secondary w-100">Clear</button>
+            <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 w-100">Clear</button>
         </div>
     </div>
 </form>
@@ -71,13 +71,14 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Add</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-outline-success">Add</button>
+                    <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 <?php foreach ($curriculumsToDisplay as $curriculum): ?>
     <div class="card mb-3">

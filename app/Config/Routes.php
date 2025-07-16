@@ -70,6 +70,7 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/semesters/update/(:num)', [AdminController::class, 'updateSemester/$1']);
     $routes->post('academics/semesters/delete/(:num)', [AdminController::class, 'deleteSemester/$1']);
 
+
     // SUBJECTS
     $routes->get('academics/subjects', [AdminController::class, 'view_subjects']);
     $routes->post('academics/subjects/create', [AdminController::class, 'createSubject']);

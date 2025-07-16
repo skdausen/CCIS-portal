@@ -26,13 +26,13 @@
                     <option value="second">Second</option>
                     <option value="midyear">Midyear</option>
                 </select>
-                <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
+                <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
             </div>
             <div class="col-md-5 mb-2">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by School Year...">
             </div>
             <div class="col-md-4 mb-2 d-flex justify-content-end">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSemesterModal">Add New Semester</button>
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addSemesterModal">Add New Semester</button>
             </div>
         </div>
 
@@ -97,8 +97,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Update</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-outline-success">Update</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </form>
                             </div>
@@ -119,8 +119,8 @@
                                         Are you sure you want to delete <strong><?= esc(ucfirst($semester['semester'])) ?> - <?= esc($semester['schoolyear']) ?></strong>?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -164,8 +164,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Add</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-outline-success">Add</button>
+                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>

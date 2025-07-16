@@ -27,7 +27,7 @@
                 <option value="ge">GE</option>
                 <option value="pe">PE</option>
             </select>
-            <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
+            <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
         </div>
         <div class="col-md-5 mb-2">
             <input type="text" id="searchInput" class="form-control" placeholder="Search by code or description...">
@@ -35,7 +35,7 @@
         
         <div class="col-md-4 mb-2 d-flex justify-content-end">
             <!-- Add Subject Button -->
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
     </div>
 
@@ -139,8 +139,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Update</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-outline-success">Update</button>
+                    <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -162,8 +162,8 @@
                                         Are you sure you want to delete <strong><?= esc($subject['subject_code']) ?></strong>?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -244,8 +244,8 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Add Subject</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-outline-success">Add Subject</button>
+          <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </form>
@@ -318,8 +318,8 @@
                 <p id="errorMessage"></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="location.reload()">Retry</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-danger" onclick="location.reload()">Retry</button>
+                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

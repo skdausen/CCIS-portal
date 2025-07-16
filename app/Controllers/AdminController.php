@@ -730,6 +730,8 @@ public function updateClass($id)
 // Delete a class
 public function deleteClass($id)
 {
+
+
     $classModel = new ClassModel();
 
     try {
@@ -740,6 +742,7 @@ public function deleteClass($id)
         return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while deleting the class.');
     }
 }
+
 
 
 
@@ -756,7 +759,7 @@ public function view_curriculums()
 
     $yearlevel_sem = $this->request->getGet('yearlevel_sem');
     $selectedCurriculum = $this->request->getGet('curriculum_id');
-    $search = $this->request->getGet('search'); // ✅ Get the search input
+    $search = $this->request->getGet('search'); //  Get the search input
 
     $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();

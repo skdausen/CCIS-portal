@@ -30,12 +30,10 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 rounded-pill py-2" style="font-size: 1.05rem;">
-                    <span class="spinner-border spinner-border-sm d-none" id="spinner" role="status"></span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                     <span id="btnText">Send OTP</span>
                 </button>
             </form>
-
-        
 
             <div class="text-end">
                 <a href="<?= site_url('auth/login') ?>" class="small text-decoration-none text-reset"> cancel </a>
@@ -44,3 +42,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function () {
+        const button = this.querySelector('button[type="submit"]');
+        const spinner = button.querySelector('.spinner-border');
+        const btnText = button.querySelector('#btnText');
+
+        // Show spinner and update text
+        spinner.classList.remove('d-none');
+        btnText.textContent = 'Sending...';
+
+        // Disable the button to prevent double submission
+        button.disabled = true;
+    });
+</script>

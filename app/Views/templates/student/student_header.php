@@ -36,9 +36,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('student/grades') ?>">Grades</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('student/about') ?>">About</a>
-                    </li>
                 </ul>
                 <!-- Icons on the far right -->
                 <ul class="navbar-nav icon-nav-links me-3">

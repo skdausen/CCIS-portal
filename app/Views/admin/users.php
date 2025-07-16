@@ -101,6 +101,19 @@
                     </select>
                     </div>
 
+                    <div class="mb-3 d-none" id="curriculumGroup">
+                        <label for="curriculum_id" class="form-label">Curriculum:</label>
+                        <select name="curriculum_id" id="curriculum_id" class="form-select">
+                            <option value="">Select Curriculum</option>
+                            <?php foreach ($curriculums as $curriculum): ?>
+                                <option value="<?= $curriculum['curriculum_id'] ?>">
+                                    <?= esc($curriculum['curriculum_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+
                     <p class="mt-3"><strong>Default password:</strong> <code>ccis1234</code></p>
                 </div>
 
@@ -192,6 +205,27 @@
 
 
 </div>
+
+<script>
+    const roleSelect = document.getElementById('role');
+    const curriculumGroup = document.getElementById('curriculumGroup');
+
+    if (roleSelect) {
+        roleSelect.addEventListener('change', function () {
+            if (this.value === 'student') {
+                curriculumGroup.classList.remove('d-none');
+                document.getElementById('curriculum_id').setAttribute('required', true);
+            } else {
+                curriculumGroup.classList.add('d-none');
+                document.getElementById('curriculum_id').removeAttribute('required');
+            }
+        });
+
+        // Trigger it on page load just in case of old input
+        roleSelect.dispatchEvent(new Event('change'));
+    }
+</script>
+
 
 
 

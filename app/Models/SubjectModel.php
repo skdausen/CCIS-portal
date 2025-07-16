@@ -16,5 +16,6 @@ class SubjectModel extends Model
         'lab_units',
         'total_units',
         'curriculum_id',
+        'yearlevel_sem', 
     ];
 }

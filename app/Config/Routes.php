@@ -59,6 +59,7 @@ $routes->group('admin', function ($routes) {
     $routes->get('users', 'AdminController::users');
     $routes->get('add-user', 'AdminController::addUserForm');
     $routes->post('create-user', 'AdminController::createUser');
+    $routes->get('user/(:num)', 'AdminController::getUser/$1');
 
     // Academics Home
     $routes->get('academics', [AdminController::class, 'index']);
@@ -69,11 +70,11 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/semesters/update/(:num)', [AdminController::class, 'updateSemester/$1']);
     $routes->post('academics/semesters/delete/(:num)', [AdminController::class, 'deleteSemester/$1']);
 
-    // COURSES
-    $routes->get('academics/courses', [AdminController::class, 'view_courses']);
-    $routes->post('academics/courses/create', [AdminController::class, 'createCourse']);
-    $routes->post('academics/courses/update/(:num)', [AdminController::class, 'updateCourse/$1']);
-    $routes->post('academics/courses/delete/(:num)', [AdminController::class, 'deleteCourse/$1']);
+    // SUBJECTS
+    $routes->get('academics/subjects', [AdminController::class, 'view_subjects']);
+    $routes->post('academics/subjects/create', [AdminController::class, 'createSubject']);
+    $routes->post('academics/subjects/update/(:num)', [AdminController::class, 'updateSubject/$1']);
+    $routes->post('academics/subjects/delete/(:num)', [AdminController::class, 'deleteSubject/$1']);
 
     // CLASSES
     $routes->get('academics/classes', [AdminController::class, 'view_classes']);
@@ -83,9 +84,14 @@ $routes->group('admin', function ($routes) {
 
     // CURRICULUM
     $routes->get('academics/curriculums', [AdminController::class, 'view_curriculums']);
-    $routes->get('academics/curriculum_old', [AdminController::class, 'curriculum_old']);
-    $routes->get('academics/curriculum_new', [AdminController::class, 'curriculum_new']);
-    $routes->get('academics/add_courses', [AdminController::class, 'add_courses']);
+    $routes->post('academics/curriculums/create', 'AdminController::create');
+    $routes->post('academics/curriculums/update/(:num)', 'AdminController::update_curriculum/$1');
+    $routes->get('academics/curriculums/view/(:num)', 'AdminController::view_curriculum_detail/$1');
+    
+
+
+
+    
 
     // 📢 Announcement management
     $routes->post('saveAnnouncement', 'AdminController::saveAnnouncement');
@@ -108,7 +114,8 @@ $routes->group('faculty', function ($routes) {
     $routes->get('classes/ajax', 'FacultyController::getClassesBySemester'); // AJAX handler
     $routes->get('class/(:num)', 'FacultyController::viewClass/$1');
     $routes->post('class/(:num)/enroll', 'FacultyController::enrollStudents/$1');
-    $routes->post('removeStudentFromClass', 'FacultyController::removeStudentFromClass');
+    $routes->post('class/(:num)/remove-student/(:num)', 'FacultyController::removeStudent/$1/$2');
+
     
 });
 

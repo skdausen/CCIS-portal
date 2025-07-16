@@ -40,7 +40,7 @@
                     <?php foreach ($semesters as $semester): ?>
                         <option value="<?= esc($semester['semester_id']) ?>"
                             <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
-                            <?= esc($semester['semester']) ?> - <?= esc($semester['schoolyear']) ?>
+                            <?= ucwords(esc($semester['semester'])) ?> - <?= esc($semester['schoolyear']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -138,9 +138,9 @@
                             <?php endif; ?>
                             <?php endif; ?>
                         </td>
-                        <td><?= esc($class['section'] ?? 'N/A') ?></td>
-                        <td><?= esc($class['fname'] . ' ' . $class['lname']) ?></td>
-                        <td><?= esc($class['semester'] . ' ' . $class['schoolyear']) ?></td>
+                        <td><?= ucwords(esc($class['section'] ?? 'N/A')) ?></td>
+                        <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
+                        <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
                         <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
                         <td>
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
@@ -316,7 +316,7 @@
                         <div class="mb-3">
                             <label class="form-label">Semester</label>
                             <div class="form-control bg-light">
-                                <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+                                <?= ucwords(esc(($activeSemester['semester'] ?? 'No Active Semester')) . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
                             </div>
                         </div>
 

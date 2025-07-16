@@ -46,12 +46,17 @@ class AdminController extends BaseController
         }
 
         $model = new UserModel();
-        $data['users'] = $model->findAll();
+        $curriculumModel = new \App\Models\CurriculumModel(); // ✅ Add this
+        $data = [
+            'users'       => $model->findAll(),
+            'curriculums' => $curriculumModel->findAll() // ✅ Include this
+        ];
 
         return view('templates/admin/admin_header')
-            . view('admin/users', $data)
+            . view('admin/users', $data) // ✅ Now this contains both `users` & `curriculums`
             . view('templates/admin/admin_footer');
     }
+
 
     // Display form to add a new user
     public function createUser()
@@ -70,7 +75,9 @@ class AdminController extends BaseController
         // GET POST INPUTS
         $username = strtoupper($this->request->getPost('username'));
         $email    = $this->request->getPost('email');
-        $role     = $this->request->getPost('role');
+        $role     = strtolower($this->request->getPost('role'));
+        $curriculumId = $this->request->getPost('curriculum_id'); // ✅ Only students will use this
+
 
         // DEFAULT PASSWORD
         $defaultPassword = 'ccis1234';
@@ -105,27 +112,38 @@ class AdminController extends BaseController
 
         // INSERT INTO RELATED TABLES BASED ON ROLE
         if ($role === 'student') {
-            $studentModel->insert([
-                'student_id' => $username,
-                'user_id'    => $userId, // optional: if linked by user ID
-                'profimg'    => $defaultImg
-            ]);
+            if (!$studentModel->insert([
+                'student_id'     => $username,
+                'user_id'        => $userId,
+                'curriculum_id'  => $curriculumId, // ✅ Save it here
+                'profimg'        => $defaultImg
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create student account.');
+            }
         }
 
+
         if ($role === 'faculty') {
-            $facultyModel->insert([
+            if (!$facultyModel->insert([
                 'faculty_id' => $username,
-                'user_id'    => $userId,  // optional: if linked by user ID
+                'user_id'    => $userId,
                 'profimg'    => $defaultImg
-            ]);
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create faculty account.');
+            }
         }
 
         if ($role === 'admin') {
-            $adminModel->insert([
-                'admin_id' => $username,
-                'user_id'    => $userId, // optional: if linked by user ID
+            if (!$adminModel->insert([
+                'admin_id'   => $username,
+                'user_id'    => $userId,
                 'profimg'    => $defaultImg
-            ]);
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create admin account.');
+            }
         }
 
         // COMPLETE TRANSACTION
@@ -135,9 +153,9 @@ class AdminController extends BaseController
         if ($db->transStatus() === false) {
             return redirect()->back()->with('error', 'Failed to create user. Please try again.');
         }
-
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
+
 
     // Controller method to get users with joined profile info
     public function viewUsers()
@@ -175,7 +193,7 @@ class AdminController extends BaseController
         $user = $userModel->find($id);
 
         if (!$user) {
-            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+            return redirect()->to('#')->with('error', 'User not found');
         }
 
         // Get extra info based on role
@@ -194,7 +212,16 @@ class AdminController extends BaseController
                 $extra = [];
         }
 
-        return $this->response->setJSON(array_merge($user, $extra ?? []));
+        return $this->response->setJSON(array_merge($user, [
+            'contactnum'  => $extra['contactnum'] ?? null,
+            'fname'       => $extra['fname'] ?? null,
+            'mname'       => $extra['mname'] ?? null,
+            'lname'       => $extra['lname'] ?? null,
+            'sex'         => $extra['sex'] ?? null,
+            'birthdate'   => $extra['birthdate'] ?? null,
+            'address'     => $extra['address'] ?? null,
+            'profimg'     => $extra['profimg'] ?? null,
+        ]));
     }
 
 
@@ -345,7 +372,7 @@ class AdminController extends BaseController
             ->first();
 
         if ($duplicate) {
-            return redirect()->back()->with('error', 'That semester + school year already exists.');
+            return redirect()->back()->with('error', 'That semester & school year already exists.');
         }
 
         if ($isActive) {
@@ -463,29 +490,33 @@ class AdminController extends BaseController
 }
 
     // Create a new subject
-   public function createSubject()
-{
-    $subjectModel = new SubjectModel();
+    public function createSubject()
+    {
+        $subjectModel = new SubjectModel();
 
-    $data = [
-        'subject_code' => $this->request->getPost('subject_code'),
-        'subject_name' => $this->request->getPost('subject_name'),
-        'subject_type' => $this->request->getPost('subject_type'),
-        'lec_units'    => $this->request->getPost('lec_units'),
-        'lab_units'    => $this->request->getPost('lab_units'),
-        'total_units'  => $this->request->getPost('lec_units') + $this->request->getPost('lab_units'),
-        'curriculum_id'  => $this->request->getPost('curriculum_id'),
-    ];
+        $lec_units = $this->request->getPost('lec_units');
+        $lab_units = $this->request->getPost('lab_units');
 
-    $success = $subjectModel->insert($data);
+        $data = [
+            'subject_code'   => $this->request->getPost('subject_code'),
+            'subject_name'   => $this->request->getPost('subject_name'),
+            'subject_type'   => $this->request->getPost('subject_type'),
+            'lec_units'      => $lec_units,
+            'lab_units'      => $lab_units,
+            'total_units'    => $lec_units + $lab_units,
+            'curriculum_id'  => $this->request->getPost('curriculum_id'),
+            'yearlevel_sem'  => $this->request->getPost('yearlevel_sem'),
+        ];
 
-    if (!$success) {
-        // Show errors from the model
-        dd($subjectModel->errors());
+        $success = $subjectModel->insert($data);
+
+        if (!$success) {
+            dd($subjectModel->errors());
+        }
+
+        return redirect()->to('admin/academics/subjects')->with('success', 'Subject added.');
     }
 
-    return redirect()->to('admin/academics/subjects')->with('success', 'Subject added.');
-}
 
 
     // Show edit form
@@ -503,7 +534,7 @@ class AdminController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    // Update the subject
+    //update
     public function updateSubject($id)
     {
         $subjectModel = new SubjectModel();
@@ -511,14 +542,18 @@ class AdminController extends BaseController
         $lec_units = $this->request->getPost('lec_units');
         $lab_units = $this->request->getPost('lab_units');
 
-        $subjectModel->update($id, [
-            'subject_code' => $this->request->getPost('subject_code'),
-            'subject_name' => $this->request->getPost('subject_name'),
+        $data = [
+            'subject_code'   => $this->request->getPost('subject_code'),
+            'subject_name'   => $this->request->getPost('subject_name'),
             'subject_type'   => $this->request->getPost('subject_type'),
-            'lec_units' => $lec_units,
-            'lab_units' => $lab_units,
-            'total_units' => $lec_units + $lab_units,
-        ]);
+            'lec_units'      => $lec_units,
+            'lab_units'      => $lab_units,
+            'total_units'    => $lec_units + $lab_units,
+            'curriculum_id'  => $this->request->getPost('curriculum_id'),
+            'yearlevel_sem'  => $this->request->getPost('yearlevel_sem'), // ✅ This was missing
+        ];
+
+        $subjectModel->update($id, $data);
 
         return redirect()->to('admin/academics/subjects')->with('success', 'Subject updated successfully.');
     }
@@ -713,21 +748,28 @@ public function deleteClass($id)
         CURRICULUM MANAGEMENT
      ***********************************************/
 
-    // View all curriculums
+        //View Curriculums
 public function view_curriculums()
 {
     $curriculumModel = new CurriculumModel();
     $programModel = new ProgramModel();
     $subjectModel = new SubjectModel();
 
-    // Get all curriculums with program names
-    $curriculums = $curriculumModel->getCurriculumsWithProgramName();
+    $yearlevel_sem = $this->request->getGet('yearlevel_sem');
+    $selectedCurriculum = $this->request->getGet('curriculum_id');
+    $search = $this->request->getGet('search'); // ✅ Get the search input
+
+    $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();
 
-    // Get all subjects grouped by curriculum_id
-    $subjects = $subjectModel->findAll();
-    $curriculumSubjects = [];
+    // Get all subjects first
+    if (!empty($yearlevel_sem)) {
+        $subjects = $subjectModel->where('yearlevel_sem', $yearlevel_sem)->findAll();
+    } else {
+        $subjects = $subjectModel->findAll();
+    }
 
+    $curriculumSubjects = [];
     foreach ($subjects as $subject) {
         $curriculumId = $subject['curriculum_id'];
         if (!isset($curriculumSubjects[$curriculumId])) {
@@ -736,16 +778,38 @@ public function view_curriculums()
         $curriculumSubjects[$curriculumId][] = $subject;
     }
 
+    // Only show the selected curriculum in cards
+    $curriculumsToDisplay = $curriculums;
+
+    if (!empty($selectedCurriculum)) {
+        $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($selectedCurriculum) {
+            return $curriculum['curriculum_id'] == $selectedCurriculum;
+        });
+    }
+
+    // If search is used, filter by name (ignore selectedCurriculum if search is active)
+    if (!empty($search)) {
+        $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($search) {
+            return stripos($curriculum['curriculum_name'], $search) !== false;
+        });
+    }
+
     return view('templates/admin/admin_header')
         . view('admin/academics/curriculums', [
-            'curriculums' => $curriculums,
+            'curriculums' => $curriculums, // for dropdown
+            'curriculumsToDisplay' => $curriculumsToDisplay, // for cards
             'programs' => $programs,
             'curriculumSubjects' => $curriculumSubjects,
+            'selectedFilter' => $yearlevel_sem,
+            'selectedCurriculum' => $selectedCurriculum,
+            'search' => $search, // 
         ])
         . view('templates/admin/admin_footer');
 }
 
-public function create()
+
+//create curriculum
+        public function create()
 {
     $curriculumModel = new CurriculumModel();
 
@@ -757,5 +821,61 @@ public function create()
     $curriculumModel->insert($data);
 
     return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum added successfully.');
+}
+
+//update curriculum
+public function update_curriculum($curriculum_id)
+{
+    $curriculumModel = new CurriculumModel();
+
+    $data = [
+        'curriculum_name' => $this->request->getPost('curriculum_name'),
+        'program_id' => $this->request->getPost('program_id'),
+    ];
+
+    $curriculumModel->update($curriculum_id, $data);
+
+    return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum updated successfully.');
+}
+
+
+public function view_curriculum_detail($curriculum_id)
+{
+    $curriculumModel = new CurriculumModel();
+    $subjectModel = new SubjectModel();
+    $programModel = new ProgramModel();
+
+    // Fetch curriculum and validate existence
+    $curriculum = $curriculumModel->find($curriculum_id);
+    if (!$curriculum) {
+        throw new \CodeIgniter\Exceptions\PageNotFoundException('Curriculum not found');
+    }
+
+    // Get program name
+    $program = $programModel->find($curriculum['program_id']);
+    $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
+
+    // Get filter from query string
+    $selectedFilter = $this->request->getGet('yearlevel_sem');
+
+    // Fetch and optionally filter subjects
+    $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->findAll();
+    $filteredSubjects = array_filter($subjects, function ($subject) use ($selectedFilter) {
+        return empty($selectedFilter) || $subject['yearlevel_sem'] === $selectedFilter;
+    });
+
+    $data = [
+        'curriculum'          => $curriculum,
+        'program'             => $program,
+        'subjects'            => $subjects,
+        'programs'            => $programModel->findAll(),
+        'curriculumsToDisplay'=> [$curriculum],
+        'curriculumSubjects'  => [$curriculum_id => $filteredSubjects],
+        'selectedFilter'      => $selectedFilter,
+    ];
+
+    return view('templates/admin/admin_header')
+        . view('admin/academics/curriculum_detail', $data)
+        . view('templates/admin/admin_footer');
 }
 }

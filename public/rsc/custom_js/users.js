@@ -65,10 +65,11 @@
                             .toLowerCase()
                             .replace(/\b\w/g, char => char.toUpperCase());
                     }
+
                     user.role = capitalizeWords(user.role);
                     user.status = capitalizeWords(user.status);
                     const fullName = `${user.fname ?? ''} ${user.mname ?? ''} ${user.lname ?? ''}`;
-                    
+
                     document.getElementById('detailUserID').textContent = user.user_id;
                     document.getElementById('detailRole').textContent = user.role;
                     document.getElementById('detailUsername').textContent = user.username;
@@ -89,6 +90,7 @@
                 })
                 .catch(err => {
                     alert('Failed to load user details: ' + err.message);
+                    console.error('Fetch error:', err);
                 });
         });
     });

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 
 use App\Models\AnnouncementModel;
+use App\Models\StudentScheduleModel;
 use App\Models\ClassModel;
 use App\Models\SemesterModel;
 use App\Models\StudentModel;
@@ -156,8 +157,11 @@ class FacultyController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $classModel = new \App\Models\ClassModel();
-        $studentModel = new \App\Models\StudentModel();
+        $classModel = new ClassModel();
+        $studentModel = new StudentModel();
+        $studentScheduleModel = new StudentScheduleModel();
+
+        $class = $classModel->find($classId);
 
         $class = $classModel
             ->select('classes.*, subjects.subject_code, subjects.subject_name, subjects.subject_type, s.semester, sy.schoolyear')
@@ -174,10 +178,18 @@ class FacultyController extends BaseController
         // Get enrolled students
         $students = $studentModel->getStudentsByClass($classId);
         
+        // Already enrolled student IDs
+        $enrolledIds = $studentScheduleModel
+            ->where('class_id', $classId)
+            ->select('stb_id')
+            ->findColumn('stb_id'); // returns array of stb_ids
+
+        // Fetch students NOT yet enrolled
         $allStudents = $studentModel
-        ->select('students.stb_id, students.student_id, students.fname, students.lname, students.mname, students.year_level, programs.program_name')
-        ->join('programs', 'programs.program_id = students.program_id')
-        ->findAll();
+            ->select('students.*, programs.program_name')
+            ->join('programs', 'programs.program_id = students.program_id')
+            ->whereNotIn('students.stb_id', $enrolledIds ?: [0]) // prevents null in whereNotIn
+            ->findAll();
 
         return view('templates/faculty/faculty_header')
             . view('faculty/view_class', [
@@ -203,6 +215,19 @@ class FacultyController extends BaseController
             return redirect()->back()->with('error', 'No new students were enrolled.');
         }
     }
+
+    public function removeStudent($classId, $stbId)
+    {
+        $studentScheduleModel = new StudentScheduleModel();
+
+        $studentScheduleModel
+            ->where('class_id', $classId)
+            ->where('stb_id', $stbId)
+            ->delete();
+
+        return redirect()->to('faculty/class/' . $classId)->with('success', 'Student removed successfully');
+    }
+
 
 
 

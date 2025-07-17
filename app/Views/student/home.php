@@ -80,7 +80,7 @@
                     <div class="col-12">
                         <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #fff; border-radius: 8px; font-size: 0.85rem;">
                             
-                            <!-- 🆕 Latest Announcement -->
+                            <!-- Latest Announcement -->
                             <h6 class="text-purple mb-2 fw-semibold" style="font-size: 1rem;">🆕 Latest Announcement</h6>
                             <div class="ms-2">
                                 <?php if ($latest) : ?>
@@ -96,7 +96,7 @@
 
                             <hr class="my-2">
 
-                            <!-- 📌 Nearing Events -->
+                            <!-- Nearing Events -->
                             <h6 class="text-purple mb-2 fw-semibold" style="font-size: 1rem;">📌 Nearing Events</h6>
                             <?php if (!empty($nearing)) : ?>
                                 <ul class="list-group list-group-flush small">

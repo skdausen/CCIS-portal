@@ -528,3 +528,55 @@ body {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 38px !important;
 }
+
+
+
+.curriculum-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.curriculum-table th,
+.curriculum-table td {
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.curriculum-table th:nth-child(1),
+.curriculum-table td:nth-child(1),
+.curriculum-table th:nth-child(2),
+.curriculum-table td:nth-child(2) {
+    text-align: left;
+}
+
+.curriculum-table th:nth-child(3),
+.curriculum-table th:nth-child(4),
+.curriculum-table th:nth-child(5),
+.curriculum-table td:nth-child(3),
+.curriculum-table td:nth-child(4),
+.curriculum-table td:nth-child(5) {
+    text-align: center;
+    width: 10%;
+}
+
+.curriculum-table .fw-bold td:nth-child(3),
+.curriculum-table .fw-bold td:nth-child(4),
+.curriculum-table .fw-bold td:nth-child(5) {
+    text-align: center;
+}
+
+.pagination .page-link {
+    border-radius: 50px;
+    padding: 6px 14px;
+    color: #6c757d;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #198754; /* Bootstrap success */
+    border-color: #198754;
+    color: #fff;
+}
+
+.pagination .page-link:hover {
+    color: #198754;
+}

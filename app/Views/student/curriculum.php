@@ -1,0 +1,86 @@
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>My Curriculum</h3>
+    </div>
+
+    <div class="col-md-6">
+        <p class="text-muted">Page <?= $page ?> of <?= $totalPages ?></p>
+    </div>
+
+    <?php if ($currentYearKey && !empty($groupedSubjects[$currentYearKey])): ?>
+        <h5 class="mt-4 fw-bold"><?= $currentYearKey ?></h5>
+
+        <?php foreach ($groupedSubjects[$currentYearKey] as $semester => $subjects): ?>
+            <?php if (!empty($subjects)): ?>
+                <h6 class="mt-3"><?= $semester ?></h6>
+                <table class="table table-bordered curriculum-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>LEC Units</th>
+                            <th>LAB Units</th>
+                            <th>Total Units</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $totalLec = 0;
+                        $totalLab = 0;
+                        foreach ($subjects as $subject):
+                            $totalLec += $subject['lec_units'];
+                            $totalLab += $subject['lab_units'];
+                        ?>
+                        <tr>
+                            <td><?= esc($subject['subject_code']) ?></td>
+                            <td><?= esc($subject['subject_name']) ?></td>
+                            <td class="text-center"><?= esc($subject['lec_units']) ?></td>
+                            <td class="text-center"><?= esc($subject['lab_units']) ?></td>
+                            <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <tr class="fw-bold bg-light">
+                            <td colspan="2" class="text-end">Total Units:</td>
+                            <td class="text-center"><?= $totalLec ?></td>
+                            <td class="text-center"><?= $totalLab ?></td>
+                            <td class="text-center"><?= $totalLec + $totalLab ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p class="text-muted">No subjects for this year.</p>
+    <?php endif; ?>
+
+   <nav aria-label="Curriculum pagination">
+    <ul class="pagination justify-content-center my-4">
+        <?php if ($page > 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="<?= site_url('student/curriculum?page=' . ($page - 1)) ?>">Previous</a>
+            </li>
+        <?php else: ?>
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+        <?php endif; ?>
+
+        <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+            <li class="page-item <?= ($page == $p) ? 'active' : '' ?>">
+                <a class="page-link" href="<?= site_url('student/curriculum?page=' . $p) ?>">
+                    <?= $p ?>
+                </a>
+            </li>
+        <?php endfor; ?>
+
+        <?php if ($page < $totalPages): ?>
+            <li class="page-item">
+                <a class="page-link" href="<?= site_url('student/curriculum?page=' . ($page + 1)) ?>">Next</a>
+            </li>
+        <?php else: ?>
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+        <?php endif; ?>
+    </ul>
+</nav>

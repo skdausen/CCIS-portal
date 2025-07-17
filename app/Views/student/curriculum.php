@@ -1,6 +1,6 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">My Curriculum</h3>
+        <h3>My Curriculum</h3>
     </div>
 
     <?php if ($currentYearKey && !empty($groupedSubjects[$currentYearKey])): ?>

@@ -42,14 +42,14 @@ body {
     height: auto;
 }
 .btn-teal {
-  background-color: #26a69a;
-  color: white;
-  font-weight: 500;
-  border-radius: 8px;
-  /* transition: background 0.3s; */
+    background-color: #26a69a;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    /* transition: background 0.3s; */
 }
 .btn-teal:hover {
-  background-color: #2bbbad;
+    background-color: #2bbbad;
 }
 
 .btn-teal:disabled {
@@ -363,21 +363,6 @@ body {
     background-color: #343a40 !important;
     color: white !important;
 }
-
-.text-purple {
-    color: #631561 !important;
-}
-
-.btn-purple {
-    background-color: #631561 !important;
-    color: white !important;
-    border: none;
-}
-
-.btn-purple:hover {
-    background-color: #4d104a !important;
-}
-
 .btn-thin {
     border-color: #343a40;
     color: #495057;
@@ -395,6 +380,28 @@ body {
 .toggle-green:focus {
     box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
 }
+.pagination .page-link {
+    border-radius: 50px;
+    padding: 6px 14px;
+    color: #6c757d;
+}
+
+.pagination .page-link-top{
+    border-radius: 5px;
+    padding: 3px 5px;
+    color: black;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #198754; /* Bootstrap success */
+    border-color: #198754;
+    color: #fff;
+}
+
+.pagination .page-link:hover {
+    color: #198754;
+}
+
 
 
 /* Custom styles for user details */
@@ -472,10 +479,6 @@ body {
     }
 }
 
-
-
-
-
 .fixed-columns th,
 .fixed-columns td {
     text-align: center;
@@ -522,60 +525,47 @@ body {
     line-height: 38px !important;
 }
 
-
-
-.curriculum-table {
+.curriculum-table,
+.grade-table {
     table-layout: fixed;
     width: 100%;
 }
 
-.curriculum-table th,
-.curriculum-table td {
+:is(.curriculum-table, .grade-table) th,
+:is(.curriculum-table, .grade-table) td,
+.grade-table input{
     vertical-align: middle;
     padding: 10px;
+    font-size: 0.85rem;
 }
 
-.curriculum-table th:nth-child(1),
-.curriculum-table td:nth-child(1),
-.curriculum-table th:nth-child(2),
-.curriculum-table td:nth-child(2) {
+/* Align first and second columns to the left */
+:is(.curriculum-table, .grade-table) th:nth-child(1),
+:is(.curriculum-table, .grade-table) td:nth-child(1){
+    text-align: left;
+    width: 15%;
+    max-width: 15%;
+}
+:is(.curriculum-table, .grade-table) th:nth-child(2)
+:is(.curriculum-table, .grade-table) td:nth-child(2){
     text-align: left;
 }
 
-.curriculum-table th:nth-child(3),
-.curriculum-table th:nth-child(4),
-.curriculum-table th:nth-child(5),
-.curriculum-table td:nth-child(3),
-.curriculum-table td:nth-child(4),
-.curriculum-table td:nth-child(5) {
+/* Make grade columns narrower and centered */
+:is(.curriculum-table, .grade-table) th:nth-child(3),
+:is(.curriculum-table, .grade-table) th:nth-child(4),
+:is(.curriculum-table, .grade-table) th:nth-child(5),
+:is(.curriculum-table, .grade-table) td:nth-child(3),
+:is(.curriculum-table, .grade-table) td:nth-child(4),
+:is(.curriculum-table, .grade-table) td:nth-child(5) {
     text-align: center;
-    width: 10%;
+    width: 15%;
+    max-width: 15%;
 }
 
-.curriculum-table .fw-bold td:nth-child(3),
-.curriculum-table .fw-bold td:nth-child(4),
-.curriculum-table .fw-bold td:nth-child(5) {
+/* Make sure .fw-bold rows are centered in grade columns */
+:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(3),
+:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(4),
+:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(5) {
     text-align: center;
-}
-
-.pagination .page-link {
-    border-radius: 50px;
-    padding: 6px 14px;
-    color: #6c757d;
-}
-
-.pagination .page-link-top{
-    border-radius: 5px;
-    padding: 3px 5px;
-    color: black;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #198754; /* Bootstrap success */
-    border-color: #198754;
-    color: #fff;
-}
-
-.pagination .page-link:hover {
-    color: #198754;
 }

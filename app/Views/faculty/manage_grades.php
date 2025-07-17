@@ -6,11 +6,11 @@
     </div>
 
     <!-- Grade Form Section -->
-    <div class="card bg-white shadow rounded mb-5 mr-3">
-        <div class="card-body p-4">
+    <div class="mb-5 mr-3">
+        <div class=" p-4">
             <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/save') ?>" method="post">
                 <div class="table-responsive">
-                    <table class="table table-bordered align-middle custom-padding">
+                    <table class="table table-bordered grade-table align-middle custom-padding">
                         <thead class="table-dark text-center">
                             <tr>
                                 <th>ID Number</th>
@@ -32,7 +32,7 @@
                                         max="99.99" 
                                         name="grades[<?= $s['stb_id'] ?>][mt_numgrade]" 
                                         value="<?= esc($s['mt_numgrade']) ?>" 
-                                        class="form-control text-end" 
+                                        class="form-control text-end p-1" 
                                         placeholder="e.g., 87.50">
                                     <small class="text-muted">Transmuted: <?= $s['mt_grade'] ?? '--' ?></small>
                                 </td>
@@ -43,7 +43,7 @@
                                         max="99.99" 
                                         name="grades[<?= $s['stb_id'] ?>][fn_numgrade]" 
                                         value="<?= esc($s['fn_numgrade']) ?>" 
-                                        class="form-control text-end" 
+                                        class="form-control text-end p-1" 
                                         placeholder="e.g., 92.00">
                                     <small class="text-muted">Transmuted: <?= $s['fn_grade'] ?? '--' ?></small>
                                 </td>

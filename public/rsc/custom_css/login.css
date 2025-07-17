@@ -1,31 +1,51 @@
-body {
-  background-image: url('../assets/bg.png'); /* adjust path if needed */
-  background-size: cover;         /* Ensures image covers entire area */
-  background-position: center;    /* Keeps image centered */
-  background-repeat: no-repeat;   /* Prevents tiling */
-  min-height: 100vh;              /* Full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.background-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../assets/bg.png') center/cover no-repeat; /* adjust path if needed */
+  filter: blur(8px);
+  z-index: -1; /* sends it behind content */
+}
+.content {
+  display: flex;
+  align-items: center;    /* vertical center */
+  justify-content: center; /* horizontal center */
+  height: 100vh;           /* full screen height */
+  position: relative;
+  z-index: 2;             
+  padding: 1rem;
 }
 img{
     width: 80px;                   /* Adjusts logo size */
     margin-bottom: 20px;           /* Space below the logo */
 }
-.btn-teal {
-  background-color: #26a69a;
-  color: white;
-  font-weight: 500;
-  border-radius: 8px;
-  /* transition: background 0.3s; */
+.card{
+  background-color: rgba(255, 255, 255, 0.20) !important;
+  box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.75) !important; /* darker shadow only on right & bottom */
 }
-.btn-teal:hover {
-  background-color: #2bbbad;
+h4, p, a, label, i{
+  color: white !important;
 }
-
-.btn-teal:disabled {
-    background-color: #26a699b6 !important;
-    border-color: #26a699b6 !important;
-    color: white !important;
-    opacity: 0.8;
-}       
+i:hover{
+  color: green !important;
+}
 .spinner-border {
     display: none;
+}
+.shadow-darker {
+  /* OFFSET X: 4px (right), OFFSET Y: 4px (bottom) */
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); /* darker shadow only on right & bottom */
+}
+
+@media (max-width: 991.98px) {
+  .card{
+    width: 70vw;
+  }
 }

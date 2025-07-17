@@ -22,7 +22,7 @@
                 <div class="alert alert-warning shadow-sm rounded">No grades available for selected filters.</div>
             <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-bordered custom-padding">
+                <table class="table table-bordered grade-table custom-padding">
                     <thead class="table-dark align-middle ">
                         <tr>
                             <th>Subject Code</th>
@@ -39,7 +39,7 @@
                                 <td><?= esc($grade->subject_name) ?></td>
                                 <td><?= ($grade->mt_grade === null || $grade->mt_grade == 0) ? 'NE' : $grade->mt_grade ?></td>
                                 <td><?= ($grade->fn_grade === null || $grade->fn_grade == 0) ? 'NE' : $grade->fn_grade ?></td>
-                                <td><?= ($grade->sem_grade === null || $grade->sem_grade == 0) ? 'NE' : $grade->sem_grade ?></td>
+                                <td class="text-center"><?= ($grade->sem_grade === null || $grade->sem_grade == 0) ? 'NE' : $grade->sem_grade ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

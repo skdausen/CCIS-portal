@@ -1,11 +1,13 @@
 <!-- new design -->
-<div class="row w-100 justify-content-center">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
         <div class="card p-4 shadow rounded-4">
+        <div class="back-arrow fs-4">
+            <a href="<?= site_url('auth/login') ?>" class="small text-decoration-none"><i class="fa-solid fa-arrow-left"></i></a>
+        </div>
         <div class="text-center mb-4">
             <img src="<?= base_url('rsc/assets/cs-logo.png') ?>" alt="CS Logo" class="mb-3" style="width: 80px;">
-            <h4 class="fw-bold" style="font-size: 1.5rem;">Forgot Password</h4>
-            <p class="text-muted" style="font-size: 1rem;">Enter your email</p>
+            <h4 class="fw-bold" >Forgot Password</h4>
+            <p>Enter your email</p>
         </div>
 
             <?php if (session()->getFlashdata('error')): ?>
@@ -29,19 +31,14 @@
                     <input type="email" class="form-control rounded-pill py-2" name="email" id="email" required placeholder="Enter your email">
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2" style="font-size: 1.05rem;">
+                <button type="submit" class="btn btn-success w-100 rounded-pill py-2">
                     <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                     <span id="btnText">Send OTP</span>
                 </button>
             </form>
-
-            <div class="text-end">
-                <a href="<?= site_url('auth/login') ?>" class="small text-decoration-none text-reset"> cancel </a>
-            </div>
         </form>
         </div>
     </div>
-</div>
 
 <script>
     document.querySelector('form').addEventListener('submit', function () {

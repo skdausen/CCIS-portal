@@ -19,46 +19,35 @@
         </div>
 
         <!-- FILTERS & SEARCH -->
-        <div class="row mb-3">
-            <div class="col-md-3 mb-2 d-flex">
-                <!-- Instructor Filter -->
-                <select id="instructorFilter" class="form-select">
-                    <option value="">Filter by Instructor</option>
-                    <?php foreach ($instructors as $facultyId => $instructorName): ?>
-                        <option value="<?= strtolower(esc($instructorName)) ?>">
-                            <?= esc($instructorName) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="button" id="clearFilterBtn" class="btn btn-outline-secondarybtn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
+        <div class="row align-items-center mb-3">
+            <div class="col-md-3 mb-2">
+                <input type="text" id="instructorSearch" class="form-control form-control-sm" placeholder="Search Instructor...">
             </div>
 
             <div class="col-md-3 mb-2">
-                <!-- Semester Filter -->
-                <select id="semesterFilter" class="form-select">
-                    <option value="">Filter by Semester</option>
-                    <?php foreach ($semesters as $semester): ?>
-                        <option value="<?= esc($semester['semester_id']) ?>"
-                            <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
-                            <?= ucwords(esc($semester['semester'])) ?> - <?= esc($semester['schoolyear']) ?>
-                        </option>
+                <select id="sectionFilter" class="form-select form-select-sm">
+                    <option value="">All Sections</option>
+                    <?php 
+                    $sections = array_unique(array_column($classes, 'section'));
+                    foreach ($sections as $section):
+                    ?>
+                        <option value="<?= strtolower(esc($section)) ?>"><?= strtoupper(esc($section)) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
-            <div class="col-md-4 mb-2">
-                <!-- Search Input -->
-                <input type="text" id="searchInput" class="form-control" placeholder="Search by course or room...">
+            <div class="col-md-2 mb-2">
+                <button id="clearFiltersBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
             </div>
 
-            <div class="col-md-2 mb-2 d-flex justify-content-end">
-                <!-- Add Class Button -->
+            <div class="col-md-4 mb-2 d-flex justify-content-end">
                 <button class="btn btn-outline-success"
                     <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
                     Add New Class
                 </button>
             </div>
         </div>
+
 
 
         <?php
@@ -97,7 +86,6 @@
 
 ?>
 
-<!-- CLASSES TABLE -->
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <thead class="table-light">
@@ -113,39 +101,33 @@
                 <?php endif; ?>
             </tr>
         </thead>
-
         <tbody>
             <?php foreach ($classes as $class): ?>
-            <tr>
-                 <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
-                        <td><?= esc($class['subject_type']) ?></td>
-
-                        <td>
-                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
-                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
-                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
-                            <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
-                            <?php else: ?>
-                                -
-                            <?php endif; ?>
-                            <?php if (!empty($class['lab_day'])): ?>
-                                <br>Lab: <?= esc(strtoupper($class['lab_day'])) ?>
-                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
-                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
-                                <?php endif; ?>
-                                <?php if (!empty($class['lab_room'])): ?>
-                                <?= esc(strtoupper($class['lab_room'])) ?>
-                            <?php endif; ?>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
-                        <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
-                        <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
-                        <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-                        <td>
-                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
-                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+            <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
+                <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
+                <td><?= esc($class['subject_type']) ?></td>
+                <td>
+                    <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
+                    <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                        <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                    <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
+                    <?php else: ?> - <?php endif; ?>
+                    <?php if (!empty($class['lab_day'])): ?>
+                        <br>Lab: <?= esc(strtoupper($class['lab_day'])) ?>
+                        <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                        <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                        <?php endif; ?>
+                        <?= esc(strtoupper($class['lab_room'])) ?>
+                    <?php endif; ?>
                 </td>
+                <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
+                <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
+                <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
+                <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+                    <td>
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
+                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+                    </td>
                 <?php endif; ?>
             </tr>
             <?php endforeach; ?>
@@ -243,6 +225,8 @@
         </form>
     </div>
 </div>
+
+
 
 
 <!-- Delete Modal -->
@@ -739,4 +723,35 @@ document.querySelectorAll('.edit-subject-search').forEach(input => {
 
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tableRows = document.querySelectorAll('table tbody tr');
+    const instructorSearch = document.querySelector('#instructorSearch');
+    const sectionFilter = document.querySelector('#sectionFilter');
+    const clearFiltersBtn = document.querySelector('#clearFiltersBtn');
+
+    function filterTable() {
+        const instructorValue = instructorSearch.value.toLowerCase().trim();
+        const sectionValue = sectionFilter.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const instructor = (row.dataset.instructor || '').toLowerCase();
+            const section = (row.dataset.section || '').toLowerCase();
+
+            const matchesInstructor = !instructorValue || instructor.includes(instructorValue);
+            const matchesSection = !sectionValue || section === sectionValue;
+
+            row.style.display = matchesInstructor && matchesSection ? '' : 'none';
+        });
+    }
+
+    instructorSearch.addEventListener('input', filterTable);
+    sectionFilter.addEventListener('change', filterTable);
+    clearFiltersBtn.addEventListener('click', () => {
+        instructorSearch.value = '';
+        sectionFilter.value = '';
+        filterTable();
+    });
+});
+</script>
 

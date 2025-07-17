@@ -172,6 +172,38 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+                        <nav aria-label="Subjects pagination">
+                <ul class="pagination justify-content-center my-4">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item mx-1">
+                            <a class="page-link" href="<?= site_url('admin/academics/subjects?page=' . ($page - 1)) ?>">Previous</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="page-item disabled mx-1">
+                            <span class="page-link">Previous</span>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                        <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
+                            <a class="page-link" href="<?= site_url('admin/academics/subjects?page=' . $p) ?>">
+                                <?= $p ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $totalPages): ?>
+                        <li class="page-item mx-1">
+                            <a class="page-link" href="<?= site_url('admin/academics/subjects?page=' . ($page + 1)) ?>">Next</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="page-item disabled mx-1">
+                            <span class="page-link">Next</span>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+
         </div>
     </div>
 
@@ -251,6 +283,7 @@
         </form>
     </div>
 </div>
+
 
 
 
@@ -452,3 +485,25 @@ function toggleEditUnits(id) {
     }
 }
 </script>
+
+<script>
+    document.addEventListener('keydown', function(event) {
+        const currentPage = <?= $page ?>;
+        const totalPages = <?= $totalPages ?>;
+        const baseUrl = "<?= site_url('admin/academics/subjects?page=') ?>";
+
+        if (event.key === 'ArrowRight') {
+            let nextPage = currentPage + 1;
+            if (nextPage > totalPages) nextPage = totalPages;
+            window.location.href = baseUrl + nextPage;
+        }
+
+        if (event.key === 'ArrowLeft') {
+            let prevPage = currentPage - 1;
+            if (prevPage < 1) prevPage = 1;
+            window.location.href = baseUrl + prevPage;
+        }
+    });
+</script>
+
+

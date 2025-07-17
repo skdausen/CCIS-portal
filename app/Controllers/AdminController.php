@@ -474,19 +474,34 @@ class AdminController extends BaseController
      ***********************************************/
 
     // View all subjects
-    public function view_subjects()
+public function view_subjects()
 {
     $subjectModel = new SubjectModel();
     $curriculumModel = new CurriculumModel();
 
-    $data['subjects'] = $subjectModel->findAll();
-    $data['curriculums'] = $curriculumModel->findAll(); 
+    $perPage = 10;
+    $page = $this->request->getGet('page') ?? 1;
 
+    $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
+
+    $totalSubjects = count($allSubjects);
+    $totalPages = ceil($totalSubjects / $perPage);
+
+    $offset = ($page - 1) * $perPage;
+    $subjects = array_slice($allSubjects, $offset, $perPage);
+
+    $data = [
+        'subjects' => $subjects,
+        'curriculums' => $curriculumModel->findAll(),
+        'page' => $page,
+        'totalPages' => $totalPages,
+    ];
 
     return view('templates/admin/admin_header')
         . view('admin/academics/subjects', $data)
         . view('templates/admin/admin_footer');
 }
+
 
     // Create a new subject
     public function createSubject()
@@ -580,52 +595,66 @@ class AdminController extends BaseController
         CLASSES MANAGEMENT
      ***********************************************/
     
-    // View all classes with details
-    public function view_classes()
+public function view_classes()
 {
     $classModel = new ClassModel();
     $facultyModel = new FacultyModel();
-    $userModel = new UserModel();
     $subjectModel = new SubjectModel();
     $semesterModel = new SemesterModel();
 
     $activeSemester = $semesterModel->getActiveSemester();
-
     $selectedSemesterId = $this->request->getGet('semester_id');
+
+    $instructorSearch = $this->request->getGet('instructor');
+    $subjectSearch = $this->request->getGet('subject');
+    $sectionFilter = $this->request->getGet('section');
 
     $semesterToShow = !empty($selectedSemesterId)
         ? $selectedSemesterId
         : (!empty($activeSemester) ? $activeSemester['semester_id'] : null);
 
-    // Start the query - ✅ updated table & column names
     $builder = $classModel
-    ->select('
-        classes.*, 
-        subjects.subject_code, subjects.subject_name, subjects.subject_type,  
-        semesters.semester, semesters.semester_id, schoolyears.schoolyear,
-        faculty.ftb_id, faculty.fname, faculty.lname
-    ')
-
-        ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')  
+        ->select('
+            classes.*, 
+            subjects.subject_code, subjects.subject_name, subjects.subject_type,  
+            semesters.semester, semesters.semester_id, schoolyears.schoolyear,
+            faculty.ftb_id, faculty.fname, faculty.lname
+        ')
+        ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')
         ->join('semesters', 'semesters.semester_id = classes.semester_id', 'left')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-        ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');         
+        ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');
 
     if (!empty($semesterToShow)) {
         $builder->where('classes.semester_id', $semesterToShow);
-        $classes = $builder->findAll();
-    } else {
-        $classes = [];
     }
 
-    // Instructors list -
+    if (!empty($instructorSearch)) {
+        $builder->groupStart()
+            ->like('faculty.fname', $instructorSearch)
+            ->orLike('faculty.lname', $instructorSearch)
+            ->groupEnd();
+    }
+
+    if (!empty($subjectSearch)) {
+        $builder->groupStart()
+            ->like('subjects.subject_code', $subjectSearch)
+            ->orLike('subjects.subject_name', $subjectSearch)
+            ->groupEnd();
+    }
+
+    if (!empty($sectionFilter)) {
+        $builder->where('classes.section', $sectionFilter);
+    }
+
+    $classes = $builder->findAll();
+
     $facultyList = $facultyModel->findAll();
     $instructors = [];
     foreach ($facultyList as $faculty) {
         $instructors[$faculty['ftb_id']] = $faculty['fname'] . ' ' . $faculty['lname'];
     }
 
-    // All semesters for the dropdown
     $semesters = $semesterModel
         ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
         ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
@@ -634,16 +663,26 @@ class AdminController extends BaseController
         ->orderBy('semesters.semester', 'ASC')
         ->findAll();
 
+    // For Section Dropdown - only distinct sections for the current semester
+        $sections = $classModel
+            ->distinct()
+            ->select('section')
+            ->where('semester_id', $semesterToShow) // optional if you want per semester
+            ->findAll();
+
+
     return view('templates/admin/admin_header')
         . view('admin/academics/classes', [
             'classes' => $classes,
             'instructors' => $instructors,
-            'courses' => $subjectModel->findAll(),   //
+            'courses' => $subjectModel->findAll(),
             'semesters' => $semesters,
             'activeSemester' => $activeSemester,
+            'sections' => $sections,
         ])
         . view('templates/admin/admin_footer');
 }
+
 
 
 // Create a new class
@@ -699,7 +738,7 @@ public function updateClass($id)
             'ftb_id'      => $this->request->getPost('ftb_id'),
             'subject_id'  => $this->request->getPost('subject_id'),
             'semester_id' => $this->request->getPost('semester_id'),
-            'section'     => strtoupper($this->request->getPost('class_section')),
+            'section' => strtoupper($this->request->getPost('section')),
             'lec_day'     => strtoupper($this->request->getPost('lec_day')),
             'lec_start'   => $this->request->getPost('lec_start'),
             'lec_end'     => $this->request->getPost('lec_end'),

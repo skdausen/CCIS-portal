@@ -1,11 +1,11 @@
 <div class="container mt-5">
 
-    <!-- 📝 Title -->
+    <!-- Title -->
     <div class="text-center my-4">
         <h3 class="text"><?= esc($class['subject_code'] . ' - ' . $class['subject_name']) ?></h3>
     </div>
 
-    <!-- 📋 Grade Form Section -->
+    <!-- Grade Form Section -->
     <div class="card bg-white shadow rounded mb-5 mr-3">
         <div class="card-body p-4">
             <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/save') ?>" method="post">
@@ -57,7 +57,7 @@
                     </table>
                 </div>
 
-                <!-- ✅ Card Footer Inside the Form but Outside the Table -->
+                <!-- Card Footer Inside the Form but Outside the Table -->
                 <div class="card-footer bg-white border-0 d-flex justify-content-end mt-3">
                     <button type="submit" class="btn btn-outline-success btn-sm me-2">Save Grades</button>
                     <a href="<?= base_url('faculty/class/' . $class['class_id']) ?>" class="btn btn btn-outline-secondary btn-thin btn-sm px-3 py-1 rounded-1">Back</a>

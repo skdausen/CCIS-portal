@@ -6,6 +6,8 @@ namespace App\Controllers;
 use App\Models\AnnouncementModel;
 use App\Models\ProgramModel;
 use App\Models\StudentModel;
+use App\Models\SubjectModel;
+
 
 class StudentController extends BaseController
 {
@@ -246,17 +248,73 @@ public function studentGrades()
     }
 
 
-    public function studentCurriculum()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
-            return redirect()->to('auth/login');
-        }
-
-        return view('templates/student/student_header')
-            . view('student/curriculum')
-            . view('templates/admin/admin_footer');
+public function studentCurriculum()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
+        return redirect()->to('auth/login');
     }
 
+    $db = \Config\Database::connect();
+    $student = $db->table('students')->where('user_id', session()->get('user_id'))->get()->getRow();
 
+    $subjects = $db->table('subjects')
+        ->where('curriculum_id', $student->curriculum_id)
+        ->orderBy('yearlevel_sem')
+        ->get()
+        ->getResultArray();
+
+    $groupedSubjects = [
+        '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
+        '2nd Year' => ['1st Semester' => [], '2nd Semester' => []],
+        '3rd Year' => ['1st Semester' => [], '2nd Semester' => [], 'Midyear' => []],
+        '4th Year' => ['1st Semester' => [], '2nd Semester' => []],
+    ];
+
+    foreach ($subjects as $subject) {
+        switch ($subject['yearlevel_sem']) {
+            case 'Y1S1':
+                $groupedSubjects['1st Year']['1st Semester'][] = $subject;
+                break;
+            case 'Y1S2':
+                $groupedSubjects['1st Year']['2nd Semester'][] = $subject;
+                break;
+            case 'Y2S1':
+                $groupedSubjects['2nd Year']['1st Semester'][] = $subject;
+                break;
+            case 'Y2S2':
+                $groupedSubjects['2nd Year']['2nd Semester'][] = $subject;
+                break;
+            case 'Y3S1':
+                $groupedSubjects['3rd Year']['1st Semester'][] = $subject;
+                break;
+            case 'Y3S2':
+                $groupedSubjects['3rd Year']['2nd Semester'][] = $subject;
+                break;
+            case 'Y3S3':
+                $groupedSubjects['3rd Year']['Midyear'][] = $subject;
+                break;
+            case 'Y4S1':
+                $groupedSubjects['4th Year']['1st Semester'][] = $subject;
+                break;
+            case 'Y4S2':
+                $groupedSubjects['4th Year']['2nd Semester'][] = $subject;
+                break;
+        }
+    }
+
+    $yearKeys = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+    $page = (int)$this->request->getGet('page') ?: 1;
+    $totalPages = count($yearKeys);
+    $currentYearKey = $yearKeys[$page - 1] ?? null;
+
+    return view('templates/student/student_header')
+        . view('student/curriculum', [
+            'groupedSubjects' => $groupedSubjects,
+            'currentYearKey' => $currentYearKey,
+            'page' => $page,
+            'totalPages' => $totalPages
+        ])
+        . view('templates/admin/admin_footer');
+}
 
 }

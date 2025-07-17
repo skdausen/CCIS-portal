@@ -1,5 +1,5 @@
 body {
-  background-image: url('../assets/bg.jpg'); /* adjust path if needed */
+  background-image: url('../assets/bg.png'); /* adjust path if needed */
   background-size: cover;         /* Ensures image covers entire area */
   background-position: center;    /* Keeps image centered */
   background-repeat: no-repeat;   /* Prevents tiling */

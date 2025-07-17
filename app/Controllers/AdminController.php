@@ -847,37 +847,53 @@ public function view_curriculum_detail($curriculum_id)
     $subjectModel = new SubjectModel();
     $programModel = new ProgramModel();
 
-    // Fetch curriculum and validate existence
     $curriculum = $curriculumModel->find($curriculum_id);
     if (!$curriculum) {
         throw new \CodeIgniter\Exceptions\PageNotFoundException('Curriculum not found');
     }
 
-    // Get program name
     $program = $programModel->find($curriculum['program_id']);
     $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
 
-    // Get filter from query string
-    $selectedFilter = $this->request->getGet('yearlevel_sem');
+    $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->orderBy('yearlevel_sem')->findAll();
 
-    // Fetch and optionally filter subjects
-    $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->findAll();
-    $filteredSubjects = array_filter($subjects, function ($subject) use ($selectedFilter) {
-        return empty($selectedFilter) || $subject['yearlevel_sem'] === $selectedFilter;
-    });
-
-    $data = [
-        'curriculum'          => $curriculum,
-        'program'             => $program,
-        'subjects'            => $subjects,
-        'programs'            => $programModel->findAll(),
-        'curriculumsToDisplay'=> [$curriculum],
-        'curriculumSubjects'  => [$curriculum_id => $filteredSubjects],
-        'selectedFilter'      => $selectedFilter,
+    $groupedSubjects = [
+        '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
+        '2nd Year' => ['1st Semester' => [], '2nd Semester' => []],
+        '3rd Year' => ['1st Semester' => [], '2nd Semester' => [], 'Midyear' => []],
+        '4th Year' => ['1st Semester' => [], '2nd Semester' => []],
     ];
 
+    foreach ($subjects as $subject) {
+        switch ($subject['yearlevel_sem']) {
+            case 'Y1S1': $groupedSubjects['1st Year']['1st Semester'][] = $subject; break;
+            case 'Y1S2': $groupedSubjects['1st Year']['2nd Semester'][] = $subject; break;
+            case 'Y2S1': $groupedSubjects['2nd Year']['1st Semester'][] = $subject; break;
+            case 'Y2S2': $groupedSubjects['2nd Year']['2nd Semester'][] = $subject; break;
+            case 'Y3S1': $groupedSubjects['3rd Year']['1st Semester'][] = $subject; break;
+            case 'Y3S2': $groupedSubjects['3rd Year']['2nd Semester'][] = $subject; break;
+            case 'Y3S3': $groupedSubjects['3rd Year']['Midyear'][] = $subject; break;
+            case 'Y4S1': $groupedSubjects['4th Year']['1st Semester'][] = $subject; break;
+            case 'Y4S2': $groupedSubjects['4th Year']['2nd Semester'][] = $subject; break;
+        }
+    }
+
+    $yearKeys = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+    $totalPages = count($yearKeys);
+    $page = (int)$this->request->getGet('page') ?: 1;
+    $page = max(1, min($page, $totalPages));
+    $currentYearKey = $yearKeys[$page - 1] ?? null;
+
     return view('templates/admin/admin_header')
-        . view('admin/academics/curriculum_detail', $data)
+        . view('admin/academics/curriculum_detail', [
+            'curriculum_id' => $curriculum_id,
+            'curriculum' => $curriculum,
+            'program' => $program,
+            'groupedSubjects' => $groupedSubjects,
+            'currentYearKey' => $currentYearKey,
+            'page' => $page,
+            'totalPages' => $totalPages
+        ])
         . view('templates/admin/admin_footer');
 }
 }

@@ -19,5 +19,6 @@ class PreventBackHistory implements FilterInterface
         $response->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         $response->setHeader('Cache-Control', 'post-check=0, pre-check=0');
         $response->setHeader('Pragma', 'no-cache');
+        $response->setHeader('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 }

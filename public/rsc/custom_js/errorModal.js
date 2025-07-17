@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
             errorModal.show();
 
             // Optional: hide after 3 seconds
-            setTimeout(() => {
-                errorModal.hide();
-            }, 3000);
+            // setTimeout(() => {
+            //     errorModal.hide();
+            // }, 3000);
         }
     }
 });

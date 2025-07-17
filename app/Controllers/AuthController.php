@@ -12,10 +12,20 @@ class AuthController extends BaseController
 {
     // DISPLAY LOGIN PAGE
     public function index()
-    {
+    {        
+        $userModel    = new UserModel();
+        $username = session()->get('username');
+        $user = $userModel->where('username', $username)->first();
+
         // IF USER IS ALREADY LOGGED IN, REDIRECT TO HOME
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('home');
+            if ($user['role'] === 'student') {
+                return redirect()->to('student/home');
+            } elseif ($user['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('admin/home');
+            }
         }
 
         // SHOW LOGIN PAGE WITH HEADER AND FOOTER

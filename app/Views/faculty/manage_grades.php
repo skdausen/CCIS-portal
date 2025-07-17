@@ -6,8 +6,21 @@
     </div>
 
     <!-- Grade Form Section -->
-    <div class="mb-5 mr-3">
-        <div class=" p-4">
+    <div class="card bg-white shadow rounded mb-5 mr-3">
+        <div class="card-body p-4">
+            <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/upload') ?>" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="grades_file" class="form-label">Upload Excel/CSV</label>
+                    <input class="form-control" type="file" name="grades_file" id="grades_file" accept=".xlsx,.csv" required>
+                </div>
+                <button type="submit" class="btn btn-outline-primary btn-sm">Upload Grades</button>
+            </form>
+            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-primary btn-sm mb-3">
+            📥 Download Grade Template
+            </a>
+
+
+
             <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/save') ?>" method="post">
                 <div class="table-responsive">
                     <table class="table table-bordered grade-table align-middle custom-padding">

@@ -315,6 +315,7 @@ class AdminController extends BaseController
         ];
 
         return view('templates/admin/admin_header', $data)
+            . view('templates/admin/sidebar')
             . view('admin/academics', $data)
             . view('templates/admin/admin_footer');
     }
@@ -336,6 +337,7 @@ class AdminController extends BaseController
         $data['semesters'] = $semesterModel->getSemWithDetails();
 
         return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
             . view('admin/academics/semesters', $data)
             . view('templates/admin/admin_footer');
     }
@@ -484,6 +486,7 @@ class AdminController extends BaseController
 
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/subjects', $data)
         . view('templates/admin/admin_footer');
 }
@@ -529,6 +532,7 @@ class AdminController extends BaseController
         }
 
         return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
             . view('admin/academics/edit_subject', ['subject' => $subject])
             . view('templates/admin/admin_footer');
     }
@@ -635,6 +639,7 @@ class AdminController extends BaseController
         ->findAll();
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/classes', [
             'classes' => $classes,
             'instructors' => $instructors,
@@ -797,6 +802,7 @@ public function view_curriculums()
     }
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/curriculums', [
             'curriculums' => $curriculums, // for dropdown
             'curriculumsToDisplay' => $curriculumsToDisplay, // for cards
@@ -885,6 +891,7 @@ public function view_curriculum_detail($curriculum_id)
     $currentYearKey = $yearKeys[$page - 1] ?? null;
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/curriculum_detail', [
             'curriculum_id' => $curriculum_id,
             'curriculum' => $curriculum,

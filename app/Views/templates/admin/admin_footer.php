@@ -343,6 +343,27 @@
 </script>
 <?php endif; ?>
 
+<!-- sidebar script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggleSidebarBtn");
+    const toggleIcon = document.getElementById("toggleIcon");
+    const html = document.documentElement;
+
+    toggleBtn.addEventListener("click", () => {
+      const isCollapsed = html.classList.toggle("sidebar-collapsed");
+      localStorage.setItem("sidebarCollapsed", isCollapsed);
+
+      toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
+      toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
+    });
+
+    // Set correct icon on load
+    const isCollapsed = html.classList.contains("sidebar-collapsed");
+    toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
+    toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
+  });
+</script>
 
   <!-- Bootstrap JS -->
   <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>

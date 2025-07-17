@@ -11,11 +11,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- FullCalendar Styles  -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <!-- Sidebar -->
+    <script>
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+        document.documentElement.classList.add("sidebar-collapsed");
+    }
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Force browser not to cache this page -->
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+
+    <script>
+    (function () {
+        if (localStorage.getItem("sidebarCollapsed") === "true") {
+        document.documentElement.classList.add("sidebar-collapsed");
+        }
+    })();
+    </script>
+
 </head>
 <body>
 

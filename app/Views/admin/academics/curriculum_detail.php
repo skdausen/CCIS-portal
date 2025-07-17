@@ -110,9 +110,6 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                       
-                                      
-                                       
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             <?php else: ?>

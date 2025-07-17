@@ -549,15 +549,22 @@ body {
 :is(.curriculum-table, .grade-table) th:nth-child(2)
 :is(.curriculum-table, .grade-table) td:nth-child(2){
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Make grade columns narrower and centered */
 :is(.curriculum-table, .grade-table) th:nth-child(3),
 :is(.curriculum-table, .grade-table) th:nth-child(4),
 :is(.curriculum-table, .grade-table) th:nth-child(5),
+:is(.curriculum-table, .grade-table) th:nth-child(6),
+:is(.curriculum-table, .grade-table) th:nth-child(7),
 :is(.curriculum-table, .grade-table) td:nth-child(3),
 :is(.curriculum-table, .grade-table) td:nth-child(4),
-:is(.curriculum-table, .grade-table) td:nth-child(5) {
+:is(.curriculum-table, .grade-table) td:nth-child(5),
+:is(.curriculum-table, .grade-table) th:nth-child(6),
+:is(.curriculum-table, .grade-table) th:nth-child(7) {
     text-align: center;
     width: 15%;
     max-width: 15%;

@@ -56,22 +56,20 @@
                     </div>
 
                     <?php
-                                $today = date('Y-m-d');
-                                $currentMonth = date('m');
-                                $currentYear = date('Y');
+                        $today = date('Y-m-d');
+                        $currentMonth = date('m');
+                        $currentYear = date('Y');
 
-                                // Get today's announcements
-                                $todaysAnnouncements = array_filter($announcements, function ($a) use ($today) {
-                                    return date('Y-m-d', strtotime($a['event_datetime'])) === $today;
-                                });
+                        // Get today's announcements
+                        $todaysAnnouncements = array_filter($announcements, function ($a) use ($today) {
+                            return date('Y-m-d', strtotime($a['event_datetime'])) === $today;
+                        });
 
-                                usort($todaysAnnouncements, function ($a, $b) {
-                                    return strtotime($b['event_datetime']) - strtotime($a['event_datetime']);
-                                });
+                        usort($todaysAnnouncements, function ($a, $b) {
+                            return strtotime($b['event_datetime']) - strtotime($a['event_datetime']);
+                        });
 
-                                $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
-
-                                // Get nearing announcements (this month, not today)
+                        $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
                     ?>
 
                     <!-- Announcements -->
@@ -119,38 +117,36 @@
                             <?php endif; ?>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
 </div>
-        <!-- Modal for Announcement -->
-        <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content shadow">
-                    <div class="modal-header text-dark">
-                        <h5 class="modal-title" id="eventModalLabel">Announcement Details</h5>
-                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h5 id="eventTitle"></h5>
-                        <p class="text-muted" id="eventDate"></p>
-                        <p id="eventDescription"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <?php if (in_array(session('role'), ['admin', 'superadmin'])) : ?>
-                            <button type="button" class="btn btn-warning" id="editAnnouncementBtn">Edit</button>
-                            <form id="deleteForm" method="post" action="<?= site_url('admin/deleteAnnouncement') ?>" class="d-inline">
-                                <input type="hidden" name="announcement_id" id="modalAnnouncementId">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        <?php endif; ?>
-                    </div>
-                </div>
+
+<!-- Modal for Announcement -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header text-dark">
+                <h5 class="modal-title" id="eventModalLabel">Announcement Details</h5>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 id="eventTitle"></h5>
+                <p class="text-muted" id="eventDate"></p>
+                <p id="eventDescription"></p>
+            </div>
+            <div class="modal-footer">
+                <?php if (in_array(session('role'), ['admin', 'superadmin'])) : ?>
+                    <button type="button" class="btn btn-warning" id="editAnnouncementBtn">Edit</button>
+                    <form id="deleteForm" method="post" action="<?= site_url('admin/deleteAnnouncement') ?>" class="d-inline">
+                        <input type="hidden" name="announcement_id" id="modalAnnouncementId">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                <?php endif; ?>
             </div>
         </div>
+    </div>
 </div>
 
 <script>

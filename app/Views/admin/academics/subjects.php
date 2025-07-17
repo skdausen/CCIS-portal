@@ -177,61 +177,61 @@
 
 <!-- Add Subject Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form action="<?= site_url('admin/academics/subjects/create') ?>" method="post">
-      <?= csrf_field() ?>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addModalLabel">Add New Subject</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog">
+        <form action="<?= site_url('admin/academics/subjects/create') ?>" method="post">
+        <?= csrf_field() ?>
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="addModalLabel">Add New Subject</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
+            <div class="modal-body">
 
-          <div class="mb-3">
+            <div class="mb-3">
             <label>Curriculum</label>
             <select name="curriculum_id" class="form-select" required>
-              <option value="">Select Curriculum</option>
-              <?php foreach ($curriculums as $curr): ?>
-              <option value="<?= $curr['curriculum_id'] ?>">
+                <option value="">Select Curriculum</option>
+                <?php foreach ($curriculums as $curr): ?>
+                <option value="<?= $curr['curriculum_id'] ?>">
                 <?= esc($curr['curriculum_name']) ?>
-              </option>
-              <?php endforeach; ?>
+                </option>
+                <?php endforeach; ?>
             </select>
-          </div>
+            </div>
 
-          <!-- Year Level & Semester Dropdown (ENUM Values) -->
-          <div class="mb-3">
-            <label>Year Level & Semester</label>
-            <select name="yearlevel_sem" class="form-select" required>
-              <option value="">Select Year Level & Semester</option>
-              <option value="Y1S1">1st Year - 1st Semester</option>
-              <option value="Y1S2">1st Year - 2nd Semester</option>
-              <option value="Y2S1">2nd Year - 1st Semester</option>
-              <option value="Y2S2">2nd Year - 2nd Semester</option>
-              <option value="Y3S1">3rd Year - 1st Semester</option>
-              <option value="Y3S2">3rd Year - 2nd Semester</option>
-              <option value="Y3S3">3rd Year - Midyear</option>
-              <option value="Y4S1">4th Year - 1st Semester</option>
-              <option value="Y4S2">4th Year - 2nd Semester</option>
-            </select>
-          </div>
+            <!-- Year Level & Semester Dropdown (ENUM Values) -->
+            <div class="mb-3">
+                <label>Year Level & Semester</label>
+                <select name="yearlevel_sem" class="form-select" required>
+                    <option value="">Select Year Level & Semester</option>
+                    <option value="Y1S1">1st Year - 1st Semester</option>
+                    <option value="Y1S2">1st Year - 2nd Semester</option>
+                    <option value="Y2S1">2nd Year - 1st Semester</option>
+                    <option value="Y2S2">2nd Year - 2nd Semester</option>
+                    <option value="Y3S1">3rd Year - 1st Semester</option>
+                    <option value="Y3S2">3rd Year - 2nd Semester</option>
+                    <option value="Y3S3">3rd Year - Midyear</option>
+                    <option value="Y4S1">4th Year - 1st Semester</option>
+                    <option value="Y4S2">4th Year - 2nd Semester</option>
+                </select>
+            </div>
 
-          <div class="mb-3">
-            <label>Subject Code</label>
-            <input type="text" name="subject_code" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label>Subject Name</label>
-            <input type="text" name="subject_name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label>Subject Type</label>
-            <select name="subject_type" class="form-select" id="add_subject_type" onchange="toggleAddUnits()" required>
-              <option value="LEC">LEC</option>
-              <option value="LEC with LAB">LEC with LAB</option>
-            </select>
-          </div>
-          
+            <div class="mb-3">
+                <label>Subject Code</label>
+                <input type="text" name="subject_code" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Subject Name</label>
+                <input type="text" name="subject_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Subject Type</label>
+                <select name="subject_type" class="form-select" id="add_subject_type" onchange="toggleAddUnits()" required>
+                    <option value="LEC">LEC</option>
+                    <option value="LEC with LAB">LEC with LAB</option>
+                </select>
+            </div>
+
             <div class="mb-3">
                 <label>Lecture Units</label>
                 <input type="number" id="lec_units" name="lec_units" class="form-control" required min="0">
@@ -242,14 +242,14 @@
                 <input type="number" id="lab_units" name="lab_units" class="form-control" min="0" value="0">
             </div>
 
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-success">Add Subject</button>
+                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-success">Add Subject</button>
-          <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </form>
-  </div>
+        </form>
+    </div>
 </div>
 
 

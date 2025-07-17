@@ -24,14 +24,6 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <script>
-    (function () {
-        if (localStorage.getItem("sidebarCollapsed") === "true") {
-        document.documentElement.classList.add("sidebar-collapsed");
-        }
-    })();
-    </script>
-
 </head>
 <body>
 

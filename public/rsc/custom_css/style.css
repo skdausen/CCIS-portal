@@ -437,6 +437,7 @@ body {
     .navbar-nav.icon-nav-links {
         width: 100%; /* Take full width when collapsed */
         justify-content: flex-end; /* Align content to the right */
+        align-items: flex-end;
         margin-left: 0;
         margin-right: 0;
     }

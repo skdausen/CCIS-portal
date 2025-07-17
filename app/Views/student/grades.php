@@ -1,11 +1,11 @@
 <div class="container mt-5">
-    <div class="text-center mb-4">
+    <div class="mb-4">
         <h2 class="text">My Grades</h2>
     </div>
 
-    <!-- 🧾 Grades Table -->
-        <div class="card shadow-sm rounded p-3">
-            <!-- 🔍 Filters -->
+    <!-- Grades Table -->
+        <div class="col-12 col-lg-12">
+            <!-- Filters -->
             <form method="get" class="row mb-4 g-2">
                 <div class="col-md-3">
                     <label for="semester_id" class="form-label">Semester</label>
@@ -46,7 +46,7 @@
 
                 </table>
             </div>
-            <!-- 📘 Grade System Legend -->
+            <!-- Grade System Legend -->
             <div class="card mt-4 border-0 shadow-sm col-md-3">
                 <div class="card-header">
                     Grade System Guide

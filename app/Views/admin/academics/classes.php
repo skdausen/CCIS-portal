@@ -153,7 +153,7 @@
     </table>
 </div>
 
-<!-- ✅ OUTSIDE THE TABLE: Edit and Delete Modals -->
+<!-- OUTSIDE THE TABLE: Edit and Delete Modals -->
 <?php foreach ($classes as $class): ?>
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
@@ -269,7 +269,7 @@
 <?php endforeach; ?>
 
 
-<!-- ✅ ADD CLASS MODAL (Remains after everything) -->
+
 <!-- Add Class Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">

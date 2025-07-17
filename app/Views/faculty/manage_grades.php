@@ -21,30 +21,36 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $allowedGrades = ['1.00', '1.25', '1.50', '1.75', '2.00', '2.25', '2.50', '2.75', '3.00', '5.00'];
-                            ?>
                             <?php foreach ($students as $s): $sem = $s['sem_grade'] ?? '';?>
                             <tr>
                                 <td><?= esc($s['student_id']) ?></td>
                                 <td><?= esc("{$s['lname']}, {$s['fname']} {$s['mname']}") ?></td>
                                 <td>
-                                    <select name="grades[<?= $s['stb_id'] ?>][mt_grade]" class="form-select">
-                                        <option value="">--</option>
-                                        <?php foreach ($allowedGrades as $g): ?>
-                                        <option value="<?= $g ?>" <?= ($s['mt_grade'] == $g) ? 'selected' : '' ?>><?= $g ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <input type="number" 
+                                        step="0.01" 
+                                        min="0" 
+                                        max="99.99" 
+                                        name="grades[<?= $s['stb_id'] ?>][mt_numgrade]" 
+                                        value="<?= esc($s['mt_numgrade']) ?>" 
+                                        class="form-control text-end" 
+                                        placeholder="e.g., 87.50">
+                                    <small class="text-muted">Transmuted: <?= $s['mt_grade'] ?? '--' ?></small>
                                 </td>
                                 <td>
-                                    <select name="grades[<?= $s['stb_id'] ?>][fn_grade]" class="form-select">
-                                        <option value="">--</option>
-                                        <?php foreach ($allowedGrades as $g): ?>
-                                        <option value="<?= $g ?>" <?= ($s['fn_grade'] == $g) ? 'selected' : '' ?>><?= $g ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <input type="number" 
+                                        step="0.01" 
+                                        min="0" 
+                                        max="99.99" 
+                                        name="grades[<?= $s['stb_id'] ?>][fn_numgrade]" 
+                                        value="<?= esc($s['fn_numgrade']) ?>" 
+                                        class="form-control text-end" 
+                                        placeholder="e.g., 92.00">
+                                    <small class="text-muted">Transmuted: <?= $s['fn_grade'] ?? '--' ?></small>
                                 </td>
-                                <td class="text-center"><?= $sem ?: '--' ?></td>
+                                <td class="text-center">
+                                    <div><?= $s['sem_numgrade'] ?? '--' ?></div>
+                                    <small class="text-muted">Transmuted: <?= $sem ?: '--' ?></small>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

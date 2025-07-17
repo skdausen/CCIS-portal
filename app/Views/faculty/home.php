@@ -4,7 +4,7 @@
 
     <div class="row mt-5">
         <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
-        <div class="col-md-8">
+        <div class="col-lg-8 col-12">
             <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
             <div class="card p-3 shadow">
                 <?php foreach ($schedule as $day => $entries): ?>
@@ -46,7 +46,7 @@
         </div>
 
         <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
-        <div class="col-md-4 px-5">
+        <div class="col-lg-4 px-5 col-12">
             <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>
             <div class="card p-3 border-0 bg-transparent">
                 <div class="row">

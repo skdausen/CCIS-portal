@@ -31,7 +31,8 @@ body {
     border-radius: 5px;
 }
 .shadow-darker {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* darker and more visible */
+  /* OFFSET X: 4px (right), OFFSET Y: 4px (bottom) */
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); /* darker shadow only on right & bottom */
 }
 
 
@@ -316,11 +317,7 @@ body {
 
 /* CALENDAR STYLES */
 #calendar.calendar-sm {
-    background-color: #ffffff;
     color: #631561 !important;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.05);
 }
 #calendar a{
     color: #631561 !important;
@@ -345,10 +342,6 @@ body {
 /* REMOVE SCROLL IF TIGHT */
 .fc-scroller-harness {
     overflow: hidden !important;
-}
-
-#latest-update {
-    box-shadow: 0 0 10px rgba(0,0,0,0.03);
 }
 
 /* Only for faculty and student */

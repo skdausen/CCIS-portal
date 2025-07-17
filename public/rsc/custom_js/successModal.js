@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const successModal = new bootstrap.Modal(successModalEl);
             successModal.show();
 
-            setTimeout(() => {
-                successModal.hide();
-            }, 2000);
+            // setTimeout(() => {
+            //     successModal.hide();
+            // }, 2000);
         }
     }
 });

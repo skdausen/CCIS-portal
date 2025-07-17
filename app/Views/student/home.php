@@ -49,7 +49,7 @@
 
         <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
         <div class="col-12 col-lg-4 mb-5">
-            <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>
+            <h4 class="fw-bold px-3">Events & Announcements</h4>
             <div class="card p-3 border-0 bg-transparent">
                 <div class="row">
                     <!-- Calendar -->

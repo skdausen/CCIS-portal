@@ -1,8 +1,19 @@
 <div class="container mt-5">
-    <!-- Course Title -->
-    <div class="text-center mb-4">
-        <h2><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></h2>
+  <div class="col-md-12 mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+      <!-- Back Arrow -->
+      <a href="<?= base_url('faculty/classes') ?>" class="btn btn-link text-muted text-decoration-none">
+        <i class="fas fa-arrow-left fs-3"></i>
+      </a>
+
+      <!-- Centered Title (auto-margins center it visually) -->
+      <h2 class="flex-grow-1 text-center mb-0"><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></h2>
+
+      <!-- Invisible filler to keep title centered -->
+      <span style="width: 42px;"></span>
     </div>
+  </div>
+  <hr>
 
     <!-- Course Info -->
     <div class="row mb-3 justify-content-center">
@@ -13,7 +24,7 @@
         </div>
         <div class="col-md-6 text-md-end">
             <p><strong>Schedule: </strong> 
-                <ul>
+                <ul class="list-unstyled">
                   <li><strong>Lecture:</strong> <?= esc($class['lec_day']) ?>, <?= esc($class['lec_start']) ?> - <?= esc($class['lec_end']) ?> (Room <?= esc($class['lec_room']) ?>)</li>
                   <?php if ($class['subject_type'] === 'LEC with LAB'): ?>
                   <li><strong>Lab:</strong> <?= esc($class['lab_day']) ?>, <?= esc($class['lab_start']) ?> - <?= esc($class['lab_end']) ?> (Room <?= esc($class['lab_room']) ?>)</li>
@@ -28,10 +39,12 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="text-uppercase fw-bold text-muted mb-0">Enrolled Students:</h6>
         <div>
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
+            <button type="button" class="btn btn-outline-success btn-sm me-2 mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
                 Manage Students
             </button>
-            <a href="#" class="btn btn-success btn-sm">Manage Grades</a>
+            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-outline-success btn-sm mb-3">
+              Manage Grades
+            </a>
         </div>
     </div>
 
@@ -41,25 +54,32 @@
           <div class="alert alert-warning">No students enrolled in this class.</div>
       <?php else: ?>
           <div class="table-responsive">
-              <table class="table table-striped table-bordered">
-                  <thead class="table-dark">
-                      <tr>
-                          <th>ID Number</th>
-                          <th>Full Name</th>
-                          <th>Year Level</th>
-                          <th>Program</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <?php foreach ($students as $s): ?>
-                      <tr>
-                          <td><?= esc($s['student_id']) ?></td>
-                          <td><?= esc($s['lname']) ?>, <?= esc($s['fname']) ?> <?= esc($s['mname']) ?></td>
-                          <td><?= esc($s['year_level']) ?></td>
-                          <td><?= esc($s['program_name']) ?></td>
-                      </tr>
-                      <?php endforeach; ?>
-                  </tbody>
+              <table class="table table-bordered table-sm custom-padding">
+                <thead class="table-dark">
+                  <tr>
+                    <th>ID Number</th>
+                    <th>Name</th>
+                    <th>Year Level</th>
+                    <th>Program</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($students as $student): ?>
+                    <tr>
+                      <td><?= esc($student['student_id']) ?></td>
+                      <td><?= esc("{$student['lname']}, {$student['fname']} {$student['mname']}") ?></td>
+                      <td><?= esc($student['year_level']) ?></td>
+                      <td><?= esc($student['program_name']) ?></td>
+                      <td>
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmRemoveModal"
+                          data-stbid="<?= $student['stb_id'] ?>" data-name="<?= esc("{$student['lname']}, {$student['fname']}") ?>">
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
               </table>
           </div>
       <?php endif; ?>
@@ -67,7 +87,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="manageStudentsModal" tabindex="-1" aria-labelledby="manageStudentsModalLabel" aria-hidden="true">
+<div class="modal fade" id="manageStudentsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="manageStudentsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/enroll') ?>" method="post">
       <div class="modal-content">
@@ -119,8 +139,11 @@
               </thead>
               <tbody>
                 <?php foreach ($allStudents as $student): ?>
-                  <tr>
-                    <td><input type="checkbox" name="student_ids[]" value="<?= esc($student['stb_id']) ?>"></td>
+                  <tr class="selectable-row">
+                    <td>
+                      <input type="checkbox" name="student_ids[]" value="<?= esc($student['stb_id']) ?>" class="form-check-input d-none">
+                      <span class="check-indicator"><i class="far fa-square text-muted"></i></span>
+                    </td>
                     <td class="id-number"><?= esc($student['student_id']) ?></td>
                     <td class="name"><?= esc($student['lname']) ?>, <?= esc($student['fname']) ?> <?= esc($student['mname']) ?></td>
                     <td class="year"><?= esc($student['year_level']) ?></td>
@@ -132,9 +155,28 @@
           </div>
         </div>
 
-
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Enroll Selected</button>
+          <button type="submit" class="btn btn-outline-success">Enroll Selected</button>
+          <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 py-2 px-3" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Confirm Remove Modal -->
+<div class="modal fade" id="confirmRemoveModal" tabindex="-1" aria-labelledby="confirmRemoveLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="post" id="removeStudentForm">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="confirmRemoveLabel">Confirm Removal</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to remove <strong id="studentToRemoveName"></strong> from this class?
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Yes, Remove</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
@@ -142,6 +184,36 @@
   </div>
 </div>
 
+<script>
+  // Fill modal with student info
+  const removeModal = document.getElementById('confirmRemoveModal');
+  removeModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    const stbId = button.getAttribute('data-stbid');
+    const name = button.getAttribute('data-name');
+
+    document.getElementById('studentToRemoveName').textContent = name;
+    document.getElementById('removeStudentForm').action = "<?= base_url('faculty/class/' . $class['class_id'] . '/remove-student') ?>/" + stbId;
+  });
+</script>
+
+
+<!-- 🔥 Style for selection feedback -->
+<style>
+  .selectable-row {
+    cursor: pointer;
+  }
+
+  .selectable-row.table-active {
+    background-color: #e9f7ef !important;
+  }
+
+  .selectable-row:hover {
+    background-color: #f3f3f3;
+  }
+</style>
+
+<!-- 💫 JS for row selection + filtering -->
 <script>
   function filterStudents() {
     const search = document.getElementById('studentSearch').value.toLowerCase();
@@ -160,17 +232,34 @@
       const matchesProgram = !selectedProgram || program === selectedProgram;
       const matchesYear = !selectedYear || year === selectedYear;
 
-      if (matchesSearch && matchesProgram && matchesYear) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
+      row.style.display = (matchesSearch && matchesProgram && matchesYear) ? '' : 'none';
     });
   }
 
-  // Add event listeners
   document.getElementById('studentSearch').addEventListener('keyup', filterStudents);
   document.getElementById('filterProgram').addEventListener('change', filterStudents);
   document.getElementById('filterYear').addEventListener('change', filterStudents);
-</script>
 
+  // 🔄 Make entire row clickable to toggle checkbox
+  document.querySelectorAll('.selectable-row').forEach(row => {
+    row.addEventListener('click', function (e) {
+      const checkbox = this.querySelector('input[type="checkbox"]');
+      const icon = this.querySelector('.check-indicator i');
+
+      // Only toggle if not clicking directly on input
+      if (!e.target.matches('input')) {
+        checkbox.checked = !checkbox.checked;
+      }
+
+      if (checkbox.checked) {
+        this.classList.add('table-active');
+        icon.classList.remove('fa-square', 'text-muted');
+        icon.classList.add('fa-check-square', 'text-success');
+      } else {
+        this.classList.remove('table-active');
+        icon.classList.remove('fa-check-square', 'text-success');
+        icon.classList.add('fa-square', 'text-muted');
+      }
+    });
+  });
+</script>

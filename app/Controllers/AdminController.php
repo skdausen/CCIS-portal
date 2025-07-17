@@ -46,12 +46,17 @@ class AdminController extends BaseController
         }
 
         $model = new UserModel();
-        $data['users'] = $model->findAll();
+        $curriculumModel = new CurriculumModel(); 
+        $data = [
+            'users'       => $model->findAll(),
+            'curriculums' => $curriculumModel->findAll() 
+        ];
 
         return view('templates/admin/admin_header')
-            . view('admin/users', $data)
+            . view('admin/users', $data) 
             . view('templates/admin/admin_footer');
     }
+
 
     // Display form to add a new user
     public function createUser()
@@ -70,7 +75,9 @@ class AdminController extends BaseController
         // GET POST INPUTS
         $username = strtoupper($this->request->getPost('username'));
         $email    = $this->request->getPost('email');
-        $role     = $this->request->getPost('role');
+        $role     = strtolower($this->request->getPost('role'));
+        $curriculumId = $this->request->getPost('curriculum_id'); 
+
 
         // DEFAULT PASSWORD
         $defaultPassword = 'ccis1234';
@@ -105,27 +112,38 @@ class AdminController extends BaseController
 
         // INSERT INTO RELATED TABLES BASED ON ROLE
         if ($role === 'student') {
-            $studentModel->insert([
-                'student_id' => $username,
-                'user_id'    => $userId, // optional: if linked by user ID
-                'profimg'    => $defaultImg
-            ]);
+            if (!$studentModel->insert([
+                'student_id'     => $username,
+                'user_id'        => $userId,
+                'curriculum_id'  => $curriculumId,
+                'profimg'        => $defaultImg
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create student account.');
+            }
         }
 
+
         if ($role === 'faculty') {
-            $facultyModel->insert([
+            if (!$facultyModel->insert([
                 'faculty_id' => $username,
-                'user_id'    => $userId,  // optional: if linked by user ID
+                'user_id'    => $userId,
                 'profimg'    => $defaultImg
-            ]);
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create faculty account.');
+            }
         }
 
         if ($role === 'admin') {
-            $adminModel->insert([
-                'admin_id' => $username,
-                'user_id'    => $userId, // optional: if linked by user ID
+            if (!$adminModel->insert([
+                'admin_id'   => $username,
+                'user_id'    => $userId,
                 'profimg'    => $defaultImg
-            ]);
+            ])) {
+                $db->transRollback();
+                return redirect()->back()->with('error', 'Failed to create admin account.');
+            }
         }
 
         // COMPLETE TRANSACTION
@@ -135,9 +153,9 @@ class AdminController extends BaseController
         if ($db->transStatus() === false) {
             return redirect()->back()->with('error', 'Failed to create user. Please try again.');
         }
-
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
+
 
     // Controller method to get users with joined profile info
     public function viewUsers()
@@ -330,7 +348,6 @@ class AdminController extends BaseController
         }
 
         $semester = $this->request->getPost('semester'); // e.g., "1st"
-        $semester = $this->request->getPost('semester');
         $schoolyearText = str_replace(['–', '—'], '-', $this->request->getPost('schoolyear'));
         $schoolyearText = preg_replace('/\s+/', '', trim($schoolyearText));
         $status = $this->request->getPost('status');
@@ -354,7 +371,7 @@ class AdminController extends BaseController
             ->first();
 
         if ($duplicate) {
-            return redirect()->back()->with('error', 'That semester + school year already exists.');
+            return redirect()->back()->with('error', 'That semester & school year already exists.');
         }
 
         if ($isActive) {
@@ -638,7 +655,7 @@ public function createClass()
         $subjectId = $this->request->getPost('subject_id');
         $ftbId = $this->request->getPost('ftb_id');
         $semesterId = $this->request->getPost('semester_id');
-        $section = $this->request->getPost('section');
+        $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
 
         $data = [
@@ -646,17 +663,17 @@ public function createClass()
             'subject_id'  => $subjectId,
             'semester_id' => $semesterId,
             'section'     => $section,
-            'lec_day'     => $this->request->getPost('lec_day'),
+            'lec_day'     => strtoupper($this->request->getPost('lec_day')),
             'lec_start'   => $this->request->getPost('lec_start'),
             'lec_end'     => $this->request->getPost('lec_end'),
-            'lec_room'    => $this->request->getPost('lec_room'),
+            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
         ];
 
         if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = $this->request->getPost('lab_day');
+            $data['lab_day']   = strtoupper($this->request->getPost('lab_day'));
             $data['lab_start'] = $this->request->getPost('lab_start');
             $data['lab_end']   = $this->request->getPost('lab_end');
-            $data['lab_room']  = $this->request->getPost('lab_room');
+            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
         }
 
         $classModel->insert($data);
@@ -682,18 +699,18 @@ public function updateClass($id)
             'ftb_id'      => $this->request->getPost('ftb_id'),
             'subject_id'  => $this->request->getPost('subject_id'),
             'semester_id' => $this->request->getPost('semester_id'),
-            'section'     => $this->request->getPost('class_section'),
-            'lec_day'     => $this->request->getPost('lec_day'),
+            'section'     => strtoupper($this->request->getPost('class_section')),
+            'lec_day'     => strtoupper($this->request->getPost('lec_day')),
             'lec_start'   => $this->request->getPost('lec_start'),
             'lec_end'     => $this->request->getPost('lec_end'),
-            'lec_room'    => $this->request->getPost('lec_room'),
+            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
         ];
 
         if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = $this->request->getPost('lab_day');
+            $data['lab_day']   = strtoupper($this->request->getPost('lab_day'));
             $data['lab_start'] = $this->request->getPost('lab_start');
             $data['lab_end']   = $this->request->getPost('lab_end');
-            $data['lab_room']  = $this->request->getPost('lab_room');
+            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
         } else {
             $data['lab_day']   = null;
             $data['lab_start'] = null;
@@ -713,6 +730,8 @@ public function updateClass($id)
 // Delete a class
 public function deleteClass($id)
 {
+
+
     $classModel = new ClassModel();
 
     try {
@@ -723,6 +742,7 @@ public function deleteClass($id)
         return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while deleting the class.');
     }
 }
+
 
 
 
@@ -739,7 +759,7 @@ public function view_curriculums()
 
     $yearlevel_sem = $this->request->getGet('yearlevel_sem');
     $selectedCurriculum = $this->request->getGet('curriculum_id');
-    $search = $this->request->getGet('search'); // ✅ Get the search input
+    $search = $this->request->getGet('search'); //  Get the search input
 
     $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();

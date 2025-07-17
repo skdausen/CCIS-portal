@@ -9,9 +9,8 @@
     <link rel="stylesheet" href="<?= base_url('rsc/custom_css/style.css'); ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- FullCalendar Styles from correct path -->
+    <!-- FullCalendar Styles  -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-
 
     <!-- Force browser not to cache this page -->
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
@@ -41,9 +40,6 @@
                 </ul>
                 <!-- Icons on the far right -->
                 <ul class="navbar-nav icon-nav-links me-3">
-                    <li class="nav-item me-3">
-                        <a class="nav-link" href="#"><i class="fas fa-bell mt-2"></i></a>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle profile-dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- Placeholder for user profile image -->

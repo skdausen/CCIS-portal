@@ -4,18 +4,57 @@
 
     <div class="row mt-5">
         <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
-        <div class="col-md-8">
+        <div class="col-12 col-lg-8 mb-5">
             <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
+            <div class="card p-3 shadow-darker">
+                <?php foreach ($schedule as $day => $entries): ?>
+                    <h5 class="mt-4"><?= esc(strtoupper($day)) ?></h5>
+
+                    <?php if (!empty($entries)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped custom-padding">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Subject Code</th>
+                                        <th>Subject Name</th>
+                                        <th>Type</th>
+                                        <th>Time</th>
+                                        <th>Room</th>
+                                        <th>Instructor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($entries as $entry): ?>
+                                        <tr>
+                                            <td><?= esc($entry['subject_code']) ?></td>
+                                            <td><?= esc($entry['subject_name']) ?></td>
+                                            <td><?= esc(ucfirst($entry['type'])) ?></td>
+                                            <td>
+                                                <?= date('h:i A', strtotime($entry['start'])) ?>
+                                                – <?= date('h:i A', strtotime($entry['end'])) ?>
+                                            </td>
+                                            <td><?= esc($entry['room']) ?></td>
+                                            <td><?= esc($entry['instructor'] ?? 'N/A') ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted"><em>No classes.</em></p>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
 
         <!-- RIGHT COLUMN: CALENDAR & ANNOUNCEMENTS -->
-        <div class="col-md-4 px-5">
-            <h4 class="fw-bold mb-4 px-3">Events & Announcements</h4>
+        <div class="col-12 col-lg-4 mb-5">
+            <h4 class="fw-bold px-3">Events & Announcements</h4>
             <div class="card p-3 border-0 bg-transparent">
                 <div class="row">
                     <!-- Calendar -->
-                    <div class="col-12 mb-4">
-                        <div id="calendar" class="calendar-sm shadow-lg"></div>
+                    <div class="col-12 mb-4 card shadow-darker">
+                        <div id="calendar" class="calendar-sm p-3"></div>
                     </div>
 
                     <?php
@@ -38,10 +77,9 @@
                     ?>
 
                     <!-- Announcements -->
-                    <div class="col-12">
-                        <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #fff; border-radius: 8px; font-size: 0.85rem;">
-                            
-                            <!-- 🆕 Latest Announcement -->
+                    <div class="col-12 card shadow-darker">
+                        <div class="py-3 p-2" id="latest-update">
+                            <!-- Latest Announcement -->
                             <h6 class="text-purple mb-2 fw-semibold" style="font-size: 1rem;">🆕 Latest Announcement</h6>
                             <div class="ms-2">
                                 <?php if ($latest) : ?>
@@ -54,12 +92,11 @@
                                     <p class="text-muted mb-1">No announcements for today.</p>
                                 <?php endif; ?>
                             </div>
-
-                            <hr class="my-2">
-
+                            <hr>
                             <!-- 📌 Nearing Events -->
-                            <h6 class="text-purple mb-2 fw-semibold" style="font-size: 1rem;">📌 Nearing Events</h6>
-                            <?php if (!empty($nearing)) : ?>
+                            <div class="ms-2">
+                                <h6 class="text-purple mb-2 fw-semibold" style="font-size: 1rem;">📌 Nearing Events</h6>
+                                <?php if (!empty($nearing)) : ?>
                                 <ul class="list-group list-group-flush small">
                                     <?php foreach ($nearing as $n) : ?>
                                         <li class="list-group-item py-1 px-2">
@@ -75,11 +112,12 @@
                                             </button><br>
                                             <small class="text-muted"><?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?></small>
                                         </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php else : ?>
-                                <p class="text-muted small">No upcoming announcements.</p>
-                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <?php else : ?>
+                                        <p class="text-muted small">No upcoming announcements.</p>
+                                        <?php endif; ?>
+                            </div>
                         </div>
                     </div>
 

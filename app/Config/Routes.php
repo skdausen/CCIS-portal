@@ -70,6 +70,7 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/semesters/update/(:num)', [AdminController::class, 'updateSemester/$1']);
     $routes->post('academics/semesters/delete/(:num)', [AdminController::class, 'deleteSemester/$1']);
 
+
     // SUBJECTS
     $routes->get('academics/subjects', [AdminController::class, 'view_subjects']);
     $routes->post('academics/subjects/create', [AdminController::class, 'createSubject']);
@@ -114,7 +115,9 @@ $routes->group('faculty', function ($routes) {
     $routes->get('classes/ajax', 'FacultyController::getClassesBySemester'); // AJAX handler
     $routes->get('class/(:num)', 'FacultyController::viewClass/$1');
     $routes->post('class/(:num)/enroll', 'FacultyController::enrollStudents/$1');
-    $routes->post('removeStudentFromClass', 'FacultyController::removeStudentFromClass');
+    $routes->post('class/(:num)/remove-student/(:num)', 'FacultyController::removeStudent/$1/$2');
+    $routes->get('class/(:num)/grades', 'FacultyController::manageGrades/$1');
+    $routes->post('class/(:num)/grades/save', 'FacultyController::saveGrades/$1');
     
 });
 
@@ -126,6 +129,9 @@ $routes->group('student', function ($routes) {
 
     // Student Home & Users
     $routes->get('home', 'StudentController::studentHome');
-    $routes->get('schedule', 'StudentController::studentSchedule');
+    $routes->get('curriculum', 'StudentController::studentCurriculum');
     $routes->get('grades', 'StudentController::studentGrades');
+    $routes->get('grades', 'StudentController::getGrades');
+    $routes->get('home', 'StudentController::studentSchedule');
+    
 });

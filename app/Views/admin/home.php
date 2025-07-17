@@ -5,12 +5,12 @@
 
     <!-- Calendar -->
     <div class="card mt-4 p-3 border-0" style="background-color:rgba(248, 249, 255, 0);">
-        <div class="card-header bg-gray text-white d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <div>
-                Events & Announcements
+                <h4 class="m-0">Events & Announcements</h4>
             </div>
             <div>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
+                <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
                     Add Announcement
                 </button>
             </div>
@@ -18,12 +18,12 @@
         <div class="card-body">
             <div class="row">
                 <!-- Calendar LEFT -->
-                <div class="col-md-6">
+                <div class="col-12 col-lg-6">
                     <div id="calendar" class="calendar-sm"></div>
                 </div>
 
                 <!-- Updates RIGHT -->
-                <div class="col-md-6">
+                <div class="col-12 col-lg-6">
                     <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
                         <!-- 🔍 Filter Logic -->
                         <?php
@@ -127,10 +127,10 @@
                 </div>
                 <div class="modal-footer">
                     <?php if (in_array(session('role'), ['admin', 'superadmin'])) : ?>
-                        <button type="button" class="btn btn-warning" id="editAnnouncementBtn">Edit</button>
+                        <button type="button" class="btn btn-outline-success" id="editAnnouncementBtn">Edit</button>
                         <form id="deleteForm" method="post" action="<?= site_url('admin/deleteAnnouncement') ?>" class="d-inline">
                             <input type="hidden" name="announcement_id" id="modalAnnouncementId">
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-outline-danger">Delete</button>
                         </form>
                     <?php endif; ?>
                 </div>
@@ -163,9 +163,9 @@
                         <div class="mb-3">
                             <label for="audience" class="form-label">Audience</label>
                             <select class="form-select" name="audience" id="audience" required>
-                                <option value="all">All</option>
-                                <option value="students">Students</option>
-                                <option value="faculty">Faculty</option>
+                                <option value="All">All</option>
+                                <option value="Students">Students</option>
+                                <option value="Faculty">Faculty</option>
                             </select>
                         </div>
 
@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Post Announcement</button>
+                        <button type="submit" class="btn btn-outline-success">Post Announcement</button>
                     </div>
                 </form>
             </div>
@@ -206,9 +206,9 @@
                             <div class="mb-3">
                                 <label for="editAudience" class="form-label">Audience</label>
                                 <select class="form-select" name="audience" id="editAudience" required>
-                                    <option value="all">All</option>
-                                    <option value="students">Students</option>
-                                    <option value="faculty">Faculty</option>
+                                    <option value="All">All</option>
+                                    <option value="Students">Students</option>
+                                    <option value="Faculty">Faculty</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -217,8 +217,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Update</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-outline-success">Update</button>
+                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>

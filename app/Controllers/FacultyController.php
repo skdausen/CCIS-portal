@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 
 use App\Models\AnnouncementModel;
+use App\Models\StudentScheduleModel;
 use App\Models\ClassModel;
+use App\Models\GradeModel;
 use App\Models\SemesterModel;
 use App\Models\StudentModel;
 use App\Models\UserModel;
@@ -156,8 +158,11 @@ class FacultyController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $classModel = new \App\Models\ClassModel();
-        $studentModel = new \App\Models\StudentModel();
+        $classModel = new ClassModel();
+        $studentModel = new StudentModel();
+        $studentScheduleModel = new StudentScheduleModel();
+
+        $class = $classModel->find($classId);
 
         $class = $classModel
             ->select('classes.*, subjects.subject_code, subjects.subject_name, subjects.subject_type, s.semester, sy.schoolyear')
@@ -174,10 +179,18 @@ class FacultyController extends BaseController
         // Get enrolled students
         $students = $studentModel->getStudentsByClass($classId);
         
+        // Already enrolled student IDs
+        $enrolledIds = $studentScheduleModel
+            ->where('class_id', $classId)
+            ->select('stb_id')
+            ->findColumn('stb_id'); // returns array of stb_ids
+
+        // Fetch students NOT yet enrolled
         $allStudents = $studentModel
-        ->select('students.stb_id, students.student_id, students.fname, students.lname, students.mname, students.year_level, programs.program_name')
-        ->join('programs', 'programs.program_id = students.program_id')
-        ->findAll();
+            ->select('students.*, programs.program_name')
+            ->join('programs', 'programs.program_id = students.program_id')
+            ->whereNotIn('students.stb_id', $enrolledIds ?: [0]) // prevents null in whereNotIn
+            ->findAll();
 
         return view('templates/faculty/faculty_header')
             . view('faculty/view_class', [
@@ -195,13 +208,117 @@ class FacultyController extends BaseController
         }
 
         $studentIds = $this->request->getPost('student_ids');
-        $scheduleModel = new \App\Models\StudentScheduleModel();
+        $scheduleModel = new StudentScheduleModel();
 
         if ($scheduleModel->enrollStudents($classId, $studentIds)) {
             return redirect()->back()->with('success', 'Students successfully enrolled to class.');
         } else {
             return redirect()->back()->with('error', 'No new students were enrolled.');
         }
+    }
+
+    public function removeStudent($classId, $stbId)
+    {
+        $studentScheduleModel = new StudentScheduleModel();
+
+        $studentScheduleModel
+            ->where('class_id', $classId)
+            ->where('stb_id', $stbId)
+            ->delete();
+
+        return redirect()->to('faculty/class/' . $classId)->with('success', 'Student removed successfully');
+    }
+
+    public function manageGrades($classId)
+    {
+        $classModel = new ClassModel();
+        $studentScheduleModel = new StudentScheduleModel();
+        $studentModel = new StudentModel();
+        $gradeModel = new GradeModel();
+
+        // Get class details
+        $class = $classModel
+            ->select('classes.*, subjects.subject_code, subjects.subject_name')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->find($classId);
+
+        // Get enrolled students with existing grades (if any)
+        $students = $studentModel->select('students.*, grades.mt_grade, grades.fn_grade, grades.sem_grade, grades.mt_numgrade, grades.fn_numgrade, grades.sem_numgrade')
+            ->join('student_schedules', 'student_schedules.stb_id = students.stb_id')
+            ->join('grades', 'grades.stb_id = students.stb_id AND grades.class_id = student_schedules.class_id', 'left')
+            ->where('student_schedules.class_id', $classId)
+            ->findAll();
+
+        return view('templates/faculty/faculty_header')
+            . view('faculty/manage_grades', [
+                    'class' => $class,
+                    'students' => $students,
+                    ])
+            . view('templates/admin/admin_footer');
+    }
+
+    public function saveGrades($classId)
+    {
+        $gradeModel = new GradeModel();
+
+        $gradesData = $this->request->getPost('grades');
+
+        foreach ($gradesData as $stb_id => $grade) {
+        // Safely get the numerical grades (null if not set or empty)
+        $mtNum = isset($grade['mt_numgrade']) && $grade['mt_numgrade'] !== '' ? floatval($grade['mt_numgrade']) : null;
+        $fnNum = isset($grade['fn_numgrade']) && $grade['fn_numgrade'] !== '' ? floatval($grade['fn_numgrade']) : null;
+
+        // ❌ If both are empty, skip this student
+        if ($mtNum === null && $fnNum === null) {
+            continue;
+        }
+
+        // Transmute
+        $mtGrade = $mtNum !== null ? $this->transmute($mtNum) : null;
+        $fnGrade = $fnNum !== null ? $this->transmute($fnNum) : null;
+
+        // Average for semestral
+        $semNum = ($mtNum !== null && $fnNum !== null) ? round(($mtNum + $fnNum) / 2, 2) : null;
+        $semGrade = $semNum !== null ? $this->transmute($semNum) : null;
+
+        $data = [
+            'stb_id'        => $stb_id,
+            'class_id'      => $classId,
+            'mt_numgrade'   => $mtNum,
+            'mt_grade'      => $mtGrade,
+            'fn_numgrade'   => $fnNum,
+            'fn_grade'      => $fnGrade,
+            'sem_numgrade'  => $semNum,
+            'sem_grade'     => $semGrade,
+        ];
+
+        $existing = $gradeModel->where('stb_id', $stb_id)
+                            ->where('class_id', $classId)
+                            ->first();
+
+        if ($existing) {
+            $gradeModel->update($existing['grade_id'], $data);
+        } else {
+            $gradeModel->insert($data);
+        }
+    }
+
+
+        return redirect()->back()->with('success', 'Grades saved successfully!');
+    }
+
+    private function transmute($numGrade)
+    {
+        if ($numGrade >= 96.5) return '1.00';
+        if ($numGrade >= 93.5) return '1.25';
+        if ($numGrade >= 90.5) return '1.50';
+        if ($numGrade >= 87.5) return '1.75';
+        if ($numGrade >= 84.5) return '2.00';
+        if ($numGrade >= 81.5) return '2.25';
+        if ($numGrade >= 78.5) return '2.50';
+        if ($numGrade >= 75.5) return '2.75';
+        if ($numGrade >= 74.5) return '3.00';
+        return '5.00';
     }
 
 

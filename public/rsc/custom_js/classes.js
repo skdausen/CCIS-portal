@@ -85,3 +85,46 @@ function showNoSemesterModal() {
         noSemesterModal.hide();
     }, 1500); // Auto-hide after 1500 ms (1.5 seconds)
 }
+
+// TIME VALIDATION
+// VALIDATE LECTURE TIME
+document.getElementById('lecStart').addEventListener('change', function () {
+    const start = this.value;
+    const endInput = document.getElementById('lecEnd');
+    endInput.min = start;
+
+    if (endInput.value < start) {
+        endInput.value = '';
+        alert('Lecture End Time cannot be earlier than Start Time!');
+    }
+});
+
+document.getElementById('lecEnd').addEventListener('change', function () {
+    const end = this.value;
+    const startInput = document.getElementById('lecStart');
+    if (end < startInput.value) {
+        this.value = '';
+        alert('Lecture End Time cannot be earlier than Start Time!');
+    }
+});
+
+// VALIDATE LAB TIME
+document.getElementById('labStart').addEventListener('change', function () {
+    const start = this.value;
+    const endInput = document.getElementById('labEnd');
+    endInput.min = start;
+
+    if (endInput.value < start) {
+        endInput.value = '';
+        alert('Lab End Time cannot be earlier than Start Time!');
+    }
+});
+
+document.getElementById('labEnd').addEventListener('change', function () {
+    const end = this.value;
+    const startInput = document.getElementById('labStart');
+    if (end < startInput.value) {
+        this.value = '';
+        alert('Lab End Time cannot be earlier than Start Time!');
+    }
+});

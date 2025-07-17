@@ -27,7 +27,7 @@
                 <option value="ge">GE</option>
                 <option value="pe">PE</option>
             </select>
-            <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
+            <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
         </div>
         <div class="col-md-5 mb-2">
             <input type="text" id="searchInput" class="form-control" placeholder="Search by code or description...">
@@ -35,7 +35,7 @@
         
         <div class="col-md-4 mb-2 d-flex justify-content-end">
             <!-- Add Subject Button -->
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
     </div>
 
@@ -69,83 +69,83 @@
                         </td>
                     </tr>
 
-                   <!-- Edit Modal -->
-<div class="modal fade" id="editModal<?= $subject['subject_id'] ?>" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form method="post" action="<?= site_url('admin/academics/subjects/update/' . $subject['subject_id']) ?>">
-                <?= csrf_field() ?>
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Subject</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editModal<?= $subject['subject_id'] ?>" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="post" action="<?= site_url('admin/academics/subjects/update/' . $subject['subject_id']) ?>">
+                                    <?= csrf_field() ?>
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Subject</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
 
-                    <div class="mb-3">
-                        <label>Curriculum</label>
-                        <select name="curriculum_id" class="form-select" required>
-                            <option value="">Select Curriculum</option>
-                            <?php foreach ($curriculums as $curr): ?>
-                                <option value="<?= $curr['curriculum_id'] ?>" <?= $curr['curriculum_id'] == $subject['curriculum_id'] ? 'selected' : '' ?>>
-                                    <?= esc($curr['curriculum_name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                                        <div class="mb-3">
+                                            <label>Curriculum</label>
+                                            <select name="curriculum_id" class="form-select" required>
+                                                <option value="">Select Curriculum</option>
+                                                <?php foreach ($curriculums as $curr): ?>
+                                                    <option value="<?= $curr['curriculum_id'] ?>" <?= $curr['curriculum_id'] == $subject['curriculum_id'] ? 'selected' : '' ?>>
+                                                        <?= esc($curr['curriculum_name']) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>Year Level & Semester</label>
+                                            <select name="yearlevel_sem" class="form-select" required>
+                                                <option value="">Select Year Level & Semester</option>
+                                                <option value="Y1S1" <?= $subject['yearlevel_sem'] == 'Y1S1' ? 'selected' : '' ?>>1st Year - 1st Semester</option>
+                                                <option value="Y1S2" <?= $subject['yearlevel_sem'] == 'Y1S2' ? 'selected' : '' ?>>1st Year - 2nd Semester</option>
+                                                <option value="Y2S1" <?= $subject['yearlevel_sem'] == 'Y2S1' ? 'selected' : '' ?>>2nd Year - 1st Semester</option>
+                                                <option value="Y2S2" <?= $subject['yearlevel_sem'] == 'Y2S2' ? 'selected' : '' ?>>2nd Year - 2nd Semester</option>
+                                                <option value="Y3S1" <?= $subject['yearlevel_sem'] == 'Y3S1' ? 'selected' : '' ?>>3rd Year - 1st Semester</option>
+                                                <option value="Y3S2" <?= $subject['yearlevel_sem'] == 'Y3S2' ? 'selected' : '' ?>>3rd Year - 2nd Semester</option>
+                                                <option value="Y3S3" <?= $subject['yearlevel_sem'] == 'Y3S3' ? 'selected' : '' ?>>3rd Year - Midyear</option>
+                                                <option value="Y4S1" <?= $subject['yearlevel_sem'] == 'Y4S1' ? 'selected' : '' ?>>4th Year - 1st Semester</option>
+                                                <option value="Y4S2" <?= $subject['yearlevel_sem'] == 'Y4S2' ? 'selected' : '' ?>>4th Year - 2nd Semester</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>Subject Code</label>
+                                            <input type="text" name="subject_code" class="form-control" value="<?= esc($subject['subject_code']) ?>" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>Subject Name</label>
+                                            <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>Subject Type</label>
+                                            <select name="subject_type" class="form-select edit-subject-type" data-id="<?= $subject['subject_id'] ?>" onchange="toggleEditUnits(<?= $subject['subject_id'] ?>)" required>
+                                                <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
+                                                <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>Lecture Units</label>
+                                            <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required min="0">
+                                        </div>
+
+                                        <div class="mb-3 edit-lab-units-group-<?= $subject['subject_id'] ?>" style="<?= $subject['subject_type'] == 'LEC with LAB' ? '' : 'display: none;' ?>">
+                                            <label>Lab Units</label>
+                                            <input type="number" name="lab_units" class="form-control" min="0" value="<?= esc($subject['lab_units']) ?>">
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-outline-success">Update</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label>Year Level & Semester</label>
-                        <select name="yearlevel_sem" class="form-select" required>
-                            <option value="">Select Year Level & Semester</option>
-                            <option value="Y1S1" <?= $subject['yearlevel_sem'] == 'Y1S1' ? 'selected' : '' ?>>1st Year - 1st Semester</option>
-                            <option value="Y1S2" <?= $subject['yearlevel_sem'] == 'Y1S2' ? 'selected' : '' ?>>1st Year - 2nd Semester</option>
-                            <option value="Y2S1" <?= $subject['yearlevel_sem'] == 'Y2S1' ? 'selected' : '' ?>>2nd Year - 1st Semester</option>
-                            <option value="Y2S2" <?= $subject['yearlevel_sem'] == 'Y2S2' ? 'selected' : '' ?>>2nd Year - 2nd Semester</option>
-                            <option value="Y3S1" <?= $subject['yearlevel_sem'] == 'Y3S1' ? 'selected' : '' ?>>3rd Year - 1st Semester</option>
-                            <option value="Y3S2" <?= $subject['yearlevel_sem'] == 'Y3S2' ? 'selected' : '' ?>>3rd Year - 2nd Semester</option>
-                            <option value="Y3S3" <?= $subject['yearlevel_sem'] == 'Y3S3' ? 'selected' : '' ?>>3rd Year - Midyear</option>
-                            <option value="Y4S1" <?= $subject['yearlevel_sem'] == 'Y4S1' ? 'selected' : '' ?>>4th Year - 1st Semester</option>
-                            <option value="Y4S2" <?= $subject['yearlevel_sem'] == 'Y4S2' ? 'selected' : '' ?>>4th Year - 2nd Semester</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Subject Code</label>
-                        <input type="text" name="subject_code" class="form-control" value="<?= esc($subject['subject_code']) ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Subject Name</label>
-                        <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Subject Type</label>
-                        <select name="subject_type" class="form-select edit-subject-type" data-id="<?= $subject['subject_id'] ?>" onchange="toggleEditUnits(<?= $subject['subject_id'] ?>)" required>
-                            <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
-                            <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Lecture Units</label>
-                        <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required min="0">
-                    </div>
-
-                    <div class="mb-3 edit-lab-units-group-<?= $subject['subject_id'] ?>" style="<?= $subject['subject_type'] == 'LEC with LAB' ? '' : 'display: none;' ?>">
-                        <label>Lab Units</label>
-                        <input type="number" name="lab_units" class="form-control" min="0" value="<?= esc($subject['lab_units']) ?>">
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Update</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 
                     <!-- Delete Modal -->
@@ -162,8 +162,8 @@
                                         Are you sure you want to delete <strong><?= esc($subject['subject_code']) ?></strong>?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -177,61 +177,61 @@
 
 <!-- Add Subject Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form action="<?= site_url('admin/academics/subjects/create') ?>" method="post">
-      <?= csrf_field() ?>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addModalLabel">Add New Subject</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog">
+        <form action="<?= site_url('admin/academics/subjects/create') ?>" method="post">
+        <?= csrf_field() ?>
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="addModalLabel">Add New Subject</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
+            <div class="modal-body">
 
-          <div class="mb-3">
+            <div class="mb-3">
             <label>Curriculum</label>
             <select name="curriculum_id" class="form-select" required>
-              <option value="">Select Curriculum</option>
-              <?php foreach ($curriculums as $curr): ?>
-              <option value="<?= $curr['curriculum_id'] ?>">
+                <option value="">Select Curriculum</option>
+                <?php foreach ($curriculums as $curr): ?>
+                <option value="<?= $curr['curriculum_id'] ?>">
                 <?= esc($curr['curriculum_name']) ?>
-              </option>
-              <?php endforeach; ?>
+                </option>
+                <?php endforeach; ?>
             </select>
-          </div>
+            </div>
 
-          <!-- Year Level & Semester Dropdown (ENUM Values) -->
-          <div class="mb-3">
-            <label>Year Level & Semester</label>
-            <select name="yearlevel_sem" class="form-select" required>
-              <option value="">Select Year Level & Semester</option>
-              <option value="Y1S1">1st Year - 1st Semester</option>
-              <option value="Y1S2">1st Year - 2nd Semester</option>
-              <option value="Y2S1">2nd Year - 1st Semester</option>
-              <option value="Y2S2">2nd Year - 2nd Semester</option>
-              <option value="Y3S1">3rd Year - 1st Semester</option>
-              <option value="Y3S2">3rd Year - 2nd Semester</option>
-              <option value="Y3S3">3rd Year - Midyear</option>
-              <option value="Y4S1">4th Year - 1st Semester</option>
-              <option value="Y4S2">4th Year - 2nd Semester</option>
-            </select>
-          </div>
+            <!-- Year Level & Semester Dropdown (ENUM Values) -->
+            <div class="mb-3">
+                <label>Year Level & Semester</label>
+                <select name="yearlevel_sem" class="form-select" required>
+                    <option value="">Select Year Level & Semester</option>
+                    <option value="Y1S1">1st Year - 1st Semester</option>
+                    <option value="Y1S2">1st Year - 2nd Semester</option>
+                    <option value="Y2S1">2nd Year - 1st Semester</option>
+                    <option value="Y2S2">2nd Year - 2nd Semester</option>
+                    <option value="Y3S1">3rd Year - 1st Semester</option>
+                    <option value="Y3S2">3rd Year - 2nd Semester</option>
+                    <option value="Y3S3">3rd Year - Midyear</option>
+                    <option value="Y4S1">4th Year - 1st Semester</option>
+                    <option value="Y4S2">4th Year - 2nd Semester</option>
+                </select>
+            </div>
 
-          <div class="mb-3">
-            <label>Subject Code</label>
-            <input type="text" name="subject_code" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label>Subject Name</label>
-            <input type="text" name="subject_name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label>Subject Type</label>
-            <select name="subject_type" class="form-select" id="add_subject_type" onchange="toggleAddUnits()" required>
-              <option value="LEC">LEC</option>
-              <option value="LEC with LAB">LEC with LAB</option>
-            </select>
-          </div>
-          
+            <div class="mb-3">
+                <label>Subject Code</label>
+                <input type="text" name="subject_code" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Subject Name</label>
+                <input type="text" name="subject_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Subject Type</label>
+                <select name="subject_type" class="form-select" id="add_subject_type" onchange="toggleAddUnits()" required>
+                    <option value="LEC">LEC</option>
+                    <option value="LEC with LAB">LEC with LAB</option>
+                </select>
+            </div>
+
             <div class="mb-3">
                 <label>Lecture Units</label>
                 <input type="number" id="lec_units" name="lec_units" class="form-control" required min="0">
@@ -242,14 +242,14 @@
                 <input type="number" id="lab_units" name="lab_units" class="form-control" min="0" value="0">
             </div>
 
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-success">Add Subject</button>
+                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Add Subject</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </form>
-  </div>
+        </form>
+    </div>
 </div>
 
 
@@ -318,8 +318,8 @@
                 <p id="errorMessage"></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="location.reload()">Retry</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-danger" onclick="location.reload()">Retry</button>
+                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

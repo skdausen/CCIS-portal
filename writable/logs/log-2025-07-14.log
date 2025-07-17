@@ -1,0 +1,95 @@
+DEBUG - 2025-07-14 06:32:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-07-14 06:33:24 --> mysqli_sql_exception: Table 'ccis_portal.course' doesn't exist in C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\CCIS-portal\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `co`.`co...', 0)
+#1 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `co`.`co...')
+#2 C:\xampp\htdocs\CCIS-portal\system\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `co`.`co...')
+#3 C:\xampp\htdocs\CCIS-portal\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `co`.`co...', Array, false)
+#4 C:\xampp\htdocs\CCIS-portal\app\Models\CurriculumModel.php(25): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\CCIS-portal\app\Controllers\AdminController.php(612): App\Models\CurriculumModel->getCourses(NULL, NULL)
+#6 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(933): App\Controllers\AdminController->view_curriculums()
+#7 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+#8 C:\xampp\htdocs\CCIS-portal\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\CCIS-portal\system\Boot.php(334): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\CCIS-portal\system\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\CCIS-portal\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 C:\xampp\htdocs\CCIS-portal\system\rewrite.php(44): require_once('C:\\xampp\\htdocs...')
+#13 {main}
+CRITICAL - 2025-07-14 06:33:24 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'ccis_portal.course' doesn't exist
+[Method: GET, Route: admin/academics/curriculums]
+in SYSTEMPATH\Database\BaseConnection.php on line 692.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC', [], false)
+ 2 APPPATH\Models\CurriculumModel.php(25): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\AdminController.php(612): App\Models\CurriculumModel->getCourses(null, null)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_curriculums()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+10 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-14 06:33:24 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'ccis_portal.course' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC', [], false)
+ 4 APPPATH\Models\CurriculumModel.php(25): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\AdminController.php(612): App\Models\CurriculumModel->getCourses(null, null)
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_curriculums()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+CRITICAL - 2025-07-14 06:33:24 --> [Caused by] mysqli_sql_exception: Table 'ccis_portal.course' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(738): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(652): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `co`.`course_code`, `co`.`course_description`, `co`.`lec_units`, `co`.`lab_units`, `cu`.`year_level`, `cu`.`course_semester`
+FROM `course` AS `co`
+LEFT JOIN `curriculums` AS `cu` ON `cu`.`course_id` = `co`.`course_id`
+ORDER BY `co`.`course_code` ASC', [], false)
+ 5 APPPATH\Models\CurriculumModel.php(25): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\AdminController.php(612): App\Models\CurriculumModel->getCourses(null, null)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AdminController->view_curriculums()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AdminController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+13 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\CCIS-portal\\public\\index.php')
+DEBUG - 2025-07-14 06:33:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:33:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:34:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 06:34:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2025-07-14 08:16:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

@@ -10,8 +10,8 @@
           Are you sure you want to log out?
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <a href="<?= site_url('auth/logout') ?>" class="btn btn-danger">Confirm Logout</a>
+          <button class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
+          <a href="<?= site_url('auth/logout') ?>" class="btn btn-outline-danger">Confirm Logout</a>
         </div>
       </div>
     </div>
@@ -90,7 +90,7 @@
                     <th>Sex</th>
                     <td><?= esc(session('sex')) ?></td>
                   </tr>
-                  <?php if (session('role') === 'student'): ?>
+                  <?php if (session('role') === 'student' && isset($programs)): ?>
                     <tr>
                       <th>Program</th>
                       <td><?= esc(session('program')) ?></td>
@@ -153,8 +153,8 @@
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+          <button class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -202,7 +202,7 @@
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
 
-              <?php if (session('role') === 'student'): ?>
+              <?php if (session('role') === 'student' && isset($programs)): ?>
               <div class="col-md-6">
                   <label for="program_id" class="form-label">Program:</label>
                   <select name="program_id" id="program_id" class="form-select">
@@ -220,10 +220,10 @@
                   <label for="year_level" class="form-label">Year Level:</label>
                   <select name="year_level" id="year_level" class="form-select">
                       <option value="">Select year level</option>
-                      <option value="1" <?= ($student['year_level'] ?? '') == 'first year' ? 'selected' : '' ?>>1st Year</option>
-                      <option value="2" <?= ($student['year_level'] ?? '') == 'second year' ? 'selected' : '' ?>>2nd Year</option>
-                      <option value="3" <?= ($student['year_level'] ?? '') == 'third year' ? 'selected' : '' ?>>3rd Year</option>
-                      <option value="4" <?= ($student['year_level'] ?? '') == 'fourth year' ? 'selected' : '' ?>>4th Year</option>
+                      <option value="1" <?= ($student['year_level'] ?? '') == 'First Year' ? 'selected' : '' ?>>1st Year</option>
+                      <option value="2" <?= ($student['year_level'] ?? '') == 'Second Year' ? 'selected' : '' ?>>2nd Year</option>
+                      <option value="3" <?= ($student['year_level'] ?? '') == 'Third Year' ? 'selected' : '' ?>>3rd Year</option>
+                      <option value="4" <?= ($student['year_level'] ?? '') == 'Fourth Year' ? 'selected' : '' ?>>4th Year</option>
                   </select>
               </div>
           <?php endif; ?>
@@ -287,8 +287,8 @@
           </div>
 
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-success">Save Changes</button>
+            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
           </div>
         </form>
       </div>
@@ -320,8 +320,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+          <button type="button" class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
         </div>
       </form>
     </div>

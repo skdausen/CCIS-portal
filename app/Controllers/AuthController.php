@@ -25,62 +25,6 @@ class AuthController extends BaseController
     }
 
     // HANDLE LOGIN FORM SUBMISSION
-    public function authenticate2()
-    {
-        $session = session();
-        $request = \Config\Services::request();
-        $model = new UserModel();
-
-        $username = $request->getPost('username');
-        $password = $request->getPost('password');
-
-        $user = $model->getUserByUsername($username);
-
-        if (!$user) {
-            $session->setFlashdata('error', 'User does not exist.');
-            return redirect()->to('auth/login')->withInput();
-        }
-
-        //  If user is already logged in (status = active), block login
-        if ($user['status'] === 'active') {
-            $session->setFlashdata('error', 'User is already logged in elsewhere.');
-            return redirect()->to('auth/login')->withInput();
-        }
-
-        //  Verify password
-        if (password_verify($password, $user['userpassword'])) {
-            // Update login timestamp and set status to active
-            $model->update($user['user_id'], [
-                'last_login' => date('Y-m-d H:i:s'),
-                'status'     => 'active'
-            ]);
-
-            // Set full session data
-            $session->set([
-                'isLoggedIn'     => true,
-                'user_id'        => $user['user_id'],
-                'username'       => $user['username'],
-                'email'          => $user['email'],
-                'role'           => $user['role'],
-                'last_login'     => date('Y-m-d H:i:s'), // updated login time
-            ]);
-
-            // Redirect based on role
-            if (in_array($user['role'], ['admin', 'superadmin'])) {
-                return redirect()->to('admin/home');
-            } else if ($user['role'] === 'faculty') {
-                return redirect()->to('faculty/home');
-            } else if ($user['role'] === 'student') {
-                return redirect()->to('student/home');
-            } else {
-                return redirect()->to('home');
-            }
-        }
-        // If password is incorrect
-        $session->setFlashdata('error', 'Incorrect password.');
-        return redirect()->to('auth/login')->withInput(); 
-    }
-
     public function authenticate()
     {
         $session = session();

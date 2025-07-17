@@ -26,13 +26,13 @@
                     <option value="second">Second</option>
                     <option value="midyear">Midyear</option>
                 </select>
-                <button type="button" id="clearFilterBtn" class="btn btn-secondary ms-2">Clear</button>
+                <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
             </div>
             <div class="col-md-5 mb-2">
                 <input type="text" id="searchInput" class="form-control" placeholder="Search by School Year...">
             </div>
             <div class="col-md-4 mb-2 d-flex justify-content-end">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSemesterModal">Add New Semester</button>
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addSemesterModal">Add New Semester</button>
             </div>
         </div>
 
@@ -79,9 +79,9 @@
                                         <div class="mb-3">
                                             <label>Semester</label>
                                             <select name="semester" class="form-select" required>
-                                                <option value="first semester" <?= $semester['semester'] === 'first semester' ? 'selected' : '' ?>>First Semester</option>
-                                                <option value="second semester" <?= $semester['semester'] === 'second semester' ? 'selected' : '' ?>>Second Semester</option>
-                                                <option value="midyear" <?= $semester['semester'] === 'midyear' ? 'selected' : '' ?>>Midyear</option>
+                                                <option value="first semester" <?= $semester['semester'] === 'First Semester' ? 'selected' : '' ?>>First Semester</option>
+                                                <option value="second semester" <?= $semester['semester'] === 'Second Semester' ? 'selected' : '' ?>>Second Semester</option>
+                                                <option value="midyear" <?= $semester['semester'] === 'Midyear' ? 'selected' : '' ?>>Midyear</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">
@@ -97,8 +97,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Update</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-outline-success">Update</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </form>
                             </div>
@@ -119,8 +119,8 @@
                                         Are you sure you want to delete <strong><?= esc(ucfirst($semester['semester'])) ?> - <?= esc($semester['schoolyear']) ?></strong>?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </div>
                             </form>
@@ -164,140 +164,18 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Add</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-outline-success">Add</button>
+                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Duplicate Alert Modal -->
-        <div class="modal fade" id="duplicateModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title">Warning</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="duplicateMessage">The semester and school year combination already exists. Please try again.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div> <!-- End of container -->
 </div> <!-- End of main-container -->
 
-
-<!-- Trigger duplicate modal if backend sets an error -->
-<?php if (session()->getFlashdata('error')): ?>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateModal'));
-        document.getElementById('duplicateMessage').innerText = "<?= esc(session()->getFlashdata('error')) ?>";
-        duplicateModal.show();
-        setTimeout(() => { duplicateModal.hide(); }, 1500);
-    });
-</script>
-<?php endif; ?>
-
-<!-- Duplicate Check Script -->
-<script>
-    function checkDuplicate(form, currentId = null) {
-    const semester = form.querySelector('[name="semester"]').value.trim().toLowerCase();
-    const schoolyear = form.querySelector('[name="schoolyear"]').value.trim().toLowerCase();
-
-    let isDuplicate = false;
-
-    document.querySelectorAll('#semestersTable tbody tr').forEach(row => {
-        const rowSemester = row.cells[0].textContent.trim().toLowerCase();
-        const rowSchoolYear = row.cells[1].textContent.trim().toLowerCase();
-        const rowId = row.getAttribute('data-id');
-
-        if (semester === rowSemester && schoolyear === rowSchoolYear && rowId !== String(currentId || '')) {
-            isDuplicate = true;
-        }
-    });
-
-    if (isDuplicate) {
-        const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateModal'));
-        duplicateModal.show();
-        setTimeout(() => { duplicateModal.hide(); }, 1500);
-        return false; // Prevent form submit
-    }
-
-    return true; // Allow form submit
-    }
-</script>
-
-<!-- Duplicate Check Script -->
-<script>
-    function checkDuplicate(form, currentId = null) {
-        const semester = form.querySelector('[name="semester"]').value.trim().toLowerCase();
-        const schoolyear = form.querySelector('[name="schoolyear"]').value.trim().toLowerCase();
-
-        let isDuplicate = false;
-
-        document.querySelectorAll('#semestersTable tbody tr').forEach(row => {
-            const rowSemester = row.cells[0].textContent.trim().toLowerCase();
-            const rowSchoolYear = row.cells[1].textContent.trim().toLowerCase();
-            const rowId = row.getAttribute('data-id');
-
-            if (semester === rowSemester && schoolyear === rowSchoolYear && rowId !== String(currentId || '')) {
-                isDuplicate = true;
-            }
-        });
-
-        if (isDuplicate) {
-            const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateModal'));
-            duplicateModal.show();
-
-            // Auto-close after 1.5 seconds
-            setTimeout(() => {
-                duplicateModal.hide();
-            }, 1500);
-
-            return false; // Prevent form submission
-        }
-
-        return true; // Allow submission
-    }
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const semesterFilter = document.getElementById('semesterFilter');
-        const searchInput = document.getElementById('searchInput');
-        const clearFilterBtn = document.getElementById('clearFilterBtn');
-        const rows = document.querySelectorAll('#semestersTable tbody tr');
-
-        function applyFilters() {
-            const semesterValue = semesterFilter.value.toLowerCase();
-            const searchValue = searchInput.value.toLowerCase();
-
-            rows.forEach(row => {
-                const semesterText = row.cells[0].textContent.trim().toLowerCase();
-                const schoolYearText = row.cells[1].textContent.trim().toLowerCase();
-
-                const matchesSemester = !semesterValue || semesterText === semesterValue;
-                const matchesSearch = !searchValue || schoolYearText.includes(searchValue);
-
-                if (matchesSemester && matchesSearch) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        semesterFilter.addEventListener('change', applyFilters);
-        searchInput.addEventListener('input', applyFilters);
-        clearFilterBtn.addEventListener('click', () => {
-            semesterFilter.value = '';
-            searchInput.value = '';
-            applyFilters();
-        });
-    });
+    
 </script>
 

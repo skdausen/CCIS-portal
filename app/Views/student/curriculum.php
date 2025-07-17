@@ -8,11 +8,20 @@
     </div>
 
     <?php if ($currentYearKey && !empty($groupedSubjects[$currentYearKey])): ?>
-        <h5 class="mt-4 fw-bold"><?= $currentYearKey ?></h5>
+        <!-- Show Year Level Properly -->
+        <h4 class="mt-4 fw-bold"><?= $yearLevelLabels[$currentYearKey] ?? '' ?></h4>
 
-        <?php foreach ($groupedSubjects[$currentYearKey] as $semester => $subjects): ?>
-            <?php if (!empty($subjects)): ?>
-                <h6 class="mt-3"><?= $semester ?></h6>
+        <?php 
+        $semesters = [
+            $currentYearKey . 'S1' => '1st Semester',
+            $currentYearKey . 'S2' => '2nd Semester',
+            $currentYearKey . 'S3' => 'Midyear',
+        ];
+        ?>
+
+        <?php foreach ($semesters as $semKey => $semLabel): ?>
+            <?php if (!empty($groupedSubjects[$semKey])): ?>
+                <h6 class="mt-3"><?= $semLabel ?></h6>
                 <table class="table table-bordered curriculum-table">
                     <thead class="table-light">
                         <tr>
@@ -27,7 +36,7 @@
                         <?php 
                         $totalLec = 0;
                         $totalLab = 0;
-                        foreach ($subjects as $subject):
+                        foreach ($groupedSubjects[$semKey] as $subject):
                             $totalLec += $subject['lec_units'];
                             $totalLab += $subject['lab_units'];
                         ?>
@@ -52,6 +61,8 @@
     <?php else: ?>
         <p class="text-muted">No subjects for this year.</p>
     <?php endif; ?>
+</div>
+
 
    <nav aria-label="Curriculum pagination">
     <ul class="pagination justify-content-center my-4">

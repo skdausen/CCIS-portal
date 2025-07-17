@@ -359,7 +359,7 @@
         filterRows();
     });
 </script>
-\<script>
+<script>
 function toggleAddUnits() {
     const typeSelect = document.getElementById('add_subject_type');
     const labGroup = document.getElementById('lab_units_group');

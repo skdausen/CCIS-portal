@@ -26,11 +26,7 @@
 <form method="get" action="<?= site_url('admin/academics/curriculums') ?>" class="mb-4">
     <div class="row g-2 align-items-center">
         <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Search Curriculum Name..." value="<?= esc($search ?? '') ?>">
-        </div>
-
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-success w-100">Search</button>
+           <input type="text" id="searchInput" class="form-control" placeholder="Search currciculum name">
         </div>
 
         <div class="col-md-2">
@@ -80,19 +76,20 @@
 </div>
 
 
-<?php foreach ($curriculumsToDisplay as $curriculum): ?>
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5>
-                <a href="<?= site_url('admin/academics/curriculums/view/' . $curriculum['curriculum_id']) ?>">
-                    <?= esc($curriculum['curriculum_name']) ?>
-                </a>
-            </h5>
-            <p class="mb-0"><?= esc($curriculum['program_name']) ?></p>
+<div id="curriculumList">
+    <?php foreach ($curriculumsToDisplay as $curriculum): ?>
+        <div class="card mb-3 curriculum-card">
+            <div class="card-body">
+                <h5>
+                    <a href="<?= site_url('admin/academics/curriculums/view/' . $curriculum['curriculum_id']) ?>">
+                        <?= esc($curriculum['curriculum_name']) ?>
+                    </a>
+                </h5>
+                <p class="mb-0"><?= esc($curriculum['program_name']) ?></p>
+            </div>
         </div>
-    </div>
-<?php endforeach; ?>
-
+    <?php endforeach; ?>
+</div>
 
 
 
@@ -104,3 +101,31 @@ document.getElementById('clearFilterBtn').addEventListener('click', function() {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearFilterBtn');
+        const cards = document.querySelectorAll('#curriculumList .curriculum-card');
+
+        function filterCards() {
+            const searchVal = searchInput.value.toLowerCase();
+            cards.forEach(card => {
+                const title = card.querySelector('h5').textContent.toLowerCase();
+                const program = card.querySelector('p').textContent.toLowerCase();
+                const match = title.includes(searchVal) || program.includes(searchVal);
+                card.style.display = match ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterCards);
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            filterCards();
+        });
+
+        filterCards();
+    });
+</script>

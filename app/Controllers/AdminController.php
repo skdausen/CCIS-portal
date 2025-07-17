@@ -847,32 +847,55 @@ public function view_curriculum_detail($curriculum_id)
     $subjectModel = new SubjectModel();
     $programModel = new ProgramModel();
 
-    // Fetch curriculum and validate existence
     $curriculum = $curriculumModel->find($curriculum_id);
     if (!$curriculum) {
         throw new \CodeIgniter\Exceptions\PageNotFoundException('Curriculum not found');
     }
 
-    // Get program name
     $program = $programModel->find($curriculum['program_id']);
     $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
 
-    // Get filter from query string
     $selectedFilter = $this->request->getGet('yearlevel_sem');
 
-    // Fetch and optionally filter subjects
-    $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->findAll();
-    $filteredSubjects = array_filter($subjects, function ($subject) use ($selectedFilter) {
-        return empty($selectedFilter) || $subject['yearlevel_sem'] === $selectedFilter;
-    });
+    $subjects = $subjectModel
+        ->where('curriculum_id', $curriculum_id)
+        ->orderBy('yearlevel_sem ASC, subject_code ASC')
+        ->findAll();
+
+    $groupedSubjects = [];
+    foreach ($subjects as $subject) {
+        if (str_starts_with($subject['yearlevel_sem'], 'Y1')) {
+            $groupedSubjects['Y1'][] = $subject;
+        } elseif (str_starts_with($subject['yearlevel_sem'], 'Y2')) {
+            $groupedSubjects['Y2'][] = $subject;
+        } elseif (str_starts_with($subject['yearlevel_sem'], 'Y3')) {
+            $groupedSubjects['Y3'][] = $subject;
+        } elseif (str_starts_with($subject['yearlevel_sem'], 'Y4')) {
+            $groupedSubjects['Y4'][] = $subject;
+        }
+    }
+
+    $yearKeys = array_keys($groupedSubjects);
+    $page = (int)$this->request->getGet('page') ?: 1;
+    $totalPages = count($yearKeys);
+    $currentYearKey = $yearKeys[$page - 1] ?? null;
+
+    $yearLevelLabels = [
+        'Y1' => '1st Year',
+        'Y2' => '2nd Year',
+        'Y3' => '3rd Year',
+        'Y4' => '4th Year',
+    ];
 
     $data = [
         'curriculum'          => $curriculum,
         'program'             => $program,
-        'subjects'            => $subjects,
         'programs'            => $programModel->findAll(),
-        'curriculumsToDisplay'=> [$curriculum],
-        'curriculumSubjects'  => [$curriculum_id => $filteredSubjects],
+        'groupedSubjects'     => $groupedSubjects,
+        'yearLevelLabels'     => $yearLevelLabels,
+        'currentYearKey'      => $currentYearKey,
+        'page'                => $page,
+        'totalPages'          => $totalPages,
         'selectedFilter'      => $selectedFilter,
     ];
 

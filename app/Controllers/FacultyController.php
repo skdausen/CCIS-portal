@@ -419,42 +419,72 @@ class FacultyController extends BaseController
 
     public function downloadGradeTemplate($classId)
     {
-        $studentModel = new StudentModel();
-        $studentScheduleModel = new StudentScheduleModel();
+        $classModel = new \App\Models\ClassModel();
+        $studentModel = new \App\Models\StudentModel();
+        $studentScheduleModel = new \App\Models\StudentScheduleModel();
+        $gradeModel = new \App\Models\GradeModel();
 
-        // Get students for this class
-        $students = $studentModel->select('students.student_id, CONCAT(students.lname, ", ", students.fname, " ", students.mname) AS full_name')
+        // Get class info
+        $class = $classModel
+            ->select('classes.*, subjects.subject_code, subjects.subject_name')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id')
+            ->find($classId);
+
+        if (!$class) {
+            return redirect()->back()->with('error', 'Class not found.');
+        }
+
+        // Get students enrolled in this class
+        $students = $studentModel
+            ->select('students.student_id, students.fname, students.mname, students.lname, students.stb_id')
             ->join('student_schedules', 'student_schedules.stb_id = students.stb_id')
             ->where('student_schedules.class_id', $classId)
             ->findAll();
+
+        // Map grades by stb_id
+        $grades = $gradeModel->where('class_id', $classId)->findAll();
+        $gradeMap = [];
+        foreach ($grades as $g) {
+            $gradeMap[$g['stb_id']] = $g;
+        }
 
         // Create spreadsheet
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Header
-        $sheet->fromArray(['student_id', 'full_name', 'mt_numgrade', 'fn_numgrade'], NULL, 'A1');
+        // Headers
+        $sheet->setCellValue('A1', 'student_id');
+        $sheet->setCellValue('B1', 'full_name');
+        $sheet->setCellValue('C1', 'midterm_grade');
+        $sheet->setCellValue('D1', 'final_grade');
 
-        // Rows
+        // Fill data
         $row = 2;
         foreach ($students as $student) {
+            $fullName = "{$student['lname']}, {$student['fname']} {$student['mname']}";
+            $midterm = $gradeMap[$student['stb_id']]['mt_numgrade'] ?? '';
+            $final   = $gradeMap[$student['stb_id']]['fn_numgrade'] ?? '';
+
             $sheet->setCellValue("A{$row}", $student['student_id']);
-            $sheet->setCellValue("B{$row}", $student['full_name']);
+            $sheet->setCellValue("B{$row}", $fullName);
+            $sheet->setCellValue("C{$row}", $midterm);
+            $sheet->setCellValue("D{$row}", $final);
             $row++;
         }
 
-        // Download as file
+        // Generate filename
+        $safeCode = preg_replace('/[^a-zA-Z0-9]/', '_', $class['subject_code']);
+        $safeName = preg_replace('/[^a-zA-Z0-9]/', '_', $class['subject_name']);
+        $filename = "{$safeCode}_{$safeName}_Template.xlsx";
+
+        // Output file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"$filename\"");
+        header('Cache-Control: max-age=0');
+
         $writer = new Xlsx($spreadsheet);
-
-        $filename = 'grade_template_class_' . $classId . '.xlsx';
-        $response = service('response');
-
-        // Set headers
-        return $response
-            ->setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            ->setHeader('Content-Disposition', "attachment; filename=\"$filename\"")
-            ->setHeader('Cache-Control', 'max-age=0')
-            ->setBody($this->spreadsheetToOutput($writer));
+        $writer->save('php://output');
+        exit;
     }
 
     // Helper to capture spreadsheet output

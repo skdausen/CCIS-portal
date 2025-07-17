@@ -20,7 +20,7 @@
             </a>
 
 
-
+            
             <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/save') ?>" method="post">
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle custom-padding">
@@ -76,6 +76,9 @@
                     <a href="<?= base_url('faculty/class/' . $class['class_id']) ?>" class="btn btn btn-outline-secondary btn-thin btn-sm px-3 py-1 rounded-1">Back</a>
                 </div>
             </form>
+
+
+
         </div>
     </div>
 

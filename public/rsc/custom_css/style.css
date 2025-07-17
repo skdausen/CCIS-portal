@@ -565,18 +565,15 @@ body {
     text-align: center;
 }
 
-.pagination .page-link {
-    border-radius: 50px;
-    padding: 6px 14px;
-    color: #6c757d;
-}
+    .pagination .page-item.active .page-link {
+        background-color: #198754;
+        border-color: #198754;
+        color: white;
+    }
+    .pagination .page-link {
+        color: #198754;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #ccc;
+    }
 
-.pagination .page-item.active .page-link {
-    background-color: #198754; /* Bootstrap success */
-    border-color: #198754;
-    color: #fff;
-}
-
-.pagination .page-link:hover {
-    color: #198754;
-}

@@ -84,3 +84,21 @@
         <?php endif; ?>
     </ul>
 </nav>
+
+
+<script>
+    document.addEventListener('keydown', function(event) {
+        const currentPage = <?= $page ?>;
+        const totalPages = <?= $totalPages ?>;
+
+        if (event.key === 'ArrowRight') {
+            const nextPage = (currentPage >= totalPages) ? 1 : currentPage + 1;
+            window.location.href = "<?= site_url('student/curriculum?page=') ?>" + nextPage;
+        }
+        if (event.key === 'ArrowLeft') {
+            const prevPage = (currentPage <= 1) ? totalPages : currentPage - 1;
+            window.location.href = "<?= site_url('student/curriculum?page=') ?>" + prevPage;
+        }
+    });
+</script>
+

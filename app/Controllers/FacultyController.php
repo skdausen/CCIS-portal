@@ -10,6 +10,10 @@ use App\Models\GradeModel;
 use App\Models\SemesterModel;
 use App\Models\StudentModel;
 use App\Models\UserModel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use CodeIgniter\HTTP\Response;
 
 class FacultyController extends BaseController
 {
@@ -264,44 +268,44 @@ class FacultyController extends BaseController
         $gradesData = $this->request->getPost('grades');
 
         foreach ($gradesData as $stb_id => $grade) {
-        // Safely get the numerical grades (null if not set or empty)
-        $mtNum = isset($grade['mt_numgrade']) && $grade['mt_numgrade'] !== '' ? floatval($grade['mt_numgrade']) : null;
-        $fnNum = isset($grade['fn_numgrade']) && $grade['fn_numgrade'] !== '' ? floatval($grade['fn_numgrade']) : null;
+            // Safely get the numerical grades (null if not set or empty)
+            $mtNum = isset($grade['mt_numgrade']) && $grade['mt_numgrade'] !== '' ? floatval($grade['mt_numgrade']) : null;
+            $fnNum = isset($grade['fn_numgrade']) && $grade['fn_numgrade'] !== '' ? floatval($grade['fn_numgrade']) : null;
 
-        // ❌ If both are empty, skip this student
-        if ($mtNum === null && $fnNum === null) {
-            continue;
+            // ❌ If both are empty, skip this student
+            if ($mtNum === null && $fnNum === null) {
+                continue;
+            }
+
+            // Transmute
+            $mtGrade = $mtNum !== null ? $this->transmute($mtNum) : null;
+            $fnGrade = $fnNum !== null ? $this->transmute($fnNum) : null;
+
+            // Average for semestral
+            $semNum = ($mtNum !== null && $fnNum !== null) ? round(($mtNum + $fnNum) / 2, 2) : null;
+            $semGrade = $semNum !== null ? $this->transmute($semNum) : null;
+
+            $data = [
+                'stb_id'        => $stb_id,
+                'class_id'      => $classId,
+                'mt_numgrade'   => $mtNum,
+                'mt_grade'      => $mtGrade,
+                'fn_numgrade'   => $fnNum,
+                'fn_grade'      => $fnGrade,
+                'sem_numgrade'  => $semNum,
+                'sem_grade'     => $semGrade,
+            ];
+
+            $existing = $gradeModel->where('stb_id', $stb_id)
+                                ->where('class_id', $classId)
+                                ->first();
+
+            if ($existing) {
+                $gradeModel->update($existing['grade_id'], $data);
+            } else {
+                $gradeModel->insert($data);
+            }
         }
-
-        // Transmute
-        $mtGrade = $mtNum !== null ? $this->transmute($mtNum) : null;
-        $fnGrade = $fnNum !== null ? $this->transmute($fnNum) : null;
-
-        // Average for semestral
-        $semNum = ($mtNum !== null && $fnNum !== null) ? round(($mtNum + $fnNum) / 2, 2) : null;
-        $semGrade = $semNum !== null ? $this->transmute($semNum) : null;
-
-        $data = [
-            'stb_id'        => $stb_id,
-            'class_id'      => $classId,
-            'mt_numgrade'   => $mtNum,
-            'mt_grade'      => $mtGrade,
-            'fn_numgrade'   => $fnNum,
-            'fn_grade'      => $fnGrade,
-            'sem_numgrade'  => $semNum,
-            'sem_grade'     => $semGrade,
-        ];
-
-        $existing = $gradeModel->where('stb_id', $stb_id)
-                            ->where('class_id', $classId)
-                            ->first();
-
-        if ($existing) {
-            $gradeModel->update($existing['grade_id'], $data);
-        } else {
-            $gradeModel->insert($data);
-        }
-    }
 
 
         return redirect()->back()->with('success', 'Grades saved successfully!');
@@ -321,7 +325,145 @@ class FacultyController extends BaseController
         return '5.00';
     }
 
+    public function uploadGrades($classId)
+    {
+        $file = $this->request->getFile('grades_file');
 
+        if (!$file->isValid() || $file->getExtension() !== 'xlsx' && $file->getExtension() !== 'csv') {
+            return redirect()->back()->with('error', 'Please upload a valid Excel or CSV file.');
+        }
+
+        $studentModel = new StudentModel();
+        $gradeModel = new GradeModel();
+
+        // Load file with PhpSpreadsheet
+        $spreadsheet = IOFactory::load($file->getTempName());
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray(null, true, true, true);
+
+        $header = array_map('strtolower', $rows[1]); // First row is header
+        unset($rows[1]);
+
+        $successCount = 0;
+        $errors = [];
+
+        foreach ($rows as $i => $row) {
+            $studentId = $row['A'] ?? null;
+            $mtNum = isset($row['C']) ? floatval($row['C']) : null;
+            $fnNum = isset($row['D']) ? floatval($row['D']) : null;
+
+            if (!$studentId) {
+                $errors[] = "Row $i: Missing student ID.";
+                continue;
+            }
+
+            $student = $studentModel->where('student_id', $studentId)->first();
+
+            if (!$student) {
+                $errors[] = "Row $i: Student ID {$studentId} not found.";
+                continue;
+            }
+
+            $stbId = $student['stb_id'];
+
+            if ($mtNum === null && $fnNum === null) {
+                $errors[] = "Row $i: No grades provided for {$studentId}.";
+                continue;
+            }
+
+            $mtGrade = $mtNum !== null ? $this->transmute($mtNum) : null;
+            $fnGrade = $fnNum !== null ? $this->transmute($fnNum) : null;
+            $semNum = null;
+            $semGrade = null;
+
+            if ($mtNum !== null && $fnNum !== null) {
+                $semNum = round(($mtNum + $fnNum) / 2, 2);
+                $semGrade = $this->transmute($semNum);
+            }
+
+
+            $data = [
+                'stb_id' => $stbId,
+                'class_id' => $classId,
+                'mt_numgrade' => $mtNum,
+                'mt_grade'    => $mtGrade,
+                'fn_numgrade' => $fnNum,
+                'fn_grade'    => $fnGrade,
+                'sem_numgrade'=> $semNum,
+                'sem_grade'   => $semGrade,
+            ];
+
+            $existing = $gradeModel->where('stb_id', $stbId)->where('class_id', $classId)->first();
+
+            if ($existing) {
+                $gradeModel->update($existing['grade_id'], $data);
+            } else {
+                $gradeModel->insert($data);
+            }
+
+            $successCount++;
+        }
+
+        $message = "$successCount grade(s) successfully uploaded.";
+        if (!empty($errors)) {
+            $message .= "<br><strong>Errors:</strong><ul>";
+            foreach ($errors as $e) {
+                $message .= "<li>" . esc($e) . "</li>";
+            }
+            $message .= "</ul>";
+            return redirect()->back()->with('error', $message);
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function downloadGradeTemplate($classId)
+    {
+        $studentModel = new StudentModel();
+        $studentScheduleModel = new StudentScheduleModel();
+
+        // Get students for this class
+        $students = $studentModel->select('students.student_id, CONCAT(students.lname, ", ", students.fname, " ", students.mname) AS full_name')
+            ->join('student_schedules', 'student_schedules.stb_id = students.stb_id')
+            ->where('student_schedules.class_id', $classId)
+            ->findAll();
+
+        // Create spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header
+        $sheet->fromArray(['student_id', 'full_name', 'mt_numgrade', 'fn_numgrade'], NULL, 'A1');
+
+        // Rows
+        $row = 2;
+        foreach ($students as $student) {
+            $sheet->setCellValue("A{$row}", $student['student_id']);
+            $sheet->setCellValue("B{$row}", $student['full_name']);
+            $row++;
+        }
+
+        // Download as file
+        $writer = new Xlsx($spreadsheet);
+
+        $filename = 'grade_template_class_' . $classId . '.xlsx';
+        $response = service('response');
+
+        // Set headers
+        return $response
+            ->setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->setHeader('Content-Disposition', "attachment; filename=\"$filename\"")
+            ->setHeader('Cache-Control', 'max-age=0')
+            ->setBody($this->spreadsheetToOutput($writer));
+    }
+
+    // Helper to capture spreadsheet output
+    private function spreadsheetToOutput($writer)
+    {
+        ob_start();
+        $writer->save('php://output');
+        return ob_get_clean();
+    }
 
     private function expandDays($days)
     {

@@ -116,9 +116,13 @@ $routes->group('faculty', function ($routes) {
     $routes->get('class/(:num)', 'FacultyController::viewClass/$1');
     $routes->post('class/(:num)/enroll', 'FacultyController::enrollStudents/$1');
     $routes->post('class/(:num)/remove-student/(:num)', 'FacultyController::removeStudent/$1/$2');
+
+    // Grades Management
     $routes->get('class/(:num)/grades', 'FacultyController::manageGrades/$1');
     $routes->post('class/(:num)/grades/save', 'FacultyController::saveGrades/$1');
-    
+    $routes->post('class/(:num)/grades/upload', 'FacultyController::uploadGrades/$1');
+    $routes->get('class/(:num)/grades/download-template', 'FacultyController::downloadGradeTemplate/$1'); //download template
+
 });
 
 

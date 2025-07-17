@@ -176,6 +176,37 @@
 </div> <!-- End of main-container -->
 
 <script>
-    
-</script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const semesterFilter = document.getElementById('semesterFilter');
+        const searchInput = document.getElementById('searchInput');
+        const clearFilterBtn = document.getElementById('clearFilterBtn');
+        const tableRows = document.querySelectorAll('#semestersTable tbody tr');
 
+        function filterTable() {
+            const semesterValue = semesterFilter.value.toLowerCase();
+            const searchValue = searchInput.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const semesterText = row.children[0].textContent.toLowerCase();
+                const schoolYearText = row.children[1].textContent.toLowerCase();
+
+                const semesterMatch = !semesterValue || semesterText.includes(semesterValue);
+                const searchMatch = !searchValue || schoolYearText.includes(searchValue);
+
+                if (semesterMatch && searchMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        semesterFilter.addEventListener('change', filterTable);
+        searchInput.addEventListener('input', filterTable);
+        clearFilterBtn.addEventListener('click', function() {
+            semesterFilter.value = '';
+            searchInput.value = '';
+            filterTable();
+        });
+    });
+</script>

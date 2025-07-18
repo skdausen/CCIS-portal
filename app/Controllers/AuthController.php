@@ -128,22 +128,6 @@ class AuthController extends BaseController
             return redirect()->to('auth/login')->withInput();
         }
     }
-
-    public function setInactive()
-    {
-        $data = $this->request->getJSON();
-        $userId = $data->user_id ?? null;
-
-        if ($userId) {
-            $userModel = new UserModel();
-            $userModel->update($userId, ['status' => 'inactive']);
-            return $this->response->setJSON(['success' => true]);
-        }
-
-        return $this->response->setJSON(['success' => false]);
-    }
-
-
     // LOGOUT USER
     public function logout()
     {

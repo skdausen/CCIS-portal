@@ -344,30 +344,6 @@
 </script>
 <?php endif; ?>
 
-<script>
-    const USER_ID = "<?= session('user_id') ?>";
-</script>
-
-<script>
-    setInterval(function () {
-        fetch("<?= site_url('auth/checkSession') ?>")
-            .then(res => res.json())
-            .then(data => {
-                if (!data.active) {
-                    // Mark user as inactive (via fetch)
-                    fetch("<?= site_url('auth/setInactive') ?>", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ user_id: USER_ID })
-                    }).then(() => {
-                        window.location.href = "<?= site_url('auth/logout') ?>";
-                    });
-                }
-            });
-    }, 2500);
-</script>
 
 <!-- sidebar script -->
 <script>

@@ -401,8 +401,12 @@ body {
 .pagination .page-link:hover {
     color: #198754;
 }
-
-
+.back-arrow i{
+    color: black;
+}
+.back-arrow i:hover{
+    color: green;
+}
 
 /* Custom styles for user details */
 #detailProfileImg {
@@ -576,3 +580,12 @@ body {
 :is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(5) {
     text-align: center;
 }
+
+/* Truncate subject name text with ellipsis */
+.curriculum-table td.truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0;
+}
+

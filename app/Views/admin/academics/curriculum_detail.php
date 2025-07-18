@@ -14,10 +14,16 @@
 
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">Curriculum Details</h3>
-        <h3 class="fw-bold"><?= esc($curriculum['curriculum_name']) ?></h3>
-        <p class="text-muted small"><?= esc($program['program_name'] ?? '') ?></p>
+    <div class="mb-4">
+        <div class="back-arrow fs-4 mb-3">
+            <a href="<?= site_url('admin/academics/curriculums') ?>" class="small text-decoration-none btn-success"><i class="fa-solid fa-arrow-left"></i></a>
+        </div>
+        <div class="d-flex">
+            <div>
+                <h4 class="fw-bold"><?= esc($curriculum['curriculum_name']) ?></h4>
+                <p class="text-muted small"><?= esc($program['program_name'] ?? '') ?></p>
+            </div>
+        </div>
     </div>
 
     <?php if ($currentYearKey && !empty($groupedSubjects[$currentYearKey])): ?>
@@ -82,13 +88,7 @@
                         ?>
                         <tr>
                             <td><?= esc($subject['subject_code']) ?></td>
-                            <?php
-                            $fullTitle = $subject['subject_name'];
-                            $shortTitle = strlen($fullTitle) > 52 ? substr($fullTitle, 0, 52) . '...' : $fullTitle;
-                            ?>
-                            <td title="<?= esc($fullTitle) ?>">
-                                <?= esc($shortTitle) ?>
-                            </td>
+                            <td><?= esc($subject['subject_name']) ?></td>
                             <td class="text-center"><?= esc($subject['lec_units']) ?></td>
                             <td class="text-center"><?= esc($subject['lab_units']) ?></td>
                             <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>

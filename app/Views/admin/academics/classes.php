@@ -197,7 +197,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 <?= $class['subject_type'] == 'LEC with LAB' ? 'col-md-6' : 'col-md-12' ?>">
                             <h6>Lecture Schedule</h6>
                             <input type="text" name="lec_day" value="<?= esc($class['lec_day']) ?>" class="form-control mb-2" placeholder="Day/s" required>
                             <input type="text" name="lec_room" value="<?= esc($class['lec_room']) ?>" class="form-control mb-2" placeholder="Room" required>
@@ -211,7 +211,6 @@
                             <input type="text" name="lab_room" value="<?= esc($class['lab_room']) ?>" class="form-control mb-2" placeholder="Lab Room" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
                             <input type="time" name="lab_start" value="<?= esc($class['lab_start']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
                             <input type="time" name="lab_end" value="<?= esc($class['lab_end']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
-
                         </div>
                     </div>
                 </div>
@@ -289,8 +288,8 @@
                             </div>
                         </div>
                         
-                         <!-- Subject -->
-                       <div class="mb-3 position-relative">
+                        <!-- Subject -->
+                        <div class="mb-3 position-relative">
                             <label for="subjectSearchInput" class="form-label">Subject</label>
                             <input type="text" id="subjectSearchInput" class="form-control" placeholder="Search Subject Code or Name..." autocomplete="off" required>
                             <input type="hidden" name="subject_id" id="subjectIdInput">
@@ -306,10 +305,10 @@
                         <ul id="subjectSuggestions" class="list-group position-absolute" style="z-index: 1050;"></ul>
 
 
-                        <!-- Schedule -->
-                     <div class="row">
+                    <!-- Schedule -->
+                    <div class="row">
                         <!-- Lecture Schedule -->
-                        <div id="lectureSchedule" class="col-md-6">
+                        <div id="lectureSchedule" class="col-md-12">
                             <h6>Lecture Schedule</h6>
                             <div class="mb-3">
                                 <label for="lecDay" class="form-label">Day/s</label>
@@ -369,9 +368,6 @@
 
 
 
-
-
-
 <script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
 
 <!-- No Active Semester Modal -->
@@ -389,58 +385,10 @@
     </div>
 </div>
 
+<!-- External JS for class-related features -->
+<script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
 
-
-
-
-<!-- Success Modal -->
-<div class="modal fade" id="successModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Success</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="successMessage"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Error</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="errorMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-danger" onclick="location.reload()">Retry</button>
-                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<script>
-    const subjects = <?= json_encode(array_map(function($subject) {
-        return [
-            'id' => $subject['subject_id'],
-            'code' => $subject['subject_code'],
-            'name' => $subject['subject_name'],
-            'type' => $subject['subject_type']
-        ];
-    }, $courses)); ?>;
-</script>
-
-
+<!-- Initialize the subject data array using PHP (used for both add/edit subject search) -->
 <script>
     // Data for subject search
     const subjects = <?= json_encode(array_map(function ($subject) {
@@ -457,13 +405,16 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ----- ADD CLASS SUBJECT SEARCH -----
+    // Handles subject search input and display for the "Add Class" form
     const searchInput = document.getElementById('subjectSearchInput');
     const subjectIdInput = document.getElementById('subjectIdInput');
     const subjectTypeInput = document.getElementById('subjectTypeInput');
     const suggestionsList = document.getElementById('subjectSuggestions');
+    const lectureSchedule = document.getElementById('lectureSchedule');
     const labScheduleSection = document.getElementById('labSchedule');
     const labFields = ['labDay', 'labRoom', 'labStart', 'labEnd'].map(id => document.getElementById(id));
 
+    // Handle user typing in subject search
     searchInput.addEventListener('input', function () {
         const query = searchInput.value.toLowerCase();
         const filteredSubjects = subjects.filter(sub =>
@@ -472,32 +423,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         suggestionsList.innerHTML = '';
         filteredSubjects.forEach(sub => {
+            // Create suggestion item
             const li = document.createElement('li');
             li.classList.add('list-group-item', 'list-group-item-action');
             li.textContent = `${sub.code} - ${sub.name}`;
             li.dataset.id = sub.id;
             li.dataset.type = sub.type;
+
+            // On selection of a subject
             li.addEventListener('click', () => {
                 searchInput.value = `${sub.code} - ${sub.name}`;
                 subjectIdInput.value = sub.id;
                 subjectTypeInput.value = sub.type;
                 suggestionsList.innerHTML = '';
 
+                // Toggle lab section and column layout based on subject type
                 if (sub.type === 'LEC with LAB') {
+                    lectureSchedule.classList.remove('d-none');
                     labScheduleSection.classList.remove('d-none');
+                    lectureSchedule.classList.remove('col-md-12');
+                    lectureSchedule.classList.add('col-md-6');
                     labFields.forEach(field => field.setAttribute('required', 'required'));
                 } else {
+                    lectureSchedule.classList.remove('d-none');
                     labScheduleSection.classList.add('d-none');
+                    lectureSchedule.classList.remove('col-md-6');
+                    lectureSchedule.classList.add('col-md-12');
                     labFields.forEach(field => {
                         field.removeAttribute('required');
                         field.value = '';
                     });
                 }
             });
+
             suggestionsList.appendChild(li);
         });
     });
 
+    // Hide suggestions on click outside
     document.addEventListener('click', function (e) {
         if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
             suggestionsList.innerHTML = '';
@@ -506,150 +469,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ----- EDIT CLASS SUBJECT SEARCH (MULTIPLE MODALS) -----
+    // Handle subject selection logic inside edit modals
     document.querySelectorAll('.edit-subject-search').forEach(input => {
-        const classId = input.dataset.id;
-        const hiddenInput = document.querySelector(`.edit-subject-id[data-id="${classId}"]`);
-        const typeInput = document.querySelector(`.edit-subject-type[data-id="${classId}"]`);
-        const suggestionList = document.querySelector(`.edit-suggestions[data-id="${classId}"]`);
-        const labSection = document.querySelector(`.edit-lab-schedule[data-id="${classId}"]`);
-
-        input.addEventListener('input', function () {
-            const query = this.value.toLowerCase();
-            const filteredSubjects = subjects.filter(sub =>
-                sub.code.toLowerCase().includes(query) || sub.name.toLowerCase().includes(query)
-            );
-
-            suggestionList.innerHTML = '';
-            filteredSubjects.forEach(sub => {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item', 'list-group-item-action');
-                li.textContent = `${sub.code} - ${sub.name}`;
-                li.dataset.id = sub.id;
-                li.dataset.type = sub.type;
-                li.addEventListener('click', () => {
-                    input.value = `${sub.code} - ${sub.name}`;
-                    hiddenInput.value = sub.id;
-                    typeInput.value = sub.type;
-                    suggestionList.innerHTML = '';
-
-                    if (sub.type === 'LEC with LAB') {
-                        labSection.classList.remove('d-none');
-                    } else {
-                        labSection.classList.add('d-none');
-                        labSection.querySelectorAll('input').forEach(input => input.value = '');
-                    }
-                });
-                suggestionList.appendChild(li);
-            });
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
-                suggestionList.innerHTML = '';
-            }
-        });
-
-        if (typeInput.value === 'LEC with LAB') {
-            labSection.classList.remove('d-none');
-        }
-    });
-
-
-    // ----- TIME INPUT FOCUS (Optional UX Tweak) -----
-    const lecEnd = document.getElementById('lecEnd');
-    const lecStart = document.getElementById('lecStart');
-    lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
-
-    const labEnd = document.getElementById('labEnd');
-    const labStart = document.getElementById('labStart');
-    labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
-
-    document.querySelectorAll('.edit-lab-schedule').forEach(section => {
-        const lecStart = section.querySelector('input[name="lec_start"]');
-        const lecEnd = section.querySelector('input[name="lec_end"]');
-        const labStart = section.querySelector('input[name="lab_start"]');
-        const labEnd = section.querySelector('input[name="lab_end"]');
-
-        lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
-        labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
-    });
-
-});
-</script>
-
-
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-    const searchInput = document.getElementById('subjectSearchInput');
-    const subjectIdInput = document.getElementById('subjectIdInput');
-    const subjectTypeInput = document.getElementById('subjectTypeInput');
-    const suggestionsList = document.getElementById('subjectSuggestions');
-    const labScheduleSection = document.getElementById('labSchedule');
-    const labFields = ['labDay', 'labRoom', 'labStart', 'labEnd'].map(id => document.getElementById(id));
-
-    function showSuggestions(filteredSubjects) {
-        suggestionsList.innerHTML = '';
-        filteredSubjects.forEach(sub => {
-            const li = document.createElement('li');
-            li.classList.add('list-group-item', 'list-group-item-action');
-            li.textContent = `${sub.code} - ${sub.name}`;
-            li.dataset.id = sub.id;
-            li.dataset.type = sub.type;
-            li.addEventListener('click', () => {
-                searchInput.value = `${sub.code} - ${sub.name}`;
-                subjectIdInput.value = sub.id;
-                subjectTypeInput.value = sub.type;
-                suggestionsList.innerHTML = '';
-
-                if (sub.type === 'LEC with LAB') {
-                    labScheduleSection.classList.remove('d-none');
-                    labFields.forEach(field => field.setAttribute('required', 'required'));
-                } else {
-                    labScheduleSection.classList.add('d-none');
-                    labFields.forEach(field => {
-                        field.removeAttribute('required');
-                        field.value = '';
-                    });
-                }
-            });
-            suggestionsList.appendChild(li);
-        });
-    }
-
-    searchInput.addEventListener('input', function () {
-        const query = searchInput.value.toLowerCase();
-        const filteredSubjects = subjects.filter(sub =>
-            sub.code.toLowerCase().includes(query) ||
-            sub.name.toLowerCase().includes(query)
-        );
-        if (query.length === 0) {
-            suggestionsList.innerHTML = '';
-        } else {
-            showSuggestions(filteredSubjects);
-        }
-    });
-
-    document.addEventListener('click', function (e) {
-        if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
-            suggestionsList.innerHTML = '';
-        }
-    });
-});
-</script>
-
-
-<script>
-
-document.querySelectorAll('.edit-subject-search').forEach(input => {
     const classId = input.dataset.id;
     const hiddenInput = document.querySelector(`.edit-subject-id[data-id="${classId}"]`);
     const typeInput = document.querySelector(`.edit-subject-type[data-id="${classId}"]`);
     const suggestionList = document.querySelector(`.edit-suggestions[data-id="${classId}"]`);
     const labSection = document.querySelector(`.edit-lab-schedule[data-id="${classId}"]`);
+    const lectureSection = document.querySelector(`.edit-lecture-schedule[data-id="${classId}"]`);
 
+    // Input event for filtering suggestions
     input.addEventListener('input', function () {
         const query = this.value.toLowerCase();
         const filteredSubjects = subjects.filter(sub =>
@@ -663,6 +492,7 @@ document.querySelectorAll('.edit-subject-search').forEach(input => {
             li.textContent = `${sub.code} - ${sub.name}`;
             li.dataset.id = sub.id;
             li.dataset.type = sub.type;
+
             li.addEventListener('click', () => {
                 input.value = `${sub.code} - ${sub.name}`;
                 hiddenInput.value = sub.id;
@@ -671,52 +501,68 @@ document.querySelectorAll('.edit-subject-search').forEach(input => {
 
                 if (sub.type === 'LEC with LAB') {
                     labSection.classList.remove('d-none');
+                    lectureSection.classList.remove('col-md-12');
+                    lectureSection.classList.add('col-md-6');
+                    labSection.classList.remove('col-md-0');
+                    labSection.classList.add('col-md-6');
                 } else {
                     labSection.classList.add('d-none');
                     labSection.querySelectorAll('input').forEach(input => input.value = '');
+                    lectureSection.classList.remove('col-md-6');
+                    lectureSection.classList.add('col-md-12');
                 }
             });
+
             suggestionList.appendChild(li);
         });
     });
 
+    // Hide suggestions when clicking outside
     document.addEventListener('click', function (e) {
         if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
             suggestionList.innerHTML = '';
         }
     });
 
+    // Set correct columns initially if already has value
     if (typeInput.value === 'LEC with LAB') {
         labSection.classList.remove('d-none');
+        lectureSection.classList.remove('col-md-12');
+        lectureSection.classList.add('col-md-6');
+        labSection.classList.remove('col-md-0');
+        labSection.classList.add('col-md-6');
+    } else {
+        labSection.classList.add('d-none');
+        lectureSection.classList.remove('col-md-6');
+        lectureSection.classList.add('col-md-12');
     }
 });
-</script>
+    // ----- TIME INPUT FOCUS (Optional UX Tweak) -----
+    // If user clicks 'end' time without filling 'start', auto-focus the start field
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    // Lecture Time
-    const lecStart = document.getElementById('lecStart');
     const lecEnd = document.getElementById('lecEnd');
+    const lecStart = document.getElementById('lecStart');
+    lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
 
-    lecEnd.addEventListener('focus', function () {
-        if (!lecStart.value) {
-            lecStart.focus();
-        }
-    });
-
-    // Lab Time
-    const labStart = document.getElementById('labStart');
     const labEnd = document.getElementById('labEnd');
+    const labStart = document.getElementById('labStart');
+    labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
 
-    labEnd.addEventListener('focus', function () {
-        if (!labStart.value) {
-            labStart.focus();
-        }
+    // Same behavior for all edit modals
+    document.querySelectorAll('.edit-lab-schedule').forEach(section => {
+        const lecStart = section.querySelector('input[name="lec_start"]');
+        const lecEnd = section.querySelector('input[name="lec_end"]');
+        const labStart = section.querySelector('input[name="lab_start"]');
+        const labEnd = section.querySelector('input[name="lab_end"]');
+
+        lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
+        labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
     });
-});
 
+});
 </script>
 
+<!-- Filter table by instructor name or section -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const tableRows = document.querySelectorAll('table tbody tr');
@@ -748,4 +594,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-

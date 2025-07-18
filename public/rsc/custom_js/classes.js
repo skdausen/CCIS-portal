@@ -1,29 +1,29 @@
 // This script handles the dynamic behavior of the class type selection and filtering functionality
 
 // It updates the class type input based on the selected subject and manages the display of lecture and lab schedules
-const subjectSelect = document.getElementById('addSubjectSelect');
-const classTypeInput = document.getElementById('subjectTypeInput'); // ✅ Corrected
-const lectureSchedule = document.getElementById('lectureSchedule');
-const labSchedule = document.getElementById('labSchedule');
+// const subjectSelect = document.getElementById('addSubjectSelect');
+// const classTypeInput = document.getElementById('subjectTypeInput'); 
+// const lectureSchedule = document.getElementById('lectureSchedule');
+// const labSchedule = document.getElementById('labSchedule');
 
-subjectSelect.addEventListener('change', function () {
-    const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
-    const subjectType = selectedOption.getAttribute('data-type') || '';
+// subjectSelect.addEventListener('change', function () {
+//     const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
+//     const subjectType = selectedOption.getAttribute('data-type') || '';
 
-    classTypeInput.value = subjectType; // ✅ Now this works.
+//     classTypeInput.value = subjectType; 
 
-    if (subjectType === 'LEC') {
-        lectureSchedule.classList.remove('d-none');
-        labSchedule.classList.add('d-none');
-        lectureSchedule.classList.remove('col-md-6');
-        lectureSchedule.classList.add('col-md-12');
-    } else {
-        lectureSchedule.classList.remove('d-none');
-        labSchedule.classList.remove('d-none');
-        lectureSchedule.classList.remove('col-md-12');
-        lectureSchedule.classList.add('col-md-6');
-    } 
-});
+//     if (subjectType === 'LEC') {
+//         lectureSchedule.classList.remove('d-none');
+//         labSchedule.classList.add('d-none');
+//         lectureSchedule.classList.remove('col-md-6');
+//         lectureSchedule.classList.add('col-md-12');
+//     } else {
+//         lectureSchedule.classList.remove('d-none');
+//         labSchedule.classList.remove('d-none');
+//         lectureSchedule.classList.remove('col-md-12');
+//         lectureSchedule.classList.add('col-md-6');
+//     } 
+// });
 
 
 
@@ -41,7 +41,7 @@ subjectSelect.addEventListener('change', function () {
             rows.forEach(row => {
                 const course = row.cells[0].textContent.toLowerCase();
                 const room = row.cells[4].textContent.toLowerCase();
-                const instructor = row.cells[5].textContent.toLowerCase();  // Corrected from 4 ➡️ 5
+                const instructor = row.cells[5].textContent.toLowerCase(); 
 
                 const matchInstructor = !instructorVal || instructor.includes(instructorVal);
                 const matchSearch = !searchVal || course.includes(searchVal) || room.includes(searchVal);

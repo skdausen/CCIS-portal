@@ -714,6 +714,22 @@ public function createClass()
         $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
 
+        // TIME VALIDATION
+        $lec_start = $this->request->getPost('lec_start');
+        $lec_end   = $this->request->getPost('lec_end');
+        $lab_start = $this->request->getPost('lab_start');
+        $lab_end   = $this->request->getPost('lab_end');
+
+        if (strtotime($lec_start) >= strtotime($lec_end)) {
+            return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
+        }
+
+        if ($subjectType === 'LEC with LAB') {
+            if (strtotime($lab_start) >= strtotime($lab_end)) {
+                return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+            }
+        }
+
         $data = [
             'ftb_id'      => $ftbId,
             'subject_id'  => $subjectId,
@@ -741,8 +757,6 @@ public function createClass()
 }
 
 
-
-
 // Update an existing class
 public function updateClass($id)
 {
@@ -750,6 +764,21 @@ public function updateClass($id)
 
     try {
         $subjectType = $this->request->getPost('subject_type');
+        $lec_start = $this->request->getPost('lec_start');
+        $lec_end = $this->request->getPost('lec_end');
+        $lab_start = $this->request->getPost('lab_start');
+        $lab_end = $this->request->getPost('lab_end');
+
+        // Time validation
+        if (strtotime($lec_start) >= strtotime($lec_end)) {
+            return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
+        }
+
+        if ($subjectType === 'LEC with LAB') {
+            if (strtotime($lab_start) >= strtotime($lab_end)) {
+                return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+            }
+        }
 
         $data = [
             'ftb_id'      => $this->request->getPost('ftb_id'),

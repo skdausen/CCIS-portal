@@ -2,6 +2,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Force browser not to cache this page -->
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>AdaL CCIS Portal</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="<?php echo base_url("rsc/bootstrap-5.3.7/css/bootstrap.css"); ?>">
@@ -18,15 +24,8 @@
         document.documentElement.classList.add("sidebar-collapsed");
     }
     </script>
-
-    <!-- Force browser not to cache this page -->
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
 </head>
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-darker">
         <div class="container-fluid position-relative">
             <a class="navbar-brand ms-3" href="#">CCIS</a>

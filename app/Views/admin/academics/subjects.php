@@ -38,9 +38,9 @@
                         <th>Subject Code</th>
                         <th>Subject Name</th>
                         <th>Subject Type</th>
-                        <th>Lecture Units</th>
-                        <th>Lab Units</th>
-                        <th>Total Units</th>
+                        <th class="text-center">Lecture Units</th>
+                        <th class="text-center">Lab Units</th>
+                        <th class="text-center">Total Units</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -58,9 +58,9 @@
                             <?= esc($shortTitle) ?>
                         </td>
                         <td><?= esc($subject['subject_type']) ?></td>
-                        <td><?= esc($subject['lec_units']) ?></td>
-                        <td><?= esc($subject['lab_units']) ?></td>
-                        <td><?= esc($subject['total_units']) ?></td>
+                        <td class="text-center"><?= esc($subject['lec_units']) ?></td>
+                        <td class="text-center"><?= esc($subject['lab_units']) ?></td>
+                        <td class="text-center"><?= esc($subject['total_units']) ?></td>
                         <td>
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
                             <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>

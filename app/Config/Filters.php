@@ -36,6 +36,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         // CUSTOM FILTER TO PREVENT BACK BUTTON CACHING
         'preventBackHistory' => \App\Filters\PreventBackHistory::class,
+        'sessionCheck' => \App\Filters\SessionExpiryCheck::class,
 
     ];
 
@@ -113,5 +114,10 @@ class Filters extends BaseFilters
             'student/*',
             'faculty/*',
         ]],
-    ];
+        'sessionCheck' => ['before' => [
+            'admin/*',
+            'student/*',
+            'faculty/*',
+        ]],
+        ];
 }

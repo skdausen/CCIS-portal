@@ -1,12 +1,9 @@
 body {
-    /* font-family: 'Inter', sans-serif; */
     background-color: white;
-    /* background: linear-gradient(to bottom right, #e0f7fa, #631561); Gradient background from your image */
-    min-height: 100vh; /* Ensure it takes full viewport height */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    /* background-color: #f8f9fa; */
 }
 /* NAVIGATION BAR STYLES */
 .navbar {
@@ -169,7 +166,6 @@ body {
 }
 
 .sidebar-nav a.active {
-    background-color: #f3e5f5;
     color: #8e44ad;
     border-left-color: #8e44ad;
 }
@@ -253,64 +249,6 @@ body {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-
-/* LOG OUT STYLES */
-.logout-container {
-    background-color: #ffffff; /* Solid white for a cleaner look */
-    padding: 3.5rem 3rem; /* Increased padding */
-    border-radius: 20px; /* More rounded corners */
-    /* Softer, more diffused shadow */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    max-width: 550px; /* Slightly wider */
-    width: 100%; /* Ensure it's responsive */
-    transform: translateY(0); /* For potential future animations */
-    transition: transform 0.3s ease-out;
-}
-.logout-container h1 {
-    color: #212529; /* Darker text for better contrast */
-    margin-bottom: 1.5rem;
-    font-weight: 700; /* Bolder font weight */
-    font-size: 2.5rem; /* Larger heading */
-}
-.logout-container p {
-    color: #495057; /* Slightly darker grey for readability */
-    margin-bottom: 2.5rem; /* More space below paragraph */
-    font-size: 1.1rem;
-    line-height: 1.6;
-}
-.btn-logout {
-    background: linear-gradient(to right, #ff6b6b, #ee5253); /* Gradient for logout button */
-    border: none; /* Remove default border */
-    color: #fff;
-    padding: 0.85rem 2.5rem; /* Larger padding */
-    border-radius: 50rem; /* Pill shape */
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4); /* Soft shadow for button */
-}
-.btn-logout:hover {
-    background: linear-gradient(to right, #ee5253, #ff6b6b); /* Reverse gradient on hover */
-    transform: translateY(-2px); /* Slight lift effect */
-    box-shadow: 0 6px 15px rgba(255, 107, 107, 0.6);
-    color: #fff; /* Ensure text color remains white on hover */
-}
-.btn-outline-secondary {
-    border-color: #ced4da; /* Lighter border for outline button */
-    color: #6c757d;
-    padding: 0.85rem 2.5rem;
-    border-radius: 50rem;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-.btn-outline-secondary:hover {
-    background-color: #e9ecef;
-    color: #495057;
-    border-color: #adb5bd;
-}
-
 /* CALENDAR STYLES */
 #calendar.calendar-sm {
     color: #631561 !important;
@@ -321,25 +259,20 @@ body {
 .fc {
     font-size: 12px !important;
 }
-
 .fc-toolbar-title {
     font-size: 1rem !important;
 }
-
 .fc-event {
     font-size: 10px !important;
     padding: 2px 4px !important;
 }
-
 .fc-daygrid-day-frame {
     padding: 4px !important;
 }
-
 /* REMOVE SCROLL IF TIGHT */
 .fc-scroller-harness {
     overflow: hidden !important;
 }
-
 /* Only for faculty and student */
 .faculty #calendar,
 .student #calendar {
@@ -382,19 +315,16 @@ body {
     padding: 6px 14px;
     color: #6c757d;
 }
-
 .pagination .page-link-top{
     border-radius: 5px;
     padding: 3px 5px;
     color: black;
 }
-
 .pagination .page-item.active .page-link {
     background-color: #198754; /* Bootstrap success */
     border-color: #198754;
     color: #fff;
 }
-
 .pagination .page-link:hover {
     color: #198754;
 }
@@ -435,7 +365,6 @@ body {
     }
 
 /* Adjustments for mobile responsiveness */
-
 .fixed-columns th,
 .fixed-columns td {
     text-align: center;
@@ -483,45 +412,40 @@ body {
 }
 
 .curriculum-table,
-.grade-table {
+.grade-table, .classes-table {
     table-layout: fixed;
     width: 100%;
 }
 
-:is(.curriculum-table, .grade-table) th,
-:is(.curriculum-table, .grade-table) td,
+:is(.curriculum-table, .grade-table, .classes-table) th,
+:is(.curriculum-table, .grade-table, .classes-table) td,
 .grade-table input{
     vertical-align: middle;
     padding: 10px;
-    font-size: 0.85rem;
+    font-size: 1rem;
 }
 
-/* Align first and second columns to the left */
 :is(.curriculum-table, .grade-table) th:nth-child(1),
 :is(.curriculum-table, .grade-table) td:nth-child(1){
     text-align: left;
     width: 15%;
     max-width: 15%;
 }
-:is(.curriculum-table, .grade-table) th:nth-child(2)
-:is(.curriculum-table, .grade-table) td:nth-child(2){
+.classes-table td:nth-child(1),
+:is(.curriculum-table, .grade-table) :is(th, td):nth-child(2) {
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Make grade columns narrower and centered */
-:is(.curriculum-table, .grade-table) th:nth-child(3),
-:is(.curriculum-table, .grade-table) th:nth-child(4),
-:is(.curriculum-table, .grade-table) th:nth-child(5),
-:is(.curriculum-table, .grade-table) th:nth-child(6),
-:is(.curriculum-table, .grade-table) th:nth-child(7),
-:is(.curriculum-table, .grade-table) td:nth-child(3),
-:is(.curriculum-table, .grade-table) td:nth-child(4),
-:is(.curriculum-table, .grade-table) td:nth-child(5),
-:is(.curriculum-table, .grade-table) th:nth-child(6),
-:is(.curriculum-table, .grade-table) th:nth-child(7) {
+
+:is(.curriculum-table, .grade-table) :is(th, td)
+:is(:nth-child(3), 
+    :nth-child(4), 
+    :nth-child(5), 
+    :nth-child(6), 
+    :nth-child(7)) {
     text-align: center;
     width: 15%;
     max-width: 15%;
@@ -534,13 +458,16 @@ body {
     text-align: center;
 }
 
-/* Truncate subject name text with ellipsis */
-.curriculum-table td.truncate-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 0;
+:is(.curriculum-table, .grade-table) th{
+    text-align: center;
 }
+
+.classes-table th:nth-child(1),
+.classes-table th:nth-child(1) {
+    width: 25%;
+}
+
+
 
 
 /* sssssssssssssssssssssssss
@@ -583,7 +510,7 @@ sssssssssssssssssssssssssidebar */
     background-color: #f0f0f0;
 }
 
-.sidebar-collapsed .sidebar .sidebar-title {
+.sidebar-collapsed .sidebar-title {
     display: none;
 }
 
@@ -601,18 +528,18 @@ sssssssssssssssssssssssssidebar */
 }
 
 .sidebar-nav a.active {
-    color: #631561;
+    color: black;
     font-weight: bold;
 }
 
 .sidebar-collapsed .main-container {
-    margin-left: 80px;
+    margin-left: 100px;
 }
 
 #toggleSidebarBtn {
     background: none;
     border: none;
-    color: #631561;
+    color: green;
     font-size: 1.25rem;
     display: flex;
     align-items: center;
@@ -691,16 +618,12 @@ sssssssssssssssssssssssssidebar */
         gap: 1rem;
     }    
     .sidebar {
-        padding: 1rem 0;
+        padding: 2rem 0;
         width: 60px;
     }
-    .sidebar .sidebar-title {
-        font-size: 1rem;
-        text-align: center;
-        display: block !important;
-    }
     .sidebar .sidebar-nav .label,
-    .sidebar #toggleSidebarBtn {
+    .sidebar #toggleSidebarBtn,
+    .sidebar .sidebar-title {
         display: none !important;
     }
     .sidebar .sidebar-nav a {

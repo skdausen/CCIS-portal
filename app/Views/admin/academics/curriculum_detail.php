@@ -76,7 +76,7 @@
                         ?>
                         <tr>
                             <td><?= esc($subject['subject_code']) ?></td>
-                            <td><?= esc($subject['subject_name']) ?></td>
+                            <td title="<?= esc($subject['subject_name']) ?>"><?= esc($subject['subject_name']) ?></td>
                             <td class="text-center"><?= esc($subject['lec_units']) ?></td>
                             <td class="text-center"><?= esc($subject['lab_units']) ?></td>
                             <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>

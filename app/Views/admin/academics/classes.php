@@ -77,7 +77,7 @@
 ?>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover classes-table custom-padding">
         <thead class="table-light">
             <tr>
                 <th>Subject</th>
@@ -94,7 +94,16 @@
         <tbody>
             <?php foreach ($classes as $class): ?>
             <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
-                <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
+                <?php
+                    $subjectName = trim($class['subject_name']);
+                    $fullTitle = $class['subject_code'] . " - " . $subjectName;
+
+                    // Use mb_strlen to properly count multibyte characters
+                    $shortTitle = (mb_strlen($fullTitle) > 52)
+                        ? mb_substr($fullTitle, 0, 52) . '...'
+                        : $fullTitle;
+                ?>
+                <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
                 <td><?= esc($class['subject_type']) ?></td>
                 <td>
                     <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
@@ -216,9 +225,6 @@
     </div>
 </div>
 
-
-
-
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal<?= $class['class_id'] ?>" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -241,8 +247,6 @@
     </div>
 </div>
 <?php endforeach; ?>
-
-
 
 <!-- Add Class Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">

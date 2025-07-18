@@ -18,12 +18,12 @@
         <div class="card-body">
             <div class="row">
                 <!-- Calendar LEFT -->
-                <div class="col-12 col-lg-6">
+                <div class="col-12 col-lg-6 mb-3">
                     <div id="calendar" class="calendar-sm"></div>
                 </div>
 
                 <!-- Updates RIGHT -->
-                <div class="col-12 col-lg-6">
+                <div class="col-12 col-lg-6 mb-3">
                     <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
                         <!-- 🔍 Filter Logic -->
                         <?php

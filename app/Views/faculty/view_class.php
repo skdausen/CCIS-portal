@@ -176,8 +176,8 @@
           Are you sure you want to remove <strong id="studentToRemoveName"></strong> from this class?
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger">Yes, Remove</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-outline-danger">Yes, Remove</button>
+          <button type="button" class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </form>

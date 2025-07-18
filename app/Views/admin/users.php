@@ -2,7 +2,7 @@
 <div class="container mt-5 users-page" data-base-url="<?= base_url() ?>">
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <h3 class="mb-2">👥 List of Users</h3>
+        <h3 class="mb-2"><i class="fa-solid fa-users me-3 text-secondary"></i>List of Users</h3>
     </div>
 
     <!-- FILTERS & SEARCH -->
@@ -69,6 +69,38 @@
             </tbody>
         </table>
     </div>
+    
+    <nav aria-label="Curriculum pagination">
+        <ul class="pagination justify-content-center my-4">
+            <?php if ($page > 1): ?>
+                <li class="page-item mx-1">
+                    <a class="page-link" href="<?= site_url('admin/users?page=' . ($page - 1)) ?>">Previous</a>
+                </li>
+            <?php else: ?>
+                <li class="page-item disabled mx-1">
+                    <span class="page-link">Previous</span>
+                </li>
+            <?php endif; ?>
+
+            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
+                    <a class="page-link" href="<?= site_url('admin/users?page=' . $p) ?>">
+                        <?= $p ?>
+                    </a>
+                </li>
+            <?php endfor; ?>
+
+            <?php if ($page < $totalPages): ?>
+                <li class="page-item mx-1">
+                    <a class="page-link" href="<?= site_url('admin/users?page=' . ($page + 1)) ?>">Next</a>
+                </li>
+            <?php else: ?>
+                <li class="page-item disabled mx-1">
+                    <span class="page-link">Next</span>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
 
     <!-- ADD USER MODAL -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
@@ -118,8 +150,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Create Account</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-outline-success">Create Account</button>
+                    <button type="button" class="btn btn-outline-secondary btn-thin px-3 py-2 rounded-1" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
 
@@ -190,34 +222,31 @@
         </div>
 
         <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button class="btn btn-outline-secondary btn-thin px-3 py-2 rounded-1" data-bs-dismiss="modal">Close</button>
         </div>
         </div>
     </div>
     </div>
+
+    <script>
+    document.addEventListener('keydown', function(event) {
+        const currentPage = <?= $page ?>;
+        const totalPages = <?= $totalPages ?>;
+
+        if (event.key === 'ArrowRight') {
+            const nextPage = (currentPage >= totalPages) ? 1 : currentPage + 1;
+            window.location.href = "<?= site_url('admin/users?page=') ?>" + nextPage;
+        }
+        if (event.key === 'ArrowLeft') {
+            const prevPage = (currentPage <= 1) ? totalPages : currentPage - 1;
+            window.location.href = "<?= site_url('admin/users?page=') ?>" + prevPage;
+        }
+    });
+    </script>
 
 
 </div>
 
-<script>
-    const roleSelect = document.getElementById('role');
-    const curriculumGroup = document.getElementById('curriculumGroup');
-
-    if (roleSelect) {
-        roleSelect.addEventListener('change', function () {
-            if (this.value === 'student') {
-                curriculumGroup.classList.remove('d-none');
-                document.getElementById('curriculum_id').setAttribute('required', true);
-            } else {
-                curriculumGroup.classList.add('d-none');
-                document.getElementById('curriculum_id').removeAttribute('required');
-            }
-        });
-
-        // Trigger it on page load just in case of old input
-        roleSelect.dispatchEvent(new Event('change'));
-    }
-</script>
 
 
 

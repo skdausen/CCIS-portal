@@ -76,6 +76,9 @@
                     <a href="<?= base_url('faculty/class/' . $class['class_id']) ?>" class="btn btn btn-outline-secondary btn-thin btn-sm px-3 py-1 rounded-1">Back</a>
                 </div>
             </form>
+
+
+
         </div>
     </div>
 

@@ -45,11 +45,23 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $model = new UserModel();
+        $userModel = new UserModel();
         $curriculumModel = new CurriculumModel(); 
+
+        $usersPerPage = 10;
+        $page = (int) ($this->request->getGet('page') ?? 1);
+        $page = max($page, 1);
+        $offset = ($page - 1) * $usersPerPage;
+
+        $users = $userModel->findAll($usersPerPage, $offset);
+        $totalUsers = $userModel->countAll();
+        $totalPages = ceil($totalUsers / $usersPerPage);
+
         $data = [
-            'users'       => $model->findAll(),
-            'curriculums' => $curriculumModel->findAll() 
+            'users'       => $users,
+            'curriculums' => $curriculumModel->findAll() ,
+            'page' => $page,
+            'totalPages' => $totalPages
         ];
 
         return view('templates/admin/admin_header')
@@ -315,6 +327,7 @@ class AdminController extends BaseController
         ];
 
         return view('templates/admin/admin_header', $data)
+            . view('templates/admin/sidebar')
             . view('admin/academics', $data)
             . view('templates/admin/admin_footer');
     }
@@ -336,6 +349,7 @@ class AdminController extends BaseController
         $data['semesters'] = $semesterModel->getSemWithDetails();
 
         return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
             . view('admin/academics/semesters', $data)
             . view('templates/admin/admin_footer');
     }
@@ -498,6 +512,7 @@ public function view_subjects()
     ];
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/subjects', $data)
         . view('templates/admin/admin_footer');
 }
@@ -544,6 +559,7 @@ public function view_subjects()
         }
 
         return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
             . view('admin/academics/edit_subject', ['subject' => $subject])
             . view('templates/admin/admin_footer');
     }
@@ -672,6 +688,7 @@ public function view_classes()
 
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/classes', [
             'classes' => $classes,
             'instructors' => $instructors,
@@ -836,6 +853,7 @@ public function view_curriculums()
     }
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/curriculums', [
             'curriculums' => $curriculums, // for dropdown
             'curriculumsToDisplay' => $curriculumsToDisplay, // for cards
@@ -924,6 +942,7 @@ public function view_curriculum_detail($curriculum_id)
     $currentYearKey = $yearKeys[$page - 1] ?? null;
 
     return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
         . view('admin/academics/curriculum_detail', [
             'curriculum_id' => $curriculum_id,
             'curriculum' => $curriculum,

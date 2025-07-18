@@ -1,17 +1,17 @@
 <!-- admin_footer.php -->
 
-  <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="confirmRemoveLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-danger text-white">
           <h5 class="modal-title">Confirm Logout</h5>
         </div>
         <div class="modal-body">
           Are you sure you want to log out?
         </div>
         <div class="modal-footer">
-          <button class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
           <a href="<?= site_url('auth/logout') ?>" class="btn btn-outline-danger">Confirm Logout</a>
+          <button class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
@@ -343,6 +343,27 @@
 </script>
 <?php endif; ?>
 
+<!-- sidebar script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggleSidebarBtn");
+    const toggleIcon = document.getElementById("toggleIcon");
+    const html = document.documentElement;
+
+    toggleBtn.addEventListener("click", () => {
+      const isCollapsed = html.classList.toggle("sidebar-collapsed");
+      localStorage.setItem("sidebarCollapsed", isCollapsed);
+
+      toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
+      toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
+    });
+
+    // Set correct icon on load
+    const isCollapsed = html.classList.contains("sidebar-collapsed");
+    toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
+    toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
+  });
+</script>
 
   <!-- Bootstrap JS -->
   <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>

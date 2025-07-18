@@ -26,8 +26,6 @@ $routes->get('auth/login', [AuthController::class, 'index']);
 $routes->post('auth/login', [AuthController::class, 'authenticate']);
 $routes->get('auth/logout', [AuthController::class, 'logout']);
 $routes->get('home', [AuthController::class, 'home']);
-$routes->get('auth/checkSession', 'AuthController::checkSession');
-$routes->post('auth/setInactive', 'AuthController::setInactive');
 
 // ---------------------
 // PASSWORD RESET ROUTES

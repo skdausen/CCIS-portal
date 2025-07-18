@@ -8,6 +8,18 @@ class Password extends BaseController
 {
     public function forgot()
     {
+        $model    = new UserModel();
+        $username = session()->get('username');
+        $users = $model->where('username', $username)->first();
+        if (session()->get('isLoggedIn')) {
+            if ($users['role'] === 'student') {
+                return redirect()->to('student/home');
+            } elseif ($users['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($users['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('admin/home');
+            }
+        }
         // return view('password/forgot_form');
         return view('templates/login_header')
             . view('password/forgot_form')
@@ -16,6 +28,19 @@ class Password extends BaseController
 
     public function sendOTP()
     {
+        $model    = new UserModel();
+        $username = session()->get('username');
+        $users = $model->where('username', $username)->first();
+        if (session()->get('isLoggedIn')) {
+            if ($users['role'] === 'student') {
+                return redirect()->to('student/home');
+            } elseif ($users['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($users['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('admin/home');
+            }
+        }
+
         helper('email');
 
         $email = $this->request->getPost('email');
@@ -40,6 +65,18 @@ class Password extends BaseController
 
     public function verifyForm()
     {
+        $model    = new UserModel();
+        $username = session()->get('username');
+        $users = $model->where('username', $username)->first();
+        if (session()->get('isLoggedIn')) {
+            if ($users['role'] === 'student') {
+                return redirect()->to('student/home');
+            } elseif ($users['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($users['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('admin/home');
+            }
+        }
         $email = $this->request->getGet('email');
         // return view('password/verify_form', ['email' => $email]);
 
@@ -64,6 +101,18 @@ class Password extends BaseController
 
     public function resetForm()
     {
+        $model    = new UserModel();
+        $username = session()->get('username');
+        $users = $model->where('username', $username)->first();
+        if (session()->get('isLoggedIn')) {
+            if ($users['role'] === 'student') {
+                return redirect()->to('student/home');
+            } elseif ($users['role'] === 'faculty') {
+                return redirect()->to('faculty/home');
+            } elseif (in_array($users['role'], ['admin', 'superadmin'])) {
+                return redirect()->to('admin/home');
+            }
+        }
         $email = $this->request->getGet('email');
 
         return view('templates/login_header')

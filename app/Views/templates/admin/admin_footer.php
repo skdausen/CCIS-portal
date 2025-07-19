@@ -345,6 +345,9 @@
 <?php endif; ?>
 
 
+<!-- Bootstrap JS -->
+<script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
+
 <!-- sidebar script -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -367,9 +370,6 @@
   });
 </script>
 
-  <!-- Bootstrap JS -->
-  <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
-
   <!-- Prevent back history script -->
   <script src="<?= base_url("rsc/custom_js/preventBackHistory.js") ?>"></script>
 
@@ -385,7 +385,7 @@
   <!--View, Search, & Filter Users JS -->
   <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
 
-  <script src="<?= base_url('rsc/custom_js/jquery-3.6.0.min.js') ?>"></script>
+
 
 
 </body>

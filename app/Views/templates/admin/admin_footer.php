@@ -376,20 +376,17 @@
   <!-- FullCalendar JS -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-  <!-- Your calendar logic -->
+  <!--Calendar-->
   <script src="<?= base_url('rsc/custom_js/calendar.js') ?>"></script>
 
-  <!-- Event Modal JS -->
-  <script src="<?= base_url('rsc/custom_js/eventModal.js') ?>"></script>
+  <!-- Event, Error, Success Modal JS -->
+  <script src="<?= base_url('rsc/custom_js/modals.js') ?>"></script>
 
   <!--View, Search, & Filter Users JS -->
   <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
 
-  <!-- Success Modal JS -->
-  <script src="<?= base_url('rsc/custom_js/successModal.js') ?>"></script>
+  <script src="<?= base_url('rsc/custom_js/jquery-3.6.0.min.js') ?>"></script>
 
-  <!-- Error Modal JS -->
-  <script src="<?= base_url('rsc/custom_js/errorModal.js') ?>"></script>
 
 </body>
 </html>

@@ -113,5 +113,5 @@ class Filters extends BaseFilters
             'student/*',
             'faculty/*',
         ]],
-    ];
+        ];
 }

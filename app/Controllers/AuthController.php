@@ -60,10 +60,10 @@ class AuthController extends BaseController
         }
 
         // If user is already marked as active
-        if ($user['status'] === 'active') {
-            $session->setFlashdata('error', 'User is already logged in elsewhere.');
-            return redirect()->to('auth/login')->withInput();
-        }
+        // if ($user['status'] === 'active') {
+        //     $session->setFlashdata('error', 'User is already logged in elsewhere.');
+        //     return redirect()->to('auth/login')->withInput();
+        // }
 
         // Check password
         if (password_verify($password, $user['userpassword'])) {
@@ -128,7 +128,6 @@ class AuthController extends BaseController
             return redirect()->to('auth/login')->withInput();
         }
     }
-
     // LOGOUT USER
     public function logout()
     {

@@ -22,6 +22,10 @@ html, body {
   z-index: 2;             
   padding: 1rem;
 }
+.col-12{
+  align-items: center;    
+  justify-content: center;
+}
 img{
     width: 80px;                   /* Adjusts logo size */
     margin-bottom: 20px;           /* Space below the logo */
@@ -32,6 +36,9 @@ img{
 }
 h4, p, a, label, i{
   color: white !important;
+}
+i{
+  color: gray !important;
 }
 i:hover{
   color: green !important;
@@ -45,7 +52,10 @@ i:hover{
 }
 
 @media (max-width: 991.98px) {
+  .col-12{
+    justify-items: center;
+  }
   .card{
-    width: 70vw;
+    width: 80%;
   }
 }

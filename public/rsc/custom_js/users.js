@@ -15,9 +15,7 @@
 
                 let matchRole = true;
 
-                if (roleVal === 'admin') {
-                    matchRole = role === 'admin' || role === 'superadmin'; // Include superadmin under admin
-                } else if (roleVal) {
+                if (roleVal) {
                     matchRole = role === roleVal;
                 }
 
@@ -39,6 +37,25 @@
             addUserModal.querySelector('form').reset();
         });
     });
+    
+    //ADD CURRICULUM IF STUDENT
+    const roleSelect = document.getElementById('role');
+    const curriculumGroup = document.getElementById('curriculumGroup');
+
+    if (roleSelect) {
+        roleSelect.addEventListener('change', function () {
+            if (this.value === 'student') {
+                curriculumGroup.classList.remove('d-none');
+                document.getElementById('curriculum_id').setAttribute('required', true);
+            } else {
+                curriculumGroup.classList.add('d-none');
+                document.getElementById('curriculum_id').removeAttribute('required');
+            }
+        });
+
+        // Trigger it on page load just in case of old input
+        roleSelect.dispatchEvent(new Event('change'));
+    }
     
     // VIEW USER DETAILS SCRIPT
     // This script handles the viewing of user details in a modal when the "View" button

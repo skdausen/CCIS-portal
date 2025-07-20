@@ -1,15 +1,5 @@
 <!-- Main Container -->
 <div class="main-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-title">Academics</div>
-        <ul class="sidebar-nav">
-            <li><a href="<?=site_url('admin/academics/semesters')?>">Semesters</a></li>
-            <li><a href="<?=site_url('admin/academics/subjects')?>">Subjects</a></li>
-            <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
-            <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
-        </ul>
-    </div>
 
     <div class="container mt-5">
 
@@ -24,7 +14,7 @@
                 <input type="text" id="instructorSearch" class="form-control form-control-sm" placeholder="Search Instructor...">
             </div>
 
-            <div class="col-md-3 mb-2">
+            <div class="col-md-2 mb-2">
                 <select id="sectionFilter" class="form-select form-select-sm">
                     <option value="">All Sections</option>
                     <?php 
@@ -36,17 +26,35 @@
                 </select>
             </div>
 
-            <div class="col-md-2 mb-2">
-                <button id="clearFiltersBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
+            <div class="col-md-3 mb-2">
+                <select id="semesterFilter" class="form-select form-select-sm">
+                    <option value="">
+                        <?= isset($activeSemester) 
+                            ? ucwords($activeSemester['semester']) . ' ' . $activeSemester['schoolyear'] 
+                            : 'No Active Semester' ?>
+                    </option>
+                    <?php foreach ($semesters as $semester): ?>
+                        <?php if (!isset($activeSemester) || $semester['semester_id'] != $activeSemester['semester_id']): ?>
+                            <option value="<?= $semester['semester_id'] ?>" <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
+                                <?= ucwords($semester['semester']) . ' ' . $semester['schoolyear'] ?>
+                            </option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
-            <div class="col-md-4 mb-2 d-flex justify-content-end">
+            <div class="col-md-1 mb-2">
+                <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100 btn-thin rounded-1 px-2 py-1">Clear</button>
+            </div>
+
+            <div class="col-md-3 mb-2 text-end">
                 <button class="btn btn-outline-success"
                     <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
                     Add New Class
                 </button>
             </div>
         </div>
+
 
 
 
@@ -87,7 +95,7 @@
 ?>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover classes-table custom-padding">
         <thead class="table-light">
             <tr>
                 <th>Subject</th>
@@ -104,7 +112,16 @@
         <tbody>
             <?php foreach ($classes as $class): ?>
             <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
-                <td><?= esc($class['subject_code']) ?> - <?= esc($class['subject_name']) ?></td>
+                <?php
+                    $subjectName = trim($class['subject_name']);
+                    $fullTitle = $class['subject_code'] . " - " . $subjectName;
+
+                    // Use mb_strlen to properly count multibyte characters
+                    $shortTitle = (mb_strlen($fullTitle) > 52)
+                        ? mb_substr($fullTitle, 0, 52) . '...'
+                        : $fullTitle;
+                ?>
+                <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
                 <td><?= esc($class['subject_type']) ?></td>
                 <td>
                     <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
@@ -159,22 +176,29 @@
                     </div>
 
                     <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Instructor</label>
-                            <select name="ftb_id" class="form-select" required>
-                                <option value="">Select Instructor</option>
-                                <?php foreach ($instructors as $ftbId => $instructorName): ?>
-                                    <option value="<?= $ftbId ?>" <?= $ftbId == $class['ftb_id'] ? 'selected' : '' ?>>
-                                        <?= esc($instructorName) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                        <!-- Instructor Search (Left Side) -->
+                        <div class="col-md-6 position-relative">
+                            <label for="editInstructorSearchInput<?= $class['class_id'] ?>" class="form-label">Instructor</label>
+                            <input type="text" id="editInstructorSearchInput<?= $class['class_id'] ?>" 
+                                class="form-control" placeholder="Search Instructor..." autocomplete="off"
+                                value="<?= esc($instructors[$class['ftb_id']] ?? '') ?>" required>
+
+                            <input type="hidden" name="ftb_id" id="editInstructorIdInput<?= $class['class_id'] ?>" 
+                                value="<?= esc($class['ftb_id']) ?>">
+
+                            <ul id="editInstructorSuggestions<?= $class['class_id'] ?>" 
+                                class="list-group position-absolute w-100 shadow"
+                                style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
                         </div>
+
+                        <!-- Section (Right Side) -->
                         <div class="col-md-6">
                             <label class="form-label">Section</label>
-                            <input type="text" name="section" class="form-control" value="<?= esc($class['section']) ?>" required>
+                            <input type="text" name="section" class="form-control" 
+                                value="<?= esc($class['section']) ?>" required>
                         </div>
                     </div>
+
 
                     <div class="mb-3 position-relative">
                         <label class="form-label">Subject</label>
@@ -198,7 +222,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="edit-lecture-schedule <?= $class['subject_type'] == 'LEC with LAB' ? 'col-md-6' : 'col-md-12' ?>" data-id="<?= $class['class_id'] ?>">
                             <h6>Lecture Schedule</h6>
                             <input type="text" name="lec_day" value="<?= esc($class['lec_day']) ?>" class="form-control mb-2" placeholder="Day/s" required>
                             <input type="text" name="lec_room" value="<?= esc($class['lec_room']) ?>" class="form-control mb-2" placeholder="Room" required>
@@ -212,7 +236,6 @@
                             <input type="text" name="lab_room" value="<?= esc($class['lab_room']) ?>" class="form-control mb-2" placeholder="Lab Room" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
                             <input type="time" name="lab_start" value="<?= esc($class['lab_start']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
                             <input type="time" name="lab_end" value="<?= esc($class['lab_end']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
-
                         </div>
                     </div>
                 </div>
@@ -225,9 +248,6 @@
         </form>
     </div>
 </div>
-
-
-
 
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal<?= $class['class_id'] ?>" tabindex="-1">
@@ -253,7 +273,6 @@
 <?php endforeach; ?>
 
 
-
 <!-- Add Class Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
@@ -276,27 +295,24 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <!-- Instructor -->
-                                <label for="instructor" class="form-label">Instructor</label>
-                                <select name="ftb_id" class="form-select" required>
-                                    <option value="">Select Instructor</option>
-                                    <?php foreach ($instructors as $ftbId => $instructorName): ?>
-                                        <option value="<?= $ftbId ?>">
-                                            <?= esc($instructorName) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <!-- Instructor Search -->
+                            <div class="col-md-6 position-relative">
+                                <label for="instructorSearchInput" class="form-label">Instructor</label>
+                                <input type="text" id="instructorSearchInput" class="form-control" placeholder="Search Instructor..." autocomplete="off" required>
+                                <input type="hidden" name="ftb_id" id="instructorIdInput">
+                                <ul id="instructorSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
                             </div>
+
                             <!-- Section -->
                             <div class="col-md-6">
                                 <label for="section" class="form-label">Section</label>
                                 <input type="text" name="section" id="section" class="form-control" placeholder="Section e.g., A, B, C" required>
                             </div>
                         </div>
+
                         
-                         <!-- Subject -->
-                       <div class="mb-3 position-relative">
+                        <!-- Subject -->
+                        <div class="mb-3 position-relative">
                             <label for="subjectSearchInput" class="form-label">Subject</label>
                             <input type="text" id="subjectSearchInput" class="form-control" placeholder="Search Subject Code or Name..." autocomplete="off" required>
                             <input type="hidden" name="subject_id" id="subjectIdInput">
@@ -312,10 +328,10 @@
                         <ul id="subjectSuggestions" class="list-group position-absolute" style="z-index: 1050;"></ul>
 
 
-                        <!-- Schedule -->
-                     <div class="row">
+                    <!-- Schedule -->
+                    <div class="row">
                         <!-- Lecture Schedule -->
-                        <div id="lectureSchedule" class="col-md-6">
+                        <div id="lectureSchedule" class="col-md-12">
                             <h6>Lecture Schedule</h6>
                             <div class="mb-3">
                                 <label for="lecDay" class="form-label">Day/s</label>
@@ -375,9 +391,6 @@
 
 
 
-
-
-
 <script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
 
 <!-- No Active Semester Modal -->
@@ -395,39 +408,15 @@
     </div>
 </div>
 
-
-
-
-
-<!-- Success Modal -->
-<div class="modal fade" id="successModal" tabindex="-1">
+<div class="modal fade" id="invalidEntryModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Success</h5>
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Invalid Entry</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <p id="successMessage"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Error</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="errorMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-danger" onclick="location.reload()">Retry</button>
-                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
+            <div class="modal-body" id="invalidEntryMessage">
+                Invalid input.
             </div>
         </div>
     </div>
@@ -435,18 +424,10 @@
 
 
 
-<script>
-    const subjects = <?= json_encode(array_map(function($subject) {
-        return [
-            'id' => $subject['subject_id'],
-            'code' => $subject['subject_code'],
-            'name' => $subject['subject_name'],
-            'type' => $subject['subject_type']
-        ];
-    }, $courses)); ?>;
-</script>
+<!-- External JS for class-related features -->
+<script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
 
-
+<!-- Initialize the subject data array using PHP (used for both add/edit subject search) -->
 <script>
     // Data for subject search
     const subjects = <?= json_encode(array_map(function ($subject) {
@@ -463,13 +444,16 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ----- ADD CLASS SUBJECT SEARCH -----
+    // Handles subject search input and display for the "Add Class" form
     const searchInput = document.getElementById('subjectSearchInput');
     const subjectIdInput = document.getElementById('subjectIdInput');
     const subjectTypeInput = document.getElementById('subjectTypeInput');
     const suggestionsList = document.getElementById('subjectSuggestions');
+    const lectureSchedule = document.getElementById('lectureSchedule');
     const labScheduleSection = document.getElementById('labSchedule');
     const labFields = ['labDay', 'labRoom', 'labStart', 'labEnd'].map(id => document.getElementById(id));
 
+    // Handle user typing in subject search
     searchInput.addEventListener('input', function () {
         const query = searchInput.value.toLowerCase();
         const filteredSubjects = subjects.filter(sub =>
@@ -478,32 +462,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         suggestionsList.innerHTML = '';
         filteredSubjects.forEach(sub => {
+            // Create suggestion item
             const li = document.createElement('li');
             li.classList.add('list-group-item', 'list-group-item-action');
             li.textContent = `${sub.code} - ${sub.name}`;
             li.dataset.id = sub.id;
             li.dataset.type = sub.type;
+
+            // On selection of a subject
             li.addEventListener('click', () => {
                 searchInput.value = `${sub.code} - ${sub.name}`;
                 subjectIdInput.value = sub.id;
                 subjectTypeInput.value = sub.type;
                 suggestionsList.innerHTML = '';
 
+                // Toggle lab section and column layout based on subject type
                 if (sub.type === 'LEC with LAB') {
+                    lectureSchedule.classList.remove('d-none');
                     labScheduleSection.classList.remove('d-none');
+                    lectureSchedule.classList.remove('col-md-12');
+                    lectureSchedule.classList.add('col-md-6');
                     labFields.forEach(field => field.setAttribute('required', 'required'));
                 } else {
+                    lectureSchedule.classList.remove('d-none');
                     labScheduleSection.classList.add('d-none');
+                    lectureSchedule.classList.remove('col-md-6');
+                    lectureSchedule.classList.add('col-md-12');
                     labFields.forEach(field => {
                         field.removeAttribute('required');
                         field.value = '';
                     });
                 }
             });
+
             suggestionsList.appendChild(li);
         });
     });
 
+    // Hide suggestions on click outside
     document.addEventListener('click', function (e) {
         if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
             suggestionsList.innerHTML = '';
@@ -512,150 +508,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ----- EDIT CLASS SUBJECT SEARCH (MULTIPLE MODALS) -----
+    // Handle subject selection logic inside edit modals
     document.querySelectorAll('.edit-subject-search').forEach(input => {
-        const classId = input.dataset.id;
-        const hiddenInput = document.querySelector(`.edit-subject-id[data-id="${classId}"]`);
-        const typeInput = document.querySelector(`.edit-subject-type[data-id="${classId}"]`);
-        const suggestionList = document.querySelector(`.edit-suggestions[data-id="${classId}"]`);
-        const labSection = document.querySelector(`.edit-lab-schedule[data-id="${classId}"]`);
-
-        input.addEventListener('input', function () {
-            const query = this.value.toLowerCase();
-            const filteredSubjects = subjects.filter(sub =>
-                sub.code.toLowerCase().includes(query) || sub.name.toLowerCase().includes(query)
-            );
-
-            suggestionList.innerHTML = '';
-            filteredSubjects.forEach(sub => {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item', 'list-group-item-action');
-                li.textContent = `${sub.code} - ${sub.name}`;
-                li.dataset.id = sub.id;
-                li.dataset.type = sub.type;
-                li.addEventListener('click', () => {
-                    input.value = `${sub.code} - ${sub.name}`;
-                    hiddenInput.value = sub.id;
-                    typeInput.value = sub.type;
-                    suggestionList.innerHTML = '';
-
-                    if (sub.type === 'LEC with LAB') {
-                        labSection.classList.remove('d-none');
-                    } else {
-                        labSection.classList.add('d-none');
-                        labSection.querySelectorAll('input').forEach(input => input.value = '');
-                    }
-                });
-                suggestionList.appendChild(li);
-            });
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
-                suggestionList.innerHTML = '';
-            }
-        });
-
-        if (typeInput.value === 'LEC with LAB') {
-            labSection.classList.remove('d-none');
-        }
-    });
-
-
-    // ----- TIME INPUT FOCUS (Optional UX Tweak) -----
-    const lecEnd = document.getElementById('lecEnd');
-    const lecStart = document.getElementById('lecStart');
-    lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
-
-    const labEnd = document.getElementById('labEnd');
-    const labStart = document.getElementById('labStart');
-    labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
-
-    document.querySelectorAll('.edit-lab-schedule').forEach(section => {
-        const lecStart = section.querySelector('input[name="lec_start"]');
-        const lecEnd = section.querySelector('input[name="lec_end"]');
-        const labStart = section.querySelector('input[name="lab_start"]');
-        const labEnd = section.querySelector('input[name="lab_end"]');
-
-        lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
-        labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
-    });
-
-});
-</script>
-
-
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-    const searchInput = document.getElementById('subjectSearchInput');
-    const subjectIdInput = document.getElementById('subjectIdInput');
-    const subjectTypeInput = document.getElementById('subjectTypeInput');
-    const suggestionsList = document.getElementById('subjectSuggestions');
-    const labScheduleSection = document.getElementById('labSchedule');
-    const labFields = ['labDay', 'labRoom', 'labStart', 'labEnd'].map(id => document.getElementById(id));
-
-    function showSuggestions(filteredSubjects) {
-        suggestionsList.innerHTML = '';
-        filteredSubjects.forEach(sub => {
-            const li = document.createElement('li');
-            li.classList.add('list-group-item', 'list-group-item-action');
-            li.textContent = `${sub.code} - ${sub.name}`;
-            li.dataset.id = sub.id;
-            li.dataset.type = sub.type;
-            li.addEventListener('click', () => {
-                searchInput.value = `${sub.code} - ${sub.name}`;
-                subjectIdInput.value = sub.id;
-                subjectTypeInput.value = sub.type;
-                suggestionsList.innerHTML = '';
-
-                if (sub.type === 'LEC with LAB') {
-                    labScheduleSection.classList.remove('d-none');
-                    labFields.forEach(field => field.setAttribute('required', 'required'));
-                } else {
-                    labScheduleSection.classList.add('d-none');
-                    labFields.forEach(field => {
-                        field.removeAttribute('required');
-                        field.value = '';
-                    });
-                }
-            });
-            suggestionsList.appendChild(li);
-        });
-    }
-
-    searchInput.addEventListener('input', function () {
-        const query = searchInput.value.toLowerCase();
-        const filteredSubjects = subjects.filter(sub =>
-            sub.code.toLowerCase().includes(query) ||
-            sub.name.toLowerCase().includes(query)
-        );
-        if (query.length === 0) {
-            suggestionsList.innerHTML = '';
-        } else {
-            showSuggestions(filteredSubjects);
-        }
-    });
-
-    document.addEventListener('click', function (e) {
-        if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
-            suggestionsList.innerHTML = '';
-        }
-    });
-});
-</script>
-
-
-<script>
-
-document.querySelectorAll('.edit-subject-search').forEach(input => {
     const classId = input.dataset.id;
     const hiddenInput = document.querySelector(`.edit-subject-id[data-id="${classId}"]`);
     const typeInput = document.querySelector(`.edit-subject-type[data-id="${classId}"]`);
     const suggestionList = document.querySelector(`.edit-suggestions[data-id="${classId}"]`);
     const labSection = document.querySelector(`.edit-lab-schedule[data-id="${classId}"]`);
+    const lectureSection = document.querySelector(`.edit-lecture-schedule[data-id="${classId}"]`);
 
+    // Input event for filtering suggestions
     input.addEventListener('input', function () {
         const query = this.value.toLowerCase();
         const filteredSubjects = subjects.filter(sub =>
@@ -669,6 +531,7 @@ document.querySelectorAll('.edit-subject-search').forEach(input => {
             li.textContent = `${sub.code} - ${sub.name}`;
             li.dataset.id = sub.id;
             li.dataset.type = sub.type;
+
             li.addEventListener('click', () => {
                 input.value = `${sub.code} - ${sub.name}`;
                 hiddenInput.value = sub.id;
@@ -677,57 +540,119 @@ document.querySelectorAll('.edit-subject-search').forEach(input => {
 
                 if (sub.type === 'LEC with LAB') {
                     labSection.classList.remove('d-none');
+                    lectureSection.classList.remove('col-md-12');
+                    lectureSection.classList.add('col-md-6');
+                    labSection.classList.remove('col-md-0');
+                    labSection.classList.add('col-md-6');
                 } else {
                     labSection.classList.add('d-none');
                     labSection.querySelectorAll('input').forEach(input => input.value = '');
+                    lectureSection.classList.remove('col-md-6');
+                    lectureSection.classList.add('col-md-12');
                 }
             });
+
             suggestionList.appendChild(li);
         });
     });
 
+    // Hide suggestions when clicking outside
     document.addEventListener('click', function (e) {
         if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
             suggestionList.innerHTML = '';
         }
     });
 
+    // Set correct columns initially if already has value
     if (typeInput.value === 'LEC with LAB') {
         labSection.classList.remove('d-none');
+        lectureSection.classList.remove('col-md-12');
+        lectureSection.classList.add('col-md-6');
+        labSection.classList.remove('col-md-0');
+        labSection.classList.add('col-md-6');
+    } else {
+        labSection.classList.add('d-none');
+        lectureSection.classList.remove('col-md-6');
+        lectureSection.classList.add('col-md-12');
     }
+});
+    // ----- TIME INPUT FOCUS (Optional UX Tweak) -----
+    // If user clicks 'end' time without filling 'start', auto-focus the start field
+
+    const lecEnd = document.getElementById('lecEnd');
+    const lecStart = document.getElementById('lecStart');
+    lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
+
+    const labEnd = document.getElementById('labEnd');
+    const labStart = document.getElementById('labStart');
+    labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
+
+    // Same behavior for all edit modals
+    document.querySelectorAll('.edit-lab-schedule').forEach(section => {
+        const lecStart = section.querySelector('input[name="lec_start"]');
+        const lecEnd = section.querySelector('input[name="lec_end"]');
+        const labStart = section.querySelector('input[name="lab_start"]');
+        const labEnd = section.querySelector('input[name="lab_end"]');
+
+        lecEnd?.addEventListener('focus', () => { if (!lecStart.value) lecStart.focus(); });
+        labEnd?.addEventListener('focus', () => { if (!labStart.value) labStart.focus(); });
+    });
+
 });
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    // Lecture Time
-    const lecStart = document.getElementById('lecStart');
-    const lecEnd = document.getElementById('lecEnd');
+    const instructors = [
+    <?php foreach ($instructors as $ftbId => $instructorName): ?>
+    {
+        id: "<?= esc($ftbId) ?>",
+        name: "<?= esc($instructorName) ?>"
+    },
+    <?php endforeach; ?>
+];
 
-    lecEnd.addEventListener('focus', function () {
-        if (!lecStart.value) {
-            lecStart.focus();
-        }
+const instructorSearchInput = document.getElementById('instructorSearchInput');
+const instructorSuggestions = document.getElementById('instructorSuggestions');
+const instructorIdInput = document.getElementById('instructorIdInput');
+
+instructorSearchInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    instructorSuggestions.innerHTML = '';
+
+    if (!query) return;
+
+    const matches = instructors.filter(instructor =>
+        instructor.name.toLowerCase().includes(query)
+    );
+
+    matches.forEach(instructor => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'list-group-item-action');
+        li.textContent = instructor.name;
+        li.addEventListener('click', () => {
+            instructorSearchInput.value = instructor.name;
+            instructorIdInput.value = instructor.id;
+            instructorSuggestions.innerHTML = '';
+        });
+        instructorSuggestions.appendChild(li);
     });
+});
 
-    // Lab Time
-    const labStart = document.getElementById('labStart');
-    const labEnd = document.getElementById('labEnd');
-
-    labEnd.addEventListener('focus', function () {
-        if (!labStart.value) {
-            labStart.focus();
-        }
-    });
+document.addEventListener('click', function (e) {
+    if (!instructorSuggestions.contains(e.target) && e.target !== instructorSearchInput) {
+        instructorSuggestions.innerHTML = '';
+    }
 });
 
 </script>
 
+<!-- Filter table by instructor name or section as well as semester -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const tableRows = document.querySelectorAll('table tbody tr');
     const instructorSearch = document.querySelector('#instructorSearch');
     const sectionFilter = document.querySelector('#sectionFilter');
+    const semesterFilter = document.querySelector('#semesterFilter');
     const clearFiltersBtn = document.querySelector('#clearFiltersBtn');
 
     function filterTable() {
@@ -747,11 +672,139 @@ document.addEventListener('DOMContentLoaded', function () {
 
     instructorSearch.addEventListener('input', filterTable);
     sectionFilter.addEventListener('change', filterTable);
+
     clearFiltersBtn.addEventListener('click', () => {
         instructorSearch.value = '';
         sectionFilter.value = '';
-        filterTable();
+        semesterFilter.value = '';
+
+        // Remove ?semester_id=... from URL and reload
+        const url = new URL(window.location.href);
+        url.searchParams.delete('semester_id');
+        window.location.href = url.toString();
     });
+});
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    <?php foreach ($classes as $class): ?>
+    (function () {
+        const input = document.getElementById('editInstructorSearchInput<?= $class['class_id'] ?>');
+        const list = document.getElementById('editInstructorSuggestions<?= $class['class_id'] ?>');
+        const hidden = document.getElementById('editInstructorIdInput<?= $class['class_id'] ?>');
+
+        if (!input || !list || !hidden) return;
+
+        input.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            list.innerHTML = '';
+
+            if (!query) return;
+
+            const matches = instructors.filter(instr =>
+                instr.name.toLowerCase().includes(query)
+            );
+
+            matches.forEach(instr => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.textContent = instr.name;
+                li.addEventListener('click', () => {
+                    input.value = instr.name;
+                    hidden.value = instr.id;
+                    list.innerHTML = '';
+                });
+                list.appendChild(li);
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!list.contains(e.target) && e.target !== input) {
+                list.innerHTML = '';
+            }
+        });
+    })();
+    <?php endforeach; ?>
 });
 </script>
 
+<script>
+    document.getElementById('semesterFilter').addEventListener('change', function () {
+    const selectedSemester = this.value;
+    const url = new URL(window.location.href);
+
+    if (selectedSemester) {
+        url.searchParams.set('semester_id', selectedSemester);
+    } else {
+        url.searchParams.delete('semester_id');
+    }
+
+    window.location.href = url.toString();
+});
+
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const instructorsList = instructors.map(ins => ins.name.toLowerCase());
+    const subjectsList = subjects.map(sub => (sub.code + ' - ' + sub.name).toLowerCase());
+
+    function showInvalidModal(message) {
+        const modalElement = document.getElementById('invalidEntryModal');
+        const bootstrapModal = new bootstrap.Modal(modalElement);
+        document.getElementById('invalidEntryMessage').textContent = message;
+        bootstrapModal.show();
+
+        setTimeout(() => {
+            bootstrapModal.hide();
+        }, 1000); // auto-hide after 1 second
+    }
+
+    // ADD CLASS FORM VALIDATION
+    const addForm = document.querySelector('#addModal form');
+    addForm.addEventListener('submit', function (e) {
+        const instructorName = document.getElementById('instructorSearchInput').value.toLowerCase();
+        const subjectName = document.getElementById('subjectSearchInput').value.toLowerCase();
+
+        if (!instructorsList.includes(instructorName)) {
+            e.preventDefault();
+            showInvalidModal('The instructor you selected does not exist.');
+            return;
+        }
+
+        if (!subjectsList.includes(subjectName)) {
+            e.preventDefault();
+            showInvalidModal('The subject you selected does not exist.');
+            return;
+        }
+    });
+
+    // EDIT CLASS FORM VALIDATION (multiple modals)
+    document.querySelectorAll('[id^="editModal"]').forEach(modal => {
+        const form = modal.querySelector('form');
+        form.addEventListener('submit', function (e) {
+            const classId = form.querySelector('.edit-subject-search').dataset.id;
+            const instructorInput = form.querySelector(`#editInstructorSearchInput${classId}`);
+            const subjectInput = form.querySelector(`.edit-subject-search[data-id="${classId}"]`);
+
+            const instructorName = instructorInput.value.toLowerCase();
+            const subjectName = subjectInput.value.toLowerCase();
+
+            if (!instructorsList.includes(instructorName)) {
+                e.preventDefault();
+                showInvalidModal('The instructor you selected does not exist.');
+                return;
+            }
+
+            if (!subjectsList.includes(subjectName)) {
+                e.preventDefault();
+                showInvalidModal('The subject you selected does not exist.');
+                return;
+            }
+        });
+    });
+});
+</script>

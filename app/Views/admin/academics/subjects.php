@@ -1,15 +1,5 @@
 <!-- Main Container -->
 <div class="main-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-title">Academics</div>
-        <ul class="sidebar-nav">
-            <li><a href="<?=site_url('admin/academics/semesters')?>">Semesters</a></li>
-            <li><a href="<?=site_url('admin/academics/subjects')?>">Subjects</a></li>
-            <li><a href="<?=site_url('admin/academics/curriculums')?>">Curriculum</a></li>
-            <li><a href="<?=site_url('admin/academics/classes')?>">Classes</a></li>
-        </ul>
-    </div>
 
     <div class="container mt-5">
         <!-- HEADER -->
@@ -18,7 +8,7 @@
         </div>
 
 
-         <!-- FILTERS & SEARCH -->
+        <!-- FILTERS & SEARCH -->
     <div class="row mb-3">
         <div class="col-md-3 mb-2 d-flex">
             <select id="categoryFilter" class="form-select">
@@ -48,9 +38,9 @@
                         <th>Subject Code</th>
                         <th>Subject Name</th>
                         <th>Subject Type</th>
-                        <th>Lecture Units</th>
-                        <th>Lab Units</th>
-                        <th>Total Units</th>
+                        <th class="text-center">Lecture Units</th>
+                        <th class="text-center">Lab Units</th>
+                        <th class="text-center">Total Units</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -58,11 +48,19 @@
                     <?php foreach ($subjects as $subject): ?>
                     <tr>
                         <td><?= esc($subject['subject_code']) ?></td>
-                        <td><?= esc($subject['subject_name']) ?></td>
+                        <?php
+                            $fullTitle = trim($subject['subject_name']);
+                            $shortTitle = (strlen($fullTitle) > 52)
+                                ? mb_substr($fullTitle, 0, 52) . '...'
+                                : $fullTitle;
+                        ?>
+                        <td title="<?= esc($fullTitle) ?>">
+                            <?= esc($shortTitle) ?>
+                        </td>
                         <td><?= esc($subject['subject_type']) ?></td>
-                        <td><?= esc($subject['lec_units']) ?></td>
-                        <td><?= esc($subject['lab_units']) ?></td>
-                        <td><?= esc($subject['total_units']) ?></td>
+                        <td class="text-center"><?= esc($subject['lec_units']) ?></td>
+                        <td class="text-center"><?= esc($subject['lab_units']) ?></td>
+                        <td class="text-center"><?= esc($subject['total_units']) ?></td>
                         <td>
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
                             <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>

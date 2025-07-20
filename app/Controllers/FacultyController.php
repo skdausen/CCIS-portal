@@ -329,73 +329,134 @@ class FacultyController extends BaseController
 
     public function uploadGrades($classId)
     {
+        helper('text');
+
         $file = $this->request->getFile('grades_file');
 
-        if (!$file->isValid() || $file->getExtension() !== 'xlsx' && $file->getExtension() !== 'csv') {
-            return redirect()->back()->with('error', 'Please upload a valid Excel or CSV file.');
+        if (!$file->isValid() || !in_array($file->getExtension(), ['xlsx', 'xls'])) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid file uploaded.']);
         }
 
         $studentModel = new StudentModel();
         $gradeModel = new GradeModel();
 
-        // Load file with PhpSpreadsheet
         $spreadsheet = IOFactory::load($file->getTempName());
         $sheet = $spreadsheet->getActiveSheet();
+        
         $rows = $sheet->toArray(null, true, true, true);
 
-        $header = array_map('strtolower', $rows[1]); // First row is header
-        unset($rows[1]);
+        if (empty($rows)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Excel sheet is empty.']);
+        }
 
-        $successCount = 0;
-        $errors = [];
+        // Step 1: Identify MG and TFG column letters from the first row
+        $headerRow = $rows[1]; // First row = header
+        $mgCol = null;
+        $tfgCol = null;
 
-        foreach ($rows as $i => $row) {
-            $studentId = $row['A'] ?? null;
-            $mtNum = isset($row['C']) ? floatval($row['C']) : null;
-            $fnNum = isset($row['D']) ? floatval($row['D']) : null;
+        foreach ($headerRow as $colLetter => $value) {
+            foreach ($headerRow as $colLetter => $value) {
+                if (!$value) continue;
 
-            if (!$studentId) {
-                $errors[] = "Row $i: Missing student ID.";
-                continue;
+                $val = strtoupper(trim(preg_replace('/\s+/', '', $value))); // Remove spaces and normalize
+                if ($val === 'MG') $mgCol = $colLetter;
+                if ($val === 'TFG') $tfgCol = $colLetter;
             }
+        }
+
+        if (!$mgCol && !$tfgCol) {
+            return $this->response->setJSON([
+                'status' => 'error', 
+                'message' => 'MG or TFG column not found. Make sure the column headers are labeled "MG" and/or "TFG".'
+            ]);
+        }
+
+        unset($rows[1]); // remove header
+
+        $changedGrades = [];
+
+        foreach ($rows as $row) {
+            $studentId = $row['A'] ?? null;
+
+            $mtNum = $mgCol && isset($row[$mgCol]) && is_numeric($row[$mgCol]) ? round(floatval($row[$mgCol]), 2) : null;
+            $fnNum = $tfgCol && isset($row[$tfgCol]) && is_numeric($row[$tfgCol]) ? round(floatval($row[$tfgCol]), 2) : null;
+
+            if (!$studentId || ($mtNum === null && $fnNum === null)) continue;
 
             $student = $studentModel->where('student_id', $studentId)->first();
-
-            if (!$student) {
-                $errors[] = "Row $i: Student ID {$studentId} not found.";
-                continue;
-            }
+            if (!$student) continue;
 
             $stbId = $student['stb_id'];
-
-            if ($mtNum === null && $fnNum === null) {
-                $errors[] = "Row $i: No grades provided for {$studentId}.";
-                continue;
-            }
-
-            $mtGrade = $mtNum !== null ? $this->transmute($mtNum) : null;
-            $fnGrade = $fnNum !== null ? $this->transmute($fnNum) : null;
-            $semNum = null;
-            $semGrade = null;
-
-            if ($mtNum !== null && $fnNum !== null) {
-                $semNum = round(($mtNum + $fnNum) / 2, 2);
-                $semGrade = $this->transmute($semNum);
-            }
-
-
-            $data = [
-                'stb_id' => $stbId,
-                'class_id' => $classId,
-                'mt_numgrade' => $mtNum,
-                'mt_grade'    => $mtGrade,
-                'fn_numgrade' => $fnNum,
-                'fn_grade'    => $fnGrade,
-                'sem_numgrade'=> $semNum,
-                'sem_grade'   => $semGrade,
-            ];
-
             $existing = $gradeModel->where('stb_id', $stbId)->where('class_id', $classId)->first();
+
+            $changes = [];
+
+            if ($mtNum !== null && (!isset($existing['mt_numgrade']) || round($existing['mt_numgrade'], 2) !== $mtNum)) {
+                $changes['mt_numgrade'] = ['old' => $existing['mt_numgrade'] ?? '-', 'new' => $mtNum];
+            }
+
+            if ($fnNum !== null && (!isset($existing['fn_numgrade']) || round($existing['fn_numgrade'], 2) !== $fnNum)) {
+                $changes['fn_numgrade'] = ['old' => $existing['fn_numgrade'] ?? '-', 'new' => $fnNum];
+            }
+
+            if (!empty($changes)) {
+                $semNum = ($mtNum !== null && $fnNum !== null) ? round(($mtNum + $fnNum) / 2, 2) : null;
+                $semGrade = $semNum !== null ? $this->transmute($semNum) : null;
+
+                $changedGrades[] = [
+                    'student_id' => $studentId,
+                    'fullname'   => "{$student['lname']}, {$student['fname']} {$student['mname']}",
+                    'changes'    => $changes,
+                    'data'       => [
+                        'stb_id'       => $stbId,
+                        'class_id'     => $classId,
+                        'mt_numgrade'  => $mtNum,
+                        'mt_grade'     => $mtNum !== null ? $this->transmute($mtNum) : null,
+                        'fn_numgrade'  => $fnNum,
+                        'fn_grade'     => $fnNum !== null ? $this->transmute($fnNum) : null,
+                        'sem_numgrade' => $semNum,
+                        'sem_grade'    => $semGrade,
+                    ]
+                ];
+            }
+        }
+
+        if (empty($changedGrades)) {
+            return $this->response->setJSON(['status' => 'no_changes']);
+        }
+
+        session()->set('grade_upload_changes', $changedGrades);
+
+        return $this->response->setJSON([
+            'status' => 'changes_detected',
+            'changes' => $changedGrades
+        ]);
+    }
+
+
+    public function confirmUpload($classId)
+    {
+        $gradeModel = new GradeModel();
+        $changes = session()->get('grade_upload_changes') ?? [];
+
+        if (empty($changes)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'No changes to save.']);
+        }
+
+        $successCount = 0;
+
+        foreach ($changes as $entry) {
+            $data = $entry['data'];
+
+            // Prevent null overwrite (optional improvement)
+            $data = array_filter($data, function($val) {
+                return $val !== null;
+            });
+
+            $existing = $gradeModel
+                ->where('stb_id', $data['stb_id'])
+                ->where('class_id', $classId)
+                ->first();
 
             if ($existing) {
                 $gradeModel->update($existing['grade_id'], $data);
@@ -406,24 +467,20 @@ class FacultyController extends BaseController
             $successCount++;
         }
 
-        $message = "$successCount grade(s) successfully uploaded.";
-        if (!empty($errors)) {
-            $message .= "<br><strong>Errors:</strong><ul>";
-            foreach ($errors as $e) {
-                $message .= "<li>" . esc($e) . "</li>";
-            }
-            $message .= "</ul>";
-            return redirect()->back()->with('error', $message);
-        }
+        session()->remove('grade_upload_changes');
 
-        return redirect()->back()->with('success', $message);
+        return $this->response->setJSON([
+            'status' => 'success',
+            'message' => "$successCount grade(s) successfully uploaded."
+        ]);
     }
+
+
 
     public function downloadGradeTemplate($classId)
     {
         $classModel = new \App\Models\ClassModel();
         $studentModel = new \App\Models\StudentModel();
-        $studentScheduleModel = new \App\Models\StudentScheduleModel();
         $gradeModel = new \App\Models\GradeModel();
 
         // Get class info
@@ -457,8 +514,8 @@ class FacultyController extends BaseController
         // Headers
         $sheet->setCellValue('A1', 'student_id');
         $sheet->setCellValue('B1', 'full_name');
-        $sheet->setCellValue('C1', 'midterm_grade');
-        $sheet->setCellValue('D1', 'final_grade');
+        $sheet->setCellValue('C1', 'MG');
+        $sheet->setCellValue('D1', 'TFG');
 
         // Fill data
         $row = 2;

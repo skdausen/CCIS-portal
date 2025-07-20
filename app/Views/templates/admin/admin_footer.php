@@ -348,6 +348,9 @@
 <!-- Bootstrap JS -->
 <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
 
+<!-- Event, Error, Success Modal JS -->
+<script src="<?= base_url('rsc/custom_js/modals.js') ?>"></script>
+
 <!-- sidebar script -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -379,13 +382,8 @@
   <!--Calendar-->
   <script src="<?= base_url('rsc/custom_js/calendar.js') ?>"></script>
 
-  <!-- Event, Error, Success Modal JS -->
-  <script src="<?= base_url('rsc/custom_js/modals.js') ?>"></script>
-
   <!--View, Search, & Filter Users JS -->
   <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
-
-
 
 
 </body>

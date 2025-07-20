@@ -10,10 +10,6 @@
         <div class="card-body p-4">
             <form id="uploadGradesForm" action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/upload') ?>" method="post" enctype="multipart/form-data">
 
-                <!-- <div class="mb-3">
-                    <label for="grades_file" class="form-label">Upload Excel/CSV</label>
-                    <input class="form-control" type="file" name="grades_file" id="grades_file" accept=".xlsx,.csv" required>
-                </div> -->
                 <div class="d-flex justify-content-end gap-3">
                     <input class="form-control d-none" type="file" name="grades_file" id="grades_file" accept=".xlsx,.csv" required>
 

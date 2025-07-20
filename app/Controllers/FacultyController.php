@@ -71,7 +71,8 @@ class FacultyController extends BaseController
                         'subject_name' => $class['subject_name'],
                         'room' => $class['lec_room'],
                         'start' => $class['lec_start'],
-                        'end' => $class['lec_end']
+                        'end' => $class['lec_end'],
+                        'section' => $class['section']
                     ];
                 }
             }
@@ -86,7 +87,8 @@ class FacultyController extends BaseController
                         'subject_name' => $class['subject_name'],
                         'room' => $class['lab_room'],
                         'start' => $class['lab_start'],
-                        'end' => $class['lab_end']
+                        'end' => $class['lab_end'],
+                        'section' => $class['section']
                     ];
                 }
             }

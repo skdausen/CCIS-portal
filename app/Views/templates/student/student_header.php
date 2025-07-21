@@ -20,7 +20,7 @@
 </head>
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand ms-3" href="#">CCIS</a>
+            <a class="navbar-brand ms-3" href="<?= site_url('student/home') ?>">CCIS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

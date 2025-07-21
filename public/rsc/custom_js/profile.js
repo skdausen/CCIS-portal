@@ -1,7 +1,7 @@
- const editToggleBtn = document.getElementById('editToggleBtn');
-    const editToggleText = document.getElementById('editToggleText');
-    const profileForm = document.getElementById('profileForm');
-    const saveBtnContainer = document.getElementById('saveBtnContainer');
+const editToggleBtn = document.getElementById('editToggleBtn');
+const editToggleText = document.getElementById('editToggleText');
+const profileForm = document.getElementById('profileForm');
+const saveBtnContainer = document.getElementById('saveBtnContainer');
 
     editToggleBtn.addEventListener('click', () => {
       const isEditing = editToggleText.textContent === 'cancel';

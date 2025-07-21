@@ -479,9 +479,9 @@ class FacultyController extends BaseController
 
     public function downloadGradeTemplate($classId)
     {
-        $classModel = new \App\Models\ClassModel();
-        $studentModel = new \App\Models\StudentModel();
-        $gradeModel = new \App\Models\GradeModel();
+        $classModel = new ClassModel();
+        $studentModel = new StudentModel();
+        $gradeModel = new GradeModel();
 
         // Get class info
         $class = $classModel

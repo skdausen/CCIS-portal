@@ -73,8 +73,8 @@
 
                 <!-- Button aligned to bottom right -->
                 <div class="mb-4 ms-auto">
-                    <a href="<?= site_url('grades/download?semester_id=' . $selectedSemester) ?>" class="btn btn-outline-success">
-                        Download Grade
+                    <a href="<?= site_url('student/grades/download?semester_id=' . $selectedSemester) ?>" class="btn btn-success mb-3">
+                        Download PDF
                     </a>
                 </div>
 

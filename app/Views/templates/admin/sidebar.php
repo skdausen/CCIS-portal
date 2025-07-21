@@ -5,7 +5,10 @@
 <div class="sidebar">
     <div class="sidebar-inner pt-5"> 
         <div class="sidebar-header d-flex justify-content-between align-items-center px-3 pt-3">
-            <h5 class="sidebar-title mb-0">Academics</h5>
+            <a href="<?= site_url('admin/academics') ?>" class="text-decoration-none text-dark">
+                <h5 class="sidebar-title mb-0">Academics</h5>
+            </a>
+            <!-- <h5 class="sidebar-title mb-0">Academics</h5> -->
             <button id="toggleSidebarBtn" title="Toggle sidebar">
                 <i id="toggleIcon" class="bi bi-chevron-left"></i>
             </button>

@@ -18,9 +18,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 </head>
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-darker">
-        <div class="container-fluid position-relative">
-            <a class="navbar-brand ms-3" href="#">CCIS</a>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-3" href="<?= site_url('student/home') ?>">CCIS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

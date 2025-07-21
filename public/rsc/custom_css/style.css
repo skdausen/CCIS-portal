@@ -466,6 +466,11 @@ body {
     width: 30%;
 }
 
+.scale-down {
+transform: scale(0.75); /* MAKES ELEMENT 85% OF ORIGINAL SIZE */
+transform-origin: left; /* KEEPS IT CENTERED */
+}
+
 
 
 

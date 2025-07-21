@@ -129,9 +129,10 @@ $routes->group('student', function ($routes) {
 
     // Student Home & Users
     $routes->get('home', 'StudentController::studentHome');
-    $routes->get('curriculum', 'StudentController::studentCurriculum');
-    $routes->get('grades', 'StudentController::studentGrades');
-    $routes->get('grades', 'StudentController::getGrades');
     $routes->get('home', 'StudentController::studentSchedule');
+    $routes->get('curriculum', 'StudentController::studentCurriculum');
+    $routes->get('grades/grades', 'StudentController::studentGrades');
+    $routes->get('grades/grades', 'StudentController::getGrades');
+    $routes->get('grades/download', 'StudentController::downloadPDF');
     
 });

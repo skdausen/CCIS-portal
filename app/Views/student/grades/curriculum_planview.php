@@ -2,9 +2,14 @@
 <link rel="stylesheet" href="<?= base_url('/rsc/custom_css/style.css') ?>">
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>My Curriculum Plan View</h3>
+    <div class="d-flex align-items-center mb-4">
+        <a href="<?= site_url('student/grades/grades') ?>" class="btn btn-link text-muted text-decoration-none d-flex align-items-center gap-2">
+            <img src="<?= base_url('rsc/assets/uploads/left_arrow.png') ?>" alt="Back" style="width: 40px; height: 40px;">
+        </a>
+
+        <h3 class="m-0">My Curriculum Plan View</h3>
     </div>
+
 
     <?php if (!empty($groupedSubjects)): ?>
         <?php foreach ($groupedSubjects as $year => $semesters): ?>

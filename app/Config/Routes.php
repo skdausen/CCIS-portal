@@ -136,6 +136,7 @@ $routes->group('student', function ($routes) {
     $routes->get('grades/grades', 'StudentController::getGrades');
     $routes->get('grades/download', 'StudentController::downloadPDF');
     $routes->get('grades/curriculum_planview', 'StudentController::curriculumPlanView');
+    
 
 
     

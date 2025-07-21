@@ -14,4 +14,5 @@ class GradeModel extends Model
     ];
 
     protected $useTimestamps = false;
+
 }

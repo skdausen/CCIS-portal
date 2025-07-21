@@ -220,6 +220,7 @@
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
 
+              <!-- Program -->
               <?php if (session('role') === 'student' && isset($programs)): ?>
               <div class="col-md-6">
                   <label for="program_id" class="form-label">Program:</label>
@@ -234,6 +235,9 @@
                   </select>
               </div>
 
+              <!-- Major -->
+
+              <!-- Year Level -->
               <div class="col-md-6">
                   <label for="year_level" class="form-label">Year Level:</label>
                   <select name="year_level" id="year_level" class="form-select">

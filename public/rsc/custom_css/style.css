@@ -472,6 +472,69 @@ transform-origin: left; /* KEEPS IT CENTERED */
 }
 
 
+/* Apply a clean, visible grid */
+.curriculum-planview-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    border: 2px solid #333;
+}
+
+/* Strong inner grid borders */
+.curriculum-planview-table th,
+.curriculum-planview-table td {
+    border: 1px solid #333;
+    padding: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #fff;
+}
+
+/* Header styles */
+.curriculum-planview-table thead th {
+    background-color: #f1f1f1;
+    font-weight: 600;
+}
+
+/* Left align for first 2 columns */
+.curriculum-planview-table th:nth-child(1),
+.curriculum-planview-table td:nth-child(1),
+.curriculum-planview-table th:nth-child(2),
+.curriculum-planview-table td:nth-child(2) {
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Bold rows for totals */
+.curriculum-planview-table tr.fw-bold td {
+    background-color: #f8f8f8;
+    font-weight: 600;
+}
+
+/* Slight spacing between year/semester groups */
+h4, h6 {
+    margin-top: 2rem;
+    font-weight: bold;
+}
+
+/* Optional: make header and borders clearer on print */
+@media print {
+    .curriculum-planview-table {
+        border: 1px solid #000;
+    }
+    .curriculum-planview-table th,
+    .curriculum-planview-table td {
+        border: 1px solid #000;
+    }
+}
+
+
+
+
 
 
 /* sssssssssssssssssssssssss

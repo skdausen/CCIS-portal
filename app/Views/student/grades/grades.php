@@ -6,10 +6,10 @@
     <!-- Grades Table -->
         <div class="col-12 col-lg-12">
             <!-- Filters -->
-            <form method="get" class="row mb-4 g-2">
-                <div class="col-md-3">
+            <form method="get" class="d-flex align-items-end gap-3 mb-4 flex-wrap">
+                <div>
                     <label for="semester_id" class="form-label">Semester</label>
-                    <select name="semester_id" id="semester_id" class="form-select" onchange="this.form.submit()">
+                    <select name="semester_id" id="semester_id" class="form-select" onchange="this.form.submit()" style="min-width: 250px;">
                         <?php foreach ($semesters as $sem): ?>
                             <option value="<?= $sem->semester_id ?>" <?= ($selectedSemester == $sem->semester_id) ? 'selected' : '' ?>>
                                 <?= esc($sem->schoolyear . ' - ' . $sem->semester) ?>
@@ -17,7 +17,15 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <div class="ms-auto">
+                    <a href="<?= site_url('student/grades/curriculum_planview') ?>" class="btn btn-outline-primary">
+                        Curriculum Plan View
+                    </a>
+                </div>
             </form>
+
+            
             <?php if (empty($grades)): ?>
                 <div class="alert alert-warning shadow-sm rounded">No grades available for selected filters.</div>
             <?php else: ?>
@@ -46,19 +54,26 @@
 
                 </table>
             </div>
-            <?php
-            $selectedYLS = ''; // determine this based on subject info if needed
-            foreach ($grades as $g) {
-                // Assume you have yearlevel_sem in each subject record or fetch separately
-                $selectedYLS = $g->yearlevel_sem ?? ''; // adjust if needed
-            }
-            ?>
-            <?php if (isset($gwa)): ?>
-                <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-danger' ?> mt-4">
-                    <strong>GWA:</strong> <?= $gwa ?><br>
-                    <?= $isDeanLister ? '🎉 Congratulations! You are a <strong>Dean\'s Lister</strong>.' : 'You are <strong>not a Dean\'s Lister</strong> this semester.' ?>
+            <!-- DISPLAY GWA -->
+            <?php if ($gwa !== null): ?>
+                <div class="alert alert-info mt-4">
+                    <strong>GWA:</strong> <?= esc($gwa) ?>
                 </div>
             <?php endif; ?>
+
+            <!-- DISPLAY DEAN'S LIST STATUS -->
+            <?php if ($gwa !== null): ?>
+                <?php if ($isDeanLister): ?>
+                    <div class="alert alert-success">
+                        🎓 <strong>Dean's Lister</strong> ✅ — Congratulations!
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-warning">
+                        ❌ You're not a Dean's Lister. Keep striving!
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
 
             <!-- Grade System Legend -->
             <div class="d-flex justify-content-between align-items-end w-100">

@@ -6,7 +6,7 @@ namespace App\Controllers;
 use App\Models\AnnouncementModel;
 use App\Models\ProgramModel;
 use App\Models\StudentModel;
-use App\Models\SubjectModel;
+use App\Models\GradeModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -291,7 +291,7 @@ class StudentController extends BaseController
 
     public function downloadPDF()
     {
-        $gradesModel = new \App\Models\GradesModel(); // adjust model if needed
+        $gradesModel = new GradeModel(); // adjust model if needed
         $userId = session()->get('user_id');
         $semesterId = $this->request->getGet('semester_id');
 

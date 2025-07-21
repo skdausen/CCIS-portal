@@ -726,7 +726,7 @@ public function createClass()
 
         if ($subjectType === 'LEC with LAB') {
             if (strtotime($lab_start) >= strtotime($lab_end)) {
-                return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+            return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
             }
         }
 

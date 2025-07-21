@@ -117,6 +117,7 @@ $routes->group('faculty', function ($routes) {
     $routes->get('class/(:num)/grades', 'FacultyController::manageGrades/$1');
     $routes->post('class/(:num)/grades/save', 'FacultyController::saveGrades/$1');
     $routes->post('class/(:num)/grades/upload', 'FacultyController::uploadGrades/$1');
+    $routes->post('class/(:num)/grades/confirm-upload', 'FacultyController::confirmUpload/$1');
     $routes->get('class/(:num)/grades/download-template', 'FacultyController::downloadGradeTemplate/$1'); //download template
 
 });
@@ -129,9 +130,10 @@ $routes->group('student', function ($routes) {
 
     // Student Home & Users
     $routes->get('home', 'StudentController::studentHome');
-    $routes->get('curriculum', 'StudentController::studentCurriculum');
-    $routes->get('grades', 'StudentController::studentGrades');
-    $routes->get('grades', 'StudentController::getGrades');
     $routes->get('home', 'StudentController::studentSchedule');
+    $routes->get('curriculum', 'StudentController::studentCurriculum');
+    $routes->get('grades/grades', 'StudentController::studentGrades');
+    $routes->get('grades/grades', 'StudentController::getGrades');
+    $routes->get('grades/download', 'StudentController::downloadPDF');
     
 });

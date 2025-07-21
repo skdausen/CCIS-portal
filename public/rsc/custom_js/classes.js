@@ -128,3 +128,75 @@ document.getElementById('labEnd').addEventListener('change', function () {
         alert('Lab End Time cannot be earlier than Start Time!');
     }
 });
+
+
+// Instructors list for search (PHP to JS)
+const instructors = [
+    <?php foreach ($instructors as $ftbId => $instructorName): ?>
+    { id: "<?= esc($ftbId) ?>", name: "<?= esc($instructorName) ?>" },
+    <?php endforeach; ?>
+];
+
+// For Add Modal
+const addInput = document.getElementById('instructorSearchInput');
+const addHidden = document.getElementById('instructorIdInput');
+const addSuggestions = document.getElementById('instructorSuggestions');
+
+addInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    addSuggestions.innerHTML = '';
+    if (!query) return;
+
+    const matches = instructors.filter(i => i.name.toLowerCase().includes(query));
+    matches.forEach(i => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'list-group-item-action');
+        li.textContent = i.name;
+        li.addEventListener('click', () => {
+            addInput.value = i.name;
+            addHidden.value = i.id;
+            addSuggestions.innerHTML = '';
+        });
+        addSuggestions.appendChild(li);
+    });
+});
+
+document.addEventListener('click', function (e) {
+    if (!addSuggestions.contains(e.target) && e.target !== addInput) {
+        addSuggestions.innerHTML = '';
+    }
+});
+
+// For Edit Modals
+(function() {
+    const id = "<?= $class['class_id'] ?>";
+    const input = document.getElementById('editInstructorSearchInput' + id);
+    const hiddenInput = document.getElementById('editInstructorIdInput' + id);
+    const suggestions = document.getElementById('editInstructorSuggestions' + id);
+
+    input.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        suggestions.innerHTML = '';
+        if (!query) return;
+
+        const matches = instructors.filter(i => i.name.toLowerCase().includes(query));
+        matches.forEach(i => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item', 'list-group-item-action');
+            li.textContent = i.name;
+            li.addEventListener('click', () => {
+                input.value = i.name;
+                hiddenInput.value = i.id;
+                suggestions.innerHTML = '';
+            });
+            suggestions.appendChild(li);
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!suggestions.contains(e.target) && e.target !== input) {
+            suggestions.innerHTML = '';
+        }
+    });
+})();
+

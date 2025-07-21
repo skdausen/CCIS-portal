@@ -170,20 +170,37 @@
             <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
+          
+          <input type="hidden" name="clear_image" id="clearImageFlag" value="0">
 
           <div class="modal-body overflow-y-auto">
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
-              <div class="col-12 text-center">
-                <img src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>"
+                         <div class="col-12 text-center">
+                <img id="profilePreview"
+                    src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>"
                     alt="Profile Picture"
                     class="rounded-circle shadow"
                     style="width: 120px; height: 120px; object-fit: cover;">
+                
                 <div class="mt-2">
-                  <label for="profimg" class="form-label small text-muted">Change Photo</label>
-                  <input type="file" name="profimg" id="profimg" class="form-control form-control-sm">
+                    <label for="profimg" class="form-label small text-muted">Change Photo</label>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="file"
+                            name="profimg"
+                            id="profimg"
+                            class="form-control form-control-sm flex-grow-1"
+                            accept="image/*">
+
+                        <button type="button"
+                            id="clearProfileImage"
+                            class="btn btn-outline-danger btn-sm">
+                            Clear
+                        </button>
+                    </div>
                 </div>
-              </div>
+            </div>
 
               <!-- First Name -->
               <div class="col-md-4">
@@ -345,33 +362,34 @@
 <?php endif; ?>
 
 
-<!-- Bootstrap JS -->
-<script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
+  <!-- Bootstrap JS -->
+  <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
 
-<!-- Event, Error, Success Modal JS -->
-<script src="<?= base_url('rsc/custom_js/modals.js') ?>"></script>
+  <!-- Event, Error, Success Modal JS -->
+  <script src="<?= base_url('rsc/custom_js/modals.js') ?>"></script>
 
-<!-- sidebar script -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("toggleSidebarBtn");
-    const toggleIcon = document.getElementById("toggleIcon");
-    const html = document.documentElement;
+  <!-- sidebar script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggleBtn = document.getElementById("toggleSidebarBtn");
+      const toggleIcon = document.getElementById("toggleIcon");
+      const html = document.documentElement;
 
-    toggleBtn.addEventListener("click", () => {
-      const isCollapsed = html.classList.toggle("sidebar-collapsed");
-      localStorage.setItem("sidebarCollapsed", isCollapsed);
+      toggleBtn.addEventListener("click", () => {
+        const isCollapsed = html.classList.toggle("sidebar-collapsed");
+        localStorage.setItem("sidebarCollapsed", isCollapsed);
 
+        toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
+        toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
+      });
+
+      // Set correct icon on load
+      const isCollapsed = html.classList.contains("sidebar-collapsed");
       toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
       toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
     });
+  </script>
 
-    // Set correct icon on load
-    const isCollapsed = html.classList.contains("sidebar-collapsed");
-    toggleIcon.classList.toggle("bi-chevron-right", isCollapsed);
-    toggleIcon.classList.toggle("bi-chevron-left", !isCollapsed);
-  });
-</script>
 
   <!-- Prevent back history script -->
   <script src="<?= base_url("rsc/custom_js/preventBackHistory.js") ?>"></script>
@@ -384,6 +402,41 @@
 
   <!--View, Search, & Filter Users JS -->
   <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const profileInput = document.getElementById('profimg');
+      const profilePreview = document.getElementById('profilePreview');
+      const clearBtn = document.getElementById('clearProfileImage');
+      const clearFlag = document.getElementById('clearImageFlag');
+      
+
+      const defaultImage = "<?= base_url('rsc/assets/uploads/default.png') ?>";
+      const currentImage = "<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>";
+
+      profileInput.addEventListener('change', function () {
+          const file = this.files[0];
+          if (file) {
+              profilePreview.src = URL.createObjectURL(file);
+              clearFlag.value = '0'; // user picked new file
+          }
+      });
+
+      clearBtn.addEventListener('click', function () {
+          profilePreview.src = defaultImage;
+          profileInput.value = '';
+          clearFlag.value = '1'; // tell backend to reset to default
+      });
+
+      const modal = document.getElementById('editProfileModal');
+      modal.addEventListener('show.bs.modal', function () {
+          profilePreview.src = currentImage;
+          profileInput.value = '';
+          clearFlag.value = '0'; // reset clear flag on open
+      });
+  });
+
+  </script>
 
 
 </body>

@@ -14,7 +14,7 @@
                 <input type="text" id="instructorSearch" class="form-control form-control-sm" placeholder="Search Instructor...">
             </div>
 
-            <div class="col-md-3 mb-2">
+            <div class="col-md-2 mb-2">
                 <select id="sectionFilter" class="form-select form-select-sm">
                     <option value="">All Sections</option>
                     <?php 
@@ -26,17 +26,35 @@
                 </select>
             </div>
 
-            <div class="col-md-2 mb-2">
-                <button id="clearFiltersBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
+            <div class="col-md-3 mb-2">
+                <select id="semesterFilter" class="form-select form-select-sm">
+                    <option value="">
+                        <?= isset($activeSemester) 
+                            ? ucwords($activeSemester['semester']) . ' ' . $activeSemester['schoolyear'] 
+                            : 'No Active Semester' ?>
+                    </option>
+                    <?php foreach ($semesters as $semester): ?>
+                        <?php if (!isset($activeSemester) || $semester['semester_id'] != $activeSemester['semester_id']): ?>
+                            <option value="<?= $semester['semester_id'] ?>" <?= isset($_GET['semester_id']) && $_GET['semester_id'] == $semester['semester_id'] ? 'selected' : '' ?>>
+                                <?= ucwords($semester['semester']) . ' ' . $semester['schoolyear'] ?>
+                            </option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
-            <div class="col-md-4 mb-2 d-flex justify-content-end">
+            <div class="col-md-1 mb-2">
+                <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100 btn-thin rounded-1 px-2 py-1">Clear</button>
+            </div>
+
+            <div class="col-md-3 mb-2 text-end">
                 <button class="btn btn-outline-success"
                     <?= empty($activeSemester) ? 'onclick="showNoSemesterModal()"' : 'data-bs-toggle="modal" data-bs-target="#addModal"' ?>>
                     Add New Class
                 </button>
             </div>
         </div>
+
 
 
 
@@ -158,22 +176,29 @@
                     </div>
 
                     <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Instructor</label>
-                            <select name="ftb_id" class="form-select" required>
-                                <option value="">Select Instructor</option>
-                                <?php foreach ($instructors as $ftbId => $instructorName): ?>
-                                    <option value="<?= $ftbId ?>" <?= $ftbId == $class['ftb_id'] ? 'selected' : '' ?>>
-                                        <?= esc($instructorName) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                        <!-- Instructor Search (Left Side) -->
+                        <div class="col-md-6 position-relative">
+                            <label for="editInstructorSearchInput<?= $class['class_id'] ?>" class="form-label">Instructor</label>
+                            <input type="text" id="editInstructorSearchInput<?= $class['class_id'] ?>" 
+                                class="form-control" placeholder="Search Instructor..." autocomplete="off"
+                                value="<?= esc($instructors[$class['ftb_id']] ?? '') ?>" required>
+
+                            <input type="hidden" name="ftb_id" id="editInstructorIdInput<?= $class['class_id'] ?>" 
+                                value="<?= esc($class['ftb_id']) ?>">
+
+                            <ul id="editInstructorSuggestions<?= $class['class_id'] ?>" 
+                                class="list-group position-absolute w-100 shadow"
+                                style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
                         </div>
+
+                        <!-- Section (Right Side) -->
                         <div class="col-md-6">
                             <label class="form-label">Section</label>
-                            <input type="text" name="section" class="form-control" value="<?= esc($class['section']) ?>" required>
+                            <input type="text" name="section" class="form-control" 
+                                value="<?= esc($class['section']) ?>" required>
                         </div>
                     </div>
+
 
                     <div class="mb-3 position-relative">
                         <label class="form-label">Subject</label>
@@ -197,7 +222,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 <?= $class['subject_type'] == 'LEC with LAB' ? 'col-md-6' : 'col-md-12' ?>">
+                        <div class="edit-lecture-schedule <?= $class['subject_type'] == 'LEC with LAB' ? 'col-md-6' : 'col-md-12' ?>" data-id="<?= $class['class_id'] ?>">
                             <h6>Lecture Schedule</h6>
                             <input type="text" name="lec_day" value="<?= esc($class['lec_day']) ?>" class="form-control mb-2" placeholder="Day/s" required>
                             <input type="text" name="lec_room" value="<?= esc($class['lec_room']) ?>" class="form-control mb-2" placeholder="Room" required>
@@ -247,6 +272,7 @@
 </div>
 <?php endforeach; ?>
 
+
 <!-- Add Class Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
@@ -269,24 +295,21 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <!-- Instructor -->
-                                <label for="instructor" class="form-label">Instructor</label>
-                                <select name="ftb_id" class="form-select" required>
-                                    <option value="">Select Instructor</option>
-                                    <?php foreach ($instructors as $ftbId => $instructorName): ?>
-                                        <option value="<?= $ftbId ?>">
-                                            <?= esc($instructorName) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <!-- Instructor Search -->
+                            <div class="col-md-6 position-relative">
+                                <label for="instructorSearchInput" class="form-label">Instructor</label>
+                                <input type="text" id="instructorSearchInput" class="form-control" placeholder="Search Instructor..." autocomplete="off" required>
+                                <input type="hidden" name="ftb_id" id="instructorIdInput">
+                                <ul id="instructorSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
                             </div>
+
                             <!-- Section -->
                             <div class="col-md-6">
                                 <label for="section" class="form-label">Section</label>
                                 <input type="text" name="section" id="section" class="form-control" <?= old('section') ?> placeholder="Section e.g., A, B, C" required>
                             </div>
                         </div>
+
                         
                         <!-- Subject -->
                         <div class="mb-3 position-relative">
@@ -384,6 +407,22 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="invalidEntryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Invalid Entry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="invalidEntryMessage">
+                Invalid input.
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- External JS for class-related features -->
 <script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
@@ -562,12 +601,58 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Filter table by instructor name or section -->
+<script>
+    const instructors = [
+    <?php foreach ($instructors as $ftbId => $instructorName): ?>
+    {
+        id: "<?= esc($ftbId) ?>",
+        name: "<?= esc($instructorName) ?>"
+    },
+    <?php endforeach; ?>
+];
+
+const instructorSearchInput = document.getElementById('instructorSearchInput');
+const instructorSuggestions = document.getElementById('instructorSuggestions');
+const instructorIdInput = document.getElementById('instructorIdInput');
+
+instructorSearchInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    instructorSuggestions.innerHTML = '';
+
+    if (!query) return;
+
+    const matches = instructors.filter(instructor =>
+        instructor.name.toLowerCase().includes(query)
+    );
+
+    matches.forEach(instructor => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'list-group-item-action');
+        li.textContent = instructor.name;
+        li.addEventListener('click', () => {
+            instructorSearchInput.value = instructor.name;
+            instructorIdInput.value = instructor.id;
+            instructorSuggestions.innerHTML = '';
+        });
+        instructorSuggestions.appendChild(li);
+    });
+});
+
+document.addEventListener('click', function (e) {
+    if (!instructorSuggestions.contains(e.target) && e.target !== instructorSearchInput) {
+        instructorSuggestions.innerHTML = '';
+    }
+});
+
+</script>
+
+<!-- Filter table by instructor name or section as well as semester -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const tableRows = document.querySelectorAll('table tbody tr');
     const instructorSearch = document.querySelector('#instructorSearch');
     const sectionFilter = document.querySelector('#sectionFilter');
+    const semesterFilter = document.querySelector('#semesterFilter');
     const clearFiltersBtn = document.querySelector('#clearFiltersBtn');
 
     function filterTable() {
@@ -587,10 +672,139 @@ document.addEventListener('DOMContentLoaded', function () {
 
     instructorSearch.addEventListener('input', filterTable);
     sectionFilter.addEventListener('change', filterTable);
+
     clearFiltersBtn.addEventListener('click', () => {
         instructorSearch.value = '';
         sectionFilter.value = '';
-        filterTable();
+        semesterFilter.value = '';
+
+        // Remove ?semester_id=... from URL and reload
+        const url = new URL(window.location.href);
+        url.searchParams.delete('semester_id');
+        window.location.href = url.toString();
+    });
+});
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    <?php foreach ($classes as $class): ?>
+    (function () {
+        const input = document.getElementById('editInstructorSearchInput<?= $class['class_id'] ?>');
+        const list = document.getElementById('editInstructorSuggestions<?= $class['class_id'] ?>');
+        const hidden = document.getElementById('editInstructorIdInput<?= $class['class_id'] ?>');
+
+        if (!input || !list || !hidden) return;
+
+        input.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            list.innerHTML = '';
+
+            if (!query) return;
+
+            const matches = instructors.filter(instr =>
+                instr.name.toLowerCase().includes(query)
+            );
+
+            matches.forEach(instr => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.textContent = instr.name;
+                li.addEventListener('click', () => {
+                    input.value = instr.name;
+                    hidden.value = instr.id;
+                    list.innerHTML = '';
+                });
+                list.appendChild(li);
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!list.contains(e.target) && e.target !== input) {
+                list.innerHTML = '';
+            }
+        });
+    })();
+    <?php endforeach; ?>
+});
+</script>
+
+<script>
+    document.getElementById('semesterFilter').addEventListener('change', function () {
+    const selectedSemester = this.value;
+    const url = new URL(window.location.href);
+
+    if (selectedSemester) {
+        url.searchParams.set('semester_id', selectedSemester);
+    } else {
+        url.searchParams.delete('semester_id');
+    }
+
+    window.location.href = url.toString();
+});
+
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const instructorsList = instructors.map(ins => ins.name.toLowerCase());
+    const subjectsList = subjects.map(sub => (sub.code + ' - ' + sub.name).toLowerCase());
+
+    function showInvalidModal(message) {
+        const modalElement = document.getElementById('invalidEntryModal');
+        const bootstrapModal = new bootstrap.Modal(modalElement);
+        document.getElementById('invalidEntryMessage').textContent = message;
+        bootstrapModal.show();
+
+        setTimeout(() => {
+            bootstrapModal.hide();
+        }, 1000); // auto-hide after 1 second
+    }
+
+    // ADD CLASS FORM VALIDATION
+    const addForm = document.querySelector('#addModal form');
+    addForm.addEventListener('submit', function (e) {
+        const instructorName = document.getElementById('instructorSearchInput').value.toLowerCase();
+        const subjectName = document.getElementById('subjectSearchInput').value.toLowerCase();
+
+        if (!instructorsList.includes(instructorName)) {
+            e.preventDefault();
+            showInvalidModal('The instructor you selected does not exist.');
+            return;
+        }
+
+        if (!subjectsList.includes(subjectName)) {
+            e.preventDefault();
+            showInvalidModal('The subject you selected does not exist.');
+            return;
+        }
+    });
+
+    // EDIT CLASS FORM VALIDATION (multiple modals)
+    document.querySelectorAll('[id^="editModal"]').forEach(modal => {
+        const form = modal.querySelector('form');
+        form.addEventListener('submit', function (e) {
+            const classId = form.querySelector('.edit-subject-search').dataset.id;
+            const instructorInput = form.querySelector(`#editInstructorSearchInput${classId}`);
+            const subjectInput = form.querySelector(`.edit-subject-search[data-id="${classId}"]`);
+
+            const instructorName = instructorInput.value.toLowerCase();
+            const subjectName = subjectInput.value.toLowerCase();
+
+            if (!instructorsList.includes(instructorName)) {
+                e.preventDefault();
+                showInvalidModal('The instructor you selected does not exist.');
+                return;
+            }
+
+            if (!subjectsList.includes(subjectName)) {
+                e.preventDefault();
+                showInvalidModal('The subject you selected does not exist.');
+                return;
+            }
+        });
     });
 });
 </script>

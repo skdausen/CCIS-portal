@@ -294,8 +294,6 @@ body {
     color: white !important;
 }
 .btn-thin {
-    border-color: #343a40;
-    color: #495057;
     font-weight: 400;         /* NORMAL WEIGHT */
     padding: 0.25rem 0.5rem;  /* THINNER LOOK */
     font-size: 0.9rem;        /* SLIGHTLY SMALLER */
@@ -411,8 +409,9 @@ body {
     line-height: 38px !important;
 }
 
+/* TABLE STYLES */
 .curriculum-table,
-.grade-table, .classes-table {
+.grade-table, .classes-table, .schedule-table {
     table-layout: fixed;
     width: 100%;
 }
@@ -425,14 +424,13 @@ body {
     font-size: 1rem;
 }
 
-:is(.curriculum-table, .grade-table) th:nth-child(1),
-:is(.curriculum-table, .grade-table) td:nth-child(1){
+:is(.curriculum-table, .grade-table, .schedule-table) th:nth-child(1),
+:is(.curriculum-table, .grade-table, .schedule-table) td:nth-child(1){
     text-align: left;
     width: 15%;
-    max-width: 15%;
 }
 .classes-table td:nth-child(1),
-:is(.curriculum-table, .grade-table) :is(th, td):nth-child(2) {
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(2) {
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
@@ -440,15 +438,14 @@ body {
 }
 
 
-:is(.curriculum-table, .grade-table) :is(th, td)
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td)
 :is(:nth-child(3), 
     :nth-child(4), 
     :nth-child(5), 
     :nth-child(6), 
     :nth-child(7)) {
     text-align: center;
-    width: 15%;
-    max-width: 15%;
+    width: 10%;
 }
 
 /* Make sure .fw-bold rows are centered in grade columns */
@@ -463,8 +460,10 @@ body {
 }
 
 .classes-table th:nth-child(1),
-.classes-table th:nth-child(1) {
-    width: 25%;
+.classes-table td:nth-child(1), 
+.schedule-table th:nth-child(2),
+.schedule-table td:nth-child(2) {
+    width: 30%;
 }
 
 

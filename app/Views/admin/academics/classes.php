@@ -306,7 +306,7 @@
                             <!-- Section -->
                             <div class="col-md-6">
                                 <label for="section" class="form-label">Section</label>
-                                <input type="text" name="section" id="section" class="form-control" placeholder="Section e.g., A, B, C" required>
+                                <input type="text" name="section" id="section" class="form-control" <?= old('section') ?> placeholder="Section e.g., A, B, C" required>
                             </div>
                         </div>
 

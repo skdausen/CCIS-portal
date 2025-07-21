@@ -132,12 +132,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <strong>Section:</strong> ${(c.section ?? 'N/A').toUpperCase()}
                             </p>
                             <p>
-                                <strong>Lecture:</strong> ${c.lec_day ?? 'N/A'}, ${c.lec_start ?? ''} - ${c.lec_end ?? ''}<br>
+                                <strong>Lecture:</strong> ${c.lec_day ?? 'N/A'}, ${formatTime(c.lec_start) ?? ''} - ${formatTime(c.lec_end) ?? ''}<br>
                                 Room: ${(c.lec_room).toUpperCase() ?? ''}
                             </p>
                             ${c.subject_type === 'LEC with LAB' ? `
                                 <p>
-                                    <strong>Lab:</strong> ${c.lab_day ?? 'N/A'}, ${c.lab_start ?? ''} - ${c.lab_end ?? ''}<br>
+                                    <strong>Lab:</strong> ${c.lab_day ?? 'N/A'}, ${formatTime(c.lab_start) ?? ''} - ${formatTime(c.lab_end) ?? ''}<br>
                                     Room: ${c.lab_room ?? ''}
                                 </p>` : ''}
                         </div>
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <thead>
                     <tr>
                         <th>Subject Code</th>
-                        <th>Name</th>
+                        <th>Subject Name</th>
                         <th>Type</th>
                         <th>Section</th>
                         <th>Lecture</th>
@@ -166,13 +166,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 </thead>
                 <tbody>`;
             paginated.forEach(c => {
+                const fullTitle = `${c.subject_name}`;
+                const shortTitle = fullTitle.length > 52 ? fullTitle.substring(0, 52) + '...' : fullTitle;
+
                 html += `<tr>
                     <td>${c.subject_code}</td>
-                    <td>${c.subject_name}</td>
+                    <td title="${fullTitle}">${shortTitle}</td>
                     <td>${c.subject_type}</td>
                     <td>${(c.section ?? 'N/A').toUpperCase()}</td>
-                    <td>${c.lec_day ?? ''}, ${c.lec_start ?? ''} - ${c.lec_end ?? ''}<br>Room: ${c.lec_room.toUpperCase() ?? ''}</td>
-                    <td>${c.subject_type === 'LEC with LAB' ? `${c.lab_day ?? ''}, ${c.lab_start ?? ''} - ${c.lab_end ?? ''}<br>Room: ${c.lab_room.toUpperCase() ?? ''}` : 'N/A'}</td>
+                    <td>${c.lec_day ?? ''}, ${formatTime(c.lec_start) ?? ''} - ${formatTime(c.lec_end) ?? ''}<br>Room: ${c.lec_room.toUpperCase() ?? ''}</td>
+                    <td>${c.subject_type === 'LEC with LAB' ? `${c.lab_day ?? ''}, ${formatTime(c.lab_start) ?? ''} - ${formatTime(c.lab_end) ?? ''}<br>Room: ${c.lab_room.toUpperCase() ?? ''}` : 'N/A'}</td>
                     <td>
                         <a href="<?= base_url('faculty/class/') ?>${c.class_id}" class="btn btn-sm btn-outline-primary">Manage Class</a>
                     </td>
@@ -192,5 +195,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     fetchClasses();
 });
+function formatTime(timeStr) {
+    if (!timeStr) return '';
+    const [hour, minute] = timeStr.split(':');
+    const h = parseInt(hour, 10);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 || 12;
+    return `${hour12}:${minute} ${ampm}`;
+}
 </script>
 

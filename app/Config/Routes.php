@@ -117,6 +117,7 @@ $routes->group('faculty', function ($routes) {
     $routes->get('class/(:num)/grades', 'FacultyController::manageGrades/$1');
     $routes->post('class/(:num)/grades/save', 'FacultyController::saveGrades/$1');
     $routes->post('class/(:num)/grades/upload', 'FacultyController::uploadGrades/$1');
+    $routes->post('class/(:num)/grades/confirm-upload', 'FacultyController::confirmUpload/$1');
     $routes->get('class/(:num)/grades/download-template', 'FacultyController::downloadGradeTemplate/$1'); //download template
 
 });

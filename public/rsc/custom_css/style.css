@@ -532,7 +532,11 @@ h4, h6 {
     }
 }
 
-
+.gwa-box {
+    border: 1px solid #ccc;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
 
 
 

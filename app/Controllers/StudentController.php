@@ -135,45 +135,46 @@ class StudentController extends BaseController
             ->getResultArray();
 
         $groupedSubjects = [
-            '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
-            '2nd Year' => ['1st Semester' => [], '2nd Semester' => []],
-            '3rd Year' => ['1st Semester' => [], '2nd Semester' => [], 'Midyear' => []],
-            '4th Year' => ['1st Semester' => [], '2nd Semester' => []],
+            'First Year' => ['First Semester' => [], 'Second Semester' => []],
+            'Second Year' => ['First Semester' => [], 'Second Semester' => []],
+            'Third Year' => ['First Semester' => [], 'Second Semester' => [], 'Midyear' => []],
+            'Fourth Year' => ['First Semester' => [], 'Second Semester' => []],
         ];
+
 
         foreach ($subjects as $subject) {
             switch ($subject['yearlevel_sem']) {
                 case 'Y1S1':
-                    $groupedSubjects['1st Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['First Year']['First Semester'][] = $subject;
                     break;
                 case 'Y1S2':
-                    $groupedSubjects['1st Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['First Year']['Second Semester'][] = $subject;
                     break;
                 case 'Y2S1':
-                    $groupedSubjects['2nd Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['Second Year']['First Semester'][] = $subject;
                     break;
                 case 'Y2S2':
-                    $groupedSubjects['2nd Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['Second Year']['Second Semester'][] = $subject;
                     break;
                 case 'Y3S1':
-                    $groupedSubjects['3rd Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['Third Year']['First Semester'][] = $subject;
                     break;
                 case 'Y3S2':
-                    $groupedSubjects['3rd Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['Third Year']['Second Semester'][] = $subject;
                     break;
                 case 'Y3S3':
-                    $groupedSubjects['3rd Year']['Midyear'][] = $subject;
+                    $groupedSubjects['Third Year']['Midyear'][] = $subject;
                     break;
                 case 'Y4S1':
-                    $groupedSubjects['4th Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['Fourth Year']['First Semester'][] = $subject;
                     break;
                 case 'Y4S2':
-                    $groupedSubjects['4th Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['Fourth Year']['Second Semester'][] = $subject;
                     break;
             }
         }
 
-        $yearKeys = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+        $yearKeys = ['First Year', 'Second Year', 'Third Year', 'Fourth Year'];
         $page = (int)$this->request->getGet('page') ?: 1;
         $totalPages = count($yearKeys);
         $currentYearKey = $yearKeys[$page - 1] ?? null;
@@ -379,7 +380,7 @@ public function curriculumPlanView()
         ->get()
         ->getResultArray();
 
-    // Attach Grade
+    // Attach Grades
     foreach ($subjects as &$subject) {
         $gradeRow = $db->table('grades g')
             ->select('g.sem_grade')
@@ -391,18 +392,29 @@ public function curriculumPlanView()
 
         $subject['grade'] = $gradeRow ? $gradeRow->sem_grade : null;
     }
+    unset($subject); // Good practice
 
-    // Group by Year and Semester (Readable)
+    // ✅ Remove duplicates properly via subject_id
+    $uniqueSubjects = [];
+    foreach ($subjects as $subject) {
+        $key = $subject['subject_id'];
+        if (!isset($uniqueSubjects[$key])) {
+            $uniqueSubjects[$key] = $subject;
+        }
+    }
+    $subjects = array_values($uniqueSubjects);
+
+    // Group by Year and Semester
     $groupedSubjects = [];
     foreach ($subjects as $subject) {
-        $yearRaw = substr($subject['yearlevel_sem'], 0, 2); // Y1
-        $semRaw = substr($subject['yearlevel_sem'], 2);     // S1
+        $yearRaw = substr($subject['yearlevel_sem'], 0, 2);
+        $semRaw = substr($subject['yearlevel_sem'], 2);
 
         $year = match ($yearRaw) {
-            'Y1' => '1st Year',
-            'Y2' => '2nd Year',
-            'Y3' => '3rd Year',
-            'Y4' => '4th Year',
+            'Y1' => 'First Year',
+            'Y2' => 'Second Year',
+            'Y3' => 'Third Year',
+            'Y4' => 'Fourth Year',
             default => 'Other Year',
         };
 
@@ -416,11 +428,51 @@ public function curriculumPlanView()
         $groupedSubjects[$year][$semester][] = $subject;
     }
 
-    $data = [
-        'groupedSubjects' => $groupedSubjects,
-        'curriculum_id' => $curriculum_id
-    ];
+    // --- Compute GWA and Honor ---
+    $totalUnits = 0;
+    $totalGradePoints = 0;
+    $lowestGrade = 0;
 
-    return view('student/grades/curriculum_planview', $data);
+    foreach ($subjects as $subject) {
+        // Skip NSTP
+        if (stripos($subject['subject_code'], 'NSTP') !== false) {
+            continue;
+        }
+
+        if ($subject['grade'] !== null && is_numeric($subject['grade']) && $subject['grade'] != 0) {
+            $units = $subject['total_units'];
+            $grade = $subject['grade'];
+
+            $totalUnits += $units;
+            $totalGradePoints += $units * $grade;
+
+            if ($grade > $lowestGrade) {
+                $lowestGrade = $grade;
+            }
+        }
+    }
+
+    $gwa = $totalUnits > 0 ? round($totalGradePoints / $totalUnits, 2) : null;
+    $honor = null;
+
+    if ($gwa !== null) {
+        if ($gwa >= 1.0 && $gwa <= 1.25 && $lowestGrade <= 2.0) {
+            $honor = 'Summa Cum Laude';
+        } elseif ($gwa > 1.25 && $gwa <= 1.5 && $lowestGrade <= 2.25) {
+            $honor = 'Magna Cum Laude';
+        } elseif ($gwa > 1.5 && $gwa <= 1.75 && $lowestGrade <= 2.5) {
+            $honor = 'Cum Laude';
+        }
+    }
+
+    return view('student/grades/curriculum_planview', [
+        'groupedSubjects' => $groupedSubjects,
+        'curriculum_id' => $curriculum_id,
+        'gwa' => $gwa,
+        'honor' => $honor,
+    ]);
 }
+
+
+
 }

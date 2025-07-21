@@ -183,6 +183,66 @@ class StudentController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
+    public function studentGrades()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
+            return redirect()->to('auth/login');
+        }
+
+        $db = \Config\Database::connect();
+        $userId = session()->get('user_id');
+
+        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
+        if (!$student) {
+            return redirect()->to('auth/login');
+        }
+
+        $stbId = $student->stb_id;
+
+        $selectedSemester = $this->request->getGet('semester_id');
+
+        // Fetch all semesters for dropdown
+        $semesters = $db->table('semesters')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'DESC')
+            ->get()->getResult();
+
+        // ✅ Automatically select the active semester if not selected
+        if (!$selectedSemester) {
+            $activeSemester = $db->table('semesters')
+                ->where('is_active', 1)
+                ->select('semester_id')
+                ->get()
+                ->getRow();
+            if ($activeSemester) {
+                $selectedSemester = $activeSemester->semester_id;
+            }
+        }
+
+        // Fetch grades filtered by semester
+        $builder = $db->table('student_schedules ss')
+            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->where('ss.stb_id', $stbId);
+
+        if ($selectedSemester) {
+            $builder->where('c.semester_id', $selectedSemester);
+        }
+
+        $grades = $builder->get()->getResult();
+
+        return view('templates/student/student_header')
+            . view('student/grades/grades', [
+                'grades' => $grades,
+                'semesters' => $semesters,
+                'selectedSemester' => $selectedSemester,
+            ])
+            . view('templates/admin/admin_footer');
+    }
     public function getGrades()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
@@ -213,7 +273,7 @@ class StudentController extends BaseController
 
         // Build grades query
         $gradesQuery = $db->table('student_schedules ss')
-            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade')
+            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units')
             ->join('classes c', 'c.class_id = ss.class_id')
             ->join('subjects s', 's.subject_id = c.subject_id')
             ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
@@ -225,11 +285,55 @@ class StudentController extends BaseController
 
         $grades = $gradesQuery->get()->getResult();
 
+        $curriculumId = $student->curriculum_id;
+
+        $yearlevelSems = ['Y1S1','Y1S2','Y2S1','Y2S2','Y3S1','Y3S2','Y3S3','Y4S1','Y4S2'];
+        $deansListFlags = [];
+
+        foreach ($yearlevelSems as $yls) {
+            $deansListFlags[$yls] = $this->isDeansLister($stbId, $curriculumId, $yls);
+        }
+
+        $totalUnits = 0;
+        $weightedSum = 0;
+        $isDeanLister = true;
+
+    // Determine selectedYLS from grades if possible
+    $selectedYLS = '';
+    foreach ($grades as $g) {
+        if (isset($g->yearlevel_sem)) {
+            $selectedYLS = $g->yearlevel_sem;
+            break;
+        }
+    }
+
+    // Compute GWA from current grades
+    $totalUnits = 0;
+    $weightedSum = 0;
+    $gwa = null;
+
+    foreach ($grades as $g) {
+        if (!is_numeric($g->sem_grade)) continue;
+        $totalUnits += $g->total_units;
+        $weightedSum += ($g->sem_grade * $g->total_units);
+    }
+
+    $gwa = $totalUnits > 0 ? round($weightedSum / $totalUnits, 2) : null;
+
+    // Check if Dean’s Lister for selected semester
+    $isDeanLister = false;
+    if ($selectedYLS && isset($deansListFlags[$selectedYLS])) {
+        $isDeanLister = $deansListFlags[$selectedYLS];
+    }
+
         return view('templates/student/student_header')
             . view('student/grades/grades', [
                 'grades' => $grades,
                 'semesters' => $semesters,
-                'selectedSemester' => $selectedSemester
+                'selectedSemester' => $selectedSemester,
+                'deansListFlags' => $deansListFlags,
+                'isDeanLister' => $isDeanLister,
+                'gwa' => $gwa
             ])
             . view('templates/admin/admin_footer');
     }
@@ -279,6 +383,7 @@ class StudentController extends BaseController
             'grades' => $grades,
             'currentSemester' => $currentSemester
         ]);
+    
 
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
@@ -287,6 +392,54 @@ class StudentController extends BaseController
 
         return $dompdf->stream('grades.pdf', ['Attachment' => true]);
     }
+
+    private function isDeansLister($stbId, $curriculumId, $yearlevelSem)
+    {
+        $db = \Config\Database::connect();
+
+        // Get all subjects for the curriculum and yearlevel_sem
+        $currSubjects = $db->table('subjects')
+            ->select('subject_id')
+            ->where('curriculum_id', $curriculumId)
+            ->where('yearlevel_sem', $yearlevelSem)
+            ->get()
+            ->getResultArray();
+
+        $currSubjectIds = array_column($currSubjects, 'subject_id');
+        if (empty($currSubjectIds)) {
+            return false; // No curriculum subjects for this yearlevel_sem
+        }
+
+        // Get all subject_ids that the student has enrolled in (joined with grades to filter out NE or non-numeric)
+        $studentSubjects = $db->table('student_schedules ss')
+            ->select('s.subject_id, g.sem_grade')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->where('ss.stb_id', $stbId)
+            ->whereIn('s.subject_id', $currSubjectIds)
+            ->get()
+            ->getResult();
+
+        // Check if the student took all required curriculum subjects
+        if (count($studentSubjects) !== count($currSubjectIds)) {
+            return false; // Not full load
+        }
+
+        // Check each grade
+        foreach ($studentSubjects as $subj) {
+            $grade = $subj->sem_grade;
+
+            if (!is_numeric($grade) || $grade > 2.00) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+
 
     private function expandDays($days)
     {

@@ -14,13 +14,13 @@
                     <input class="form-control d-none" type="file" name="grades_file" id="grades_file" accept=".xlsx,.xls" required>
 
                     <!-- BUTTON TO TRIGGER FILE INPUT -->
-                    <button type="button" id="triggerUploadBtn" class="btn btn-outline-primary btn-sm mb-3">
-                        📤 Upload Grades
+                    <button type="button" id="triggerUploadBtn" class="btn btn-outline-success btn-sm mb-3">
+                        Upload Grades
                     </button>
 
                     <!-- <button type="submit" class="btn btn-outline-primary btn-sm mb-3">Upload Grades</button> -->
-                    <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-primary btn-sm mb-3">
-                    📥 Download Grade Template
+                    <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-success btn-sm mb-3">
+                        Download Grade Template
                     </a>
                 </div>
 
@@ -213,7 +213,7 @@
                 }
             },
             error: function () {
-                alert("❌ An error occurred while uploading the grades.");
+                alert("An error occurred while uploading the grades.");
                 uploadBtn.disabled = false;
                 uploadBtn.innerHTML = originalText;
             }

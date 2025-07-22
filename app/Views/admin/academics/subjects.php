@@ -486,7 +486,7 @@ function toggleEditUnits(id) {
 
 <script>
     document.addEventListener('keydown', function(event) {
-        // Prevent pagination when a modal is open
+        // Skip if modal is open
         const isModalOpen = document.querySelector('.modal.show');
         if (isModalOpen) return;
 
@@ -496,13 +496,13 @@ function toggleEditUnits(id) {
 
         if (event.key === 'ArrowRight') {
             let nextPage = currentPage + 1;
-            if (nextPage > totalPages) nextPage = totalPages;
+            if (nextPage > totalPages) nextPage = 1; // Loop to page 1
             window.location.href = baseUrl + nextPage;
         }
 
         if (event.key === 'ArrowLeft') {
             let prevPage = currentPage - 1;
-            if (prevPage < 1) prevPage = 1;
+            if (prevPage < 1) prevPage = totalPages; // Loop to last page
             window.location.href = baseUrl + prevPage;
         }
     });

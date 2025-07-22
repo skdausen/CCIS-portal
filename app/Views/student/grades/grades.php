@@ -46,6 +46,20 @@
 
                 </table>
             </div>
+            <?php
+            $selectedYLS = ''; // determine this based on subject info if needed
+            foreach ($grades as $g) {
+                // Assume you have yearlevel_sem in each subject record or fetch separately
+                $selectedYLS = $g->yearlevel_sem ?? ''; // adjust if needed
+            }
+            ?>
+            <?php if (isset($gwa)): ?>
+                <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-danger' ?> mt-4">
+                    <strong>GWA:</strong> <?= $gwa ?><br>
+                    <?= $isDeanLister ? '🎉 Congratulations! You are a <strong>Dean\'s Lister</strong>.' : 'You are <strong>not a Dean\'s Lister</strong> this semester.' ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Grade System Legend -->
             <div class="d-flex justify-content-between align-items-end w-100">
 

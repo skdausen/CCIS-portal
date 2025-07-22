@@ -486,6 +486,10 @@ function toggleEditUnits(id) {
 
 <script>
     document.addEventListener('keydown', function(event) {
+        // Prevent pagination when a modal is open
+        const isModalOpen = document.querySelector('.modal.show');
+        if (isModalOpen) return;
+
         const currentPage = <?= $page ?>;
         const totalPages = <?= $totalPages ?>;
         const baseUrl = "<?= site_url('admin/academics/subjects?page=') ?>";

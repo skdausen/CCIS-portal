@@ -114,7 +114,7 @@
                         </div>
                         <!-- 📌 Nearest Events -->
                         <div class="ms-2">
-                            <h6 class="text-purple">📌 Nearing Events</h6>
+                            <h6 class="mt-1">📌 Nearing Events</h6>
                             <?php if (!empty($nearing)) : ?>
                                 <ul class="list-group list-group-flush mt-2">
                                     <?php foreach ($nearing as $n) : ?>

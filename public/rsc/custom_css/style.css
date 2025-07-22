@@ -58,7 +58,7 @@ body {
 .main-container {
     display: flex;
     min-height: 100vh;
-    margin-left: 280px;
+    margin-left: 250px;
     transition: margin-left 0.3s ease;
 }
 
@@ -547,7 +547,7 @@ sssssssssssssssssssssssssidebar */
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: 240px;
     height: 100vh;
     background-color: #fff;
     border-right: 1px solid #ffffff;

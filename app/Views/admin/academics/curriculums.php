@@ -1,12 +1,11 @@
 <!-- Main Container -->
-<div class="main-container">
+<div class="main-container ms-2">
 
-    <div class="container mt-5">
+    <div class="container mt-5 px-3">
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Curriculum Courses</h3>
-
         </div>
 
         <!-- Search Filter -->

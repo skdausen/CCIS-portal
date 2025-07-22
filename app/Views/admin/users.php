@@ -20,7 +20,7 @@
             <input type="text" id="searchInput" class="form-control" placeholder="Search by username or email...">
         </div>
         <div class="col-md-5 mb-2 d-flex justify-content-end">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Add Account</button>
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Add Account</button>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
                     <?php foreach ($users as $user): ?>
                         <tr>
                             <td><?= esc($user['user_id']) ?></td>
-                            <td><?= esc($user['role']) ?></td>
+                            <td><?=strtoupper( esc($user['role']) )?></td>
                             <td><?= esc($user['username']) ?></td>
                             <td><?= esc($user['email']) ?></td>
                             <td>

@@ -53,8 +53,15 @@
             <div class="card p-3 border-0 bg-transparent">
                 <div class="row">
                     <!-- Calendar -->
-                    <div class="col-12 mb-4 card shadow-darker">
+                    <div class="col-12 mb-4 card shadow-darker p-2">
                         <div id="calendar" class="calendar-sm p-3"></div>
+                        <div class="p-3">
+                            <h6 class="mt-1">Quick Links:</h6>
+                            <a href="https://fpes.online/login-student.php">Faculty Evaluation</a>
+                            <a href="https://www.facebook.com/people/Ispsc-Main-Campus-Registrar/61576774508246/">ISPSC Main Campus Registrar FB Page</a>
+                            <a href="https://fpes.online/login-student.php">Faculty Evaluation</a>
+                            <a href="https://fpes.online/login-student.php">Faculty Evaluation</a>
+                        </div>
                     </div>
 
                     <!-- 🔍 Filter Logic -->
@@ -114,7 +121,7 @@
                         </div>
                         <!-- 📌 Nearest Events -->
                         <div class="ms-2">
-                            <h6 class="text-purple">📌 Nearing Events</h6>
+                            <h6 class="mt-1">📌 Nearing Events</h6>
                             <?php if (!empty($nearing)) : ?>
                                 <ul class="list-group list-group-flush mt-2">
                                     <?php foreach ($nearing as $n) : ?>

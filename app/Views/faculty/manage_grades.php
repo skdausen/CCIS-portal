@@ -19,7 +19,7 @@
                     </button>
 
                     <!-- <button type="submit" class="btn btn-outline-primary btn-sm mb-3">Upload Grades</button> -->
-                    <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-success btn-sm mb-3">
+                    <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-success gi btn-sm mb-3">
                         Download Grade Template
                     </a>
                 </div>
@@ -172,7 +172,7 @@
                 uploadBtn.innerHTML = originalText;
 
                 if (response.status === 'no_changes') {
-                    $('#uploadFeedbackMessage').html("No grade changes detected.");
+                    $('#uploadFeedbackMessage').html("No grade changes detected. Please review your inputs");
                     $('#uploadFeedbackModal').modal('show');
                     fileInput.value = "";
                     return;
@@ -207,6 +207,12 @@
 
                 if (response.status === 'success') {
                     $("#gradeTableContainer").load(location.href + " #gradeTableContainer > *");
+                    $('#uploadFeedbackMessage').html(response.message);
+                    $('#uploadFeedbackModal').modal('show');
+                    fileInput.value = "";
+                }
+                
+                if (response.status === 'error') {
                     $('#uploadFeedbackMessage').html(response.message);
                     $('#uploadFeedbackModal').modal('show');
                     fileInput.value = "";

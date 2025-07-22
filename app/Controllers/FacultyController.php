@@ -333,9 +333,21 @@ class FacultyController extends BaseController
 
         $file = $this->request->getFile('grades_file');
 
-        if (!$file->isValid() || !in_array($file->getExtension(), ['xlsx', 'xls'])) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid file uploaded.']);
+        if (!$file->isValid()) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Upload failed: ' . $file->getErrorString()
+            ]);
         }
+
+        $ext = strtolower($file->getExtension());
+        if (!in_array($ext, ['xlsx', 'xls'])) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid file type. Only .xlsx or .xls files are allowed.'
+            ]);
+        }
+
 
         $studentModel = new StudentModel();
         $gradeModel = new GradeModel();

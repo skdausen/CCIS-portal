@@ -467,6 +467,7 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
+        $classModel = new ClassModel();
         $semesterModel = new SemesterModel();
         $semester = $semesterModel->find($id);
 
@@ -476,6 +477,13 @@ class AdminController extends BaseController
 
         if ($semester['is_active']) {
             return redirect()->back()->with('error', 'Cannot delete an active semester.');
+        }
+
+        // Check if this semester is used in any class
+        $usedInClasses = $classModel->where('semester_id', $id)->countAllResults();
+
+        if ($usedInClasses > 0) {
+            return redirect()->back()->with('error', 'Cannot delete semester. It is used in one or more classes.');
         }
 
         $semesterModel->delete($id);
@@ -714,6 +722,17 @@ public function createClass()
         $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
 
+        $existing = $classModel->where([
+            'subject_id' => $subjectId,
+            'ftb_id' => $ftbId,
+            'semester_id' => $semesterId,
+            'section' => $section,
+        ])->first();
+
+        if ($existing) {
+            return redirect()->back()->withInput()->with('error', 'Class with same subject, faculty, section, and semester already exists.');
+        }
+
         // TIME VALIDATION
         $lec_start = $this->request->getPost('lec_start');
         $lec_end   = $this->request->getPost('lec_end');
@@ -763,11 +782,26 @@ public function updateClass($id)
     $classModel = new ClassModel();
 
     try {
+        $subjectId = $this->request->getPost('subject_id');
+        $ftbId = $this->request->getPost('ftb_id');
+        $semesterId = $this->request->getPost('semester_id');
+        $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
         $lec_start = $this->request->getPost('lec_start');
         $lec_end = $this->request->getPost('lec_end');
         $lab_start = $this->request->getPost('lab_start');
         $lab_end = $this->request->getPost('lab_end');
+
+        $existing = $classModel->where([
+            'subject_id' => $subjectId,
+            'ftb_id' => $ftbId,
+            'semester_id' => $semesterId,
+            'section' => $section,
+        ])->where('class_id !=', $id)->first(); // use your PK field here
+
+        if ($existing) {
+            return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
+        }
 
         // Time validation
         if (strtotime($lec_start) >= strtotime($lec_end)) {

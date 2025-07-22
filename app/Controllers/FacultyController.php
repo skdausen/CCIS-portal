@@ -348,7 +348,6 @@ class FacultyController extends BaseController
             ]);
         }
 
-
         $studentModel = new StudentModel();
         $gradeModel = new GradeModel();
 
@@ -386,6 +385,8 @@ class FacultyController extends BaseController
         unset($rows[1]); // remove header
 
         $changedGrades = [];
+        $extraStudents = []; 
+        $studentsWithNoGrades = [];
 
         foreach ($rows as $row) {
             $studentId = $row['A'] ?? null;
@@ -393,10 +394,19 @@ class FacultyController extends BaseController
             $mtNum = $mgCol && isset($row[$mgCol]) && is_numeric($row[$mgCol]) ? round(floatval($row[$mgCol]), 2) : null;
             $fnNum = $tfgCol && isset($row[$tfgCol]) && is_numeric($row[$tfgCol]) ? round(floatval($row[$tfgCol]), 2) : null;
 
-            if (!$studentId || ($mtNum === null && $fnNum === null)) continue;
+
+            if (!$studentId) continue;
 
             $student = $studentModel->where('student_id', $studentId)->first();
-            if (!$student) continue;
+            if (!$student) {
+                $extraStudents[] = $studentId;
+                continue;
+            }
+
+            if ($mtNum === null && $fnNum === null) {
+                $studentsWithNoGrades[] = $studentId;
+                continue;
+            }
 
             $stbId = $student['stb_id'];
             $existing = $gradeModel->where('stb_id', $stbId)->where('class_id', $classId)->first();
@@ -433,15 +443,30 @@ class FacultyController extends BaseController
             }
         }
 
-        if (empty($changedGrades)) {
+        if (empty($changedGrades) && empty($extraStudents) && empty($studentsWithNoGrades)) {
             return $this->response->setJSON(['status' => 'no_changes']);
         }
+        if (empty($changedGrades) && !empty($extraStudents) && empty($studentsWithNoGrades)) {
+            return $this->response->setJSON([
+                'status' => 'changes_detected',
+                'extra_students' => $extraStudents,
+            ]);
+        }
+        // if (empty($changedGrades) && empty($extraStudents) && !empty($studentsWithNoGrades)) {
+        //     return $this->response->setJSON([
+        //         'status' => 'changes_detected',
+        //         'students_with_no_grades' => $studentsWithNoGrades
+        //     ]);
+        // }
 
+        // Store changes in session
         session()->set('grade_upload_changes', $changedGrades);
 
         return $this->response->setJSON([
             'status' => 'changes_detected',
-            'changes' => $changedGrades
+            'changes' => $changedGrades,
+            'extra_students' => $extraStudents,
+            'students_with_no_grades' => $studentsWithNoGrades
         ]);
     }
 

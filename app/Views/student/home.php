@@ -57,10 +57,23 @@
                         <div id="calendar" class="calendar-sm p-3"></div>
                         <div class="p-3">
                             <h6 class="mt-1">Quick Links:</h6>
-                            <a href="https://fpes.online/login-student.php">Faculty Evaluation</a>
-                            <a href="https://www.facebook.com/people/Ispsc-Main-Campus-Registrar/61576774508246/">ISPSC Main Campus Registrar FB Page</a>
-                            <a href="https://fpes.online/login-student.php">Faculty Evaluation</a>
-                            <a href="https://fpes.online/login-student.php">Faculty Evaluation</a>
+                            <ul class="quick-links">
+                                <li>
+                                    <a href="https://fpes.online/login-student.php"><i class="fa-solid fa-link me-2"></i>Faculty Evaluation</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.facebook.com/people/Ispsc-Main-Campus-Registrar/61576774508246/"><i class="fa-solid fa-link me-2"></i>ISPSC Main Campus- Registrar FB Page</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.facebook.com/people/ISPSC-Main-Campus-Office-of-Student-Affairs-and-Services/100095246231734/"><i class="fa-solid fa-link me-2"></i>ISPSC Main Campus- SAS FB Page</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.facebook.com/nlpsccssocandon"><i class="fa-solid fa-link me-2"></i>CSSO FB Page</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.facebook.com/ComputingStudiesISPSCMain"><i class="fa-solid fa-link me-2"></i>Computing Studies FB Page</a>
+                                </li>
+                            </ul>    
                         </div>
                     </div>
 
@@ -105,7 +118,7 @@
                     <!-- 🆕 Latest Announcement -->
                     <div class="col-12 p-2 card shadow-darker">
                         <div class="p-2" id="latest-update">
-                            <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
+                            <h5 class="text-purple mb-3"><i class="fa-solid fa-bullhorn me-2"></i> Latest Announcement</h5>
                             <div class="ms-3">
                                 <?php if ($latest) : ?>
                                     <h6 class="mt-2"><?= esc($latest['title']); ?></h6>

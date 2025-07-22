@@ -603,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
     const instructors = [
-    <?php foreach ($instructors as $ftbId => $instructorName): ?>
+    <?php foreach ($instructors as $ftbId => $instructorName): ?>,
     {
         id: "<?= esc($ftbId) ?>",
         name: "<?= esc($instructorName) ?>"

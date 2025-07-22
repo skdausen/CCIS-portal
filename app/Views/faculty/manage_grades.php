@@ -182,6 +182,18 @@
                     const tableBody = document.getElementById('changePreviewTableBody');
                     tableBody.innerHTML = "";
 
+                    if (response.extra_students.length > 0) {
+                        // alert("⚠️ Extra student IDs not found in the system:\n" + response.extra_students.join(', '));
+                        $('#uploadFeedbackMessage').html("Extra student IDs not found in the system:\n" + response.extra_students.map(id => id.toUpperCase()).join(', '));
+                        $('#uploadFeedbackModal').modal('show');
+                    }
+
+                    // if (response.students_with_no_grades.length > 0) {
+                    //     // alert("📛 These students have no MG or TFG:\n" + response.students_with_no_grades.join(', '));
+                    //     $('#uploadFeedbackMessage').html("These students have no MG or TFG:n" + response.students_with_no_grades.map(id => id.toUpperCase()).join(', '));
+                    //     $('#uploadFeedbackModal').modal('show');
+                    // }
+
                     response.changes.forEach(change => {
                         const mtChange = change.changes.mt_numgrade 
                             ? `${change.changes.mt_numgrade.old} → <strong>${change.changes.mt_numgrade.new}</strong>` 

@@ -42,6 +42,7 @@ $routes->post('password/reset', [Password::class, 'resetPassword']);
 // ---------------------
 $routes->get('profile', 'ProfileController::index');
 $routes->post('profile/update', 'ProfileController::update');
+$routes->post('profile/update_password', 'ProfileController::update_password');
 
 // ---------------------
 // ADMIN ROUTES
@@ -84,11 +85,6 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/curriculums/create', 'AdminController::create');
     $routes->post('academics/curriculums/update/(:num)', 'AdminController::update_curriculum/$1');
     $routes->get('academics/curriculums/view/(:num)', 'AdminController::view_curriculum_detail/$1');
-    
-
-
-
-    
 
     // 📢 Announcement management
     $routes->post('saveAnnouncement', 'AdminController::saveAnnouncement');

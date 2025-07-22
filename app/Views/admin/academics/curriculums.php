@@ -1,7 +1,7 @@
 <!-- Main Container -->
-<div class="main-container ms-2">
+<div class="main-container">
 
-    <div class="container mt-5 px-3">
+    <div class="container mt-5 ms-auto">
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">

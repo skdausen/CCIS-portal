@@ -6,10 +6,10 @@
     <!-- Grades Table -->
         <div class="col-12 col-lg-12">
             <!-- Filters -->
-            <form method="get" class="row mb-4 g-2">
-                <div class="col-md-3">
+            <form method="get" class="d-flex align-items-end gap-3 mb-4 flex-wrap">
+                <div>
                     <label for="semester_id" class="form-label">Semester</label>
-                    <select name="semester_id" id="semester_id" class="form-select" onchange="this.form.submit()">
+                    <select name="semester_id" id="semester_id" class="form-select" onchange="this.form.submit()" style="min-width: 250px;">
                         <?php foreach ($semesters as $sem): ?>
                             <option value="<?= $sem->semester_id ?>" <?= ($selectedSemester == $sem->semester_id) ? 'selected' : '' ?>>
                                 <?= esc($sem->schoolyear . ' - ' . $sem->semester) ?>
@@ -17,7 +17,15 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <div class="ms-auto">
+                    <a href="<?= site_url('student/grades/curriculum_planview') ?>" class="btn btn-outline-success">
+                        Curriculum Plan View
+                    </a>
+                </div>
             </form>
+
+            
             <?php if (empty($grades)): ?>
                 <div class="alert alert-warning shadow-sm rounded">No grades available for selected filters.</div>
             <?php else: ?>
@@ -46,25 +54,12 @@
 
                 </table>
             </div>
-            <?php
-            $selectedYLS = ''; // determine this based on subject info if needed
-            foreach ($grades as $g) {
-                // Assume you have yearlevel_sem in each subject record or fetch separately
-                $selectedYLS = $g->yearlevel_sem ?? ''; // adjust if needed
-            }
-            ?>
-            <?php if (isset($gwa)): ?>
-                <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-danger' ?> mt-4">
-                    <strong>GWA:</strong> <?= $gwa ?><br>
-                    <?= $isDeanLister ? '🎉 Congratulations! You are a <strong>Dean\'s Lister</strong>.' : 'You are <strong>not a Dean\'s Lister</strong> this semester.' ?>
-                </div>
-            <?php endif; ?>
 
             <!-- Grade System Legend -->
-            <div class="d-flex justify-content-between align-items-end w-100">
+            <div class="d-flex justify-content-between align-items-start w-100">
 
                 <!-- Grade Card -->
-                <div class="card mt-4 border-0 shadow-sm col-md-3 scale-down">
+                <div class="card border-0 shadow-sm col-md-3 scale-down">
                     <div class="card-header">
                         Grade System Guide
                     </div>
@@ -86,8 +81,19 @@
                 </div>
 
                 <!-- Button aligned to bottom right -->
-                <div class="mb-4 ms-auto">
-                    <a href="<?= site_url('student/grades/download?semester_id=' . $selectedSemester) ?>" class="btn btn-success mb-3">
+                <div class="mb-4 ms-auto d-flex flex-column align-items-end">
+                    <?php if ($gwa !== null): ?>
+                        <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-info' ?> mt-4 text-end">
+                            <strong>GWA:</strong> <?= esc($gwa) ?><br>
+
+                            <?php if ($isDeanLister): ?>
+                                <strong>You're qualified for the Dean's List.</strong> Congratulations!
+                            <?php else: ?>
+                                Keep striving! Aim for a GWA ≤ 1.75 and Grades ≤ 2.25 to qualify for the Dean's List.
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                    <a href="<?= site_url('student/grades/download?semester_id=' . $selectedSemester) ?>" class="btn btn-outline-success mb-3">
                         Download PDF
                     </a>
                 </div>

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-
+use Config\Database;
 use App\Models\AnnouncementModel;
 use App\Models\ProgramModel;
 use App\Models\StudentModel;
@@ -26,12 +26,18 @@ class StudentController extends BaseController
 
         $studentModel = new StudentModel();
         $student = $studentModel->where('user_id', session('user_id'))->first();
+        if ($student) {
+            session()->set([
+                'stb_id' => $student['stb_id'],
+                'curriculum_id' => $student['curriculum_id']
+            ]);
+        }
 
         $announcementModel = new AnnouncementModel();
         $announcements = $announcementModel->getAllWithUsernames();
 
         // --- BEGIN: Load schedule like studentSchedule() ---
-        $db = \Config\Database::connect();
+        $db = Database::connect();
 
         $semester = $db->table('semesters')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
@@ -49,7 +55,7 @@ class StudentController extends BaseController
             ')
             ->join('classes', 'classes.class_id = student_schedules.class_id')
             ->join('subjects', 'subjects.subject_id = classes.subject_id')
-            ->join('faculty', 'faculty.ftb_id = classes.ftb_id') // ✅ Add this join
+            ->join('faculty', 'faculty.ftb_id = classes.ftb_id') 
             ->where('student_schedules.stb_id', $student['stb_id'])
             ->where('classes.semester_id', $semester->semester_id)
             ->get()->getResultArray();
@@ -120,7 +126,7 @@ class StudentController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $db = \Config\Database::connect();
+        $db = Database::connect();
         $student = $db->table('students')->where('user_id', session()->get('user_id'))->get()->getRow();
 
         $subjects = $db->table('subjects')
@@ -130,45 +136,46 @@ class StudentController extends BaseController
             ->getResultArray();
 
         $groupedSubjects = [
-            '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
-            '2nd Year' => ['1st Semester' => [], '2nd Semester' => []],
-            '3rd Year' => ['1st Semester' => [], '2nd Semester' => [], 'Midyear' => []],
-            '4th Year' => ['1st Semester' => [], '2nd Semester' => []],
+            'First Year' => ['First Semester' => [], 'Second Semester' => []],
+            'Second Year' => ['First Semester' => [], 'Second Semester' => []],
+            'Third Year' => ['First Semester' => [], 'Second Semester' => [], 'Midyear' => []],
+            'Fourth Year' => ['First Semester' => [], 'Second Semester' => []],
         ];
+
 
         foreach ($subjects as $subject) {
             switch ($subject['yearlevel_sem']) {
                 case 'Y1S1':
-                    $groupedSubjects['1st Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['First Year']['First Semester'][] = $subject;
                     break;
                 case 'Y1S2':
-                    $groupedSubjects['1st Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['First Year']['Second Semester'][] = $subject;
                     break;
                 case 'Y2S1':
-                    $groupedSubjects['2nd Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['Second Year']['First Semester'][] = $subject;
                     break;
                 case 'Y2S2':
-                    $groupedSubjects['2nd Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['Second Year']['Second Semester'][] = $subject;
                     break;
                 case 'Y3S1':
-                    $groupedSubjects['3rd Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['Third Year']['First Semester'][] = $subject;
                     break;
                 case 'Y3S2':
-                    $groupedSubjects['3rd Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['Third Year']['Second Semester'][] = $subject;
                     break;
                 case 'Y3S3':
-                    $groupedSubjects['3rd Year']['Midyear'][] = $subject;
+                    $groupedSubjects['Third Year']['Midyear'][] = $subject;
                     break;
                 case 'Y4S1':
-                    $groupedSubjects['4th Year']['1st Semester'][] = $subject;
+                    $groupedSubjects['Fourth Year']['First Semester'][] = $subject;
                     break;
                 case 'Y4S2':
-                    $groupedSubjects['4th Year']['2nd Semester'][] = $subject;
+                    $groupedSubjects['Fourth Year']['Second Semester'][] = $subject;
                     break;
             }
         }
 
-        $yearKeys = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+        $yearKeys = ['First Year', 'Second Year', 'Third Year', 'Fourth Year'];
         $page = (int)$this->request->getGet('page') ?: 1;
         $totalPages = count($yearKeys);
         $currentYearKey = $yearKeys[$page - 1] ?? null;
@@ -182,6 +189,61 @@ class StudentController extends BaseController
             ])
             . view('templates/admin/admin_footer');
     }
+    
+
+    public function downloadPDF()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
+            return redirect()->to('auth/login');
+        }
+
+        $userId = session()->get('user_id');
+        $db = Database::connect();
+
+        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
+        if (!$student) {
+            return redirect()->to('auth/login');
+        }
+
+        $semesterModel = new SemesterModel();
+        $currentSemester = $semesterModel->getActiveSemester();
+
+        $stbId = $student->stb_id;
+
+        $selectedSemester = $this->request->getGet('semester_id'); // make sure this is passed in your href
+
+        // Grades query (same as in getGrades)
+        $gradesQuery = $db->table('student_schedules ss')
+            ->select('s.subject_code, s.subject_name, s.total_units, g.sem_grade, st.lname, st.fname, st.mname, st.student_id, p.program_name')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->join('students st', 'st.stb_id = ss.stb_id') 
+            ->join('programs p', 'p.program_id = st.program_id', 'left')
+            ->where('ss.stb_id', $stbId);
+
+        if ($selectedSemester) {
+            $gradesQuery->where('c.semester_id', $selectedSemester);
+        }
+
+        $grades = $gradesQuery->get()->getResult();
+
+        if (empty($grades)) {
+            return redirect()->back()->with('error', 'No grades found to export.');
+        }
+
+        $html = view('student/grades/download', [
+            'grades' => $grades,
+            'currentSemester' => $currentSemester
+        ]);
+    
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $dompdf->stream('grades.pdf', ['Attachment' => true]);
+    }
 
     public function studentGrades()
     {
@@ -189,7 +251,7 @@ class StudentController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $db = \Config\Database::connect();
+        $db = Database::connect();
         $userId = session()->get('user_id');
 
         $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
@@ -209,7 +271,7 @@ class StudentController extends BaseController
             ->orderBy('semesters.semester', 'DESC')
             ->get()->getResult();
 
-        // ✅ Automatically select the active semester if not selected
+        // Automatically select the active semester if not selected
         if (!$selectedSemester) {
             $activeSemester = $db->table('semesters')
                 ->where('is_active', 1)
@@ -235,96 +297,60 @@ class StudentController extends BaseController
 
         $grades = $builder->get()->getResult();
 
-        return view('templates/student/student_header')
-            . view('student/grades/grades', [
-                'grades' => $grades,
-                'semesters' => $semesters,
-                'selectedSemester' => $selectedSemester,
-            ])
-            . view('templates/admin/admin_footer');
-    }
-    public function getGrades()
-    {
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
-            return redirect()->to('auth/login');
-        }
-
-        $userId = session()->get('user_id');
-        $db = \Config\Database::connect();
-
-        // Get current student
-        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
-        if (!$student) {
-            return redirect()->to('auth/login');
-        }
-
-        $stbId = $student->stb_id;
-
-        // Get selected semester from GET
-        $selectedSemester = $this->request->getGet('semester_id');
-
-        // Get list of all semesters for the filter dropdown
-        $semesters = $db->table('semesters')
-            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
-            ->select('semesters.*, schoolyears.schoolyear')
-            ->orderBy('schoolyears.schoolyear', 'DESC')
-            ->orderBy('semesters.semester', 'DESC')
-            ->get()->getResult();
-
         // Build grades query
-        $gradesQuery = $db->table('student_schedules ss')
-            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units')
-            ->join('classes c', 'c.class_id = ss.class_id')
-            ->join('subjects s', 's.subject_id = c.subject_id')
-            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
-            ->where('ss.stb_id', $stbId);
+            $gradesQuery = $db->table('student_schedules ss')
+                ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units, s.yearlevel_sem')
+                ->join('classes c', 'c.class_id = ss.class_id')
+                ->join('subjects s', 's.subject_id = c.subject_id')
+                ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+                ->where('ss.stb_id', $stbId);
 
-        if ($selectedSemester) {
-            $gradesQuery->where('c.semester_id', $selectedSemester);
+            if ($selectedSemester) {
+                $gradesQuery->where('c.semester_id', $selectedSemester);
+            }
+
+            $grades = $gradesQuery->get()->getResult();
+
+            $curriculumId = $student->curriculum_id;
+
+            $yearlevelSems = ['Y1S1','Y1S2','Y2S1','Y2S2','Y3S1','Y3S2','Y3S3','Y4S1','Y4S2'];
+            $deansListFlags = [];
+
+            foreach ($yearlevelSems as $yls) {
+                $deansListFlags[$yls] = $this->isDeansLister($stbId, $curriculumId, $yls);
+            }
+
+            $totalUnits = 0;
+            $weightedSum = 0;
+            $isDeanLister = true;
+
+        // Determine selectedYLS from grades if possible
+        $selectedYLS = '';
+        foreach ($grades as $g) {
+            if (isset($g->yearlevel_sem)) {
+                $selectedYLS = $g->yearlevel_sem;
+                break;
+            }
         }
 
-        $grades = $gradesQuery->get()->getResult();
-
-        $curriculumId = $student->curriculum_id;
-
-        $yearlevelSems = ['Y1S1','Y1S2','Y2S1','Y2S2','Y3S1','Y3S2','Y3S3','Y4S1','Y4S2'];
-        $deansListFlags = [];
-
-        foreach ($yearlevelSems as $yls) {
-            $deansListFlags[$yls] = $this->isDeansLister($stbId, $curriculumId, $yls);
-        }
-
+        // Compute GWA from current grades
         $totalUnits = 0;
         $weightedSum = 0;
-        $isDeanLister = true;
+        $gwa = null;
 
-    // Determine selectedYLS from grades if possible
-    $selectedYLS = '';
-    foreach ($grades as $g) {
-        if (isset($g->yearlevel_sem)) {
-            $selectedYLS = $g->yearlevel_sem;
-            break;
+        foreach ($grades as $g) {
+            if (!is_numeric($g->sem_grade)) continue;
+            $totalUnits += $g->total_units;
+            $weightedSum += ($g->sem_grade * $g->total_units);
         }
-    }
 
-    // Compute GWA from current grades
-    $totalUnits = 0;
-    $weightedSum = 0;
-    $gwa = null;
+        $gwa = $totalUnits > 0 ? round($weightedSum / $totalUnits, 2) : null;
 
-    foreach ($grades as $g) {
-        if (!is_numeric($g->sem_grade)) continue;
-        $totalUnits += $g->total_units;
-        $weightedSum += ($g->sem_grade * $g->total_units);
-    }
-
-    $gwa = $totalUnits > 0 ? round($weightedSum / $totalUnits, 2) : null;
-
-    // Check if Dean’s Lister for selected semester
-    $isDeanLister = false;
-    if ($selectedYLS && isset($deansListFlags[$selectedYLS])) {
-        $isDeanLister = $deansListFlags[$selectedYLS];
-    }
+        // Check if Dean’s Lister for selected semester
+        $isDeanLister = false;
+        if ($selectedYLS && isset($deansListFlags[$selectedYLS])) {
+            $isDeanLister = $deansListFlags[$selectedYLS];
+        }
 
         return view('templates/student/student_header')
             . view('student/grades/grades', [
@@ -338,66 +364,46 @@ class StudentController extends BaseController
             . view('templates/admin/admin_footer');
     }
 
-    public function downloadPDF()
+    public function checkDeansListerStatus($stbId, $curriculumId, $studentYearLevel, $studentSemester)
     {
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
-            return redirect()->to('auth/login');
+        $yearlevelSem = $this->mapYearLevelAndSemester($studentYearLevel, $studentSemester);
+
+        if ($yearlevelSem !== null) {
+            $isLister = $this->isDeansLister($stbId, $curriculumId, $yearlevelSem);
+            echo $isLister ? "Dean's Lister " : "You're not a Dean's Lister ";
+        } else {
+            echo "Invalid year level or semester mapping!";
         }
-
-        $userId = session()->get('user_id');
-        $db = \Config\Database::connect();
-
-        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
-        if (!$student) {
-            return redirect()->to('auth/login');
-        }
-
-        $semesterModel = new SemesterModel();
-        $currentSemester = $semesterModel->getActiveSemester();
-
-        $stbId = $student->stb_id;
-
-        $selectedSemester = $this->request->getGet('semester_id'); // ✅ make sure this is passed in your href
-
-        // Grades query (same as in getGrades)
-        $gradesQuery = $db->table('student_schedules ss')
-            ->select('s.subject_code, s.subject_name, s.total_units, g.sem_grade, st.lname, st.fname, st.mname, st.student_id, p.program_name')
-            ->join('classes c', 'c.class_id = ss.class_id')
-            ->join('subjects s', 's.subject_id = c.subject_id')
-            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
-            ->join('students st', 'st.stb_id = ss.stb_id') // Join students table
-            ->join('programs p', 'p.program_id = st.program_id', 'left') // Optional: join program info
-            ->where('ss.stb_id', $stbId);
-
-        if ($selectedSemester) {
-            $gradesQuery->where('c.semester_id', $selectedSemester);
-        }
-
-        $grades = $gradesQuery->get()->getResult();
-
-        if (empty($grades)) {
-            return redirect()->back()->with('error', 'No grades found to export.');
-        }
-
-        $html = view('student/grades/download', [
-            'grades' => $grades,
-            'currentSemester' => $currentSemester
-        ]);
-    
-
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
-        return $dompdf->stream('grades.pdf', ['Attachment' => true]);
     }
 
+    //  Converts year + semester to Y1S1, Y3S3, etc.
+    private function mapYearLevelAndSemester($yearLevel, $semester)
+    {
+        $yearMap = [
+            'First Year' => 'Y1',
+            'Second Year' => 'Y2',
+            'Third Year' => 'Y3',
+            'Fourth Year' => 'Y4',
+        ];
+
+        $semMap = [
+            'First Semester' => 'S1',
+            'Second Semester' => 'S2',
+            'Midyear' => 'S3',
+        ];
+
+        $year = $yearMap[$yearLevel] ?? null;
+        $sem = $semMap[$semester] ?? null;
+
+        return ($year && $sem) ? "{$year}{$sem}" : null;
+    }
+
+    // Main checker for Dean’s Lister
     private function isDeansLister($stbId, $curriculumId, $yearlevelSem)
     {
-        $db = \Config\Database::connect();
+        $db = Database::connect();
 
-        // Get all subjects for the curriculum and yearlevel_sem
+        // 1. Get required subjects
         $currSubjects = $db->table('subjects')
             ->select('subject_id')
             ->where('curriculum_id', $curriculumId)
@@ -406,13 +412,12 @@ class StudentController extends BaseController
             ->getResultArray();
 
         $currSubjectIds = array_column($currSubjects, 'subject_id');
-        if (empty($currSubjectIds)) {
-            return false; // No curriculum subjects for this yearlevel_sem
-        }
 
-        // Get all subject_ids that the student has enrolled in (joined with grades to filter out NE or non-numeric)
+        if (empty($currSubjectIds)) return false;
+
+        // 2. Get student enrolled subjects WITH total_units
         $studentSubjects = $db->table('student_schedules ss')
-            ->select('s.subject_id, g.sem_grade')
+            ->select('s.subject_id, g.sem_grade, s.total_units')
             ->join('classes c', 'c.class_id = ss.class_id')
             ->join('subjects s', 's.subject_id = c.subject_id')
             ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
@@ -421,25 +426,25 @@ class StudentController extends BaseController
             ->get()
             ->getResult();
 
-        // Check if the student took all required curriculum subjects
-        if (count($studentSubjects) !== count($currSubjectIds)) {
-            return false; // Not full load
-        }
+        if (count($studentSubjects) !== count($currSubjectIds)) return false;
 
-        // Check each grade
+        $totalUnits = 0;
+        $weightedSum = 0;
+
         foreach ($studentSubjects as $subj) {
-            $grade = $subj->sem_grade;
+            if (!is_numeric($subj->sem_grade)) return false;
+            if ($subj->sem_grade > 2.25) return false;
 
-            if (!is_numeric($grade) || $grade > 2.00) {
-                return false;
-            }
+            $weightedSum += $subj->sem_grade * $subj->total_units;
+            $totalUnits += $subj->total_units;
         }
 
-        return true;
+        $gwa = $totalUnits > 0 ? round($weightedSum / $totalUnits, 2) : null;
+
+        if ($gwa === null || $gwa > 1.75) return false;
+
+        return true; // Qualified Dean's Lister
     }
-
-
-
 
     private function expandDays($days)
     {
@@ -466,6 +471,122 @@ class StudentController extends BaseController
 
         return $result;
     }
+
+public function curriculumPlanView()
+{
+    $db = Database::connect();
+
+    $student_id = session('stb_id');
+    if (!$student_id) {
+        return redirect()->back()->with('error', 'No student found in session.');
+    }
+
+    $student = $db->table('students')->where('stb_id', $student_id)->get()->getRow();
+    if (!$student) {
+        return redirect()->back()->with('error', 'Student not found.');
+    }
+
+    $curriculum_id = $student->curriculum_id;
+
+    $subjects = $db->table('subjects')
+        ->select('subject_id, subject_code, subject_name, lec_units, lab_units, total_units, yearlevel_sem')
+        ->where('curriculum_id', $curriculum_id)
+        ->orderBy('yearlevel_sem', 'ASC')
+        ->get()
+        ->getResultArray();
+
+    // Attach Grades
+    foreach ($subjects as &$subject) {
+        $gradeRow = $db->table('grades g')
+            ->select('g.sem_grade')
+            ->join('classes c', 'c.class_id = g.class_id')
+            ->where('g.stb_id', $student_id)
+            ->where('c.subject_id', $subject['subject_id'])
+            ->get()
+            ->getRow();
+
+        $subject['grade'] = $gradeRow ? $gradeRow->sem_grade : null;
+    }
+    unset($subject); // Good practice
+
+    // ✅ Remove duplicates properly via subject_id
+    $uniqueSubjects = [];
+    foreach ($subjects as $subject) {
+        $key = $subject['subject_id'];
+        if (!isset($uniqueSubjects[$key])) {
+            $uniqueSubjects[$key] = $subject;
+        }
+    }
+    $subjects = array_values($uniqueSubjects);
+
+    // Group by Year and Semester
+    $groupedSubjects = [];
+    foreach ($subjects as $subject) {
+        $yearRaw = substr($subject['yearlevel_sem'], 0, 2);
+        $semRaw = substr($subject['yearlevel_sem'], 2);
+
+        $year = match ($yearRaw) {
+            'Y1' => 'First Year',
+            'Y2' => 'Second Year',
+            'Y3' => 'Third Year',
+            'Y4' => 'Fourth Year',
+            default => 'Other Year',
+        };
+
+        $semester = match ($semRaw) {
+            'S1' => '1st Semester',
+            'S2' => '2nd Semester',
+            'S3' => 'Midyear',
+            default => 'Other Semester',
+        };
+
+        $groupedSubjects[$year][$semester][] = $subject;
+    }
+
+    // --- Compute GWA and Honor ---
+    $totalUnits = 0;
+    $totalGradePoints = 0;
+    $lowestGrade = 0;
+
+    foreach ($subjects as $subject) {
+        // Skip NSTP
+        if (stripos($subject['subject_code'], 'NSTP') !== false) {
+            continue;
+        }
+
+        if ($subject['grade'] !== null && is_numeric($subject['grade']) && $subject['grade'] != 0) {
+            $units = $subject['total_units'];
+            $grade = $subject['grade'];
+
+            $totalUnits += $units;
+            $totalGradePoints += $units * $grade;
+
+            if ($grade > $lowestGrade) {
+                $lowestGrade = $grade;
+            }
+        }
+    }
+
+    $gwa = $totalUnits > 0 ? round($totalGradePoints / $totalUnits, 2) : null;
+    $honor = null;
+
+    if ($gwa !== null) {
+        if ($gwa >= 1.0 && $gwa <= 1.25 && $lowestGrade <= 2.0) {
+            $honor = 'Summa Cum Laude';
+        } elseif ($gwa > 1.25 && $gwa <= 1.5 && $lowestGrade <= 2.25) {
+            $honor = 'Magna Cum Laude';
+        } elseif ($gwa > 1.5 && $gwa <= 1.75 && $lowestGrade <= 2.5) {
+            $honor = 'Cum Laude';
+        }
+    }
+
+    return view('student/grades/curriculum_planview', [
+        'groupedSubjects' => $groupedSubjects,
+        'curriculum_id' => $curriculum_id,
+        'gwa' => $gwa,
+        'honor' => $honor,
+    ]);
+}
 
 
 

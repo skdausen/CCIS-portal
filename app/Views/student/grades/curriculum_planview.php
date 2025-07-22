@@ -2,9 +2,15 @@
 <link rel="stylesheet" href="<?= base_url('/rsc/custom_css/style.css') ?>">
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>My Curriculum Plan View</h3>
+    <div class="d-flex align-items-center mb-4">
+        <a href="<?= site_url('student/grades/grades') ?>" class="btn btn-link text-muted text-decoration-none d-flex align-items-center gap-2">
+            <img src="<?= base_url('rsc/assets/uploads/left_arrow.png') ?>" alt="Back" style="width: 40px; height: 40px;">
+        </a>
+
+        <h3 class="m-0">My Curriculum Plan View</h3>
+        
     </div>
+
 
     <?php if (!empty($groupedSubjects)): ?>
         <?php foreach ($groupedSubjects as $year => $semesters): ?>
@@ -66,3 +72,47 @@
     <?php endif; ?>
 </div>
 
+<div class="container px-4" style="max-width: 900px;">  <!-- Match your table width -->
+    <div class="row gx-5 mt-5">
+        <!-- Left Column: Legend -->
+        <div class="col-md-6">
+            <div class="p-4 rounded shadow-sm bg-white h-100">
+                <h5 class="fw-bold mb-3 text-primary">Legend for Latin Honors</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <span class="fw-bold">Summa Cum Laude:</span> 1.0 – 1.25 <br>
+                        <small class="text-muted">No grade below 2.0</small>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-bold">Magna Cum Laude:</span> 1.26 – 1.5 <br>
+                        <small class="text-muted">No grade below 2.25</small>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-bold">Cum Laude:</span> 1.51 – 1.75 <br>
+                        <small class="text-muted">No grade below 2.5</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column: Computed GWA and Honors -->
+        <div class="col-md-6">
+            <div class="p-4 rounded shadow-sm bg-white h-100">
+                <h5 class="fw-bold mb-3 text-primary">Automated GWA Result</h5>
+                <div class="alert gwa-box">
+                    <p class="mb-2 fs-5">Your Computed GWA: <strong><?= $gwa !== null ? $gwa : 'N/A' ?></strong></p>
+
+                    <?php if ($honor): ?>
+                        <p class="mb-2 text-success fs-6">You are qualified as <strong><?= esc($honor) ?></strong></p>
+                    <?php else: ?>
+                        <p class="mb-2 text-muted fs-6">You do not qualify for any Latin honor based on computed GWA.</p>
+                    <?php endif; ?>
+
+                    <p class="text-muted small fst-italic mt-3">
+                        This is an <strong>automated calculation only.</strong> Final awarding of honors is subject to deliberation by the Academic Committee.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -176,7 +176,7 @@
           <div class="modal-body overflow-y-auto">
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
-                         <div class="col-12 text-center">
+                <div class="col-12 text-center">
                 <img id="profilePreview"
                     src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>"
                     alt="Profile Picture"
@@ -220,6 +220,7 @@
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
 
+              <!-- Program -->
               <?php if (session('role') === 'student' && isset($programs)): ?>
               <div class="col-md-6">
                   <label for="program_id" class="form-label">Program:</label>
@@ -234,6 +235,9 @@
                   </select>
               </div>
 
+              <!-- Major -->
+
+              <!-- Year Level -->
               <div class="col-md-6">
                   <label for="year_level" class="form-label">Year Level:</label>
                   <select name="year_level" id="year_level" class="form-select">

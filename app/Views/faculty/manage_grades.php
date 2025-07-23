@@ -3,6 +3,7 @@
     <!-- Title -->
     <div class="text-center my-4">
         <h3 class="text"><?= esc($class['subject_code'] . ' - ' . $class['subject_name']) ?></h3>
+        <h3 class="text">Section: <?= esc($class['section']) ?></h3>
     </div>
 
     <!-- Grade Form Section -->

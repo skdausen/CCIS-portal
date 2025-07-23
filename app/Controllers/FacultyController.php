@@ -225,6 +225,10 @@ class FacultyController extends BaseController
 
     public function removeStudent($classId, $stbId)
     {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
         $studentScheduleModel = new StudentScheduleModel();
 
         $studentScheduleModel
@@ -237,6 +241,10 @@ class FacultyController extends BaseController
 
     public function manageGrades($classId)
     {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
         $classModel = new ClassModel();
         $studentScheduleModel = new StudentScheduleModel();
         $studentModel = new StudentModel();
@@ -265,6 +273,10 @@ class FacultyController extends BaseController
 
     public function saveGrades($classId)
     {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
         $gradeModel = new GradeModel();
 
         $gradesData = $this->request->getPost('grades');
@@ -329,6 +341,10 @@ class FacultyController extends BaseController
 
     public function uploadGrades($classId)
     {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
         helper('text');
 
         $file = $this->request->getFile('grades_file');
@@ -470,9 +486,12 @@ class FacultyController extends BaseController
         ]);
     }
 
-
     public function confirmUpload($classId)
     {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
         $gradeModel = new GradeModel();
         $changes = session()->get('grade_upload_changes') ?? [];
 
@@ -512,10 +531,12 @@ class FacultyController extends BaseController
         ]);
     }
 
-
-
     public function downloadGradeTemplate($classId)
     {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'faculty') {
+            return redirect()->to('auth/login');
+        }
+
         $classModel = new ClassModel();
         $studentModel = new StudentModel();
         $gradeModel = new GradeModel();

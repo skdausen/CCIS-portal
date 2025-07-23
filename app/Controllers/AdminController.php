@@ -39,7 +39,7 @@ class AdminController extends BaseController
      ***********************************************/
 
     // Display all users
-    public function users()
+    public function users() 
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
             return redirect()->to('auth/login');
@@ -47,6 +47,7 @@ class AdminController extends BaseController
 
         $userModel = new UserModel();
         $curriculumModel = new CurriculumModel(); 
+        $programModel = new ProgramModel();
 
         $usersPerPage = 10;
         $page = (int) ($this->request->getGet('page') ?? 1);
@@ -59,7 +60,8 @@ class AdminController extends BaseController
 
         $data = [
             'users'       => $users,
-            'curriculums' => $curriculumModel->findAll() ,
+            'curriculums' => $curriculumModel->findAll(),
+            'programs' => $programModel->findAll(),
             'page' => $page,
             'totalPages' => $totalPages
         ];
@@ -89,6 +91,8 @@ class AdminController extends BaseController
         $email    = $this->request->getPost('email');
         $role     = strtolower($this->request->getPost('role'));
         $curriculumId = $this->request->getPost('curriculum_id'); 
+        $programId = $this->request->getPost('program_id'); 
+        $yearLevel = $this->request->getPost('year_level'); 
 
 
         // DEFAULT PASSWORD
@@ -128,6 +132,8 @@ class AdminController extends BaseController
                 'student_id'     => $username,
                 'user_id'        => $userId,
                 'curriculum_id'  => $curriculumId,
+                'program_id'  => $programId,
+                'year_level'  => $yearLevel,
                 'profimg'        => $defaultImg
             ])) {
                 $db->transRollback();
@@ -197,12 +203,16 @@ class AdminController extends BaseController
 
     public function getUser($id)
     {
+        
         $userModel    = new UserModel();
         $studentModel = new StudentModel();
         $facultyModel = new FacultyModel();
         $adminModel   = new AdminModel();
 
+        $db = \Config\Database::connect();
+
         $user = $userModel->find($id);
+    
 
         if (!$user) {
             return redirect()->to('#')->with('error', 'User not found');
@@ -211,7 +221,12 @@ class AdminController extends BaseController
         // Get extra info based on role
         switch ($user['role']) {
             case 'student':
-                $extra = $studentModel->where('user_id', $id)->first();
+                $builder = $db->table('students s');
+                $builder->select('s.*, p.program_name as program, c.curriculum_name as curriculum');
+                $builder->join('programs p', 'p.program_id = s.program_id', 'left');
+                $builder->join('curriculums c', 'c.curriculum_id = s.curriculum_id', 'left');
+                $builder->where('s.user_id', $id);
+                $extra = $builder->get()->getRowArray();
                 break;
             case 'faculty':
                 $extra = $facultyModel->where('user_id', $id)->first();
@@ -233,6 +248,9 @@ class AdminController extends BaseController
             'birthdate'   => $extra['birthdate'] ?? null,
             'address'     => $extra['address'] ?? null,
             'profimg'     => $extra['profimg'] ?? null,
+            'curriculum'   => $extra['curriculum'] ?? null, 
+            'program'      => $extra['program'] ?? null,    
+            'year_level'   => $extra['year_level'] ?? null  
         ]));
     }
 

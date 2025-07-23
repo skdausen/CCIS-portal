@@ -144,6 +144,27 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <div class="mb-3 d-none" id="programGroup">
+                        <label for="program" class="form-label">Program:</label>
+                        <select name="program_id" id="program_id" class="form-select">
+                            <option value="">Select Program</option>
+                            <?php foreach ($programs as $program): ?>
+                                <option value="<?= $program['program_id'] ?>">
+                                    <?= esc($program['program_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3 d-none" id="yearlevelGroup">
+                        <label for="year_level" class="form-label">Year Level:</label>
+                        <select name="year_level" id="year_level" class="form-select">
+                            <option value="">Select year level</option>
+                            <option value="1" <?= ($student['year_level'] ?? '') == 'First Year' ? 'selected' : '' ?>>1st Year</option>
+                            <option value="2" <?= ($student['year_level'] ?? '') == 'Second Year' ? 'selected' : '' ?>>2nd Year</option>
+                            <option value="3" <?= ($student['year_level'] ?? '') == 'Third Year' ? 'selected' : '' ?>>3rd Year</option>
+                            <option value="4" <?= ($student['year_level'] ?? '') == 'Fourth Year' ? 'selected' : '' ?>>4th Year</option>
+                        </select>
+                    </div>
 
 
                     <p class="mt-3"><strong>Default password:</strong> <code>ccis1234</code></p>
@@ -200,6 +221,19 @@
                     </tr>
                     <tr>
                     <tr>
+                    <!-- STUDENT-ONLY FIELDS -->
+                    <tr class="student-only d-none">
+                        <th>Curriculum</th>
+                        <td id="detailCurriculum"></td>
+                    </tr>
+                    <tr class="student-only d-none">
+                        <th>Program</th>
+                        <td id="detailProgram"></td>
+                    </tr>
+                    <tr class="student-only d-none">
+                        <th>Year Level</th>
+                        <td id="detailYearLevel"></td>
+                    </tr>
                     <th>Address</th>
                     <td id="detailAddress"></td>
                     </tr>

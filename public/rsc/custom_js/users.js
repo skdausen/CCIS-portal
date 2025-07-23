@@ -41,15 +41,25 @@
     //ADD CURRICULUM IF STUDENT
     const roleSelect = document.getElementById('role');
     const curriculumGroup = document.getElementById('curriculumGroup');
+    const programGroup = document.getElementById('programGroup');
+    const yearlevelGroup = document.getElementById('yearlevelGroup');
 
     if (roleSelect) {
         roleSelect.addEventListener('change', function () {
             if (this.value === 'student') {
                 curriculumGroup.classList.remove('d-none');
                 document.getElementById('curriculum_id').setAttribute('required', true);
+                programGroup.classList.remove('d-none');
+                document.getElementById('program_id').setAttribute('required', true);
+                yearlevelGroup.classList.remove('d-none');
+                document.getElementById('year_level').setAttribute('required', true);
             } else {
                 curriculumGroup.classList.add('d-none');
                 document.getElementById('curriculum_id').removeAttribute('required');
+                programGroup.classList.add('d-none');
+                document.getElementById('program_id').removeAttribute('required');
+                yearlevelGroup.classList.add('d-none');
+                document.getElementById('year_level').removeAttribute('required');
             }
         });
 
@@ -86,6 +96,18 @@
                     user.role = capitalizeWords(user.role);
                     user.status = capitalizeWords(user.status);
                     const fullName = `${user.fname ?? ''} ${user.mname ?? ''} ${user.lname ?? ''}`;
+                    // Handle curriculum, program, year level for students only
+                    const isStudent = user.role.toLowerCase() === 'student';
+
+                    document.querySelectorAll('.student-only').forEach(el => {
+                        el.classList.toggle('d-none', !isStudent);
+                    });
+
+                    if (isStudent) {
+                        document.getElementById('detailCurriculum').textContent = capitalizeWords(user.curriculum ?? '-');
+                        document.getElementById('detailProgram').textContent = capitalizeWords(user.program ?? '-');
+                        document.getElementById('detailYearLevel').textContent = user.year_level ?? '-';
+                    }
 
                     document.getElementById('detailUserID').textContent = user.user_id;
                     document.getElementById('detailRole').textContent = user.role;

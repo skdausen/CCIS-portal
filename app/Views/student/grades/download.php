@@ -28,6 +28,7 @@
                 <th>Subject Name</th>
                 <th>Semestral Grade</th>
                 <th>Units</th>
+                <th>Units Earned</th>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +37,10 @@
                     <td><?= $g->subject_code ?></td>
                     <td><?= $g->subject_name ?></td>
                     <td><?= $g->sem_grade ?? 'NE' ?></td>
-                    <td><?= ($g->sem_grade ?? 'NE') === 'NE' ? '-' : ($g->total_units ?? '-') ?></td>
+                    <td class="text-center"><?= $g->total_units ?></td>
+                    <td class="text-center">
+                        <?= (is_numeric($g->sem_grade) && $g->sem_grade != 0 && $g->sem_grade != 5.00) ? $g->total_units : '--' ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

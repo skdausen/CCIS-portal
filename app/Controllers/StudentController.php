@@ -198,27 +198,35 @@ class StudentController extends BaseController
         }
 
         $userId = session()->get('user_id');
-        $db = Database::connect();
+        $db     = Database::connect();
 
         $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
         if (!$student) {
             return redirect()->to('auth/login');
         }
 
-        $semesterModel = new SemesterModel();
+        $semesterModel   = new SemesterModel();
         $currentSemester = $semesterModel->getActiveSemester();
 
-        $stbId = $student->stb_id;
+        $stbId            = $student->stb_id;
+        $selectedSemester = $this->request->getGet('semester_id'); // from link
 
-        $selectedSemester = $this->request->getGet('semester_id'); // make sure this is passed in your href
+        // ✅ Fetch all semesters like in studentGrades()
+        $semesters = $db->table('semesters')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'DESC')
+            ->get()
+            ->getResult();
 
-        // Grades query (same as in getGrades)
+        // Query for PDF export (includes student/program info)
         $gradesQuery = $db->table('student_schedules ss')
-            ->select('s.subject_code, s.subject_name, s.total_units, g.sem_grade, st.lname, st.fname, st.mname, st.student_id, p.program_name')
+            ->select('s.subject_code, s.subject_name, s.total_units, s.yearlevel_sem, g.sem_grade, st.lname, st.fname, st.mname, st.student_id, p.program_name')
             ->join('classes c', 'c.class_id = ss.class_id')
             ->join('subjects s', 's.subject_id = c.subject_id')
             ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
-            ->join('students st', 'st.stb_id = ss.stb_id') 
+            ->join('students st', 'st.stb_id = ss.stb_id')
             ->join('programs p', 'p.program_id = st.program_id', 'left')
             ->where('ss.stb_id', $stbId);
 
@@ -232,11 +240,16 @@ class StudentController extends BaseController
             return redirect()->back()->with('error', 'No grades found to export.');
         }
 
-        $html = view('student/grades/download', [
-            'grades' => $grades,
-            'currentSemester' => $currentSemester
-        ]);
-    
+        // ✅ Now $semesters exists and is valid
+        $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
+
+        // Build the PDF HTML
+        $html = view('student/grades/download', array_merge([
+            'grades'          => $grades,
+            'currentSemester' => $currentSemester,
+        ], $grades_data));
+
+        // Render PDF
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
@@ -244,7 +257,6 @@ class StudentController extends BaseController
 
         return $dompdf->stream('grades.pdf', ['Attachment' => true]);
     }
-
     public function studentGrades()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
@@ -298,90 +310,108 @@ class StudentController extends BaseController
         $grades = $builder->get()->getResult();
 
         // Build grades query
-            $gradesQuery = $db->table('student_schedules ss')
-                ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units, s.yearlevel_sem')
-                ->join('classes c', 'c.class_id = ss.class_id')
-                ->join('subjects s', 's.subject_id = c.subject_id')
-                ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
-                ->where('ss.stb_id', $stbId);
+        $gradesQuery = $db->table('student_schedules ss')
+            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units, s.yearlevel_sem')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->where('ss.stb_id', $stbId);
 
-            if ($selectedSemester) {
-                $gradesQuery->where('c.semester_id', $selectedSemester);
-            }
+        if ($selectedSemester) {
+            $gradesQuery->where('c.semester_id', $selectedSemester);
+        }
 
-            $grades = $gradesQuery->get()->getResult();
+        $grades = $gradesQuery->get()->getResult();
 
-            $curriculumId = $student->curriculum_id;
+        $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
 
-            $yearlevelSems = ['Y1S1','Y1S2','Y2S1','Y2S2','Y3S1','Y3S2','Y3S3','Y4S1','Y4S2'];
-            $deansListFlags = [];
+        return view('templates/student/student_header')
+            . view('student/grades/grades', $grades_data)
+            . view('templates/admin/admin_footer');
+    }
+    private function prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters)
+    {
+        $db = Database::connect();
+        $semesters = $db->table('semesters')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'DESC')
+            ->get()->getResult();
 
-            foreach ($yearlevelSems as $yls) {
-                $deansListFlags[$yls] = $this->isDeansLister($stbId, $curriculumId, $yls);
-            }
+        // For Dean’s List checks
+        $curriculumId   = $student->curriculum_id;
+        $yearlevelSems  = ['Y1S1','Y1S2','Y2S1','Y2S2','Y3S1','Y3S2','Y3S3','Y4S1','Y4S2'];
+        $deansListFlags = [];
+        foreach ($yearlevelSems as $yls) {
+            $deansListFlags[$yls] = $this->isDeansLister($stbId, $curriculumId, $yls);
+        }
 
-            $totalUnits = 0;
-            $weightedSum = 0;
-            $isDeanLister = true;
-
-        // Determine selectedYLS from grades if possible
+        // Try to detect which YLS this set of grades belongs to
         $selectedYLS = '';
         foreach ($grades as $g) {
-            if (isset($g->yearlevel_sem)) {
+            if (isset($g->yearlevel_sem) && $g->yearlevel_sem !== '') {
                 $selectedYLS = $g->yearlevel_sem;
                 break;
             }
         }
 
-        // Compute GWA from current grades
-        $totalUnits = 0;
-        $unitsEarned = 0;
-        $weightedSum = 0;
-        $gwa = null;
+        $totalUnits    = 0; // all subjects in the result
+        $unitsEarned   = 0; // only passed
+        $weightedSum   = 0; // for GWA
+        $unitsForGwa   = 0; // denom for GWA
         $hasIncomplete = false;
 
         foreach ($grades as $g) {
-            if (!is_numeric($g->sem_grade) || $g->sem_grade == 0 || strtoupper($g->sem_grade) === 'NE') {
+            // Sum all units no matter what (display Total Units)
+            $totalUnits += (float) $g->total_units;
+
+            // Detect incomplete (no sem grade, zero, NE)
+            $sem = $g->sem_grade;
+
+            if ($sem === null || $sem === '' || strtoupper((string)$sem) === 'NE' || $sem == 0) {
                 $hasIncomplete = true;
-                continue; // skip adding to GWA calc
+                continue; // do not include in earned or GWA
             }
 
-            // Add to total units always (whether or not the grade is numeric)
-            $totalUnits += $g->total_units;
+            // Passed? (anything numeric and not 5.00)
+            if (is_numeric($sem)) {
+                // Count toward earned?
+                if ((float)$sem != 5.00) {
+                    $unitsEarned += (float)$g->total_units;
+                }
 
-            // Skip if grade is not numeric
-            if (!is_numeric($g->sem_grade)) continue;
-
-            // Add to GWA calculation
-            $weightedSum += ($g->sem_grade * $g->total_units);
-
-            // Add to earned units only if grade is valid and passing
-            if ($g->sem_grade != 0 && $g->sem_grade != 5.00) {
-                $unitsEarned += $g->total_units;
+                // Count toward GWA? (only passed, and only if no incomplete overall later)
+                if ((float)$sem != 5.00) {
+                    $weightedSum += ((float)$sem * (float)$g->total_units);
+                    $unitsForGwa += (float)$g->total_units;
+                }
             }
         }
 
-        $gwa = ($totalUnits > 0 && !$hasIncomplete) ? round($weightedSum / $unitsEarned, 2) : null;
+        // If any incomplete grade exists in the set, GWA must be null.
+        // Else compute weighted average of passed subjects.
+        $gwa = (!$hasIncomplete && $unitsForGwa > 0)
+            ? round($weightedSum / $unitsForGwa, 3)
+            : null;
 
-        // Check if Dean’s Lister for selected semester
+        // Determine whether student qualifies as Dean’s Lister *for that YLS*
         $isDeanLister = false;
         if ($selectedYLS && isset($deansListFlags[$selectedYLS])) {
             $isDeanLister = $deansListFlags[$selectedYLS];
         }
 
-        return view('templates/student/student_header')
-            . view('student/grades/grades', [
-                'grades' => $grades,
-                'semesters' => $semesters,
-                'selectedSemester' => $selectedSemester,
-                'deansListFlags' => $deansListFlags,
-                'isDeanLister' => $isDeanLister,
-                'unitsEarned' => $unitsEarned,
-                'totalUnits' => $totalUnits,
-                'hasIncomplete' => $hasIncomplete,
-                'gwa' => $gwa
-            ])
-            . view('templates/admin/admin_footer');
+        return [
+            'grades'           => $grades,
+            'semesters'        => $semesters,
+            'selectedSemester' => $selectedSemester,
+            'deansListFlags'   => $deansListFlags,
+            'isDeanLister'     => $isDeanLister,
+            'unitsEarned'      => $unitsEarned,
+            'totalUnits'       => $totalUnits,
+            'hasIncomplete'    => $hasIncomplete,
+            'gwa'              => $gwa,
+        ];
     }
 
     public function checkDeansListerStatus($stbId, $curriculumId, $studentYearLevel, $studentSemester)

@@ -94,7 +94,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="uploadFeedbackModal" tabindex="-1" aria-labelledby="uploadFeedbackModalLabel" aria-hidden="true">
+<div class="modal fade front-modal" id="uploadFeedbackModal" tabindex="-1" aria-labelledby="uploadFeedbackModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow">
         <div class="modal-header bg-primary text-white">
@@ -112,14 +112,17 @@
 </div>
 
 <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmUploadModal" tabindex="-2" aria-labelledby="confirmUploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+<div class="modal fade" id="confirmUploadModal" tabindex="-1" aria-labelledby="confirmUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="confirmUploadModalLabel">Confirm Grade Changes</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <p class="mb-2">
+                <strong>File:</strong> <span id="uploadedFileName" class="text-primary">[No file selected]</span>
+            </p>
             <p>The following grades will be updated. Please review carefully:</p>
             <div class="table-responsive">
             <table class="table table-bordered table-striped text-center align-middle">
@@ -150,6 +153,19 @@
     const fileInput = document.getElementById('grades_file');
     const uploadForm = document.getElementById('uploadGradesForm');
     const uploadBtn = document.getElementById('triggerUploadBtn');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('grades_file'); // your <input type="file"> element
+        const fileNameSpan = document.getElementById('uploadedFileName');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : '[No file selected]';
+                fileNameSpan.textContent = fileName;
+            });
+        }
+    });
+
 
     uploadBtn.addEventListener('click', function () {
         fileInput.click();
@@ -190,17 +206,18 @@
                         feedbackMessages.push("<strong>Extra student IDs not found:</strong><br>" + response.extra_students.map(id => id.toUpperCase()).join(', '));
                     }
 
-                    
                     if (response.students_with_no_grades.length > 0) {
                         feedbackMessages.push("<strong>Students with missing MG or TFG:</strong><br>" + response.students_with_no_grades.map(id => id.toUpperCase()).join(', '));
                     }
 
                     
-
                     if (feedbackMessages.length > 0) {
-                        $('#uploadFeedbackMessage').html(feedbackMessages.join('<hr>'));
-                        $('#uploadFeedbackModal').modal('show');
+                        setTimeout(() => {
+                            $('#uploadFeedbackMessage').html(feedbackMessages.join('<hr>'));
+                            $('#uploadFeedbackModal').modal('show');
+                        }, 750);
                     }
+
 
                     if (response.changes.length > 0) {
                         response.changes.forEach(change => {

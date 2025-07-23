@@ -397,13 +397,16 @@ h4, h6 {
 }
 
 /* Modal Styles */
-    .modal-dialog-centered {
-        margin: auto;
-    }
-    .modal-dialog-scrollable .modal-body {
-        max-height: 70vh; /* Or 60vh */
-        overflow-y: auto;
-    }
+.modal-dialog-centered {
+    margin: auto;
+}
+.modal-dialog-scrollable .modal-body {
+    max-height: 70vh; /* Or 60vh */
+    overflow-y: auto;
+}
+.front-modal {
+z-index: 1081; /* Bootstrap default modals use 1050–1070 */
+}
 
 /* Adjustments for mobile responsiveness */
 .fixed-columns th,

@@ -52,7 +52,7 @@
                                             min="0" 
                                             max="99.99" 
                                             name="grades[<?= $s['stb_id'] ?>][mt_numgrade]" 
-                                            value="<?= esc($s['mt_numgrade']) ?>" 
+                                            value="<?= ($s['mt_numgrade'] == 0 || is_null($s['mt_numgrade'])) ? '' : esc($s['mt_numgrade']) ?>"
                                             class="form-control text-end p-1" 
                                             placeholder="e.g., 87.50">
                                         <small class="text-muted">Transmuted: <?= $s['mt_grade'] ?? '--' ?></small>
@@ -63,15 +63,16 @@
                                             min="0" 
                                             max="99.99" 
                                             name="grades[<?= $s['stb_id'] ?>][fn_numgrade]" 
-                                            value="<?= esc($s['fn_numgrade']) ?>" 
+                                            value="<?= ($s['fn_numgrade'] == 0 || is_null($s['fn_numgrade'])) ? '' : esc($s['fn_numgrade']) ?>"
                                             class="form-control text-end p-1" 
                                             placeholder="e.g., 92.00">
                                         <small class="text-muted">Transmuted: <?= $s['fn_grade'] ?? '--' ?></small>
                                     </td>
                                     <td class="text-center">
-                                        <div><?= $s['sem_numgrade'] ?? '--' ?></div>
-                                        <small class="text-muted">Transmuted: <?= $sem ?: '--' ?></small>
+                                        <div><?= $s['sem_numgrade'] === null ? '--' : $s['sem_numgrade'] ?></div>
+                                        <small class="text-muted">Transmuted: <?= $sem === null ? '--' : $sem ?></small>
                                     </td>
+
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -111,7 +112,7 @@
 </div>
 
 <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmUploadModal" tabindex="-1" aria-labelledby="confirmUploadModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmUploadModal" tabindex="-2" aria-labelledby="confirmUploadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
         <div class="modal-header">
@@ -183,39 +184,47 @@
                     const tableBody = document.getElementById('changePreviewTableBody');
                     tableBody.innerHTML = "";
 
+                    let feedbackMessages = [];
+
                     if (response.extra_students.length > 0) {
-                        // alert("⚠️ Extra student IDs not found in the system:\n" + response.extra_students.join(', '));
-                        $('#uploadFeedbackMessage').html("Extra student IDs not found in the system:\n" + response.extra_students.map(id => id.toUpperCase()).join(', '));
+                        feedbackMessages.push("<strong>Extra student IDs not found:</strong><br>" + response.extra_students.map(id => id.toUpperCase()).join(', '));
+                    }
+
+                    
+                    if (response.students_with_no_grades.length > 0) {
+                        feedbackMessages.push("<strong>Students with missing MG or TFG:</strong><br>" + response.students_with_no_grades.map(id => id.toUpperCase()).join(', '));
+                    }
+
+                    
+
+                    if (feedbackMessages.length > 0) {
+                        $('#uploadFeedbackMessage').html(feedbackMessages.join('<hr>'));
                         $('#uploadFeedbackModal').modal('show');
                     }
 
-                    // if (response.students_with_no_grades.length > 0) {
-                    //     // alert("📛 These students have no MG or TFG:\n" + response.students_with_no_grades.join(', '));
-                    //     $('#uploadFeedbackMessage').html("These students have no MG or TFG:n" + response.students_with_no_grades.map(id => id.toUpperCase()).join(', '));
-                    //     $('#uploadFeedbackModal').modal('show');
-                    // }
-
-                    response.changes.forEach(change => {
-                        const mtChange = change.changes.mt_numgrade 
-                            ? `${change.changes.mt_numgrade.old} → <strong>${change.changes.mt_numgrade.new}</strong>` 
-                            : 'No Change';
-
-                        const fnChange = change.changes.fn_numgrade 
-                            ? `${change.changes.fn_numgrade.old} → <strong>${change.changes.fn_numgrade.new}</strong>` 
-                            : 'No Change';
-
-                        tableBody.innerHTML += `
-                            <tr>
-                                <td>${change.student_id}</td>
-                                <td>${change.fullname}</td>
-                                <td>${mtChange}</td>
-                                <td>${fnChange}</td>
-                            </tr>
-                        `;
-                    });
-
-                    const modal = new bootstrap.Modal(document.getElementById('confirmUploadModal'));
-                    modal.show();
+                    if (response.changes.length > 0) {
+                        response.changes.forEach(change => {
+                            const mtChange = change.changes.mt_numgrade 
+                                ? `${change.changes.mt_numgrade.old} → <strong>${change.changes.mt_numgrade.new}</strong>` 
+                                : 'No Change';
+    
+                            const fnChange = change.changes.fn_numgrade 
+                                ? `${change.changes.fn_numgrade.old} → <strong>${change.changes.fn_numgrade.new}</strong>` 
+                                : 'No Change';
+    
+                            tableBody.innerHTML += `
+                                <tr>
+                                    <td>${change.student_id}</td>
+                                    <td>${change.fullname}</td>
+                                    <td>${mtChange}</td>
+                                    <td>${fnChange}</td>
+                                </tr>
+                            `;
+                        });
+    
+                        const modal = new bootstrap.Modal(document.getElementById('confirmUploadModal'));
+                        modal.show();
+                    }
                 }
 
                 if (response.status === 'success') {

@@ -229,12 +229,20 @@ class FacultyController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $studentScheduleModel = new StudentScheduleModel();
+            $studentScheduleModel = new StudentScheduleModel();
+            $gradeModel = new GradeModel();
 
-        $studentScheduleModel
-            ->where('class_id', $classId)
-            ->where('stb_id', $stbId)
-            ->delete();
+            // Delete the student's class schedule
+            $studentScheduleModel
+                ->where('class_id', $classId)
+                ->where('stb_id', $stbId)
+                ->delete();
+
+            // Delete the student's grades 
+            $gradeModel
+                ->where('class_id', $classId)
+                ->where('stb_id', $stbId)
+                ->delete();
 
         return redirect()->to('faculty/class/' . $classId)->with('success', 'Student removed successfully');
     }
@@ -282,12 +290,22 @@ class FacultyController extends BaseController
         $gradesData = $this->request->getPost('grades');
 
         foreach ($gradesData as $stb_id => $grade) {
-            // Safely get the numerical grades (null if not set or empty)
-            $mtNum = isset($grade['mt_numgrade']) && $grade['mt_numgrade'] !== '' ? floatval($grade['mt_numgrade']) : null;
-            $fnNum = isset($grade['fn_numgrade']) && $grade['fn_numgrade'] !== '' ? floatval($grade['fn_numgrade']) : null;
+            $existing = $gradeModel->where('stb_id', $stb_id)
+                    ->where('class_id', $classId)
+                    ->first();
 
-            // ❌ If both are empty, skip this student
+            // Safely get the numerical grades (null if not set or empty)
+            $mtRaw = $grade['mt_numgrade'] ?? null;
+            $fnRaw = $grade['fn_numgrade'] ?? null;
+
+            $mtNum = ($mtRaw === null || $mtRaw === '' || floatval($mtRaw) == 0.0) ? null : floatval($mtRaw);
+            $fnNum = ($fnRaw === null || $fnRaw === '' || floatval($fnRaw) == 0.0) ? null : floatval($fnRaw);
+
+            // If both are empty, skip this student
             if ($mtNum === null && $fnNum === null) {
+                if ($existing) {
+                    $gradeModel->delete($existing['grade_id']);
+                }
                 continue;
             }
 
@@ -310,9 +328,6 @@ class FacultyController extends BaseController
                 'sem_grade'     => $semGrade,
             ];
 
-            $existing = $gradeModel->where('stb_id', $stb_id)
-                                ->where('class_id', $classId)
-                                ->first();
 
             if ($existing) {
                 $gradeModel->update($existing['grade_id'], $data);
@@ -465,15 +480,20 @@ class FacultyController extends BaseController
         if (empty($changedGrades) && !empty($extraStudents) && empty($studentsWithNoGrades)) {
             return $this->response->setJSON([
                 'status' => 'changes_detected',
-                'extra_students' => $extraStudents,
+                'changes' => [],
+                'students_with_no_grades' => [],
+                'extra_students' => $extraStudents
             ]);
         }
-        // if (empty($changedGrades) && empty($extraStudents) && !empty($studentsWithNoGrades)) {
-        //     return $this->response->setJSON([
-        //         'status' => 'changes_detected',
-        //         'students_with_no_grades' => $studentsWithNoGrades
-        //     ]);
-        // }
+
+        if (empty($changedGrades) && empty($extraStudents) && !empty($studentsWithNoGrades)) {
+            return $this->response->setJSON([
+                'status' => 'changes_detected',
+                'extra_students' => [],
+                'students_with_no_grades' => $studentsWithNoGrades
+            ]);
+        }
+
 
         // Store changes in session
         session()->set('grade_upload_changes', $changedGrades);

@@ -404,9 +404,6 @@
   <!--Calendar-->
   <script src="<?= base_url('rsc/custom_js/calendar.js') ?>"></script>
 
-  <!--View, Search, & Filter Users JS -->
-  <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const profileInput = document.getElementById('profimg');

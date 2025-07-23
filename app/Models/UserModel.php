@@ -26,13 +26,13 @@ class UserModel extends Model
 
     protected $returnType = 'array';
 
-    // ✅ Get user by username
+    // Get user by username
     public function getUserByUsername($username)
     {
         return $this->where('username', $username)->first();
     }
 
-    // ✅ Check if a username already exists in the database
+    // Check if a username already exists in the database
     public function usernameExists($username)
     {
         return $this->where('username', $username)->countAllResults() > 0;
@@ -81,4 +81,23 @@ class UserModel extends Model
     {
         return $this->where('email', $email)->set('userpassword', $hashedPassword)->update();
     }
+
+    public function searchAndFilter($search = null, $role = null)
+    {
+        $builder = $this->builder('users');
+        
+        if ($search) {
+            $builder->groupStart()
+                ->like('username', $search)
+                ->orLike('email', $search)
+                ->groupEnd();
+        }
+
+        if ($role) {
+            $builder->where('role', $role);
+        }
+
+        return $builder;
+    }
+
 }

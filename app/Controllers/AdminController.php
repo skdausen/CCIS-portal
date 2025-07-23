@@ -49,28 +49,39 @@ class AdminController extends BaseController
         $curriculumModel = new CurriculumModel(); 
         $programModel = new ProgramModel();
 
+        $search = $this->request->getGet('search');
+        $role = $this->request->getGet('role');
+
         $usersPerPage = 10;
         $page = (int) ($this->request->getGet('page') ?? 1);
         $page = max($page, 1);
         $offset = ($page - 1) * $usersPerPage;
 
-        $users = $userModel->findAll($usersPerPage, $offset);
-        $totalUsers = $userModel->countAll();
+        $builder = $userModel->searchAndFilter($search, $role);
+
+        $totalUsers = $builder->countAllResults(false); // true = reset query
+        $users = $builder->limit($usersPerPage, $offset)->get()->getResultArray();
         $totalPages = ceil($totalUsers / $usersPerPage);
 
         $data = [
             'users'       => $users,
             'curriculums' => $curriculumModel->findAll(),
-            'programs' => $programModel->findAll(),
-            'page' => $page,
-            'totalPages' => $totalPages
+            'programs'    => $programModel->findAll(),
+            'search'      => $search,
+            'role'        => $role,
+            'page'        => $page,
+            'totalPages'  => $totalPages
         ];
+
+        // AJAX REQUEST
+        if ($this->request->isAJAX()) {
+            return view('admin/users', $data);
+        }
 
         return view('templates/admin/admin_header')
             . view('admin/users', $data) 
             . view('templates/admin/admin_footer');
     }
-
 
     // Display form to add a new user
     public function createUser()
@@ -205,7 +216,6 @@ class AdminController extends BaseController
     {
         
         $userModel    = new UserModel();
-        $studentModel = new StudentModel();
         $facultyModel = new FacultyModel();
         $adminModel   = new AdminModel();
 
@@ -253,8 +263,6 @@ class AdminController extends BaseController
             'year_level'   => $extra['year_level'] ?? null  
         ]));
     }
-
-
 
 
     /********************************************** 

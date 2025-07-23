@@ -11,11 +11,11 @@
         <!-- FILTERS & SEARCH -->
         <div class="row align-items-center mb-3">
             <div class="col-md-3 mb-2">
-                <input type="text" id="instructorSearch" class="form-control form-control-sm" placeholder="Search Instructor...">
+                <input type="text" id="instructorSearch" class="form-control " placeholder="Search Instructor...">
             </div>
 
             <div class="col-md-2 mb-2">
-                <select id="sectionFilter" class="form-select form-select-sm">
+                <select id="sectionFilter" class="form-select">
                     <option value="">All Sections</option>
                     <?php 
                     $sections = array_unique(array_column($classes, 'section'));
@@ -27,7 +27,7 @@
             </div>
 
             <div class="col-md-3 mb-2">
-                <select id="semesterFilter" class="form-select form-select-sm">
+                <select id="semesterFilter" class="form-select">
                     <option value="">
                         <?= isset($activeSemester) 
                             ? ucwords($activeSemester['semester']) . ' ' . $activeSemester['schoolyear'] 
@@ -44,7 +44,7 @@
             </div>
 
             <div class="col-md-1 mb-2">
-                <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100 btn-thin rounded-1 px-2 py-1">Clear</button>
+                <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100 rounded-1">Clear</button>
             </div>
 
             <div class="col-md-3 mb-2 text-end">
@@ -54,9 +54,6 @@
                 </button>
             </div>
         </div>
-
-
-
 
         <?php
         $groupedClasses = [];
@@ -77,200 +74,200 @@
                 ];
             }
 
-    // Lecture
-    if (!empty($class['lec_day'])) {
-        $groupedClasses[$key]['days'][] = 'Lec: ' . $class['lec_day'];
-        $groupedClasses[$key]['times'][] = 'Lec: ' . date('g:iA', strtotime($class['lec_start'])) . '-' . date('g:iA', strtotime($class['lec_end']));
-        $groupedClasses[$key]['rooms'][] = 'Lec: ' . $class['lec_room'];
-    }
+            // Lecture
+            if (!empty($class['lec_day'])) {
+                $groupedClasses[$key]['days'][] = 'Lec: ' . $class['lec_day'];
+                $groupedClasses[$key]['times'][] = 'Lec: ' . date('g:iA', strtotime($class['lec_start'])) . '-' . date('g:iA', strtotime($class['lec_end']));
+                $groupedClasses[$key]['rooms'][] = 'Lec: ' . $class['lec_room'];
+            }
 
-    // Laboratory (optional)
-    if (!empty($class['lab_day'])) {
-        $groupedClasses[$key]['days'][] = 'Lab: ' . $class['lab_day'];
-        $groupedClasses[$key]['times'][] = 'Lab: ' . date('g:iA', strtotime($class['lab_start'])) . '-' . date('g:iA', strtotime($class['lab_end']));
-        $groupedClasses[$key]['rooms'][] = 'Lab: ' . $class['lab_room'];
-    }
-}
+            // Laboratory (optional)
+            if (!empty($class['lab_day'])) {
+                $groupedClasses[$key]['days'][] = 'Lab: ' . $class['lab_day'];
+                $groupedClasses[$key]['times'][] = 'Lab: ' . date('g:iA', strtotime($class['lab_start'])) . '-' . date('g:iA', strtotime($class['lab_end']));
+                $groupedClasses[$key]['rooms'][] = 'Lab: ' . $class['lab_room'];
+            }
+        }
 
-?>
+        ?>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-hover classes-table custom-padding">
-        <thead class="table-light">
-            <tr>
-                <th>Subject</th>
-                <th>Type</th>
-                <th>Day, Time, Room</th>
-                <th>Section</th>
-                <th>Instructor</th>
-                <th>Semester</th>
-                <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-                    <th>Actions</th>
-                <?php endif; ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($classes as $class): ?>
-            <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
-                <?php
-                    $subjectName = trim($class['subject_name']);
-                    $fullTitle = $class['subject_code'] . " - " . $subjectName;
-
-                    // Use mb_strlen to properly count multibyte characters
-                    $shortTitle = (mb_strlen($fullTitle) > 52)
-                        ? mb_substr($fullTitle, 0, 52) . '...'
-                        : $fullTitle;
-                ?>
-                <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
-                <td><?= esc($class['subject_type']) ?></td>
-                <td>
-                    <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
-                    <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
-                        <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
-                    <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
-                    <?php else: ?> - <?php endif; ?>
-                    <?php if (!empty($class['lab_day'])): ?>
-                        <br>Lab: <?= esc(strtoupper($class['lab_day'])) ?>
-                        <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
-                        <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover classes-table custom-padding">
+                <thead class="table-light">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Type</th>
+                        <th>Day, Time, Room</th>
+                        <th>Section</th>
+                        <th>Instructor</th>
+                        <th>Semester</th>
+                        <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+                            <th>Actions</th>
                         <?php endif; ?>
-                        <?= esc(strtoupper($class['lab_room'])) ?>
-                    <?php endif; ?>
-                </td>
-                <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
-                <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
-                <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
-                <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-                    <td>
-                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
-                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
-                    </td>
-                <?php endif; ?>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($classes as $class): ?>
+                    <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
+                        <?php
+                            $subjectName = trim($class['subject_name']);
+                            $fullTitle = $class['subject_code'] . " - " . $subjectName;
 
-<!-- OUTSIDE THE TABLE: Edit and Delete Modals -->
-<?php foreach ($classes as $class): ?>
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
-        <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
-            <?= csrf_field() ?>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Class</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+                            // Use mb_strlen to properly count multibyte characters
+                            $shortTitle = (mb_strlen($fullTitle) > 52)
+                                ? mb_substr($fullTitle, 0, 52) . '...'
+                                : $fullTitle;
+                        ?>
+                        <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
+                        <td><?= esc($class['subject_type']) ?></td>
+                        <td>
+                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
+                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                            <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
+                            <?php else: ?> - <?php endif; ?>
+                            <?php if (!empty($class['lab_day'])): ?>
+                                <br>Lab: <?= esc(strtoupper($class['lab_day'])) ?>
+                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                                <?php endif; ?>
+                                <?= esc(strtoupper($class['lab_room'])) ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
+                        <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
+                        <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
+                        <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+                            <td>
+                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
+                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
 
-                <div class="modal-body">
-                    <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
+        <!-- OUTSIDE THE TABLE: Edit and Delete Modals -->
+        <?php foreach ($classes as $class): ?>
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
+                <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
+                    <?= csrf_field() ?>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Class</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Semester</label>
-                        <div class="form-control bg-light">
-                            <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+                        <div class="modal-body">
+                            <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
+
+                            <div class="mb-3">
+                                <label class="form-label">Semester</label>
+                                <div class="form-control bg-light">
+                                    <?= esc(($activeSemester['semester'] ?? 'No Active Semester') . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <!-- Instructor Search (Left Side) -->
+                                <div class="col-md-6 position-relative">
+                                    <label for="editInstructorSearchInput<?= $class['class_id'] ?>" class="form-label">Instructor</label>
+                                    <input type="text" id="editInstructorSearchInput<?= $class['class_id'] ?>" 
+                                        class="form-control" placeholder="Search Instructor..." autocomplete="off"
+                                        value="<?= esc($instructors[$class['ftb_id']] ?? '') ?>" required>
+
+                                    <input type="hidden" name="ftb_id" id="editInstructorIdInput<?= $class['class_id'] ?>" 
+                                        value="<?= esc($class['ftb_id']) ?>">
+
+                                    <ul id="editInstructorSuggestions<?= $class['class_id'] ?>" 
+                                        class="list-group position-absolute w-100 shadow"
+                                        style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
+                                </div>
+
+                                <!-- Section (Right Side) -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Section</label>
+                                    <input type="text" name="section" class="form-control" 
+                                        value="<?= esc($class['section']) ?>" required>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-3 position-relative">
+                                <label class="form-label">Subject</label>
+                            <input type="text" class="form-control edit-subject-search mb-2"
+                                    data-id="<?= $class['class_id'] ?>"
+                                    placeholder="Search Subject..." 
+                                    value="<?= esc($class['subject_code'] . ' - ' . $class['subject_name']) ?>" required>
+
+                                <input type="hidden" name="subject_id" class="edit-subject-id"
+                                    data-id="<?= $class['class_id'] ?>"
+                                    value="<?= esc($class['subject_id']) ?>" required>
+
+                                <input type="text" name="subject_type"
+                                    class="form-control edit-subject-type"
+                                    data-id="<?= $class['class_id'] ?>" readonly
+                                    value="<?= esc($class['subject_type']) ?>" required>
+
+                                <ul class="list-group position-absolute w-100 shadow edit-suggestions"
+                                    data-id="<?= $class['class_id'] ?>"
+                                    style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
+                            </div>
+
+                            <div class="row">
+                                <div class="edit-lecture-schedule <?= $class['subject_type'] == 'LEC with LAB' ? 'col-md-6' : 'col-md-12' ?>" data-id="<?= $class['class_id'] ?>">
+                                    <h6>Lecture Schedule</h6>
+                                    <input type="text" name="lec_day" value="<?= esc($class['lec_day']) ?>" class="form-control mb-2" placeholder="Day/s" required>
+                                    <input type="text" name="lec_room" value="<?= esc($class['lec_room']) ?>" class="form-control mb-2" placeholder="Room" required>
+                                    <input type="time" name="lec_start" value="<?= esc($class['lec_start']) ?>" class="form-control mb-2" required>
+                                    <input type="time" name="lec_end" value="<?= esc($class['lec_end']) ?>" class="form-control mb-2" required>
+                                </div>
+
+                                <div class="col-md-6 edit-lab-schedule <?= $class['subject_type'] == 'LEC with LAB' ? '' : 'd-none' ?>" data-id="<?= $class['class_id'] ?>">
+                                    <h6>Lab Schedule</h6>
+                                <input type="text" name="lab_day" value="<?= esc($class['lab_day']) ?>" class="form-control mb-2" placeholder="Lab Day/s" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                                    <input type="text" name="lab_room" value="<?= esc($class['lab_room']) ?>" class="form-control mb-2" placeholder="Lab Room" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                                    <input type="time" name="lab_start" value="<?= esc($class['lab_start']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                                    <input type="time" name="lab_end" value="<?= esc($class['lab_end']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-success">Update</button>
+                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </div>
-
-                    <div class="row g-3 mb-3">
-                        <!-- Instructor Search (Left Side) -->
-                        <div class="col-md-6 position-relative">
-                            <label for="editInstructorSearchInput<?= $class['class_id'] ?>" class="form-label">Instructor</label>
-                            <input type="text" id="editInstructorSearchInput<?= $class['class_id'] ?>" 
-                                class="form-control" placeholder="Search Instructor..." autocomplete="off"
-                                value="<?= esc($instructors[$class['ftb_id']] ?? '') ?>" required>
-
-                            <input type="hidden" name="ftb_id" id="editInstructorIdInput<?= $class['class_id'] ?>" 
-                                value="<?= esc($class['ftb_id']) ?>">
-
-                            <ul id="editInstructorSuggestions<?= $class['class_id'] ?>" 
-                                class="list-group position-absolute w-100 shadow"
-                                style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
-                        </div>
-
-                        <!-- Section (Right Side) -->
-                        <div class="col-md-6">
-                            <label class="form-label">Section</label>
-                            <input type="text" name="section" class="form-control" 
-                                value="<?= esc($class['section']) ?>" required>
-                        </div>
-                    </div>
-
-
-                    <div class="mb-3 position-relative">
-                        <label class="form-label">Subject</label>
-                       <input type="text" class="form-control edit-subject-search mb-2"
-                            data-id="<?= $class['class_id'] ?>"
-                            placeholder="Search Subject..." 
-                            value="<?= esc($class['subject_code'] . ' - ' . $class['subject_name']) ?>" required>
-
-                        <input type="hidden" name="subject_id" class="edit-subject-id"
-                            data-id="<?= $class['class_id'] ?>"
-                            value="<?= esc($class['subject_id']) ?>" required>
-
-                        <input type="text" name="subject_type"
-                            class="form-control edit-subject-type"
-                            data-id="<?= $class['class_id'] ?>" readonly
-                            value="<?= esc($class['subject_type']) ?>" required>
-
-                        <ul class="list-group position-absolute w-100 shadow edit-suggestions"
-                            data-id="<?= $class['class_id'] ?>"
-                            style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
-                    </div>
-
-                    <div class="row">
-                        <div class="edit-lecture-schedule <?= $class['subject_type'] == 'LEC with LAB' ? 'col-md-6' : 'col-md-12' ?>" data-id="<?= $class['class_id'] ?>">
-                            <h6>Lecture Schedule</h6>
-                            <input type="text" name="lec_day" value="<?= esc($class['lec_day']) ?>" class="form-control mb-2" placeholder="Day/s" required>
-                            <input type="text" name="lec_room" value="<?= esc($class['lec_room']) ?>" class="form-control mb-2" placeholder="Room" required>
-                            <input type="time" name="lec_start" value="<?= esc($class['lec_start']) ?>" class="form-control mb-2" required>
-                            <input type="time" name="lec_end" value="<?= esc($class['lec_end']) ?>" class="form-control mb-2" required>
-                        </div>
-
-                        <div class="col-md-6 edit-lab-schedule <?= $class['subject_type'] == 'LEC with LAB' ? '' : 'd-none' ?>" data-id="<?= $class['class_id'] ?>">
-                            <h6>Lab Schedule</h6>
-                           <input type="text" name="lab_day" value="<?= esc($class['lab_day']) ?>" class="form-control mb-2" placeholder="Lab Day/s" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
-                            <input type="text" name="lab_room" value="<?= esc($class['lab_room']) ?>" class="form-control mb-2" placeholder="Lab Room" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
-                            <input type="time" name="lab_start" value="<?= esc($class['lab_start']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
-                            <input type="time" name="lab_end" value="<?= esc($class['lab_end']) ?>" class="form-control mb-2" <?= $class['subject_type'] == 'LEC with LAB' ? 'required' : '' ?>>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-outline-success">Update</button>
-                    <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
-                </div>
+                </form>
             </div>
-        </form>
-    </div>
-</div>
+        </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal<?= $class['class_id'] ?>" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <form method="post" action="<?= site_url('admin/academics/classes/delete/' . $class['class_id']) ?>">
-            <?= csrf_field() ?>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                    <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
-                </div>
+        <!-- Delete Modal -->
+        <div class="modal fade" id="deleteModal<?= $class['class_id'] ?>" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <form method="post" action="<?= site_url('admin/academics/classes/delete/' . $class['class_id']) ?>">
+                    <?= csrf_field() ?>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete <strong><?= esc($class['subject_name']) ?></strong>?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-</div>
-<?php endforeach; ?>
+        </div>
+        <?php endforeach; ?>
 
 
 <!-- Add Class Modal -->

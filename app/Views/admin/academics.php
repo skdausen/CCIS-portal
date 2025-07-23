@@ -6,25 +6,25 @@
     <div class="row g-4">
         <div class="col-md-4">
             <div class="card text-center p-3 shadow-sm">
-                <h5>🗓️ Semesters</h5>
+                <h5><i class="bi bi-calendar3 me-2 text-purple"></i> Semesters</h5>
                 <div class="fs-1"><?= $semestersCount ?></div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card text-center p-3 shadow-sm">
-                <h5>📚 Subjects</h5>
+                <h5><i class="bi bi-journal-bookmark me-2 text-purple"></i> Subjects</h5>
                 <div class="fs-1"><?= $subjectsCount ?></div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card text-center p-3 shadow-sm">
-                <h5>🏫 Classes</h5>
+                <h5><i class="bi bi-list-columns-reverse me-2 text-purple"></i> Classes</h5>
                 <div class="fs-1"><?= $classesCount ?></div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card text-center p-3 shadow-sm">
-                <h5>👨‍🏫 Faculty</h5>
+                <h5><i class="bi bi-person-lines-fill me-2 text-purple"></i> Faculty</h5>
                 <div class="fs-1"><?= $facultyCount ?></div>
             </div>
         </div>

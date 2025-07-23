@@ -324,6 +324,11 @@ body {
 :is(h1, h2, h3, h4, h5, h6) {
     font-weight: bold;
 }
+/* Slight spacing between year/semester groups */
+h4, h6 {
+    margin-top: 2rem;
+    font-weight: bold;
+}
 .text-purple{
     color: #631561; 
 }
@@ -448,8 +453,7 @@ body {
 }
 
 /* TABLE STYLES */
-.curriculum-table,
-.grade-table, .classes-table, .schedule-table {
+.curriculum-table, .grade-table, .classes-table, .schedule-table, .users-table {
     table-layout: fixed;
     width: 100%;
 }
@@ -505,8 +509,8 @@ body {
 }
 
 .scale-down {
-transform: scale(0.75); /* MAKES ELEMENT 85% OF ORIGINAL SIZE */
-transform-origin: left; /* KEEPS IT CENTERED */
+transform: scale(0.75); 
+transform-origin: left; 
 }
 
 
@@ -553,11 +557,32 @@ transform-origin: left; /* KEEPS IT CENTERED */
     font-weight: 600;
 }
 
-/* Slight spacing between year/semester groups */
-h4, h6 {
-    margin-top: 2rem;
-    font-weight: bold;
+
+/* EVEN ROWS LIGHT PURPLE BG */
+.users-table tbody tr:nth-child(even) {
+    background-color: #f3e8ff;
 }
+
+.users-table td, .users-table th {
+    padding: 12px;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* STABLE COLUMN WIDTHS USING :is() */
+.users-table :is(th, td):nth-child(1),
+.users-table :is(th, td):nth-child(2) { width: 8%; }
+
+.users-table :is(th, td):nth-child(3),
+.users-table :is(th, td):nth-child(4) { width: 20%; }
+
+.users-table :is(th, td):nth-child(5),
+.users-table :is(th, td):nth-child(6) { width: 10%; }
+
+
+
 
 /* Optional: make header and borders clearer on print */
 @media print {
@@ -575,8 +600,6 @@ h4, h6 {
     padding: 1.5rem;
     border-radius: 0.5rem;
 }
-
-
 
 
 /* sssssssssssssssssssssssss

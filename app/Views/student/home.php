@@ -115,7 +115,7 @@
                         $nearing = array_slice($nearing, 0, 3);
                     ?>
 
-                    <!-- 🆕 Latest Announcement -->
+                    <!-- Latest Announcement -->
                     <div class="col-12 p-2 card shadow-darker">
                         <div class="p-2" id="latest-update">
                             <h5 class="text-purple mb-3"><i class="fa-solid fa-bullhorn me-2"></i> Latest Announcement</h5>
@@ -132,9 +132,9 @@
                             </div>
                             <hr>
                         </div>
-                        <!-- 📌 Nearest Events -->
+                        <!-- Nearest Events -->
                         <div class="ms-2">
-                            <h6 class="mt-1">📌 Nearing Events</h6>
+                            <h6 class="text-purple mt-1"><i class="bi bi-pin-angle-fill me-2"></i> Nearing Events</h6>
                             <?php if (!empty($nearing)) : ?>
                                 <ul class="list-group list-group-flush mt-2">
                                     <?php foreach ($nearing as $n) : ?>
@@ -158,7 +158,7 @@
                                     <?php endforeach; ?>
                                 </ul>
                                 <?php else : ?>
-                                    <p class="text-muted mt-2">No upcoming announcements.</p>
+                                    <p class="text-muted fs-6 mt-2">No upcoming announcements.</p>
                             <?php endif; ?>
                         </div>
                     </div>

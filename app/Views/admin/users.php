@@ -1,80 +1,100 @@
 <!-- users.php -->
-<div class="container mt-5 users-page" data-base-url="<?= base_url() ?>">
-    <!-- HEADER -->
+<div class="container mt-5 users-page" id="userPage" data-users-url="<?= site_url('admin/users') ?>">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        <h3 class="mb-2"><i class="fa-solid fa-users me-3 text-secondary"></i>List of Users</h3>
+        <h3 class="mb-3"><i class="fa-solid fa-users me-3 text-secondary"></i>List of Users</h3>
     </div>
 
     <!-- FILTERS & SEARCH -->
-    <div class="row mb-3">
-        <div class="col-md-3 mb-2">
-            <select id="roleFilter" class="form-select">
-                <option value="">Filter by Role</option>
-                <option value="admin">Admin</option>
-                <option value="superadmin">Superadmin</option>
-                <option value="faculty">Faculty</option>
-                <option value="student">Student</option>
-            </select>
-        </div>
-        <div class="col-md-4 mb-2">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search by username or email...">
-        </div>
+
+    <div class="row mb-4">
+        <form method="get" id="filterForm" class="col-md-7">
+            <div class="row">
+                <!-- Role filter -->
+                <div class="col-md-5">
+                    <select name="role" class="form-select" id="filterRole">
+                        <option value="">All Roles</option>
+                        <option value="admin" <?= ($role === 'admin') ? 'selected' : '' ?>>Admin</option>
+                        <option value="faculty" <?= ($role === 'faculty') ? 'selected' : '' ?>>Faculty</option>
+                        <option value="student" <?= ($role === 'student') ? 'selected' : '' ?>>Student</option>
+                        <option value="superadmin" <?= ($role === 'superadmin') ? 'selected' : '' ?>>Superadmin</option>
+                    </select>
+                </div>
+
+                <!-- Search input -->
+                <div class="col-md-7">
+                    <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search username or email" value="<?= esc($search ?? '') ?>">
+                </div>
+            </div>
+        </form>
+        <!-- Add User Button -->
         <div class="col-md-5 mb-2 d-flex justify-content-end">
             <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Add Account</button>
         </div>
     </div>
 
     <!-- USERS TABLE -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover custom-padding" id="usersTable">
-            <thead class="table-light">
-                <tr>
-                    <th>User ID</th>
-                    <th>Role</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($users)): ?>
-                    <?php foreach ($users as $user): ?>
-                        <tr>
-                            <td><?= esc($user['user_id']) ?></td>
-                            <td><?=strtoupper( esc($user['role']) )?></td>
-                            <td><?= esc($user['username']) ?></td>
-                            <td><?= esc($user['email']) ?></td>
-                            <td>
-                                <?php if ($user['status'] === 'active'): ?>
-                                    <span class="badge bg-success">Active</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <a href="#" 
-                                class="btn btn-sm btn-outline-primary viewUserBtn"
-                                data-user-id="<?= esc($user['user_id']) ?>">
-                                View
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+    <div id="userTableContainer">
+        <div class="table-responsive" >
+            <table class="table table-bordered table-hover custom-padding users-table" id="usersTable">
+                <thead class="table-light">
                     <tr>
-                        <td colspan="6" class="text-center">No users found.</td>
+                        <th>User ID</th>
+                        <th>Role</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="users-table-body">
+                    <?php if (!empty($users)): ?>
+                        <?php foreach ($users as $user): ?>
+                            <tr>
+                                <td><?= esc($user['user_id']) ?></td>
+                                <td><?=strtoupper( esc($user['role']) )?></td>
+                                <td><?= esc($user['username']) ?></td>
+                                <td><?= esc($user['email']) ?></td>
+                                <td>
+                                    <?php if ($user['status'] === 'active'): ?>
+                                        <span class="badge bg-success">Active</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <a href="#" 
+                                    class="btn btn-sm btn-outline-primary viewUserBtn"
+                                    data-user-id="<?= esc($user['user_id']) ?>">
+                                    View
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center">No users found.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
+
     
+    <!-- PAGINATION -->
+    <?php
+        $queryParams = [];
+        if (!empty($search)) $queryParams['search'] = $search;
+        if (!empty($role)) $queryParams['role'] = $role;
+        $baseQuery = http_build_query($queryParams);
+    ?>
+
     <nav aria-label="Curriculum pagination">
         <ul class="pagination justify-content-center my-4">
+            <!-- Previous Button -->
             <?php if ($page > 1): ?>
                 <li class="page-item mx-1">
-                    <a class="page-link" href="<?= site_url('admin/users?page=' . ($page - 1)) ?>">Previous</a>
+                    <a class="page-link" href="<?= site_url('admin/users?page=' . ($page - 1) . (!empty($baseQuery) ? '&' . $baseQuery : '')) ?>">Previous</a>
                 </li>
             <?php else: ?>
                 <li class="page-item disabled mx-1">
@@ -82,17 +102,19 @@
                 </li>
             <?php endif; ?>
 
+            <!-- Page Numbers -->
             <?php for ($p = 1; $p <= $totalPages; $p++): ?>
                 <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
-                    <a class="page-link" href="<?= site_url('admin/users?page=' . $p) ?>">
+                    <a class="page-link" href="<?= site_url('admin/users?page=' . $p . (!empty($baseQuery) ? '&' . $baseQuery : '')) ?>">
                         <?= $p ?>
                     </a>
                 </li>
             <?php endfor; ?>
 
+            <!-- Next Button -->
             <?php if ($page < $totalPages): ?>
                 <li class="page-item mx-1">
-                    <a class="page-link" href="<?= site_url('admin/users?page=' . ($page + 1)) ?>">Next</a>
+                    <a class="page-link" href="<?= site_url('admin/users?page=' . ($page + 1) . (!empty($baseQuery) ? '&' . $baseQuery : '')) ?>">Next</a>
                 </li>
             <?php else: ?>
                 <li class="page-item disabled mx-1">
@@ -102,6 +124,7 @@
         </ul>
     </nav>
 
+
     <!-- ADD USER MODAL -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered">
@@ -110,7 +133,7 @@
             <h5 class="modal-title" id="addUserModalLabel">Add New User Account</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-            <form action="<?= site_url('admin/create-user') ?>" method="post">
+            <form action="<?= site_url('admin/create-user') ?>" method="post" id="addUser">
                 <div class="modal-body">
 
                     <div class="mb-3">
@@ -204,20 +227,20 @@
                 <table class="table table-sm table-hover custom-padding">
                 <tbody>
                     <tr>
-                    <th>User ID</th>
-                    <td id="detailUserID"></td>
+                        <th>User ID</th>
+                        <td id="detailUserID"></td>
                     </tr>
                     <tr>
-                    <th>Email</th>
-                    <td id="detailEmail"></td>
+                        <th>Email</th>
+                        <td id="detailEmail"></td>
                     </tr>
                     <tr>
-                    <th>Status</th>
-                    <td id="detailStatus"></td>
+                        <th>Status</th>
+                        <td id="detailStatus"></td>
                     </tr>
                     <tr>
-                    <th>Full Name</th>
-                    <td id="detailFullname"></td>
+                        <th>Full Name</th>
+                        <td id="detailFullname"></td>
                     </tr>
                     <tr>
                     <tr>
@@ -234,20 +257,20 @@
                         <th>Year Level</th>
                         <td id="detailYearLevel"></td>
                     </tr>
-                    <th>Address</th>
-                    <td id="detailAddress"></td>
+                        <th>Address</th>
+                        <td id="detailAddress"></td>
                     </tr>
                     <tr>
-                    <th>Contact Number</th>
-                    <td id="detailContact"></td>
+                        <th>Contact Number</th>
+                        <td id="detailContact"></td>
                     </tr>
                     <tr>
-                    <th>Account Created</th>
-                    <td id="detailCreated"></td>
+                        <th>Account Created</th>
+                        <td id="detailCreated"></td>
                     </tr>
                     <tr>
-                    <th>Last Login</th>
-                    <td id="detailLogin"></td>
+                        <th>Last Login</th>
+                        <td id="detailLogin"></td>
                     </tr>
                 </tbody>
                 </table>
@@ -261,6 +284,9 @@
         </div>
     </div>
     </div>
+
+    <!-- Custom JS for Users Page -->
+    <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
 
     <script>
     document.addEventListener('keydown', function(event) {
@@ -277,7 +303,6 @@
         }
     });
     </script>
-
 
 </div>
 

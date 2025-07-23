@@ -38,6 +38,8 @@
                             <th>Midterm Grade</th>
                             <th>Final Grade</th>
                             <th>Semestral Grade</th>
+                            <th>Units</th>
+                            <th>Units Earned</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,9 +47,14 @@
                             <tr>
                                 <td><?= esc($grade->subject_code) ?></td>
                                 <td><?= esc($grade->subject_name) ?></td>
-                                <td><?= ($grade->mt_grade === null || $grade->mt_grade == 0) ? 'NE' : $grade->mt_grade ?></td>
-                                <td><?= ($grade->fn_grade === null || $grade->fn_grade == 0) ? 'NE' : $grade->fn_grade ?></td>
+                                <td class="text-center"><?= ($grade->mt_grade === null || $grade->mt_grade == 0) ? 'NE' : $grade->mt_grade ?></td>
+                                <td class="text-center"><?= ($grade->fn_grade === null || $grade->fn_grade == 0) ? 'NE' : $grade->fn_grade ?></td>
                                 <td class="text-center"><?= ($grade->sem_grade === null || $grade->sem_grade == 0) ? 'NE' : $grade->sem_grade ?></td>
+                                <td class="text-center"><?= $grade->total_units ?></td>
+                                <!-- units earned -->
+                                <td class="text-center">
+                                    <?= (is_numeric($grade->sem_grade) && $grade->sem_grade != 0 && $grade->sem_grade != 5.00) ? $grade->total_units : '--' ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -82,17 +89,20 @@
 
                 <!-- Button aligned to bottom right -->
                 <div class="mb-4 ms-auto d-flex flex-column align-items-end">
-                    <?php if ($gwa !== null): ?>
                         <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-info' ?> mt-4 text-end">
-                            <strong>GWA:</strong> <?= esc($gwa) ?><br>
+                            <?php
+                                $displayedGwa = ($gwa === null || $gwa === 0 || $hasIncomplete) ? '--' : number_format($gwa, 3);
+                            ?>
+                            <strong>GWA:</strong> <?= esc($displayedGwa) ?><br>
 
-                            <?php if ($isDeanLister): ?>
+                            <?php if ($displayedGwa === '--'): ?>
+                                <small class="text-muted">Some grades may be NE. GWA not available.</small>
+                            <?php elseif ($isDeanLister): ?>
                                 <strong>You're qualified for the Dean's List.</strong> Congratulations!
                             <?php else: ?>
                                 Keep striving! Aim for a GWA ≤ 1.75 and Grades ≤ 2.25 to qualify for the Dean's List.
                             <?php endif; ?>
                         </div>
-                    <?php endif; ?>
                     <a href="<?= site_url('student/grades/download?semester_id=' . $selectedSemester) ?>" class="btn btn-outline-success mb-3">
                         Download PDF
                     </a>

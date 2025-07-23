@@ -335,16 +335,33 @@ class StudentController extends BaseController
 
         // Compute GWA from current grades
         $totalUnits = 0;
+        $unitsEarned = 0;
         $weightedSum = 0;
         $gwa = null;
+        $hasIncomplete = false;
 
         foreach ($grades as $g) {
-            if (!is_numeric($g->sem_grade)) continue;
+            if (!is_numeric($g->sem_grade) || $g->sem_grade == 0 || strtoupper($g->sem_grade) === 'NE') {
+                $hasIncomplete = true;
+                continue; // skip adding to GWA calc
+            }
+
+            // Add to total units always (whether or not the grade is numeric)
             $totalUnits += $g->total_units;
+
+            // Skip if grade is not numeric
+            if (!is_numeric($g->sem_grade)) continue;
+
+            // Add to GWA calculation
             $weightedSum += ($g->sem_grade * $g->total_units);
+
+            // Add to earned units only if grade is valid and passing
+            if ($g->sem_grade != 0 && $g->sem_grade != 5.00) {
+                $unitsEarned += $g->total_units;
+            }
         }
 
-        $gwa = $totalUnits > 0 ? round($weightedSum / $totalUnits, 2) : null;
+        $gwa = ($totalUnits > 0 && !$hasIncomplete) ? round($weightedSum / $unitsEarned, 2) : null;
 
         // Check if Dean’s Lister for selected semester
         $isDeanLister = false;
@@ -359,6 +376,9 @@ class StudentController extends BaseController
                 'selectedSemester' => $selectedSemester,
                 'deansListFlags' => $deansListFlags,
                 'isDeanLister' => $isDeanLister,
+                'unitsEarned' => $unitsEarned,
+                'totalUnits' => $totalUnits,
+                'hasIncomplete' => $hasIncomplete,
                 'gwa' => $gwa
             ])
             . view('templates/admin/admin_footer');

@@ -206,12 +206,23 @@ class StudentController extends BaseController
         }
 
         $semesterModel   = new SemesterModel();
-        $currentSemester = $semesterModel->getActiveSemester();
+        $selectedSemesterInfo = null;
 
         $stbId            = $student->stb_id;
-        $selectedSemester = $this->request->getGet('semester_id'); // from link
+        $selectedSemester = $this->request->getGet('semester_id');
+        
+        if ($selectedSemester) {
+            $selectedSemesterInfo = $db->table('semesters')
+                ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+                ->select('semesters.semester, schoolyears.schoolyear')
+                ->where('semesters.semester_id', $selectedSemester)
+                ->get()
+                ->getRowArray();
+        }
 
-        // ✅ Fetch all semesters like in studentGrades()
+        $currentSemester = $selectedSemesterInfo ?? $semesterModel->getActiveSemester();
+
+        // Fetch all semesters
         $semesters = $db->table('semesters')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
             ->select('semesters.*, schoolyears.schoolyear')
@@ -240,7 +251,6 @@ class StudentController extends BaseController
             return redirect()->back()->with('error', 'No grades found to export.');
         }
 
-        // ✅ Now $semesters exists and is valid
         $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
 
         // Build the PDF HTML
@@ -363,31 +373,29 @@ class StudentController extends BaseController
         $hasIncomplete = false;
 
         foreach ($grades as $g) {
-            // Sum all units no matter what (display Total Units)
+            // Sum all units for display
             $totalUnits += (float) $g->total_units;
 
-            // Detect incomplete (no sem grade, zero, NE)
             $sem = $g->sem_grade;
 
+            // Incomplete detection
             if ($sem === null || $sem === '' || strtoupper((string)$sem) === 'NE' || $sem == 0) {
                 $hasIncomplete = true;
-                continue; // do not include in earned or GWA
+                continue; // skip incomplete in both GWA and earned units
             }
 
-            // Passed? (anything numeric and not 5.00)
             if (is_numeric($sem)) {
-                // Count toward earned?
+                // Earned units only for passing grades
                 if ((float)$sem != 5.00) {
                     $unitsEarned += (float)$g->total_units;
                 }
 
-                // Count toward GWA? (only passed, and only if no incomplete overall later)
-                if ((float)$sem != 5.00) {
-                    $weightedSum += ((float)$sem * (float)$g->total_units);
-                    $unitsForGwa += (float)$g->total_units;
-                }
+                // GWA includes all numeric grades including 5.00
+                $weightedSum += ((float)$sem * (float)$g->total_units);
+                $unitsForGwa += (float)$g->total_units;
             }
         }
+
 
         // If any incomplete grade exists in the set, GWA must be null.
         // Else compute weighted average of passed subjects.

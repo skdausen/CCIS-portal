@@ -461,63 +461,65 @@ z-index: 1081; /* Bootstrap default modals use 1050–1070 */
     width: 100%;
 }
 
-:is(.curriculum-table, .grade-table, .classes-table) th,
-:is(.curriculum-table, .grade-table, .classes-table) td,
-.grade-table input{
+/* ALIGNMENT, PADDING, FONT */
+:is(.curriculum-table, .grade-table, .classes-table) :is(th, td),
+.grade-table input {
     vertical-align: middle;
     padding: 10px;
     font-size: 1rem;
 }
 
-:is(.curriculum-table, .grade-table, .schedule-table) th:nth-child(1),
-:is(.curriculum-table, .grade-table, .schedule-table) td:nth-child(1){
+/* ALIGN & WIDTH FOR FIRST COLUMN */
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(1) {
     text-align: left;
     width: 15%;
 }
-.classes-table td:nth-child(1),
-:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(2) {
+
+/* TEXT OVERFLOW & WRAP FOR SECOND COLUMNS */
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(2),
+.classes-table td:nth-child(1) {
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-
-:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td)
-:is(:nth-child(3), 
-    :nth-child(4), 
-    :nth-child(5), 
-    :nth-child(6), 
-    :nth-child(7)) {
+/* CENTER ALIGN & FIXED WIDTH FOR COLS 3–7 */
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):is(:nth-child(3), :nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)) {
     text-align: center;
     width: 10%;
 }
 
-/* Make sure .fw-bold rows are centered in grade columns */
-:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(3),
-:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(4),
-:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(5) {
+/* BOLD ROW ALIGNMENTS FOR GRADE TABLES */
+:is(.curriculum-table, .grade-table) tr.fw-bold td:is(:nth-child(3), :nth-child(4), :nth-child(5)) {
     text-align: center;
 }
 
-:is(.curriculum-table, .grade-table) th{
+/* CENTER ALIGN HEADERS */
+:is(.curriculum-table, .grade-table) th {
     text-align: center;
 }
 
-.classes-table th:nth-child(1),
-.classes-table td:nth-child(1), 
-.schedule-table th:nth-child(2),
-.schedule-table td:nth-child(2) {
+/* CUSTOM WIDTH FOR CLASSES & SCHEDULES */
+.classes-table :is(th, td):nth-child(1),
+.schedule-table :is(th, td):nth-child(2) {
     width: 30%;
 }
 
+/* SCALE ELEMENT */
 .scale-down {
-transform: scale(0.75); 
-transform-origin: left; 
+    transform: scale(0.75);
+    transform-origin: left;
 }
 
+/* SMALLER FONT */
+.small-font {
+    font-size: 0.9rem !important;
+    font-weight: 400;
+    color: #333; /* Optional for better contrast */
+}
 
-/* Apply a clean, visible grid */
+/* PLANVIEW TABLE STYLES */
 .curriculum-planview-table {
     width: 100%;
     table-layout: fixed;
@@ -526,7 +528,6 @@ transform-origin: left;
     border: 2px solid #333;
 }
 
-/* Strong inner grid borders */
 .curriculum-planview-table th,
 .curriculum-planview-table td {
     border: 1px solid #333;
@@ -537,36 +538,32 @@ transform-origin: left;
     background-color: #fff;
 }
 
-/* Header styles */
 .curriculum-planview-table thead th {
     background-color: #f1f1f1;
     font-weight: 600;
 }
 
-/* Left align for first 2 columns */
-.curriculum-planview-table th:nth-child(1),
-.curriculum-planview-table td:nth-child(1),
-.curriculum-planview-table th:nth-child(2),
-.curriculum-planview-table td:nth-child(2) {
+/* LEFT ALIGN FIRST TWO COLUMNS */
+.curriculum-planview-table :is(th, td):is(:nth-child(1), :nth-child(2)) {
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Bold rows for totals */
+/* TOTAL ROW STYLE */
 .curriculum-planview-table tr.fw-bold td {
     background-color: #f8f8f8;
     font-weight: 600;
 }
 
-
-/* EVEN ROWS LIGHT PURPLE BG */
+/* USERS TABLE EVEN ROW BG */
 .users-table tbody tr:nth-child(even) {
     background-color: #f3e8ff;
 }
 
-.users-table td, .users-table th {
+/* USERS CELL STYLE */
+.users-table :is(th, td) {
     padding: 12px;
     vertical-align: middle;
     white-space: nowrap;
@@ -574,17 +571,34 @@ transform-origin: left;
     text-overflow: ellipsis;
 }
 
-/* STABLE COLUMN WIDTHS USING :is() */
-.users-table :is(th, td):nth-child(1),
-.users-table :is(th, td):nth-child(2) { width: 8%; }
+/* REMOVE VERTICAL BORDERS */
+:is(.classes-table, .grade-table, .student-grade-table) :is(th, td),
+:is(.classes-table, .grade-table, .student-grade-table) {
+    border-left: none !important;
+    border-right: none !important;
+}
 
-.users-table :is(th, td):nth-child(3),
-.users-table :is(th, td):nth-child(4) { width: 20%; }
+/* STABLE COLUMN WIDTHS */
+.users-table :is(th, td):is(:nth-child(1), :nth-child(2)) {
+    width: 8%;
+}
 
-.users-table :is(th, td):nth-child(5),
-.users-table :is(th, td):nth-child(6) { width: 10%; }
+:is(.student-grade-table) :is(th, td):nth-child(2),
+.users-table :is(th, td):is(:nth-child(3), :nth-child(4)) {
+    width: 25%;
+}
+
+:is(.student-grade-table) :is(th, td):is(:nth-child(1), :nth-child(3), :nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)),
+.users-table :is(th, td):is(:nth-child(5), :nth-child(6)) {
+    width: 10%;
+}
 
 
+.gwa-box {
+    border: 1px solid #ccc;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
 
 
 /* Optional: make header and borders clearer on print */
@@ -596,12 +610,6 @@ transform-origin: left;
     .curriculum-planview-table td {
         border: 1px solid #000;
     }
-}
-
-.gwa-box {
-    border: 1px solid #ccc;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
 }
 
 

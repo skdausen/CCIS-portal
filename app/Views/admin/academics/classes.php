@@ -120,14 +120,14 @@
                         ?>
                         <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
                         <td><?= esc($class['subject_type']) ?></td>
-                        <td>
-                            <?= !empty($class['lec_day']) ? 'Lec: ' . esc(strtoupper($class['lec_day'])) : '' ?>
+                        <td class="small-font">
+                            <?= !empty($class['lec_day']) ? '<strong>Lec</strong>: ' . esc(strtoupper($class['lec_day'])) : '' ?>
                             <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
                                 <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
                             <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
                             <?php else: ?> - <?php endif; ?>
                             <?php if (!empty($class['lab_day'])): ?>
-                                <br>Lab: <?= esc(strtoupper($class['lab_day'])) ?>
+                                <br><strong>Lab</strong>: <?= esc(strtoupper($class['lab_day'])) ?>
                                 <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
                                 <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
                                 <?php endif; ?>

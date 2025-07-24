@@ -30,16 +30,16 @@
                 <div class="alert alert-warning shadow-sm rounded">No grades available for selected filters.</div>
             <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-bordered grade-table custom-padding">
+                <table class="table table-bordered student-grade-table custom-padding">
                     <thead class="table-dark align-middle ">
                         <tr>
                             <th>Subject Code</th>
                             <th>Subject Name</th>
-                            <th>Midterm Grade</th>
-                            <th>Final Grade</th>
-                            <th>Semestral Grade</th>
-                            <th>Units</th>
-                            <th>Units Earned</th>
+                            <th class="text-center">Midterm Grade</th>
+                            <th class="text-center">Final Grade</th>
+                            <th class="text-center">Semestral Grade</th>
+                            <th class="text-center">Units</th>
+                            <th class="text-center">Units Earned</th>
                         </tr>
                     </thead>
                     <tbody>

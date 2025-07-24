@@ -190,7 +190,78 @@ class StudentController extends BaseController
             . view('templates/admin/admin_footer');
     }
     
+    public function studentGrades()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
+            return redirect()->to('auth/login');
+        }
 
+        $db = Database::connect();
+        $userId = session()->get('user_id');
+
+        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
+        if (!$student) {
+            return redirect()->to('auth/login');
+        }
+
+        $stbId = $student->stb_id;
+
+        $selectedSemester = $this->request->getGet('semester_id');
+
+        // Fetch all semesters for dropdown
+        $semesters = $db->table('semesters')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
+            ->select('semesters.*, schoolyears.schoolyear')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'DESC')
+            ->get()->getResult();
+
+        // Automatically select the active semester if not selected
+        if (!$selectedSemester) {
+            $activeSemester = $db->table('semesters')
+                ->where('is_active', 1)
+                ->select('semester_id')
+                ->get()
+                ->getRow();
+            if ($activeSemester) {
+                $selectedSemester = $activeSemester->semester_id;
+            }
+        }
+
+        // Fetch grades filtered by semester
+        $builder = $db->table('student_schedules ss')
+            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->where('ss.stb_id', $stbId);
+
+        if ($selectedSemester) {
+            $builder->where('c.semester_id', $selectedSemester);
+        }
+
+        $grades = $builder->get()->getResult();
+
+        // Build grades query
+        $gradesQuery = $db->table('student_schedules ss')
+            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units, s.yearlevel_sem')
+            ->join('classes c', 'c.class_id = ss.class_id')
+            ->join('subjects s', 's.subject_id = c.subject_id')
+            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
+            ->where('ss.stb_id', $stbId);
+
+        if ($selectedSemester) {
+            $gradesQuery->where('c.semester_id', $selectedSemester);
+        }
+
+        $grades = $gradesQuery->get()->getResult();
+
+        $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
+
+        return view('templates/student/student_header')
+            . view('student/grades/grades', $grades_data)
+            . view('templates/admin/admin_footer');
+    }
     public function downloadPDF()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
@@ -265,79 +336,17 @@ class StudentController extends BaseController
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        return $dompdf->stream('grades.pdf', ['Attachment' => true]);
-    }
-    public function studentGrades()
-    {
-        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
-            return redirect()->to('auth/login');
-        }
+        // Format filename parts
+        $fullName = ucwords(strtolower("{$student->fname} {$student->mname} {$student->lname}"));
+        $semesterText = $currentSemester['semester'] ?? 'Semester';
+        $schoolYear   = $currentSemester['schoolyear'] ?? 'SchoolYear';
 
-        $db = Database::connect();
-        $userId = session()->get('user_id');
+        // Clean file name (remove spaces, special chars if needed)
+        $filename = "{$fullName} {$semesterText} {$schoolYear} Grades_Report";
+        $filename = preg_replace('/[^\w\s\-]/', '', $filename);  
+        $filename = str_replace(' ', '_', $filename);            
 
-        $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
-        if (!$student) {
-            return redirect()->to('auth/login');
-        }
-
-        $stbId = $student->stb_id;
-
-        $selectedSemester = $this->request->getGet('semester_id');
-
-        // Fetch all semesters for dropdown
-        $semesters = $db->table('semesters')
-            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
-            ->select('semesters.*, schoolyears.schoolyear')
-            ->orderBy('schoolyears.schoolyear', 'DESC')
-            ->orderBy('semesters.semester', 'DESC')
-            ->get()->getResult();
-
-        // Automatically select the active semester if not selected
-        if (!$selectedSemester) {
-            $activeSemester = $db->table('semesters')
-                ->where('is_active', 1)
-                ->select('semester_id')
-                ->get()
-                ->getRow();
-            if ($activeSemester) {
-                $selectedSemester = $activeSemester->semester_id;
-            }
-        }
-
-        // Fetch grades filtered by semester
-        $builder = $db->table('student_schedules ss')
-            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade')
-            ->join('classes c', 'c.class_id = ss.class_id')
-            ->join('subjects s', 's.subject_id = c.subject_id')
-            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
-            ->where('ss.stb_id', $stbId);
-
-        if ($selectedSemester) {
-            $builder->where('c.semester_id', $selectedSemester);
-        }
-
-        $grades = $builder->get()->getResult();
-
-        // Build grades query
-        $gradesQuery = $db->table('student_schedules ss')
-            ->select('s.subject_code, s.subject_name, g.mt_grade, g.fn_grade, g.sem_grade, s.total_units, s.yearlevel_sem')
-            ->join('classes c', 'c.class_id = ss.class_id')
-            ->join('subjects s', 's.subject_id = c.subject_id')
-            ->join('grades g', 'g.class_id = c.class_id AND g.stb_id = ss.stb_id', 'left')
-            ->where('ss.stb_id', $stbId);
-
-        if ($selectedSemester) {
-            $gradesQuery->where('c.semester_id', $selectedSemester);
-        }
-
-        $grades = $gradesQuery->get()->getResult();
-
-        $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
-
-        return view('templates/student/student_header')
-            . view('student/grades/grades', $grades_data)
-            . view('templates/admin/admin_footer');
+        return $dompdf->stream($filename, ['Attachment' => true]);
     }
     private function prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters)
     {

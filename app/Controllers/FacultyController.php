@@ -184,7 +184,11 @@ class FacultyController extends BaseController
 
         // Get enrolled students
         $students = $studentModel->getStudentsByClass($classId);
-        
+        // Sort enrolled students alphabetically by last name
+        usort($students, function ($a, $b) {
+            return strcmp($a['lname'], $b['lname']);
+        });
+
         // Already enrolled student IDs
         $enrolledIds = $studentScheduleModel
             ->where('class_id', $classId)
@@ -197,6 +201,11 @@ class FacultyController extends BaseController
             ->join('programs', 'programs.program_id = students.program_id')
             ->whereNotIn('students.stb_id', $enrolledIds ?: [0]) // prevents null in whereNotIn
             ->findAll();
+
+        // Sort all students alphabetically by last name
+        usort($allStudents, function ($a, $b) {
+            return strcmp($a['lname'], $b['lname']);
+        });
 
         return view('templates/faculty/faculty_header')
             . view('faculty/view_class', [

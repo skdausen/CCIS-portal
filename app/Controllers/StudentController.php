@@ -657,4 +657,148 @@ public function curriculumPlanView()
 
 
 
-}
+    public function downloadCurriculumPdf()
+    {
+        $student_id = session('stb_id');
+        if (!$student_id) {
+            return redirect()->back()->with('error', 'Student not logged in.');
+        }
+
+        $db = \Config\Database::connect();
+
+        // ✅ Fetch student data with program and curriculum
+        $student = $db->table('students s')
+            ->select('s.student_id, s.fname, s.mname, s.lname, p.program_name, c.curriculum_name')
+            ->join('programs p', 'p.program_id = s.program_id')
+            ->join('curriculums c', 'c.curriculum_id = s.curriculum_id')
+            ->where('s.stb_id', $student_id)
+            ->get()
+            ->getRow();
+
+        if (!$student) {
+            return redirect()->back()->with('error', 'Student not found.');
+        }
+
+        // ✅ Full name
+        $fullName = $student->fname . ' ' . $student->mname . ' ' . $student->lname;
+
+        // ✅ Fetch subjects and compute grouped data
+        $subjects = $this->getStudentCurriculumData($student_id);
+        $gwa = $this->computeGWA($subjects); // optional
+        $honor = $this->getHonorTitle($gwa, $subjects); // optional
+        $groupedSubjects = $this->groupSubjects($subjects);
+
+        // ✅ Generate PDF
+        $dompdf = new Dompdf(['isRemoteEnabled' => true]);
+        $html = view('student/grades/curriculum_download', [
+            'groupedSubjects'   => $groupedSubjects,
+            'gwa'               => $gwa,
+            'honor'             => $honor,
+            'student_name'      => $fullName,
+            'student_id'        => $student->student_id,
+            'program_name'      => $student->program_name,
+            'curriculum_name'   => $student->curriculum_name
+        ]);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream('curriculum_plan.pdf', ['Attachment' => 1]); // 1 = force download
+    }
+
+    private function getStudentCurriculumData($student_id)
+    {
+        $db = \Config\Database::connect();
+
+        $student = $db->table('students')->where('stb_id', $student_id)->get()->getRow();
+        if (!$student) return [];
+
+        $curriculum_id = $student->curriculum_id;
+
+        $subjects = $db->table('subjects')
+            ->select('subject_id, subject_code, subject_name, lec_units, lab_units, total_units, yearlevel_sem')
+            ->where('curriculum_id', $curriculum_id)
+            ->orderBy('yearlevel_sem', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        foreach ($subjects as &$subject) {
+            $gradeRow = $db->table('grades g')
+                ->select('g.sem_grade')
+                ->join('classes c', 'c.class_id = g.class_id')
+                ->where('g.stb_id', $student_id)
+                ->where('c.subject_id', $subject['subject_id'])
+                ->get()
+                ->getRow();
+            $subject['grade'] = $gradeRow ? $gradeRow->sem_grade : null;
+        }
+        unset($subject);
+
+        return $subjects;
+    }
+
+    private function computeGWA($subjects)
+    {
+        $totalUnits = 0;
+        $totalGradePoints = 0;
+
+        foreach ($subjects as $subject) {
+            if (stripos($subject['subject_code'], 'NSTP') !== false) continue;
+
+            if (!empty($subject['grade']) && is_numeric($subject['grade'])) {
+                $totalUnits += $subject['total_units'];
+                $totalGradePoints += $subject['total_units'] * $subject['grade'];
+            }
+        }
+
+        return $totalUnits > 0 ? round($totalGradePoints / $totalUnits, 2) : null;
+    }
+
+    private function getHonorTitle($gwa, $subjects)
+    {
+        if ($gwa === null) return null;
+
+        $lowestGrade = 0;
+        foreach ($subjects as $subject) {
+            if (!empty($subject['grade']) && is_numeric($subject['grade']) && $subject['grade'] > $lowestGrade) {
+                $lowestGrade = $subject['grade'];
+            }
+        }
+
+        if ($gwa <= 1.25 && $lowestGrade <= 2.0) return 'Summa Cum Laude';
+        if ($gwa <= 1.5 && $lowestGrade <= 2.25) return 'Magna Cum Laude';
+        if ($gwa <= 1.75 && $lowestGrade <= 2.5) return 'Cum Laude';
+        return null;
+    }
+
+    private function groupSubjects($subjects)
+    {
+        $grouped = [];
+        foreach ($subjects as $subject) {
+            $yearRaw = substr($subject['yearlevel_sem'], 0, 2);
+            $semRaw = substr($subject['yearlevel_sem'], 2);
+
+            $year = match ($yearRaw) {
+                'Y1' => 'First Year',
+                'Y2' => 'Second Year',
+                'Y3' => 'Third Year',
+                'Y4' => 'Fourth Year',
+                default => 'Other Year',
+            };
+
+            $semester = match ($semRaw) {
+                'S1' => '1st Semester',
+                'S2' => '2nd Semester',
+                'S3' => 'Midyear',
+                default => 'Other Semester',
+            };
+
+            $grouped[$year][$semester][] = $subject;
+        }
+
+        return $grouped;
+
+
+    }
+
+    }

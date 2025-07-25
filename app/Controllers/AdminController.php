@@ -972,7 +972,7 @@ public function deleteClass($id)
         CURRICULUM MANAGEMENT
      ***********************************************/
 
-        //View Curriculums
+// View Curriculums
 public function view_curriculums()
 {
     $curriculumModel = new CurriculumModel();
@@ -981,12 +981,11 @@ public function view_curriculums()
 
     $yearlevel_sem = $this->request->getGet('yearlevel_sem');
     $selectedCurriculum = $this->request->getGet('curriculum_id');
-    $search = $this->request->getGet('search'); //  Get the search input
+    $search = $this->request->getGet('search');
 
     $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
     $programs = $programModel->findAll();
 
-    // Get all subjects first
     if (!empty($yearlevel_sem)) {
         $subjects = $subjectModel->where('yearlevel_sem', $yearlevel_sem)->findAll();
     } else {
@@ -1002,16 +1001,13 @@ public function view_curriculums()
         $curriculumSubjects[$curriculumId][] = $subject;
     }
 
-    // Only show the selected curriculum in cards
     $curriculumsToDisplay = $curriculums;
-
     if (!empty($selectedCurriculum)) {
         $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($selectedCurriculum) {
             return $curriculum['curriculum_id'] == $selectedCurriculum;
         });
     }
 
-    // If search is used, filter by name (ignore selectedCurriculum if search is active)
     if (!empty($search)) {
         $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($search) {
             return stripos($curriculum['curriculum_name'], $search) !== false;
@@ -1021,26 +1017,34 @@ public function view_curriculums()
     return view('templates/admin/admin_header')
         . view('templates/admin/sidebar')
         . view('admin/academics/curriculums', [
-            'curriculums' => $curriculums, // for dropdown
-            'curriculumsToDisplay' => $curriculumsToDisplay, // for cards
+            'curriculums' => $curriculums,
+            'curriculumsToDisplay' => $curriculumsToDisplay,
             'programs' => $programs,
             'curriculumSubjects' => $curriculumSubjects,
             'selectedFilter' => $yearlevel_sem,
             'selectedCurriculum' => $selectedCurriculum,
-            'search' => $search, // 
+            'search' => $search,
         ])
         . view('templates/admin/admin_footer');
 }
 
-
-//create curriculum
-        public function create()
+// Create Curriculum (with duplicate name check)
+public function create()
 {
     $curriculumModel = new CurriculumModel();
 
+    $curriculum_name = $this->request->getPost('curriculum_name');
+    $program_id = $this->request->getPost('program_id');
+
+    // Check for duplicate
+    $existing = $curriculumModel->where('curriculum_name', $curriculum_name)->first();
+    if ($existing) {
+        return redirect()->back()->with('error', 'Curriculum name already exists.');
+    }
+
     $data = [
-        'curriculum_name' => $this->request->getPost('curriculum_name'),
-        'program_id' => $this->request->getPost('program_id'),
+        'curriculum_name' => $curriculum_name,
+        'program_id' => $program_id,
     ];
 
     $curriculumModel->insert($data);
@@ -1048,14 +1052,27 @@ public function view_curriculums()
     return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum added successfully.');
 }
 
-//update curriculum
+// Update Curriculum (with duplicate name check)
 public function update_curriculum($curriculum_id)
 {
     $curriculumModel = new CurriculumModel();
 
+    $curriculum_name = $this->request->getPost('curriculum_name');
+    $program_id = $this->request->getPost('program_id');
+
+    // Check for duplicate, excluding self
+    $existing = $curriculumModel
+        ->where('curriculum_name', $curriculum_name)
+        ->where('curriculum_id !=', $curriculum_id)
+        ->first();
+
+    if ($existing) {
+        return redirect()->back()->with('error', 'Curriculum name already exists.');
+    }
+
     $data = [
-        'curriculum_name' => $this->request->getPost('curriculum_name'),
-        'program_id' => $this->request->getPost('program_id'),
+        'curriculum_name' => $curriculum_name,
+        'program_id' => $program_id,
     ];
 
     $curriculumModel->update($curriculum_id, $data);
@@ -1063,7 +1080,7 @@ public function update_curriculum($curriculum_id)
     return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum updated successfully.');
 }
 
-
+// View Curriculum Detail
 public function view_curriculum_detail($curriculum_id)
 {
     $curriculumModel = new CurriculumModel();

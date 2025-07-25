@@ -8,6 +8,7 @@
         </a>
 
         <h3 class="m-0">My Curriculum Plan View</h3>
+
         
     </div>
 
@@ -71,6 +72,15 @@
         <p class="text-muted">No subjects in your curriculum.</p>
     <?php endif; ?>
 </div>
+
+<div class="container" style="max-width: 1300px;">
+    <div class="text-end mt-4 mb-2">
+        <a href="<?= site_url('student/grades/curriculum_download') ?>" class="btn btn-primary btn-sm">
+            Download PDF
+        </a>
+    </div>
+</div>
+
 
 <div class="container px-4" style="max-width: 900px;">  <!-- Match your table width -->
     <div class="row gx-5 mt-5">

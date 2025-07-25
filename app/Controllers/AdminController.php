@@ -39,7 +39,7 @@ class AdminController extends BaseController
      ***********************************************/
 
     // Display all users
-    public function users()
+    public function users() 
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
             return redirect()->to('auth/login');
@@ -47,28 +47,41 @@ class AdminController extends BaseController
 
         $userModel = new UserModel();
         $curriculumModel = new CurriculumModel(); 
+        $programModel = new ProgramModel();
+
+        $search = $this->request->getGet('search');
+        $role = $this->request->getGet('role');
 
         $usersPerPage = 10;
         $page = (int) ($this->request->getGet('page') ?? 1);
         $page = max($page, 1);
         $offset = ($page - 1) * $usersPerPage;
 
-        $users = $userModel->findAll($usersPerPage, $offset);
-        $totalUsers = $userModel->countAll();
+        $builder = $userModel->searchAndFilter($search, $role);
+
+        $totalUsers = $builder->countAllResults(false); // true = reset query
+        $users = $builder->limit($usersPerPage, $offset)->get()->getResultArray();
         $totalPages = ceil($totalUsers / $usersPerPage);
 
         $data = [
             'users'       => $users,
-            'curriculums' => $curriculumModel->findAll() ,
-            'page' => $page,
-            'totalPages' => $totalPages
+            'curriculums' => $curriculumModel->findAll(),
+            'programs'    => $programModel->findAll(),
+            'search'      => $search,
+            'role'        => $role,
+            'page'        => $page,
+            'totalPages'  => $totalPages
         ];
+
+        // AJAX REQUEST
+        if ($this->request->isAJAX()) {
+            return view('admin/users', $data);
+        }
 
         return view('templates/admin/admin_header')
             . view('admin/users', $data) 
             . view('templates/admin/admin_footer');
     }
-
 
     // Display form to add a new user
     public function createUser()
@@ -89,6 +102,8 @@ class AdminController extends BaseController
         $email    = $this->request->getPost('email');
         $role     = strtolower($this->request->getPost('role'));
         $curriculumId = $this->request->getPost('curriculum_id'); 
+        $programId = $this->request->getPost('program_id'); 
+        $yearLevel = $this->request->getPost('year_level'); 
 
 
         // DEFAULT PASSWORD
@@ -128,6 +143,8 @@ class AdminController extends BaseController
                 'student_id'     => $username,
                 'user_id'        => $userId,
                 'curriculum_id'  => $curriculumId,
+                'program_id'  => $programId,
+                'year_level'  => $yearLevel,
                 'profimg'        => $defaultImg
             ])) {
                 $db->transRollback();
@@ -197,12 +214,15 @@ class AdminController extends BaseController
 
     public function getUser($id)
     {
+        
         $userModel    = new UserModel();
-        $studentModel = new StudentModel();
         $facultyModel = new FacultyModel();
         $adminModel   = new AdminModel();
 
+        $db = \Config\Database::connect();
+
         $user = $userModel->find($id);
+    
 
         if (!$user) {
             return redirect()->to('#')->with('error', 'User not found');
@@ -211,7 +231,12 @@ class AdminController extends BaseController
         // Get extra info based on role
         switch ($user['role']) {
             case 'student':
-                $extra = $studentModel->where('user_id', $id)->first();
+                $builder = $db->table('students s');
+                $builder->select('s.*, p.program_name as program, c.curriculum_name as curriculum');
+                $builder->join('programs p', 'p.program_id = s.program_id', 'left');
+                $builder->join('curriculums c', 'c.curriculum_id = s.curriculum_id', 'left');
+                $builder->where('s.user_id', $id);
+                $extra = $builder->get()->getRowArray();
                 break;
             case 'faculty':
                 $extra = $facultyModel->where('user_id', $id)->first();
@@ -233,10 +258,11 @@ class AdminController extends BaseController
             'birthdate'   => $extra['birthdate'] ?? null,
             'address'     => $extra['address'] ?? null,
             'profimg'     => $extra['profimg'] ?? null,
+            'curriculum'   => $extra['curriculum'] ?? null, 
+            'program'      => $extra['program'] ?? null,    
+            'year_level'   => $extra['year_level'] ?? null  
         ]));
     }
-
-
 
 
     /********************************************** 
@@ -467,6 +493,7 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
+        $classModel = new ClassModel();
         $semesterModel = new SemesterModel();
         $semester = $semesterModel->find($id);
 
@@ -476,6 +503,13 @@ class AdminController extends BaseController
 
         if ($semester['is_active']) {
             return redirect()->back()->with('error', 'Cannot delete an active semester.');
+        }
+
+        // Check if this semester is used in any class
+        $usedInClasses = $classModel->where('semester_id', $id)->countAllResults();
+
+        if ($usedInClasses > 0) {
+            return redirect()->back()->with('error', 'Cannot delete semester. It is used in one or more classes.');
         }
 
         $semesterModel->delete($id);
@@ -714,6 +748,17 @@ public function createClass()
         $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
 
+        $existing = $classModel->where([
+            'subject_id' => $subjectId,
+            'ftb_id' => $ftbId,
+            'semester_id' => $semesterId,
+            'section' => $section,
+        ])->first();
+
+        if ($existing) {
+            return redirect()->back()->withInput()->with('error', 'Class with same subject, faculty, section, and semester already exists.');
+        }
+
         // TIME VALIDATION
         $lec_start = $this->request->getPost('lec_start');
         $lec_end   = $this->request->getPost('lec_end');
@@ -763,11 +808,26 @@ public function updateClass($id)
     $classModel = new ClassModel();
 
     try {
+        $subjectId = $this->request->getPost('subject_id');
+        $ftbId = $this->request->getPost('ftb_id');
+        $semesterId = $this->request->getPost('semester_id');
+        $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
         $lec_start = $this->request->getPost('lec_start');
         $lec_end = $this->request->getPost('lec_end');
         $lab_start = $this->request->getPost('lab_start');
         $lab_end = $this->request->getPost('lab_end');
+
+        $existing = $classModel->where([
+            'subject_id' => $subjectId,
+            'ftb_id' => $ftbId,
+            'semester_id' => $semesterId,
+            'section' => $section,
+        ])->where('class_id !=', $id)->first(); // use your PK field here
+
+        if ($existing) {
+            return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
+        }
 
         // Time validation
         if (strtotime($lec_start) >= strtotime($lec_end)) {

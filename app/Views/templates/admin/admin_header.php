@@ -11,9 +11,8 @@
     <title>AdaL CCIS Portal</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="<?= base_url("rsc/bootstrap-5.3.7/css/bootstrap.min.css") ?>">
-    <link rel="stylesheet" href="<?= base_url('rsc/custom_css/style.css'); ?>">
     <link rel="stylesheet" href="<?= base_url('rsc/bootstrap-icons/bootstrap-icons.min.css'); ?>">
-    
+    <link rel="stylesheet" href="<?= base_url('rsc/custom_css/style.css'); ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="<?= base_url('rsc/fontawesome/css/all.min.css'); ?>">
     <!-- FullCalendar Styles  -->

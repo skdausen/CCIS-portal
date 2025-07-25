@@ -58,7 +58,7 @@ body {
 .main-container {
     display: flex;
     min-height: 100vh;
-    margin-left: 280px;
+    margin-left: 250px;
     transition: margin-left 0.3s ease;
 }
 
@@ -285,9 +285,52 @@ body {
 }
 
 
+/* QUICK LINKS CONTAINER */
+.quick-links {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 1rem;
+}
+
+.quick-links li {
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #f8f9fa; 
+    border-radius: 0.375rem;
+    transition: background-color 0.3s ease;
+}
+
+.quick-links li:hover {
+    background-color: #e9ecef; /
+}
+
+.quick-links a {
+    text-decoration: none;
+    color: #631561; 
+    font-weight: 500;
+}
+
+.quick-links a:hover {
+    color: #631561; 
+}
+
+.quick-links i {
+    color: #198754;
+}
+
+
+
 /* Custom styles for toggles, buttons, backgrounds, and text */
 :is(h1, h2, h3, h4, h5, h6) {
     font-weight: bold;
+}
+/* Slight spacing between year/semester groups */
+h4, h6 {
+    margin-top: 2rem;
+    font-weight: bold;
+}
+.text-purple{
+    color: #631561; 
 }
 .bg-gray {
     background-color: #343a40 !important;
@@ -354,13 +397,16 @@ body {
 }
 
 /* Modal Styles */
-    .modal-dialog-centered {
-        margin: auto;
-    }
-    .modal-dialog-scrollable .modal-body {
-        max-height: 70vh; /* Or 60vh */
-        overflow-y: auto;
-    }
+.modal-dialog-centered {
+    margin: auto;
+}
+.modal-dialog-scrollable .modal-body {
+    max-height: 70vh; /* Or 60vh */
+    overflow-y: auto;
+}
+.front-modal {
+z-index: 1081; /* Bootstrap default modals use 1050–1070 */
+}
 
 /* Adjustments for mobile responsiveness */
 .fixed-columns th,
@@ -410,69 +456,70 @@ body {
 }
 
 /* TABLE STYLES */
-.curriculum-table,
-.grade-table, .classes-table, .schedule-table {
+.curriculum-table, .grade-table, .classes-table, .schedule-table, .users-table {
     table-layout: fixed;
     width: 100%;
 }
 
-:is(.curriculum-table, .grade-table, .classes-table) th,
-:is(.curriculum-table, .grade-table, .classes-table) td,
-.grade-table input{
+/* ALIGNMENT, PADDING, FONT */
+:is(.curriculum-table, .grade-table, .classes-table, .schedule-table) :is(th, td),
+.grade-table input {
     vertical-align: middle;
     padding: 10px;
     font-size: 1rem;
 }
 
-:is(.curriculum-table, .grade-table, .schedule-table) th:nth-child(1),
-:is(.curriculum-table, .grade-table, .schedule-table) td:nth-child(1){
+/* ALIGN & WIDTH FOR FIRST COLUMN */
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(1) {
     text-align: left;
     width: 15%;
 }
-.classes-table td:nth-child(1),
-:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(2) {
+
+/* TEXT OVERFLOW & WRAP FOR SECOND COLUMNS */
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):nth-child(2),
+.classes-table td:nth-child(1) {
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-
-:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td)
-:is(:nth-child(3), 
-    :nth-child(4), 
-    :nth-child(5), 
-    :nth-child(6), 
-    :nth-child(7)) {
+/* CENTER ALIGN & FIXED WIDTH FOR COLS 3–7 */
+:is(.curriculum-table, .grade-table, .schedule-table) :is(th, td):is(:nth-child(3), :nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)) {
     text-align: center;
-    width: 10%;
+    width: 15%;
 }
 
-/* Make sure .fw-bold rows are centered in grade columns */
-:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(3),
-:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(4),
-:is(.curriculum-table, .grade-table) tr.fw-bold td:nth-child(5) {
+/* BOLD ROW ALIGNMENTS FOR GRADE TABLES */
+:is(.curriculum-table, .grade-table) tr.fw-bold td:is(:nth-child(3), :nth-child(4), :nth-child(5)) {
     text-align: center;
 }
 
-:is(.curriculum-table, .grade-table) th{
+/* CENTER ALIGN HEADERS */
+:is(.curriculum-table, .grade-table) th {
     text-align: center;
 }
 
-.classes-table th:nth-child(1),
-.classes-table td:nth-child(1), 
-.schedule-table th:nth-child(2),
-.schedule-table td:nth-child(2) {
+/* CUSTOM WIDTH FOR CLASSES & SCHEDULES */
+.classes-table :is(th, td):nth-child(1),
+.schedule-table :is(th, td):nth-child(2) {
     width: 30%;
 }
 
+/* SCALE ELEMENT */
 .scale-down {
-transform: scale(0.75); /* MAKES ELEMENT 85% OF ORIGINAL SIZE */
-transform-origin: left; /* KEEPS IT CENTERED */
+    transform: scale(0.75);
+    transform-origin: left;
 }
 
+/* SMALLER FONT */
+.small-font {
+    font-size: 0.9rem !important;
+    font-weight: 400;
+    color: #333; /* Optional for better contrast */
+}
 
-/* Apply a clean, visible grid */
+/* PLANVIEW TABLE STYLES */
 .curriculum-planview-table {
     width: 100%;
     table-layout: fixed;
@@ -481,7 +528,6 @@ transform-origin: left; /* KEEPS IT CENTERED */
     border: 2px solid #333;
 }
 
-/* Strong inner grid borders */
 .curriculum-planview-table th,
 .curriculum-planview-table td {
     border: 1px solid #333;
@@ -492,34 +538,68 @@ transform-origin: left; /* KEEPS IT CENTERED */
     background-color: #fff;
 }
 
-/* Header styles */
 .curriculum-planview-table thead th {
     background-color: #f1f1f1;
     font-weight: 600;
 }
 
-/* Left align for first 2 columns */
-.curriculum-planview-table th:nth-child(1),
-.curriculum-planview-table td:nth-child(1),
-.curriculum-planview-table th:nth-child(2),
-.curriculum-planview-table td:nth-child(2) {
+/* LEFT ALIGN FIRST TWO COLUMNS */
+.curriculum-planview-table :is(th, td):is(:nth-child(1), :nth-child(2)) {
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Bold rows for totals */
+/* TOTAL ROW STYLE */
 .curriculum-planview-table tr.fw-bold td {
     background-color: #f8f8f8;
     font-weight: 600;
 }
 
-/* Slight spacing between year/semester groups */
-h4, h6 {
-    margin-top: 2rem;
-    font-weight: bold;
+/* USERS TABLE EVEN ROW BG */
+.users-table tbody tr:nth-child(even) {
+    background-color: #f3e8ff;
 }
+
+/* USERS CELL STYLE */
+.users-table :is(th, td) {
+    padding: 12px;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* REMOVE VERTICAL BORDERS */
+:is(.classes-table, .grade-table, .student-grade-table) :is(th, td),
+:is(.classes-table, .grade-table, .student-grade-table) {
+    border-left: none !important;
+    border-right: none !important;
+}
+
+/* STABLE COLUMN WIDTHS */
+.users-table :is(th, td):is(:nth-child(1), :nth-child(2)) {
+    width: 8%;
+}
+
+:is(.student-grade-table) :is(th, td):nth-child(2),
+.users-table :is(th, td):is(:nth-child(3), :nth-child(4)) {
+    width: 25%;
+}
+
+:is(.student-grade-table) :is(th, td):is(:nth-child(1), :nth-child(3), :nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)),
+.users-table :is(th, td):is(:nth-child(5), :nth-child(6)) {
+    width: 10%;
+}
+
+
+.gwa-box {
+    border: 1px solid #ccc;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
+
 
 /* Optional: make header and borders clearer on print */
 @media print {
@@ -532,14 +612,6 @@ h4, h6 {
     }
 }
 
-.gwa-box {
-    border: 1px solid #ccc;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-}
-
-
-
 
 /* sssssssssssssssssssssssss
 sssssssssssssssssssssssssidebar */
@@ -547,7 +619,7 @@ sssssssssssssssssssssssssidebar */
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: 240px;
     height: 100vh;
     background-color: #fff;
     border-right: 1px solid #ffffff;

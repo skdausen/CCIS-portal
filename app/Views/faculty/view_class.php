@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container mt-5 pb-5">
   <div class="col-md-12 mb-4">
     <div class="d-flex align-items-center justify-content-between">
       <!-- Back Arrow -->

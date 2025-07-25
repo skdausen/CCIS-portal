@@ -26,7 +26,7 @@
             <div id="classesContainer"></div>
         </div>
             <nav>
-                <ul id="pagination" class="pagination justify-content-center mt-3"></ul>
+                <ul id="pagination" class="pagination justify-content-center mt-3 gap-3"></ul>
             </nav>
 </div>
 
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const pagination = document.getElementById('pagination');
 
     let currentPage = 1;
-    const itemsPerPage = 9;
+    const itemsPerPage = 6;
     let allClasses = [];
 
     function fetchClasses() {

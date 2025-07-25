@@ -57,7 +57,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="profileModalLabel">👤 My Profile</h5>
+          <h5 class="modal-title" id="profileModalLabel"><i class="fa-solid fa-user me-2"></i> My Profile</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -176,7 +176,7 @@
           <div class="modal-body overflow-y-auto">
             <div class="row g-3">
               <!-- PROFILE PHOTO -->
-                         <div class="col-12 text-center">
+                <div class="col-12 text-center">
                 <img id="profilePreview"
                     src="<?= base_url('rsc/assets/uploads/' . esc(session('profimg') ?? 'default.png')) ?>"
                     alt="Profile Picture"
@@ -220,6 +220,7 @@
                 <input type="text" name="lname" class="form-control" value="<?= esc(session('lname')) ?>" required placeholder="e.g. Santos">
               </div>
 
+              <!-- Program -->
               <?php if (session('role') === 'student' && isset($programs)): ?>
               <div class="col-md-6">
                   <label for="program_id" class="form-label">Program:</label>
@@ -234,6 +235,9 @@
                   </select>
               </div>
 
+              <!-- Major -->
+
+              <!-- Year Level -->
               <div class="col-md-6">
                   <label for="year_level" class="form-label">Year Level:</label>
                   <select name="year_level" id="year_level" class="form-select">
@@ -399,9 +403,6 @@
 
   <!--Calendar-->
   <script src="<?= base_url('rsc/custom_js/calendar.js') ?>"></script>
-
-  <!--View, Search, & Filter Users JS -->
-  <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

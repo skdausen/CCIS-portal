@@ -3,7 +3,7 @@
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
-    <!-- Calendar -->
+    <!-- Calendar & Announcement -->
     <div class="card mt-4 p-3 border-0" style="background-color:rgba(248, 249, 255, 0);">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
@@ -24,7 +24,7 @@
 
                 <!-- Updates RIGHT -->
                 <div class="col-12 col-lg-6 mb-3">
-                    <div class="p-3 border-0 shadow-sm" id="latest-update" style="background-color: #ffffff; border-radius: 10px;">
+                    <div class="p-3 border-0 shadow-sm rounded-2" id="latest-update">
                         <!-- 🔍 Filter Logic -->
                         <?php
                             $today = date('Y-m-d');
@@ -63,8 +63,8 @@
                             $nearing = array_slice($nearing, 0, 3);
                         ?>
 
-                        <!-- 🆕 Latest Announcement -->
-                        <h5 class="text-purple mb-3">🆕 Latest Announcement</h5>
+                        <!-- Latest Announcement -->
+                        <h5 class="text-purple mb-3"><i class="fa-solid fa-bullhorn me-2"></i> Latest Announcement</h5>
                         <div class="ms-3">
                             <?php if ($latest) : ?>
                                 <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
@@ -79,8 +79,8 @@
 
                         <hr>
 
-                        <!-- 📌 Nearest Events -->
-                        <h6 class="text-purple mt-3">📌 Nearing Events</h6>
+                        <!-- Nearest Events -->
+                        <h6 class="text-purple mt-3"><i class="bi bi-pin-angle-fill me-2"></i>Nearing Events</h6>
                         <?php if (!empty($nearing)) : ?>
                             <ul class="list-group list-group-flush mt-2">
                                 <?php foreach ($nearing as $n) : ?>
@@ -169,7 +169,7 @@
                             </select>
                         </div>
 
-                        <!-- 📅 Event Date & Time -->
+                        <!-- Event Date & Time -->
                         <div class="mb-3">
                         <label for="event_datetime" class="form-label">Event Date & Time</label>
                         <input type="datetime-local" class="form-control" id="event_datetime" name="event_datetime" required>
@@ -184,7 +184,7 @@
         </div>
         </div>
 
-        <!-- ✏️ Edit Announcement Modal -->
+        <!-- Edit Announcement Modal -->
         <div class="modal fade" id="editAnnouncementModal" tabindex="-1" aria-labelledby="editAnnouncementModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content shadow">

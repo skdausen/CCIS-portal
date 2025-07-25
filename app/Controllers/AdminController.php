@@ -663,6 +663,11 @@ public function view_classes()
         ? $selectedSemesterId
         : (!empty($activeSemester) ? $activeSemester['semester_id'] : null);
 
+    // 🔢 Pagination variables
+    $perPage = 10;
+    $page = (int) ($this->request->getGet('page') ?? 1);
+    $offset = ($page - 1) * $perPage;
+
     $builder = $classModel
         ->select('
             classes.*, 
@@ -697,7 +702,11 @@ public function view_classes()
         $builder->where('classes.section', $sectionFilter);
     }
 
-    $classes = $builder->findAll();
+    $allClasses = $builder->findAll();
+    $totalClasses = count($allClasses);
+    $totalPages = ceil($totalClasses / $perPage);
+
+    $classes = array_slice($allClasses, $offset, $perPage);
 
     $facultyList = $facultyModel->findAll();
     $instructors = [];
@@ -713,13 +722,11 @@ public function view_classes()
         ->orderBy('semesters.semester', 'ASC')
         ->findAll();
 
-    // For Section Dropdown - only distinct sections for the current semester
-        $sections = $classModel
-            ->distinct()
-            ->select('section')
-            ->where('semester_id', $semesterToShow) // optional if you want per semester
-            ->findAll();
-
+    $sections = $classModel
+        ->distinct()
+        ->select('section')
+        ->where('semester_id', $semesterToShow)
+        ->findAll();
 
     return view('templates/admin/admin_header')
         . view('templates/admin/sidebar')
@@ -730,13 +737,14 @@ public function view_classes()
             'semesters' => $semesters,
             'activeSemester' => $activeSemester,
             'sections' => $sections,
+            'page' => $page,
+            'totalPages' => $totalPages,
         ])
         . view('templates/admin/admin_footer');
 }
 
 
 
-// Create a new class
 public function createClass()
 {
     $classModel = new ClassModel();
@@ -748,6 +756,44 @@ public function createClass()
         $section = strtoupper($this->request->getPost('section'));
         $subjectType = $this->request->getPost('subject_type');
 
+        // Get schedule values
+        $lec_day = strtoupper($this->request->getPost('lec_day'));
+        $lec_start = $this->request->getPost('lec_start');
+        $lec_end = $this->request->getPost('lec_end');
+        $lab_day = strtoupper($this->request->getPost('lab_day'));
+        $lab_start = $this->request->getPost('lab_start');
+        $lab_end = $this->request->getPost('lab_end');
+
+        // 🛑 NEW: Check all classes in the same semester (not just by faculty)
+        $conflictLec = $classModel
+            ->where('semester_id', $semesterId)
+            ->where('lec_day', $lec_day)
+            ->groupStart()
+                ->where('lec_start <', $lec_end)
+                ->where('lec_end >', $lec_start)
+            ->groupEnd()
+            ->first();
+
+        if ($conflictLec) {
+            return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
+        }
+
+        if ($subjectType === 'LEC with LAB') {
+            $conflictLab = $classModel
+                ->where('semester_id', $semesterId)
+                ->where('lab_day', $lab_day)
+                ->groupStart()
+                    ->where('lab_start <', $lab_end)
+                    ->where('lab_end >', $lab_start)
+                ->groupEnd()
+                ->first();
+
+            if ($conflictLab) {
+                return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
+            }
+        }
+
+        // 🧠 Existing class logic
         $existing = $classModel->where([
             'subject_id' => $subjectId,
             'ftb_id' => $ftbId,
@@ -759,77 +805,7 @@ public function createClass()
             return redirect()->back()->withInput()->with('error', 'Class with same subject, faculty, section, and semester already exists.');
         }
 
-        // TIME VALIDATION
-        $lec_start = $this->request->getPost('lec_start');
-        $lec_end   = $this->request->getPost('lec_end');
-        $lab_start = $this->request->getPost('lab_start');
-        $lab_end   = $this->request->getPost('lab_end');
-
-        if (strtotime($lec_start) >= strtotime($lec_end)) {
-            return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
-        }
-
-        if ($subjectType === 'LEC with LAB') {
-            if (strtotime($lab_start) >= strtotime($lab_end)) {
-            return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
-            }
-        }
-
-        $data = [
-            'ftb_id'      => $ftbId,
-            'subject_id'  => $subjectId,
-            'semester_id' => $semesterId,
-            'section'     => $section,
-            'lec_day'     => strtoupper($this->request->getPost('lec_day')),
-            'lec_start'   => $this->request->getPost('lec_start'),
-            'lec_end'     => $this->request->getPost('lec_end'),
-            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
-        ];
-
-        if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = strtoupper($this->request->getPost('lab_day'));
-            $data['lab_start'] = $this->request->getPost('lab_start');
-            $data['lab_end']   = $this->request->getPost('lab_end');
-            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
-        }
-
-        $classModel->insert($data);
-
-        return redirect()->to('admin/academics/classes')->with('success', 'Class added successfully.');
-    } catch (\Exception $e) {
-        dd($e->getMessage());
-    }
-}
-
-
-// Update an existing class
-public function updateClass($id)
-{
-    $classModel = new ClassModel();
-
-    try {
-        $subjectId = $this->request->getPost('subject_id');
-        $ftbId = $this->request->getPost('ftb_id');
-        $semesterId = $this->request->getPost('semester_id');
-        $section = strtoupper($this->request->getPost('section'));
-        $subjectType = $this->request->getPost('subject_type');
-        $lec_start = $this->request->getPost('lec_start');
-        $lec_end = $this->request->getPost('lec_end');
-        $lab_start = $this->request->getPost('lab_start');
-        $lab_end = $this->request->getPost('lab_end');
-
-        $existing = $classModel->where([
-            'subject_id' => $subjectId,
-            'ftb_id' => $ftbId,
-            'semester_id' => $semesterId,
-            'section' => $section,
-        ])->where('class_id !=', $id)->first(); // use your PK field here
-
-        if ($existing) {
-            return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
-        }
-
-        // Time validation
+        // 🕒 Time validation
         if (strtotime($lec_start) >= strtotime($lec_end)) {
             return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
         }
@@ -841,20 +817,121 @@ public function updateClass($id)
         }
 
         $data = [
-            'ftb_id'      => $this->request->getPost('ftb_id'),
-            'subject_id'  => $this->request->getPost('subject_id'),
-            'semester_id' => $this->request->getPost('semester_id'),
-            'section' => strtoupper($this->request->getPost('section')),
-            'lec_day'     => strtoupper($this->request->getPost('lec_day')),
-            'lec_start'   => $this->request->getPost('lec_start'),
-            'lec_end'     => $this->request->getPost('lec_end'),
+            'ftb_id'      => $ftbId,
+            'subject_id'  => $subjectId,
+            'semester_id' => $semesterId,
+            'section'     => $section,
+            'lec_day'     => $lec_day,
+            'lec_start'   => $lec_start,
+            'lec_end'     => $lec_end,
             'lec_room'    => strtoupper($this->request->getPost('lec_room')),
         ];
 
         if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = strtoupper($this->request->getPost('lab_day'));
-            $data['lab_start'] = $this->request->getPost('lab_start');
-            $data['lab_end']   = $this->request->getPost('lab_end');
+            $data['lab_day']   = $lab_day;
+            $data['lab_start'] = $lab_start;
+            $data['lab_end']   = $lab_end;
+            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
+        }
+
+        $classModel->insert($data);
+
+        return redirect()->to('admin/academics/classes')->with('success', 'Class added successfully.');
+    } catch (\Exception $e) {
+        dd($e->getMessage());
+    }
+}
+
+public function updateClass($id)
+{
+    $classModel = new ClassModel();
+
+    try {
+        $subjectId = $this->request->getPost('subject_id');
+        $ftbId = $this->request->getPost('ftb_id');
+        $semesterId = $this->request->getPost('semester_id');
+        $section = strtoupper($this->request->getPost('section'));
+        $subjectType = $this->request->getPost('subject_type');
+
+        // Get schedule values
+        $lec_day = strtoupper($this->request->getPost('lec_day'));
+        $lec_start = $this->request->getPost('lec_start');
+        $lec_end = $this->request->getPost('lec_end');
+        $lab_day = strtoupper($this->request->getPost('lab_day'));
+        $lab_start = $this->request->getPost('lab_start');
+        $lab_end = $this->request->getPost('lab_end');
+
+        // 🛑 Check lecture schedule conflict (against other classes in the same semester)
+        $conflictLec = $classModel
+            ->where('semester_id', $semesterId)
+            ->where('lec_day', $lec_day)
+            ->where('class_id !=', $id)
+            ->groupStart()
+                ->where('lec_start <', $lec_end)
+                ->where('lec_end >', $lec_start)
+            ->groupEnd()
+            ->first();
+
+        if ($conflictLec) {
+            return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
+        }
+
+        // 🧪 Lab conflict check if applicable
+        if ($subjectType === 'LEC with LAB') {
+            $conflictLab = $classModel
+                ->where('semester_id', $semesterId)
+                ->where('lab_day', $lab_day)
+                ->where('class_id !=', $id)
+                ->groupStart()
+                    ->where('lab_start <', $lab_end)
+                    ->where('lab_end >', $lab_start)
+                ->groupEnd()
+                ->first();
+
+            if ($conflictLab) {
+                return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
+            }
+        }
+
+        // ⛔ Check duplicate class entry
+        $existing = $classModel->where([
+            'subject_id' => $subjectId,
+            'ftb_id' => $ftbId,
+            'semester_id' => $semesterId,
+            'section' => $section,
+        ])->where('class_id !=', $id)->first();
+
+        if ($existing) {
+            return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
+        }
+
+        // 🕒 Time validation
+        if (strtotime($lec_start) >= strtotime($lec_end)) {
+            return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
+        }
+
+        if ($subjectType === 'LEC with LAB') {
+            if (strtotime($lab_start) >= strtotime($lab_end)) {
+                return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+            }
+        }
+
+        // 📦 Build data array
+        $data = [
+            'ftb_id'      => $ftbId,
+            'subject_id'  => $subjectId,
+            'semester_id' => $semesterId,
+            'section'     => $section,
+            'lec_day'     => $lec_day,
+            'lec_start'   => $lec_start,
+            'lec_end'     => $lec_end,
+            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
+        ];
+
+        if ($subjectType === 'LEC with LAB') {
+            $data['lab_day']   = $lab_day;
+            $data['lab_start'] = $lab_start;
+            $data['lab_end']   = $lab_end;
             $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
         } else {
             $data['lab_day']   = null;
@@ -867,7 +944,7 @@ public function updateClass($id)
 
         return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
     } catch (\Exception $e) {
-        return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while updating the class.');
+        return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while updating the class: ' . $e->getMessage());
     }
 }
 

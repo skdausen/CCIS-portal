@@ -147,6 +147,38 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+                <?php if ($totalPages > 1): ?>
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Prev Button -->
+                            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                                <a class="page-link"
+                                href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => max(1, $page - 1)])) ?>">
+                                    Prev
+                                </a>
+                            </li>
+
+                            <!-- Page Numbers -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                    <a class="page-link"
+                                    href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => $i])) ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <!-- Next Button -->
+                            <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+                                <a class="page-link"
+                                href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => min($totalPages, $page + 1)])) ?>">
+                                    Next
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                <?php endif; ?>
+
         </div>
 
         <!-- OUTSIDE THE TABLE: Edit and Delete Modals -->

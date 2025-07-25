@@ -350,6 +350,39 @@
   </div>
 </div>
 
+
+<!-- No Active Semester Modal -->
+<div class="modal fade" id="noSemesterModal" tabindex="-1" aria-labelledby="noSemesterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-danger">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="noSemesterModalLabel">Cannot Add Class</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-0">No active semester is set. Please activate a semester first before adding a class.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Okay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showNoSemesterModal() {
+    const modalElement = document.getElementById('noSemesterModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    // Auto-close after 1.5 seconds (1500 ms)
+    setTimeout(() => {
+      modal.hide();
+    }, 1500);
+  }
+</script>
+
+
 <?php if (session()->getFlashdata('open_modal')): ?>
 <script>
   document.addEventListener('DOMContentLoaded', function () {

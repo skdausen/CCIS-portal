@@ -771,7 +771,7 @@ class AdminController extends BaseController
             $lab_start = $this->request->getPost('lab_start');
             $lab_end = $this->request->getPost('lab_end');
 
-            // 🛑 NEW: Check all classes in the same semester (not just by faculty)
+            // Check all classes in the same semester (not just by faculty)
             $conflictLec = $classModel
                 ->where('semester_id', $semesterId)
                 ->where('lec_day', $lec_day)
@@ -868,11 +868,15 @@ class AdminController extends BaseController
             $lab_start = $this->request->getPost('lab_start');
             $lab_end = $this->request->getPost('lab_end');
 
-            // 🛑 Check lecture schedule conflict (against other classes in the same semester)
+            // Check lecture schedule conflict (against other classes in the same semester)
             $conflictLec = $classModel
                 ->where('semester_id', $semesterId)
                 ->where('lec_day', $lec_day)
                 ->where('class_id !=', $id)
+                ->groupStart()
+                    ->where('ftb_id', $ftbId)
+                    ->orWhere('section', $section)
+                ->groupEnd()
                 ->groupStart()
                     ->where('lec_start <', $lec_end)
                     ->where('lec_end >', $lec_start)
@@ -900,7 +904,7 @@ class AdminController extends BaseController
                 }
             }
 
-            // ⛔ Check duplicate class entry
+            // Check duplicate class entry
             $existing = $classModel->where([
                 'subject_id' => $subjectId,
                 'ftb_id' => $ftbId,
@@ -912,7 +916,7 @@ class AdminController extends BaseController
                 return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
             }
 
-            // 🕒 Time validation
+            // Time validation
             if (strtotime($lec_start) >= strtotime($lec_end)) {
                 return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
             }
@@ -923,7 +927,7 @@ class AdminController extends BaseController
                 }
             }
 
-            // 📦 Build data array
+            // Build data array
             $data = [
                 'ftb_id'      => $ftbId,
                 'subject_id'  => $subjectId,

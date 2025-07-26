@@ -302,7 +302,7 @@
         <?php endforeach; ?>
 
         <!-- Add Class Modal -->
-        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center modal-dialog-scrollable">
                 <form action="<?= site_url('admin/academics/classes/add') ?>" method="post">
                     <div class="modal-content">
@@ -356,53 +356,50 @@
                             <ul id="subjectSuggestions" class="list-group position-absolute" style="z-index: 1050;"></ul>
 
 
-                        <!-- Schedule -->
-                        <div class="row">
-                            <!-- Lecture Schedule -->
-                            <div id="lectureSchedule" class="col-md-12">
-                                <h6>Lecture Schedule</h6>
-                                <div class="mb-3">
-                                    <label for="lecDay" class="form-label">Day/s</label>
-                                    <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
+                            <!-- Schedule -->
+                            <div class="row">
+                                <!-- Lecture Schedule -->
+                                <div id="lectureSchedule" class="col-md-12">
+                                    <h6>Lecture Schedule</h6>
+                                    <div class="mb-3">
+                                        <label for="lecDay" class="form-label">Day/s</label>
+                                        <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="lecRoom" class="form-label">Room</label>
+                                        <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="lecStart" class="form-label">Start Time</label>
+                                        <input type="time" id="lecStart" name="lec_start" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="lecEnd" class="form-label">End Time</label>
+                                        <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="lecRoom" class="form-label">Room</label>
-                                    <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lecStart" class="form-label">Start Time</label>
-                                    <input type="time" id="lecStart" name="lec_start" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lecEnd" class="form-label">End Time</label>
-                                    <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
-                                </div>
-                            </div>
 
-                            <!-- Lab Schedule -->
-                            <div id="labSchedule" class="col-md-6 d-none">
-                                <h6>Lab Schedule</h6>
-                                <div class="mb-3">
-                                    <label for="labDay" class="form-label">Lab Day/s</label>
-                                    <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
+                                <!-- Lab Schedule -->
+                                <div id="labSchedule" class="col-md-6 d-none">
+                                    <h6>Lab Schedule</h6>
+                                    <div class="mb-3">
+                                        <label for="labDay" class="form-label">Lab Day/s</label>
+                                        <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="labRoom" class="form-label">Lab Room</label>
+                                        <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="labStart" class="form-label">Lab Start Time</label>
+                                        <input type="time" id="labStart" name="lab_start" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="labEnd" class="form-label">Lab End Time</label>
+                                        <input type="time" id="labEnd" name="lab_end" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="labRoom" class="form-label">Lab Room</label>
-                                    <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="labStart" class="form-label">Lab Start Time</label>
-                                    <input type="time" id="labStart" name="lab_start" class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="labEnd" class="form-label">Lab End Time</label>
-                                    <input type="time" id="labEnd" name="lab_end" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-
-                            
+                            </div> 
                         </div> <!-- /.modal-body -->
 
                         <div class="modal-footer">
@@ -416,13 +413,8 @@
 
 </div>
 
-
-
-
-<script src="<?= base_url('rsc/custom_js/classes.js') ?>"></script>
-
 <!-- No Active Semester Modal -->
-<div class="modal fade" id="noSemesterModal" tabindex="-1">
+<div class="modal fade" id="noSemesterModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-warning">
@@ -436,7 +428,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="invalidEntryModal" tabindex="-1">
+<div class="modal fade" id="invalidEntryModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-warning">
@@ -631,92 +623,92 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
     const instructors = [
-    <?php foreach ($instructors as $ftbId => $instructorName): ?>,
-    {
-        id: "<?= esc($ftbId) ?>",
-        name: "<?= esc($instructorName) ?>"
-    },
-    <?php endforeach; ?>
-];
+        <?php foreach ($instructors as $ftbId => $instructorName): ?>,
+        {
+            id: "<?= esc($ftbId) ?>",
+            name: "<?= esc($instructorName) ?>"
+        },
+        <?php endforeach; ?>
+    ];
 
-const instructorSearchInput = document.getElementById('instructorSearchInput');
-const instructorSuggestions = document.getElementById('instructorSuggestions');
-const instructorIdInput = document.getElementById('instructorIdInput');
+    const instructorSearchInput = document.getElementById('instructorSearchInput');
+    const instructorSuggestions = document.getElementById('instructorSuggestions');
+    const instructorIdInput = document.getElementById('instructorIdInput');
 
-instructorSearchInput.addEventListener('input', function () {
-    const query = this.value.toLowerCase();
-    instructorSuggestions.innerHTML = '';
-
-    if (!query) return;
-
-    const matches = instructors.filter(instructor =>
-        instructor.name.toLowerCase().includes(query)
-    );
-
-    matches.forEach(instructor => {
-        const li = document.createElement('li');
-        li.classList.add('list-group-item', 'list-group-item-action');
-        li.textContent = instructor.name;
-        li.addEventListener('click', () => {
-            instructorSearchInput.value = instructor.name;
-            instructorIdInput.value = instructor.id;
-            instructorSuggestions.innerHTML = '';
-        });
-        instructorSuggestions.appendChild(li);
-    });
-});
-
-document.addEventListener('click', function (e) {
-    if (!instructorSuggestions.contains(e.target) && e.target !== instructorSearchInput) {
+    instructorSearchInput.addEventListener('input', function () {
+        const query = this.value.toLowerCase();
         instructorSuggestions.innerHTML = '';
-    }
-});
+
+        if (!query) return;
+
+        const matches = instructors.filter(instructor =>
+            instructor.name.toLowerCase().includes(query)
+        );
+
+        matches.forEach(instructor => {
+            const li = document.createElement('li');
+            li.classList.add('list-group-item', 'list-group-item-action');
+            li.textContent = instructor.name;
+            li.addEventListener('click', () => {
+                instructorSearchInput.value = instructor.name;
+                instructorIdInput.value = instructor.id;
+                instructorSuggestions.innerHTML = '';
+            });
+            instructorSuggestions.appendChild(li);
+        });
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!instructorSuggestions.contains(e.target) && e.target !== instructorSearchInput) {
+            instructorSuggestions.innerHTML = '';
+        }
+    });
 
 </script>
 
 <!-- Filter table by instructor name or section as well as semester -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const tableRows = document.querySelectorAll('table tbody tr');
-    const instructorSearch = document.querySelector('#instructorSearch');
-    const sectionFilter = document.querySelector('#sectionFilter');
-    const semesterFilter = document.querySelector('#semesterFilter');
-    const clearFiltersBtn = document.querySelector('#clearFiltersBtn');
+    document.addEventListener('DOMContentLoaded', function () {
+        const tableRows = document.querySelectorAll('table tbody tr');
+        const instructorSearch = document.querySelector('#instructorSearch');
+        const sectionFilter = document.querySelector('#sectionFilter');
+        const semesterFilter = document.querySelector('#semesterFilter');
+        const clearFiltersBtn = document.querySelector('#clearFiltersBtn');
 
-    function filterTable() {
-        const instructorValue = instructorSearch.value.toLowerCase().trim();
-        const sectionValue = sectionFilter.value.toLowerCase();
+        function filterTable() {
+            const instructorValue = instructorSearch.value.toLowerCase().trim();
+            const sectionValue = sectionFilter.value.toLowerCase();
 
-        tableRows.forEach(row => {
-            const instructor = (row.dataset.instructor || '').toLowerCase();
-            const section = (row.dataset.section || '').toLowerCase();
+            tableRows.forEach(row => {
+                const instructor = (row.dataset.instructor || '').toLowerCase();
+                const section = (row.dataset.section || '').toLowerCase();
 
-            const matchesInstructor = !instructorValue || instructor.includes(instructorValue);
-            const matchesSection = !sectionValue || section === sectionValue;
+                const matchesInstructor = !instructorValue || instructor.includes(instructorValue);
+                const matchesSection = !sectionValue || section === sectionValue;
 
-            row.style.display = matchesInstructor && matchesSection ? '' : 'none';
+                row.style.display = matchesInstructor && matchesSection ? '' : 'none';
+            });
+        }
+
+        instructorSearch.addEventListener('input', filterTable);
+        sectionFilter.addEventListener('change', filterTable);
+
+        clearFiltersBtn.addEventListener('click', () => {
+            instructorSearch.value = '';
+            sectionFilter.value = '';
+            semesterFilter.value = '';
+
+            // Remove ?semester_id=... from URL and reload
+            const url = new URL(window.location.href);
+            url.searchParams.delete('semester_id');
+            window.location.href = url.toString();
         });
-    }
-
-    instructorSearch.addEventListener('input', filterTable);
-    sectionFilter.addEventListener('change', filterTable);
-
-    clearFiltersBtn.addEventListener('click', () => {
-        instructorSearch.value = '';
-        sectionFilter.value = '';
-        semesterFilter.value = '';
-
-        // Remove ?semester_id=... from URL and reload
-        const url = new URL(window.location.href);
-        url.searchParams.delete('semester_id');
-        window.location.href = url.toString();
     });
-});
 
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
     <?php foreach ($classes as $class): ?>
     (function () {
         const input = document.getElementById('editInstructorSearchInput<?= $class['class_id'] ?>');
@@ -760,17 +752,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
     document.getElementById('semesterFilter').addEventListener('change', function () {
-    const selectedSemester = this.value;
-    const url = new URL(window.location.href);
+        const selectedSemester = this.value;
+        const url = new URL(window.location.href);
 
-    if (selectedSemester) {
-        url.searchParams.set('semester_id', selectedSemester);
-    } else {
-        url.searchParams.delete('semester_id');
-    }
+        if (selectedSemester) {
+            url.searchParams.set('semester_id', selectedSemester);
+        } else {
+            url.searchParams.delete('semester_id');
+        }
 
-    window.location.href = url.toString();
-});
+        window.location.href = url.toString();
+    });
 
 </script>
 
@@ -786,9 +778,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('invalidEntryMessage').textContent = message;
         bootstrapModal.show();
 
-        setTimeout(() => {
-            bootstrapModal.hide();
-        }, 1000); // auto-hide after 1 second
     }
 
     // ADD CLASS FORM VALIDATION

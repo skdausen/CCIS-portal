@@ -3,7 +3,7 @@
 <head>
     <title><?= esc($curriculum_name ?? 'Curriculum') ?> PDF</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        body { font-family: Arial, sans-serif; font-size: 12px; }
         h3, h4, h5 { margin: 0; padding: 5px 0; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
         th, td { border: 1px solid #444; padding: 5px; text-align: center; vertical-align: middle; word-wrap: break-word; }

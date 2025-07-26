@@ -117,9 +117,8 @@ class StudentController extends BaseController
                 'student' => $student,
                 'schedule' => $schedule
             ])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
-
     public function studentCurriculum()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
@@ -128,6 +127,11 @@ class StudentController extends BaseController
 
         $db = Database::connect();
         $student = $db->table('students')->where('user_id', session()->get('user_id'))->get()->getRow();
+
+        $programModel = new ProgramModel();
+        $programs = $programModel->findAll();
+        $studentModel = new StudentModel();
+        $studentProfile = $studentModel->where('user_id', session('user_id'))->first();
 
         $subjects = $db->table('subjects')
             ->where('curriculum_id', $student->curriculum_id)
@@ -185,11 +189,12 @@ class StudentController extends BaseController
                 'groupedSubjects' => $groupedSubjects,
                 'currentYearKey' => $currentYearKey,
                 'page' => $page,
-                'totalPages' => $totalPages
+                'totalPages' => $totalPages,     
+                'programs' => $programs,
+                'student' => $studentProfile
             ])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
-    
     public function studentGrades()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
@@ -198,6 +203,11 @@ class StudentController extends BaseController
 
         $db = Database::connect();
         $userId = session()->get('user_id');
+        
+        $programModel = new ProgramModel();
+        $programs = $programModel->findAll();
+        $studentModel = new StudentModel();
+        $studentProfile = $studentModel->where('user_id', session('user_id'))->first();
 
         $student = $db->table('students')->where('user_id', $userId)->get()->getRow();
         if (!$student) {
@@ -259,8 +269,8 @@ class StudentController extends BaseController
         $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
 
         return view('templates/student/student_header')
-            . view('student/grades/grades', $grades_data)
-            . view('templates/admin/admin_footer');
+            . view('student/grades/grades', array_merge($grades_data, ['programs' => $programs, 'student' => $studentProfile]))
+            . view('templates/footer');
     }
     public function downloadPDF()
     {
@@ -430,7 +440,6 @@ class StudentController extends BaseController
             'gwa'              => $gwa,
         ];
     }
-
     public function checkDeansListerStatus($stbId, $curriculumId, $studentYearLevel, $studentSemester)
     {
         $yearlevelSem = $this->mapYearLevelAndSemester($studentYearLevel, $studentSemester);
@@ -442,7 +451,6 @@ class StudentController extends BaseController
             echo "Invalid year level or semester mapping!";
         }
     }
-
     //  Converts year + semester to Y1S1, Y3S3, etc.
     private function mapYearLevelAndSemester($yearLevel, $semester)
     {
@@ -539,123 +547,132 @@ class StudentController extends BaseController
         return $result;
     }
 
-public function curriculumPlanView()
-{
-    $db = Database::connect();
+    public function curriculumPlanView()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
+            return redirect()->to('auth/login');
+        }
 
-    $student_id = session('stb_id');
-    if (!$student_id) {
-        return redirect()->back()->with('error', 'No student found in session.');
-    }
+        $db = Database::connect();
+        $programModel = new ProgramModel();
+        $programs = $programModel->findAll();
+        $studentModel = new StudentModel();
+        $studentProfile = $studentModel->where('user_id', session('user_id'))->first();
 
-    $student = $db->table('students')->where('stb_id', $student_id)->get()->getRow();
-    if (!$student) {
-        return redirect()->back()->with('error', 'Student not found.');
-    }
+        $student_id = session('stb_id');
+        if (!$student_id) {
+            return redirect()->back()->with('error', 'No student found in session.');
+        }
 
-    $curriculum_id = $student->curriculum_id;
+        $student = $db->table('students')->where('stb_id', $student_id)->get()->getRow();
+        if (!$student) {
+            return redirect()->back()->with('error', 'Student not found.');
+        }
 
-    $subjects = $db->table('subjects')
-        ->select('subject_id, subject_code, subject_name, lec_units, lab_units, total_units, yearlevel_sem')
-        ->where('curriculum_id', $curriculum_id)
-        ->orderBy('yearlevel_sem', 'ASC')
-        ->get()
-        ->getResultArray();
+        $curriculum_id = $student->curriculum_id;
 
-    // Attach Grades
-    foreach ($subjects as &$subject) {
-        $gradeRow = $db->table('grades g')
-            ->select('g.sem_grade')
-            ->join('classes c', 'c.class_id = g.class_id')
-            ->where('g.stb_id', $student_id)
-            ->where('c.subject_id', $subject['subject_id'])
+        $subjects = $db->table('subjects')
+            ->select('subject_id, subject_code, subject_name, lec_units, lab_units, total_units, yearlevel_sem')
+            ->where('curriculum_id', $curriculum_id)
+            ->orderBy('yearlevel_sem', 'ASC')
             ->get()
-            ->getRow();
+            ->getResultArray();
 
-        $subject['grade'] = $gradeRow ? $gradeRow->sem_grade : null;
-    }
-    unset($subject); // Good practice
+        // Attach Grades
+        foreach ($subjects as &$subject) {
+            $gradeRow = $db->table('grades g')
+                ->select('g.sem_grade')
+                ->join('classes c', 'c.class_id = g.class_id')
+                ->where('g.stb_id', $student_id)
+                ->where('c.subject_id', $subject['subject_id'])
+                ->get()
+                ->getRow();
 
-    // ✅ Remove duplicates properly via subject_id
-    $uniqueSubjects = [];
-    foreach ($subjects as $subject) {
-        $key = $subject['subject_id'];
-        if (!isset($uniqueSubjects[$key])) {
-            $uniqueSubjects[$key] = $subject;
+            $subject['grade'] = $gradeRow ? $gradeRow->sem_grade : null;
         }
-    }
-    $subjects = array_values($uniqueSubjects);
+        unset($subject); // Good practice
 
-    // Group by Year and Semester
-    $groupedSubjects = [];
-    foreach ($subjects as $subject) {
-        $yearRaw = substr($subject['yearlevel_sem'], 0, 2);
-        $semRaw = substr($subject['yearlevel_sem'], 2);
-
-        $year = match ($yearRaw) {
-            'Y1' => 'First Year',
-            'Y2' => 'Second Year',
-            'Y3' => 'Third Year',
-            'Y4' => 'Fourth Year',
-            default => 'Other Year',
-        };
-
-        $semester = match ($semRaw) {
-            'S1' => '1st Semester',
-            'S2' => '2nd Semester',
-            'S3' => 'Midyear',
-            default => 'Other Semester',
-        };
-
-        $groupedSubjects[$year][$semester][] = $subject;
-    }
-
-    // --- Compute GWA and Honor ---
-    $totalUnits = 0;
-    $totalGradePoints = 0;
-    $lowestGrade = 0;
-
-    foreach ($subjects as $subject) {
-        // Skip NSTP
-        if (stripos($subject['subject_code'], 'NSTP') !== false) {
-            continue;
-        }
-
-        if ($subject['grade'] !== null && is_numeric($subject['grade']) && $subject['grade'] != 0) {
-            $units = $subject['total_units'];
-            $grade = $subject['grade'];
-
-            $totalUnits += $units;
-            $totalGradePoints += $units * $grade;
-
-            if ($grade > $lowestGrade) {
-                $lowestGrade = $grade;
+        // Remove duplicates properly via subject_id
+        $uniqueSubjects = [];
+        foreach ($subjects as $subject) {
+            $key = $subject['subject_id'];
+            if (!isset($uniqueSubjects[$key])) {
+                $uniqueSubjects[$key] = $subject;
             }
         }
-    }
+        $subjects = array_values($uniqueSubjects);
 
-    $gwa = $totalUnits > 0 ? round($totalGradePoints / $totalUnits, 2) : null;
-    $honor = null;
+        // Group by Year and Semester
+        $groupedSubjects = [];
+        foreach ($subjects as $subject) {
+            $yearRaw = substr($subject['yearlevel_sem'], 0, 2);
+            $semRaw = substr($subject['yearlevel_sem'], 2);
 
-    if ($gwa !== null) {
-        if ($gwa >= 1.0 && $gwa <= 1.25 && $lowestGrade <= 2.0) {
-            $honor = 'Summa Cum Laude';
-        } elseif ($gwa > 1.25 && $gwa <= 1.5 && $lowestGrade <= 2.25) {
-            $honor = 'Magna Cum Laude';
-        } elseif ($gwa > 1.5 && $gwa <= 1.75 && $lowestGrade <= 2.5) {
-            $honor = 'Cum Laude';
+            $year = match ($yearRaw) {
+                'Y1' => 'First Year',
+                'Y2' => 'Second Year',
+                'Y3' => 'Third Year',
+                'Y4' => 'Fourth Year',
+                default => 'Other Year',
+            };
+
+            $semester = match ($semRaw) {
+                'S1' => '1st Semester',
+                'S2' => '2nd Semester',
+                'S3' => 'Midyear',
+                default => 'Other Semester',
+            };
+
+            $groupedSubjects[$year][$semester][] = $subject;
         }
+
+        // --- Compute GWA and Honor ---
+        $totalUnits = 0;
+        $totalGradePoints = 0;
+        $lowestGrade = 0;
+
+        foreach ($subjects as $subject) {
+            // Skip NSTP
+            if (stripos($subject['subject_code'], 'NSTP') !== false) {
+                continue;
+            }
+
+            if ($subject['grade'] !== null && is_numeric($subject['grade']) && $subject['grade'] != 0) {
+                $units = $subject['total_units'];
+                $grade = $subject['grade'];
+
+                $totalUnits += $units;
+                $totalGradePoints += $units * $grade;
+
+                if ($grade > $lowestGrade) {
+                    $lowestGrade = $grade;
+                }
+            }
+        }
+
+        $gwa = $totalUnits > 0 ? round($totalGradePoints / $totalUnits, 2) : null;
+        $honor = null;
+
+        if ($gwa !== null) {
+            if ($gwa >= 1.0 && $gwa <= 1.25 && $lowestGrade <= 2.0) {
+                $honor = 'Summa Cum Laude';
+            } elseif ($gwa > 1.25 && $gwa <= 1.5 && $lowestGrade <= 2.25) {
+                $honor = 'Magna Cum Laude';
+            } elseif ($gwa > 1.5 && $gwa <= 1.75 && $lowestGrade <= 2.5) {
+                $honor = 'Cum Laude';
+            }
+        }
+
+        return view('templates/student/student_header')
+            . view('student/grades/curriculum_planview', [
+            'groupedSubjects' => $groupedSubjects,
+            'curriculum_id' => $curriculum_id,
+            'gwa' => $gwa,
+            'honor' => $honor,
+            'programs' => $programs,
+            'student' => $studentProfile])
+            . view('templates/footer');
     }
-
-    return view('student/grades/curriculum_planview', [
-        'groupedSubjects' => $groupedSubjects,
-        'curriculum_id' => $curriculum_id,
-        'gwa' => $gwa,
-        'honor' => $honor,
-    ]);
-}
-
-
 
     public function downloadCurriculumPdf()
     {
@@ -664,9 +681,9 @@ public function curriculumPlanView()
             return redirect()->back()->with('error', 'Student not logged in.');
         }
 
-        $db = \Config\Database::connect();
+        $db = Database::connect();
 
-        // ✅ Fetch student data with program and curriculum
+        // Fetch student data with program and curriculum
         $student = $db->table('students s')
             ->select('s.student_id, s.fname, s.mname, s.lname, p.program_name, c.curriculum_name')
             ->join('programs p', 'p.program_id = s.program_id')
@@ -679,16 +696,16 @@ public function curriculumPlanView()
             return redirect()->back()->with('error', 'Student not found.');
         }
 
-        // ✅ Full name
+        // Full name
         $fullName = $student->fname . ' ' . $student->mname . ' ' . $student->lname;
 
-        // ✅ Fetch subjects and compute grouped data
+        // Fetch subjects and compute grouped data
         $subjects = $this->getStudentCurriculumData($student_id);
-        $gwa = $this->computeGWA($subjects); // optional
-        $honor = $this->getHonorTitle($gwa, $subjects); // optional
+        $gwa = $this->computeGWA($subjects); 
+        $honor = $this->getHonorTitle($gwa, $subjects);
         $groupedSubjects = $this->groupSubjects($subjects);
 
-        // ✅ Generate PDF
+        // Generate PDF
         $dompdf = new Dompdf(['isRemoteEnabled' => true]);
         $html = view('student/grades/curriculum_download', [
             'groupedSubjects'   => $groupedSubjects,
@@ -699,16 +716,25 @@ public function curriculumPlanView()
             'program_name'      => $student->program_name,
             'curriculum_name'   => $student->curriculum_name
         ]);
+        
 
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-        $dompdf->stream('curriculum_plan.pdf', ['Attachment' => 1]); // 1 = force download
+
+        // Format filename parts
+        $fullName = ucwords(strtolower("{$student->fname} {$student->mname} {$student->lname}"));
+
+        // Clean file name (remove spaces, special chars if needed)
+        $filename = "{$fullName} Curriculum_Plan";
+        $filename = preg_replace('/[^\w\s\-]/', '', $filename);  
+        $filename = str_replace(' ', '_', $filename);     
+        $dompdf->stream($filename, ['Attachment' => 1]); 
     }
 
     private function getStudentCurriculumData($student_id)
     {
-        $db = \Config\Database::connect();
+        $db = Database::connect();
 
         $student = $db->table('students')->where('stb_id', $student_id)->get()->getRow();
         if (!$student) return [];

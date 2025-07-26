@@ -7,6 +7,8 @@ use App\Models\UserModel;
 use App\Models\AdminModel;
 use App\Models\FacultyModel;
 use App\Models\StudentModel;
+use App\Models\ProgramModel;
+
 
 class AuthController extends BaseController
 {
@@ -58,17 +60,10 @@ class AuthController extends BaseController
             $session->setFlashdata('error', 'User does not exist.');
             return redirect()->to('auth/login')->withInput();
         }
-
-        // If user is already marked as active
-        // if ($user['status'] === 'active') {
-        //     $session->setFlashdata('error', 'User is already logged in elsewhere.');
-        //     return redirect()->to('auth/login')->withInput();
-        // }
-
         // Check password
         if (password_verify($password, $user['userpassword'])) {
 
-            // ✅ Update login timestamp and set status to active
+            // Update login timestamp and set status to active
             $userModel->update($user['user_id'], [
                 'last_login' => date('Y-m-d H:i:s'),
                 'status'     => 'active'
@@ -86,7 +81,7 @@ class AuthController extends BaseController
                 'isLoggedIn'  => true
             ];
 
-            // 🔍 Load extra profile info from role-specific table
+            // Load extra profile info from role-specific table
             $details = [];
             if ($user['role'] === 'student') {
                 $details = $studentModel->where('student_id', $user['username'])->first();
@@ -94,6 +89,19 @@ class AuthController extends BaseController
                 $details = $facultyModel->where('faculty_id', $user['username'])->first();
             } elseif (in_array($user['role'], ['admin', 'superadmin'])) {
                 $details = $adminModel->where('admin_id', $user['username'])->first();
+            }
+
+            // If student, store program_id and year_level in session
+            if ($user['role'] === 'student') {
+                $sessionData['program_id'] = $details['program_id'] ?? null;
+                $sessionData['year_level'] = $details['year_level'] ?? null;
+
+                // 🟢 YES: ADD PROGRAM NAME TO SESSION (already present!)
+                if (!empty($details['program_id'])) {
+                    $programModel = new ProgramModel();
+                    $program = $programModel->find($details['program_id']);
+                    $sessionData['program'] = $program['program_name'] ?? null;
+                }
             }
 
             // Merge additional fields into session
@@ -110,7 +118,7 @@ class AuthController extends BaseController
                 ]);
             }
 
-            // 💾 Set session data
+            // Set session data
             $session->set($sessionData);
 
             // Redirect to home/dashboard
@@ -122,6 +130,7 @@ class AuthController extends BaseController
                 return redirect()->to('admin/home');
             }
             // return redirect()->to('admin/home');
+            dd($sessionData); // <--- REMOVE after testing
         } else {
             // Wrong password
             $session->setFlashdata('error', 'Incorrect Password.');

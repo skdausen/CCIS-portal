@@ -1,5 +1,5 @@
 <!-- users.php -->
-<div class="container mt-5 users-page" id="userPage" data-users-url="<?= site_url('admin/users') ?>">
+<div class="container mt-5 users-page" id="userPage" data-users-url="<?= site_url('admin/users') ?>" data-base-url="<?= base_url() ?>">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <h3 class="mb-3"><i class="fa-solid fa-users me-3 text-secondary"></i>List of Users</h3>
     </div>
@@ -126,7 +126,7 @@
 
 
     <!-- ADD USER MODAL -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
         <div class="modal-header">

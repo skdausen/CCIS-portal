@@ -56,22 +56,4 @@ abstract class BaseController extends Controller
         // E.g.: $this->session = service('session');
     }
 
-    protected function loadStudentData()
-    {
-        $userId = session('user_id');
-        $role = session('role');
-
-        if ($role === 'student') {
-            $studentModel = new \App\Models\StudentModel();
-            $programModel = new \App\Models\ProgramModel();
-            
-            $student = $studentModel->where('user_id', $userId)->first();
-            $programs = $programModel->findAll();
-
-            return ['student' => $student, 'programs' => $programs];
-        }
-
-        return [];
-    }
-
 }

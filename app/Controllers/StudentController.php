@@ -119,7 +119,6 @@ class StudentController extends BaseController
             ])
             . view('templates/footer');
     }
-
     public function studentCurriculum()
     {
         if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['student'])) {
@@ -196,7 +195,6 @@ class StudentController extends BaseController
             ])
             . view('templates/footer');
     }
-    
     public function studentGrades()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') !== 'student') {
@@ -442,7 +440,6 @@ class StudentController extends BaseController
             'gwa'              => $gwa,
         ];
     }
-
     public function checkDeansListerStatus($stbId, $curriculumId, $studentYearLevel, $studentSemester)
     {
         $yearlevelSem = $this->mapYearLevelAndSemester($studentYearLevel, $studentSemester);
@@ -454,7 +451,6 @@ class StudentController extends BaseController
             echo "Invalid year level or semester mapping!";
         }
     }
-
     //  Converts year + semester to Y1S1, Y3S3, etc.
     private function mapYearLevelAndSemester($yearLevel, $semester)
     {
@@ -720,11 +716,20 @@ class StudentController extends BaseController
             'program_name'      => $student->program_name,
             'curriculum_name'   => $student->curriculum_name
         ]);
+        
 
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-        $dompdf->stream('curriculum_plan.pdf', ['Attachment' => 1]); // 1 = force download
+
+        // Format filename parts
+        $fullName = ucwords(strtolower("{$student->fname} {$student->mname} {$student->lname}"));
+
+        // Clean file name (remove spaces, special chars if needed)
+        $filename = "{$fullName} Curriculum_Plan";
+        $filename = preg_replace('/[^\w\s\-]/', '', $filename);  
+        $filename = str_replace(' ', '_', $filename);     
+        $dompdf->stream($filename, ['Attachment' => 1]); 
     }
 
     private function getStudentCurriculumData($student_id)

@@ -49,7 +49,7 @@ $routes->post('profile/update_password', 'ProfileController::update_password');
 // ---------------------
 $routes->group('admin', function ($routes) {
 
-    // ✅ Admin Home & Users
+    // Admin Home & Users
     $routes->get('home', 'AdminController::adminHome');
 
     // User management
@@ -86,7 +86,7 @@ $routes->group('admin', function ($routes) {
     $routes->post('academics/curriculums/update/(:num)', 'AdminController::update_curriculum/$1');
     $routes->get('academics/curriculums/view/(:num)', 'AdminController::view_curriculum_detail/$1');
 
-    // 📢 Announcement management
+    // Announcement management
     $routes->post('saveAnnouncement', 'AdminController::saveAnnouncement');
     $routes->post('updateAnnouncement', 'AdminController::updateAnnouncement'); 
     $routes->post('deleteAnnouncement', 'AdminController::deleteAnnouncement');

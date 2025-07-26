@@ -31,7 +31,7 @@ class AdminController extends BaseController
 
         return view('templates/admin/admin_header')
             . view('admin/home', ['announcements' => $announcements])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     /********************************************** 
@@ -80,7 +80,7 @@ class AdminController extends BaseController
 
         return view('templates/admin/admin_header')
             . view('admin/users', $data) 
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     // Display form to add a new user
@@ -355,7 +355,7 @@ class AdminController extends BaseController
         return view('templates/admin/admin_header', $data)
             . view('templates/admin/sidebar')
             . view('admin/academics', $data)
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     /********************************************** 
@@ -377,7 +377,7 @@ class AdminController extends BaseController
         return view('templates/admin/admin_header')
             . view('templates/admin/sidebar')
             . view('admin/academics/semesters', $data)
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     // CREATE SEMESTER
@@ -522,34 +522,37 @@ class AdminController extends BaseController
      ***********************************************/
 
     // View all subjects
-public function view_subjects()
-{
-    $subjectModel = new SubjectModel();
-    $curriculumModel = new CurriculumModel();
+    public function view_subjects()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
+        }
+        $subjectModel = new SubjectModel();
+        $curriculumModel = new CurriculumModel();
 
-    $perPage = 10;
-    $page = $this->request->getGet('page') ?? 1;
+        $perPage = 10;
+        $page = $this->request->getGet('page') ?? 1;
 
-    $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
+        $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
 
-    $totalSubjects = count($allSubjects);
-    $totalPages = ceil($totalSubjects / $perPage);
+        $totalSubjects = count($allSubjects);
+        $totalPages = ceil($totalSubjects / $perPage);
 
-    $offset = ($page - 1) * $perPage;
-    $subjects = array_slice($allSubjects, $offset, $perPage);
+        $offset = ($page - 1) * $perPage;
+        $subjects = array_slice($allSubjects, $offset, $perPage);
 
-    $data = [
-        'subjects' => $subjects,
-        'curriculums' => $curriculumModel->findAll(),
-        'page' => $page,
-        'totalPages' => $totalPages,
-    ];
+        $data = [
+            'subjects' => $subjects,
+            'curriculums' => $curriculumModel->findAll(),
+            'page' => $page,
+            'totalPages' => $totalPages,
+        ];
 
-    return view('templates/admin/admin_header')
-        . view('templates/admin/sidebar')
-        . view('admin/academics/subjects', $data)
-        . view('templates/admin/admin_footer');
-}
+        return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
+            . view('admin/academics/subjects', $data)
+            . view('templates/footer');
+    }
 
 
     // Create a new subject
@@ -595,7 +598,7 @@ public function view_subjects()
         return view('templates/admin/admin_header')
             . view('templates/admin/sidebar')
             . view('admin/academics/edit_subject', ['subject' => $subject])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     //update
@@ -645,325 +648,328 @@ public function view_subjects()
         CLASSES MANAGEMENT
      ***********************************************/
     
-public function view_classes()
-{
-    $classModel = new ClassModel();
-    $facultyModel = new FacultyModel();
-    $subjectModel = new SubjectModel();
-    $semesterModel = new SemesterModel();
-
-    $activeSemester = $semesterModel->getActiveSemester();
-    $selectedSemesterId = $this->request->getGet('semester_id');
-
-    $instructorSearch = $this->request->getGet('instructor');
-    $subjectSearch = $this->request->getGet('subject');
-    $sectionFilter = $this->request->getGet('section');
-
-    $semesterToShow = !empty($selectedSemesterId)
-        ? $selectedSemesterId
-        : (!empty($activeSemester) ? $activeSemester['semester_id'] : null);
-
-    // 🔢 Pagination variables
-    $perPage = 10;
-    $page = (int) ($this->request->getGet('page') ?? 1);
-    $offset = ($page - 1) * $perPage;
-
-    $builder = $classModel
-        ->select('
-            classes.*, 
-            subjects.subject_code, subjects.subject_name, subjects.subject_type,  
-            semesters.semester, semesters.semester_id, schoolyears.schoolyear,
-            faculty.ftb_id, faculty.fname, faculty.lname
-        ')
-        ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')
-        ->join('semesters', 'semesters.semester_id = classes.semester_id', 'left')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-        ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');
-
-    if (!empty($semesterToShow)) {
-        $builder->where('classes.semester_id', $semesterToShow);
-    }
-
-    if (!empty($instructorSearch)) {
-        $builder->groupStart()
-            ->like('faculty.fname', $instructorSearch)
-            ->orLike('faculty.lname', $instructorSearch)
-            ->groupEnd();
-    }
-
-    if (!empty($subjectSearch)) {
-        $builder->groupStart()
-            ->like('subjects.subject_code', $subjectSearch)
-            ->orLike('subjects.subject_name', $subjectSearch)
-            ->groupEnd();
-    }
-
-    if (!empty($sectionFilter)) {
-        $builder->where('classes.section', $sectionFilter);
-    }
-
-    $allClasses = $builder->findAll();
-    $totalClasses = count($allClasses);
-    $totalPages = ceil($totalClasses / $perPage);
-
-    $classes = array_slice($allClasses, $offset, $perPage);
-
-    $facultyList = $facultyModel->findAll();
-    $instructors = [];
-    foreach ($facultyList as $faculty) {
-        $instructors[$faculty['ftb_id']] = $faculty['fname'] . ' ' . $faculty['lname'];
-    }
-
-    $semesters = $semesterModel
-        ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
-        ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
-        ->orderBy('semesters.is_active', 'DESC')
-        ->orderBy('schoolyears.schoolyear', 'DESC')
-        ->orderBy('semesters.semester', 'ASC')
-        ->findAll();
-
-    $sections = $classModel
-        ->distinct()
-        ->select('section')
-        ->where('semester_id', $semesterToShow)
-        ->findAll();
-
-    return view('templates/admin/admin_header')
-        . view('templates/admin/sidebar')
-        . view('admin/academics/classes', [
-            'classes' => $classes,
-            'instructors' => $instructors,
-            'courses' => $subjectModel->findAll(),
-            'semesters' => $semesters,
-            'activeSemester' => $activeSemester,
-            'sections' => $sections,
-            'page' => $page,
-            'totalPages' => $totalPages,
-        ])
-        . view('templates/admin/admin_footer');
-}
-
-
-
-public function createClass()
-{
-    $classModel = new ClassModel();
-
-    try {
-        $subjectId = $this->request->getPost('subject_id');
-        $ftbId = $this->request->getPost('ftb_id');
-        $semesterId = $this->request->getPost('semester_id');
-        $section = strtoupper($this->request->getPost('section'));
-        $subjectType = $this->request->getPost('subject_type');
-
-        // Get schedule values
-        $lec_day = strtoupper($this->request->getPost('lec_day'));
-        $lec_start = $this->request->getPost('lec_start');
-        $lec_end = $this->request->getPost('lec_end');
-        $lab_day = strtoupper($this->request->getPost('lab_day'));
-        $lab_start = $this->request->getPost('lab_start');
-        $lab_end = $this->request->getPost('lab_end');
-
-        // 🛑 NEW: Check all classes in the same semester (not just by faculty)
-        $conflictLec = $classModel
-            ->where('semester_id', $semesterId)
-            ->where('lec_day', $lec_day)
-            ->groupStart()
-                ->where('lec_start <', $lec_end)
-                ->where('lec_end >', $lec_start)
-            ->groupEnd()
-            ->first();
-
-        if ($conflictLec) {
-            return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
+    public function view_classes()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
         }
 
-        if ($subjectType === 'LEC with LAB') {
-            $conflictLab = $classModel
+        $classModel = new ClassModel();
+        $facultyModel = new FacultyModel();
+        $subjectModel = new SubjectModel();
+        $semesterModel = new SemesterModel();
+
+        $activeSemester = $semesterModel->getActiveSemester();
+        $selectedSemesterId = $this->request->getGet('semester_id');
+
+        $instructorSearch = $this->request->getGet('instructor');
+        $subjectSearch = $this->request->getGet('subject');
+        $sectionFilter = $this->request->getGet('section');
+
+        $semesterToShow = !empty($selectedSemesterId)
+            ? $selectedSemesterId
+            : (!empty($activeSemester) ? $activeSemester['semester_id'] : null);
+
+        // Pagination variables
+        $perPage = 10;
+        $page = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($page - 1) * $perPage;
+
+        $builder = $classModel
+            ->select('
+                classes.*, 
+                subjects.subject_code, subjects.subject_name, subjects.subject_type,  
+                semesters.semester, semesters.semester_id, schoolyears.schoolyear,
+                faculty.ftb_id, faculty.fname, faculty.lname
+            ')
+            ->join('subjects', 'subjects.subject_id = classes.subject_id', 'left')
+            ->join('semesters', 'semesters.semester_id = classes.semester_id', 'left')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+            ->join('faculty', 'faculty.ftb_id = classes.ftb_id', 'left');
+
+        if (!empty($semesterToShow)) {
+            $builder->where('classes.semester_id', $semesterToShow);
+        }
+
+        if (!empty($instructorSearch)) {
+            $builder->groupStart()
+                ->like('faculty.fname', $instructorSearch)
+                ->orLike('faculty.lname', $instructorSearch)
+                ->groupEnd();
+        }
+
+        if (!empty($subjectSearch)) {
+            $builder->groupStart()
+                ->like('subjects.subject_code', $subjectSearch)
+                ->orLike('subjects.subject_name', $subjectSearch)
+                ->groupEnd();
+        }
+
+        if (!empty($sectionFilter)) {
+            $builder->where('classes.section', $sectionFilter);
+        }
+
+        $allClasses = $builder->findAll();
+        $totalClasses = count($allClasses);
+        $totalPages = ceil($totalClasses / $perPage);
+
+        $classes = array_slice($allClasses, $offset, $perPage);
+
+        $facultyList = $facultyModel->findAll();
+        $instructors = [];
+        foreach ($facultyList as $faculty) {
+            $instructors[$faculty['ftb_id']] = $faculty['fname'] . ' ' . $faculty['lname'];
+        }
+
+        $semesters = $semesterModel
+            ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+            ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id', 'left')
+            ->orderBy('semesters.is_active', 'DESC')
+            ->orderBy('schoolyears.schoolyear', 'DESC')
+            ->orderBy('semesters.semester', 'ASC')
+            ->findAll();
+
+        $sections = $classModel
+            ->distinct()
+            ->select('section')
+            ->where('semester_id', $semesterToShow)
+            ->findAll();
+
+        return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
+            . view('admin/academics/classes', [
+                'classes' => $classes,
+                'instructors' => $instructors,
+                'courses' => $subjectModel->findAll(),
+                'semesters' => $semesters,
+                'activeSemester' => $activeSemester,
+                'sections' => $sections,
+                'page' => $page,
+                'totalPages' => $totalPages,
+            ])
+            . view('templates/footer');
+    }
+
+
+
+    public function createClass()
+    {
+        $classModel = new ClassModel();
+
+        try {
+            $subjectId = $this->request->getPost('subject_id');
+            $ftbId = $this->request->getPost('ftb_id');
+            $semesterId = $this->request->getPost('semester_id');
+            $section = strtoupper($this->request->getPost('section'));
+            $subjectType = $this->request->getPost('subject_type');
+
+            // Get schedule values
+            $lec_day = strtoupper($this->request->getPost('lec_day'));
+            $lec_start = $this->request->getPost('lec_start');
+            $lec_end = $this->request->getPost('lec_end');
+            $lab_day = strtoupper($this->request->getPost('lab_day'));
+            $lab_start = $this->request->getPost('lab_start');
+            $lab_end = $this->request->getPost('lab_end');
+
+            // 🛑 NEW: Check all classes in the same semester (not just by faculty)
+            $conflictLec = $classModel
                 ->where('semester_id', $semesterId)
-                ->where('lab_day', $lab_day)
+                ->where('lec_day', $lec_day)
                 ->groupStart()
-                    ->where('lab_start <', $lab_end)
-                    ->where('lab_end >', $lab_start)
+                    ->where('lec_start <', $lec_end)
+                    ->where('lec_end >', $lec_start)
                 ->groupEnd()
                 ->first();
 
-            if ($conflictLab) {
-                return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
+            if ($conflictLec) {
+                return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
             }
-        }
 
-        // 🧠 Existing class logic
-        $existing = $classModel->where([
-            'subject_id' => $subjectId,
-            'ftb_id' => $ftbId,
-            'semester_id' => $semesterId,
-            'section' => $section,
-        ])->first();
+            if ($subjectType === 'LEC with LAB') {
+                $conflictLab = $classModel
+                    ->where('semester_id', $semesterId)
+                    ->where('lab_day', $lab_day)
+                    ->groupStart()
+                        ->where('lab_start <', $lab_end)
+                        ->where('lab_end >', $lab_start)
+                    ->groupEnd()
+                    ->first();
 
-        if ($existing) {
-            return redirect()->back()->withInput()->with('error', 'Class with same subject, faculty, section, and semester already exists.');
-        }
-
-        // 🕒 Time validation
-        if (strtotime($lec_start) >= strtotime($lec_end)) {
-            return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
-        }
-
-        if ($subjectType === 'LEC with LAB') {
-            if (strtotime($lab_start) >= strtotime($lab_end)) {
-                return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+                if ($conflictLab) {
+                    return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
+                }
             }
+
+            // 🧠 Existing class logic
+            $existing = $classModel->where([
+                'subject_id' => $subjectId,
+                'ftb_id' => $ftbId,
+                'semester_id' => $semesterId,
+                'section' => $section,
+            ])->first();
+
+            if ($existing) {
+                return redirect()->back()->withInput()->with('error', 'Class with same subject, faculty, section, and semester already exists.');
+            }
+
+            // 🕒 Time validation
+            if (strtotime($lec_start) >= strtotime($lec_end)) {
+                return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
+            }
+
+            if ($subjectType === 'LEC with LAB') {
+                if (strtotime($lab_start) >= strtotime($lab_end)) {
+                    return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+                }
+            }
+
+            $data = [
+                'ftb_id'      => $ftbId,
+                'subject_id'  => $subjectId,
+                'semester_id' => $semesterId,
+                'section'     => $section,
+                'lec_day'     => $lec_day,
+                'lec_start'   => $lec_start,
+                'lec_end'     => $lec_end,
+                'lec_room'    => strtoupper($this->request->getPost('lec_room')),
+            ];
+
+            if ($subjectType === 'LEC with LAB') {
+                $data['lab_day']   = $lab_day;
+                $data['lab_start'] = $lab_start;
+                $data['lab_end']   = $lab_end;
+                $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
+            }
+
+            $classModel->insert($data);
+
+            return redirect()->to('admin/academics/classes')->with('success', 'Class added successfully.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
-
-        $data = [
-            'ftb_id'      => $ftbId,
-            'subject_id'  => $subjectId,
-            'semester_id' => $semesterId,
-            'section'     => $section,
-            'lec_day'     => $lec_day,
-            'lec_start'   => $lec_start,
-            'lec_end'     => $lec_end,
-            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
-        ];
-
-        if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = $lab_day;
-            $data['lab_start'] = $lab_start;
-            $data['lab_end']   = $lab_end;
-            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
-        }
-
-        $classModel->insert($data);
-
-        return redirect()->to('admin/academics/classes')->with('success', 'Class added successfully.');
-    } catch (\Exception $e) {
-        dd($e->getMessage());
     }
-}
 
-public function updateClass($id)
-{
-    $classModel = new ClassModel();
+    public function updateClass($id)
+    {
+        $classModel = new ClassModel();
 
-    try {
-        $subjectId = $this->request->getPost('subject_id');
-        $ftbId = $this->request->getPost('ftb_id');
-        $semesterId = $this->request->getPost('semester_id');
-        $section = strtoupper($this->request->getPost('section'));
-        $subjectType = $this->request->getPost('subject_type');
+        try {
+            $subjectId = $this->request->getPost('subject_id');
+            $ftbId = $this->request->getPost('ftb_id');
+            $semesterId = $this->request->getPost('semester_id');
+            $section = strtoupper($this->request->getPost('section'));
+            $subjectType = $this->request->getPost('subject_type');
 
-        // Get schedule values
-        $lec_day = strtoupper($this->request->getPost('lec_day'));
-        $lec_start = $this->request->getPost('lec_start');
-        $lec_end = $this->request->getPost('lec_end');
-        $lab_day = strtoupper($this->request->getPost('lab_day'));
-        $lab_start = $this->request->getPost('lab_start');
-        $lab_end = $this->request->getPost('lab_end');
+            // Get schedule values
+            $lec_day = strtoupper($this->request->getPost('lec_day'));
+            $lec_start = $this->request->getPost('lec_start');
+            $lec_end = $this->request->getPost('lec_end');
+            $lab_day = strtoupper($this->request->getPost('lab_day'));
+            $lab_start = $this->request->getPost('lab_start');
+            $lab_end = $this->request->getPost('lab_end');
 
-        // 🛑 Check lecture schedule conflict (against other classes in the same semester)
-        $conflictLec = $classModel
-            ->where('semester_id', $semesterId)
-            ->where('lec_day', $lec_day)
-            ->where('class_id !=', $id)
-            ->groupStart()
-                ->where('lec_start <', $lec_end)
-                ->where('lec_end >', $lec_start)
-            ->groupEnd()
-            ->first();
-
-        if ($conflictLec) {
-            return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
-        }
-
-        // 🧪 Lab conflict check if applicable
-        if ($subjectType === 'LEC with LAB') {
-            $conflictLab = $classModel
+            // 🛑 Check lecture schedule conflict (against other classes in the same semester)
+            $conflictLec = $classModel
                 ->where('semester_id', $semesterId)
-                ->where('lab_day', $lab_day)
+                ->where('lec_day', $lec_day)
                 ->where('class_id !=', $id)
                 ->groupStart()
-                    ->where('lab_start <', $lab_end)
-                    ->where('lab_end >', $lab_start)
+                    ->where('lec_start <', $lec_end)
+                    ->where('lec_end >', $lec_start)
                 ->groupEnd()
                 ->first();
 
-            if ($conflictLab) {
-                return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
+            if ($conflictLec) {
+                return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
             }
-        }
 
-        // ⛔ Check duplicate class entry
-        $existing = $classModel->where([
-            'subject_id' => $subjectId,
-            'ftb_id' => $ftbId,
-            'semester_id' => $semesterId,
-            'section' => $section,
-        ])->where('class_id !=', $id)->first();
+            // 🧪 Lab conflict check if applicable
+            if ($subjectType === 'LEC with LAB') {
+                $conflictLab = $classModel
+                    ->where('semester_id', $semesterId)
+                    ->where('lab_day', $lab_day)
+                    ->where('class_id !=', $id)
+                    ->groupStart()
+                        ->where('lab_start <', $lab_end)
+                        ->where('lab_end >', $lab_start)
+                    ->groupEnd()
+                    ->first();
 
-        if ($existing) {
-            return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
-        }
-
-        // 🕒 Time validation
-        if (strtotime($lec_start) >= strtotime($lec_end)) {
-            return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
-        }
-
-        if ($subjectType === 'LEC with LAB') {
-            if (strtotime($lab_start) >= strtotime($lab_end)) {
-                return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+                if ($conflictLab) {
+                    return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
+                }
             }
+
+            // ⛔ Check duplicate class entry
+            $existing = $classModel->where([
+                'subject_id' => $subjectId,
+                'ftb_id' => $ftbId,
+                'semester_id' => $semesterId,
+                'section' => $section,
+            ])->where('class_id !=', $id)->first();
+
+            if ($existing) {
+                return redirect()->back()->withInput()->with('error', 'A class with the same subject, faculty, section, and semester already exists.');
+            }
+
+            // 🕒 Time validation
+            if (strtotime($lec_start) >= strtotime($lec_end)) {
+                return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
+            }
+
+            if ($subjectType === 'LEC with LAB') {
+                if (strtotime($lab_start) >= strtotime($lab_end)) {
+                    return redirect()->back()->withInput()->with('error', 'Lab end time must be after start time.');
+                }
+            }
+
+            // 📦 Build data array
+            $data = [
+                'ftb_id'      => $ftbId,
+                'subject_id'  => $subjectId,
+                'semester_id' => $semesterId,
+                'section'     => $section,
+                'lec_day'     => $lec_day,
+                'lec_start'   => $lec_start,
+                'lec_end'     => $lec_end,
+                'lec_room'    => strtoupper($this->request->getPost('lec_room')),
+            ];
+
+            if ($subjectType === 'LEC with LAB') {
+                $data['lab_day']   = $lab_day;
+                $data['lab_start'] = $lab_start;
+                $data['lab_end']   = $lab_end;
+                $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
+            } else {
+                $data['lab_day']   = null;
+                $data['lab_start'] = null;
+                $data['lab_end']   = null;
+                $data['lab_room']  = null;
+            }
+
+            $classModel->update($id, $data);
+
+            return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while updating the class: ' . $e->getMessage());
         }
+    }
 
-        // 📦 Build data array
-        $data = [
-            'ftb_id'      => $ftbId,
-            'subject_id'  => $subjectId,
-            'semester_id' => $semesterId,
-            'section'     => $section,
-            'lec_day'     => $lec_day,
-            'lec_start'   => $lec_start,
-            'lec_end'     => $lec_end,
-            'lec_room'    => strtoupper($this->request->getPost('lec_room')),
-        ];
 
-        if ($subjectType === 'LEC with LAB') {
-            $data['lab_day']   = $lab_day;
-            $data['lab_start'] = $lab_start;
-            $data['lab_end']   = $lab_end;
-            $data['lab_room']  = strtoupper($this->request->getPost('lab_room'));
-        } else {
-            $data['lab_day']   = null;
-            $data['lab_start'] = null;
-            $data['lab_end']   = null;
-            $data['lab_room']  = null;
+    // Delete a class
+    public function deleteClass($id)
+    {
+
+        $classModel = new ClassModel();
+
+        try {
+            $classModel->delete($id);
+
+            return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while deleting the class.');
         }
-
-        $classModel->update($id, $data);
-
-        return redirect()->to('admin/academics/classes')->with('success', 'Class updated successfully.');
-    } catch (\Exception $e) {
-        return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while updating the class: ' . $e->getMessage());
     }
-}
-
-
-// Delete a class
-public function deleteClass($id)
-{
-
-
-    $classModel = new ClassModel();
-
-    try {
-        $classModel->delete($id);
-
-        return redirect()->to('admin/academics/classes')->with('success', 'Class deleted successfully.');
-    } catch (\Exception $e) {
-        return redirect()->to('admin/academics/classes')->with('error', 'An unexpected error occurred while deleting the class.');
-    }
-}
 
 
 
@@ -973,168 +979,172 @@ public function deleteClass($id)
      ***********************************************/
 
 // View Curriculums
-public function view_curriculums()
-{
-    $curriculumModel = new CurriculumModel();
-    $programModel = new ProgramModel();
-    $subjectModel = new SubjectModel();
-
-    $yearlevel_sem = $this->request->getGet('yearlevel_sem');
-    $selectedCurriculum = $this->request->getGet('curriculum_id');
-    $search = $this->request->getGet('search');
-
-    $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
-    $programs = $programModel->findAll();
-
-    if (!empty($yearlevel_sem)) {
-        $subjects = $subjectModel->where('yearlevel_sem', $yearlevel_sem)->findAll();
-    } else {
-        $subjects = $subjectModel->findAll();
-    }
-
-    $curriculumSubjects = [];
-    foreach ($subjects as $subject) {
-        $curriculumId = $subject['curriculum_id'];
-        if (!isset($curriculumSubjects[$curriculumId])) {
-            $curriculumSubjects[$curriculumId] = [];
+    public function view_curriculums()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
         }
-        $curriculumSubjects[$curriculumId][] = $subject;
-    }
 
-    $curriculumsToDisplay = $curriculums;
-    if (!empty($selectedCurriculum)) {
-        $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($selectedCurriculum) {
-            return $curriculum['curriculum_id'] == $selectedCurriculum;
-        });
-    }
+        $curriculumModel = new CurriculumModel();
+        $programModel = new ProgramModel();
+        $subjectModel = new SubjectModel();
 
-    if (!empty($search)) {
-        $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($search) {
-            return stripos($curriculum['curriculum_name'], $search) !== false;
-        });
-    }
+        $yearlevel_sem = $this->request->getGet('yearlevel_sem');
+        $selectedCurriculum = $this->request->getGet('curriculum_id');
+        $search = $this->request->getGet('search');
 
-    return view('templates/admin/admin_header')
-        . view('templates/admin/sidebar')
-        . view('admin/academics/curriculums', [
-            'curriculums' => $curriculums,
-            'curriculumsToDisplay' => $curriculumsToDisplay,
-            'programs' => $programs,
-            'curriculumSubjects' => $curriculumSubjects,
-            'selectedFilter' => $yearlevel_sem,
-            'selectedCurriculum' => $selectedCurriculum,
-            'search' => $search,
-        ])
-        . view('templates/admin/admin_footer');
-}
+        $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
+        $programs = $programModel->findAll();
 
-// Create Curriculum (with duplicate name check)
-public function create()
-{
-    $curriculumModel = new CurriculumModel();
-
-    $curriculum_name = $this->request->getPost('curriculum_name');
-    $program_id = $this->request->getPost('program_id');
-
-    // Check for duplicate
-    $existing = $curriculumModel->where('curriculum_name', $curriculum_name)->first();
-    if ($existing) {
-        return redirect()->back()->with('error', 'Curriculum name already exists.');
-    }
-
-    $data = [
-        'curriculum_name' => $curriculum_name,
-        'program_id' => $program_id,
-    ];
-
-    $curriculumModel->insert($data);
-
-    return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum added successfully.');
-}
-
-// Update Curriculum (with duplicate name check)
-public function update_curriculum($curriculum_id)
-{
-    $curriculumModel = new CurriculumModel();
-
-    $curriculum_name = $this->request->getPost('curriculum_name');
-    $program_id = $this->request->getPost('program_id');
-
-    // Check for duplicate, excluding self
-    $existing = $curriculumModel
-        ->where('curriculum_name', $curriculum_name)
-        ->where('curriculum_id !=', $curriculum_id)
-        ->first();
-
-    if ($existing) {
-        return redirect()->back()->with('error', 'Curriculum name already exists.');
-    }
-
-    $data = [
-        'curriculum_name' => $curriculum_name,
-        'program_id' => $program_id,
-    ];
-
-    $curriculumModel->update($curriculum_id, $data);
-
-    return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum updated successfully.');
-}
-
-// View Curriculum Detail
-public function view_curriculum_detail($curriculum_id)
-{
-    $curriculumModel = new CurriculumModel();
-    $subjectModel = new SubjectModel();
-    $programModel = new ProgramModel();
-
-    $curriculum = $curriculumModel->find($curriculum_id);
-    if (!$curriculum) {
-        throw new \CodeIgniter\Exceptions\PageNotFoundException('Curriculum not found');
-    }
-
-    $program = $programModel->find($curriculum['program_id']);
-    $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
-
-    $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->orderBy('yearlevel_sem')->findAll();
-
-    $groupedSubjects = [
-        '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
-        '2nd Year' => ['1st Semester' => [], '2nd Semester' => []],
-        '3rd Year' => ['1st Semester' => [], '2nd Semester' => [], 'Midyear' => []],
-        '4th Year' => ['1st Semester' => [], '2nd Semester' => []],
-    ];
-
-    foreach ($subjects as $subject) {
-        switch ($subject['yearlevel_sem']) {
-            case 'Y1S1': $groupedSubjects['1st Year']['1st Semester'][] = $subject; break;
-            case 'Y1S2': $groupedSubjects['1st Year']['2nd Semester'][] = $subject; break;
-            case 'Y2S1': $groupedSubjects['2nd Year']['1st Semester'][] = $subject; break;
-            case 'Y2S2': $groupedSubjects['2nd Year']['2nd Semester'][] = $subject; break;
-            case 'Y3S1': $groupedSubjects['3rd Year']['1st Semester'][] = $subject; break;
-            case 'Y3S2': $groupedSubjects['3rd Year']['2nd Semester'][] = $subject; break;
-            case 'Y3S3': $groupedSubjects['3rd Year']['Midyear'][] = $subject; break;
-            case 'Y4S1': $groupedSubjects['4th Year']['1st Semester'][] = $subject; break;
-            case 'Y4S2': $groupedSubjects['4th Year']['2nd Semester'][] = $subject; break;
+        if (!empty($yearlevel_sem)) {
+            $subjects = $subjectModel->where('yearlevel_sem', $yearlevel_sem)->findAll();
+        } else {
+            $subjects = $subjectModel->findAll();
         }
+
+        $curriculumSubjects = [];
+        foreach ($subjects as $subject) {
+            $curriculumId = $subject['curriculum_id'];
+            if (!isset($curriculumSubjects[$curriculumId])) {
+                $curriculumSubjects[$curriculumId] = [];
+            }
+            $curriculumSubjects[$curriculumId][] = $subject;
+        }
+
+        $curriculumsToDisplay = $curriculums;
+        if (!empty($selectedCurriculum)) {
+            $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($selectedCurriculum) {
+                return $curriculum['curriculum_id'] == $selectedCurriculum;
+            });
+        }
+
+        if (!empty($search)) {
+            $curriculumsToDisplay = array_filter($curriculums, function ($curriculum) use ($search) {
+                return stripos($curriculum['curriculum_name'], $search) !== false;
+            });
+        }
+
+        return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
+            . view('admin/academics/curriculums', [
+                'curriculums' => $curriculums,
+                'curriculumsToDisplay' => $curriculumsToDisplay,
+                'programs' => $programs,
+                'curriculumSubjects' => $curriculumSubjects,
+                'selectedFilter' => $yearlevel_sem,
+                'selectedCurriculum' => $selectedCurriculum,
+                'search' => $search,
+            ])
+            . view('templates/footer');
     }
 
-    $yearKeys = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
-    $totalPages = count($yearKeys);
-    $page = (int)$this->request->getGet('page') ?: 1;
-    $page = max(1, min($page, $totalPages));
-    $currentYearKey = $yearKeys[$page - 1] ?? null;
+    // Create Curriculum (with duplicate name check)
+    public function create()
+    {
+        $curriculumModel = new CurriculumModel();
 
-    return view('templates/admin/admin_header')
-        . view('templates/admin/sidebar')
-        . view('admin/academics/curriculum_detail', [
-            'curriculum_id' => $curriculum_id,
-            'curriculum' => $curriculum,
-            'program' => $program,
-            'groupedSubjects' => $groupedSubjects,
-            'currentYearKey' => $currentYearKey,
-            'page' => $page,
-            'totalPages' => $totalPages
-        ])
-        . view('templates/admin/admin_footer');
-}
+        $curriculum_name = $this->request->getPost('curriculum_name');
+        $program_id = $this->request->getPost('program_id');
+
+        // Check for duplicate
+        $existing = $curriculumModel->where('curriculum_name', $curriculum_name)->first();
+        if ($existing) {
+            return redirect()->back()->with('error', 'Curriculum name already exists.');
+        }
+
+        $data = [
+            'curriculum_name' => $curriculum_name,
+            'program_id' => $program_id,
+        ];
+
+        $curriculumModel->insert($data);
+
+        return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum added successfully.');
+    }
+
+    // Update Curriculum (with duplicate name check)
+    public function update_curriculum($curriculum_id)
+    {
+        $curriculumModel = new CurriculumModel();
+
+        $curriculum_name = $this->request->getPost('curriculum_name');
+        $program_id = $this->request->getPost('program_id');
+
+        // Check for duplicate, excluding self
+        $existing = $curriculumModel
+            ->where('curriculum_name', $curriculum_name)
+            ->where('curriculum_id !=', $curriculum_id)
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('error', 'Curriculum name already exists.');
+        }
+
+        $data = [
+            'curriculum_name' => $curriculum_name,
+            'program_id' => $program_id,
+        ];
+
+        $curriculumModel->update($curriculum_id, $data);
+
+        return redirect()->to(site_url('admin/academics/curriculums'))->with('success', 'Curriculum updated successfully.');
+    }
+
+    // View Curriculum Detail
+    public function view_curriculum_detail($curriculum_id)
+    {
+        $curriculumModel = new CurriculumModel();
+        $subjectModel = new SubjectModel();
+        $programModel = new ProgramModel();
+
+        $curriculum = $curriculumModel->find($curriculum_id);
+        if (!$curriculum) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Curriculum not found');
+        }
+
+        $program = $programModel->find($curriculum['program_id']);
+        $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
+
+        $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->orderBy('yearlevel_sem')->findAll();
+
+        $groupedSubjects = [
+            '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
+            '2nd Year' => ['1st Semester' => [], '2nd Semester' => []],
+            '3rd Year' => ['1st Semester' => [], '2nd Semester' => [], 'Midyear' => []],
+            '4th Year' => ['1st Semester' => [], '2nd Semester' => []],
+        ];
+
+        foreach ($subjects as $subject) {
+            switch ($subject['yearlevel_sem']) {
+                case 'Y1S1': $groupedSubjects['1st Year']['1st Semester'][] = $subject; break;
+                case 'Y1S2': $groupedSubjects['1st Year']['2nd Semester'][] = $subject; break;
+                case 'Y2S1': $groupedSubjects['2nd Year']['1st Semester'][] = $subject; break;
+                case 'Y2S2': $groupedSubjects['2nd Year']['2nd Semester'][] = $subject; break;
+                case 'Y3S1': $groupedSubjects['3rd Year']['1st Semester'][] = $subject; break;
+                case 'Y3S2': $groupedSubjects['3rd Year']['2nd Semester'][] = $subject; break;
+                case 'Y3S3': $groupedSubjects['3rd Year']['Midyear'][] = $subject; break;
+                case 'Y4S1': $groupedSubjects['4th Year']['1st Semester'][] = $subject; break;
+                case 'Y4S2': $groupedSubjects['4th Year']['2nd Semester'][] = $subject; break;
+            }
+        }
+
+        $yearKeys = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+        $totalPages = count($yearKeys);
+        $page = (int)$this->request->getGet('page') ?: 1;
+        $page = max(1, min($page, $totalPages));
+        $currentYearKey = $yearKeys[$page - 1] ?? null;
+
+        return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
+            . view('admin/academics/curriculum_detail', [
+                'curriculum_id' => $curriculum_id,
+                'curriculum' => $curriculum,
+                'program' => $program,
+                'groupedSubjects' => $groupedSubjects,
+                'currentYearKey' => $currentYearKey,
+                'page' => $page,
+                'totalPages' => $totalPages
+            ])
+            . view('templates/footer');
+    }
 }

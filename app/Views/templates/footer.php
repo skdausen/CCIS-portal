@@ -1,4 +1,4 @@
-<!-- admin_footer.php -->
+<!-- footer.php -->
 
 <!-- Logout Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="confirmRemoveLabel" aria-hidden="true">
@@ -91,16 +91,17 @@
                     <th>Sex</th>
                     <td><?= esc(session('sex')) ?></td>
                   </tr>
-                  <?php if (session('role') === 'student' && isset($programs)): ?>
-                    <tr>
-                      <th>Program</th>
-                      <td><?= esc(session('program')) ?></td>
-                    </tr>
-                    <tr>
-                      <th>Year Level</th>
-                      <td><?= esc(session('year_level')) ?></td>
-                    </tr>
-                  <?php endif; ?>
+                <?php if (session('role') === 'student'): ?>
+                  <tr>
+                    <th>Program</th>
+                    <td><?= esc(session('program')) ?></td>
+                  </tr>
+                  <tr>
+                    <th>Year Level</th>
+                    <td><?= esc(session('year_level')) ?></td>
+                  </tr>
+                <?php endif; ?>
+
 
                   <?php if (session('role') === 'faculty'): ?>
                     <tr>
@@ -195,7 +196,7 @@
 
                         <button type="button"
                             id="clearProfileImage"
-                            class="btn btn-outline-danger btn-sm">
+                            class="btn btn-outline-secondary btn-sm">
                             Clear
                         </button>
                     </div>
@@ -234,8 +235,6 @@
                       <?php endforeach; ?>
                   </select>
               </div>
-
-              <!-- Major -->
 
               <!-- Year Level -->
               <div class="col-md-6">

@@ -107,7 +107,7 @@ class FacultyController extends BaseController
                 'schedule' => $schedule,
                 'facultyName' => $facultyName,
                 ])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     public function classes()
@@ -135,7 +135,7 @@ class FacultyController extends BaseController
                 'semesters' => $semesters,
                 'activeSemesterId' => $active->semester_id ?? null
             ])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     public function getClassesBySemester()
@@ -213,7 +213,7 @@ class FacultyController extends BaseController
                 'students' => $students ?? [],
                 'allStudents' => $allStudents
             ])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     public function enrollStudents($classId)
@@ -285,7 +285,7 @@ class FacultyController extends BaseController
                     'class' => $class,
                     'students' => $students,
                     ])
-            . view('templates/admin/admin_footer');
+            . view('templates/footer');
     }
 
     public function saveGrades($classId)

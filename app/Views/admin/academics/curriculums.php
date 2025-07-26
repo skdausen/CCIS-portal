@@ -22,7 +22,7 @@
         </div>
 
         <!-- Add Curriculum Modal -->
-        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <form method="post" action="<?= site_url('admin/academics/curriculums/create') ?>">
@@ -92,9 +92,9 @@
                                     <div class="mb-3">
                                         <label for="curriculum_name_<?= $curriculum['curriculum_id'] ?>" class="form-label">Curriculum Name</label>
                                         <input type="text" name="curriculum_name"
-                                               id="curriculum_name_<?= $curriculum['curriculum_id'] ?>"
-                                               class="form-control"
-                                               value="<?= esc($curriculum['curriculum_name']) ?>" required>
+                                            id="curriculum_name_<?= $curriculum['curriculum_id'] ?>"
+                                            class="form-control"
+                                            value="<?= esc($curriculum['curriculum_name']) ?>" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="program_id_<?= $curriculum['curriculum_id'] ?>" class="form-label">Program</label>
@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-outline-primary">Update</button>
+                                    <button type="submit" class="btn btn-outline-success">Update</button>
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                                 </div>
                             </form>
@@ -141,4 +141,4 @@
         curriculumCards.forEach(card => card.style.display = '');
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->

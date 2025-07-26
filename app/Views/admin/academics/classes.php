@@ -149,7 +149,7 @@
             </table>
                 <?php if ($totalPages > 1): ?>
                     <nav class="mt-4">
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination justify-content-center gap-3">
                             <!-- Prev Button -->
                             <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
                                 <a class="page-link"
@@ -184,8 +184,8 @@
         <!-- OUTSIDE THE TABLE: Edit and Delete Modals -->
         <?php foreach ($classes as $class): ?>
         <!-- Edit Modal -->
-        <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1">
-            <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
+        <div class="modal fade" id="editModal<?= $class['class_id'] ?>" tabindex="-1"  data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center modal-dialog-scrollable">
                 <form method="post" action="<?= site_url('admin/academics/classes/update/' . $class['class_id']) ?>">
                     <?= csrf_field() ?>
                     <div class="modal-content">
@@ -301,119 +301,118 @@
         </div>
         <?php endforeach; ?>
 
+        <!-- Add Class Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center modal-dialog-scrollable">
+                <form action="<?= site_url('admin/academics/classes/add') ?>" method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addModalLabel">Add New Class</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
 
-<!-- Add Class Modal -->
-    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-lg-dialog-centered justify-content-center">
-            <form action="<?= site_url('admin/academics/classes/add') ?>" method="post">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addModalLabel">Add New Class</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <div class="modal-body">
+                            <!-- Semester (Auto-filled) -->
+                            <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
+
+                            <div class="mb-3">
+                                <label class="form-label">Semester</label>
+                                <div class="form-control bg-light">
+                                    <?= ucwords(esc(($activeSemester['semester'] ?? 'No Active Semester')) . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <!-- Instructor Search -->
+                                <div class="col-md-6 position-relative">
+                                    <label for="instructorSearchInput" class="form-label">Instructor</label>
+                                    <input type="text" id="instructorSearchInput" class="form-control" placeholder="Search Instructor..." autocomplete="off" required>
+                                    <input type="hidden" name="ftb_id" id="instructorIdInput">
+                                    <ul id="instructorSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
+                                </div>
+
+                                <!-- Section -->
+                                <div class="col-md-6">
+                                    <label for="section" class="form-label">Section</label>
+                                    <input type="text" name="section" id="section" class="form-control" <?= old('section') ?> placeholder="Section e.g., A, B, C" required>
+                                </div>
+                            </div>
+
+                            
+                            <!-- Subject -->
+                            <div class="mb-3 position-relative">
+                                <label for="subjectSearchInput" class="form-label">Subject</label>
+                                <input type="text" id="subjectSearchInput" class="form-control" placeholder="Search Subject Code or Name..." autocomplete="off" required>
+                                <input type="hidden" name="subject_id" id="subjectIdInput">
+
+                                <ul id="subjectSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Type</label>
+                                <input type="text" id="subjectTypeInput" name="subject_type" class="form-control" readonly placeholder="Subject Type">
+                            </div>
+
+                            <ul id="subjectSuggestions" class="list-group position-absolute" style="z-index: 1050;"></ul>
+
+
+                        <!-- Schedule -->
+                        <div class="row">
+                            <!-- Lecture Schedule -->
+                            <div id="lectureSchedule" class="col-md-12">
+                                <h6>Lecture Schedule</h6>
+                                <div class="mb-3">
+                                    <label for="lecDay" class="form-label">Day/s</label>
+                                    <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lecRoom" class="form-label">Room</label>
+                                    <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lecStart" class="form-label">Start Time</label>
+                                    <input type="time" id="lecStart" name="lec_start" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lecEnd" class="form-label">End Time</label>
+                                    <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <!-- Lab Schedule -->
+                            <div id="labSchedule" class="col-md-6 d-none">
+                                <h6>Lab Schedule</h6>
+                                <div class="mb-3">
+                                    <label for="labDay" class="form-label">Lab Day/s</label>
+                                    <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="labRoom" class="form-label">Lab Room</label>
+                                    <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="labStart" class="form-label">Lab Start Time</label>
+                                    <input type="time" id="labStart" name="lab_start" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="labEnd" class="form-label">Lab End Time</label>
+                                    <input type="time" id="labEnd" name="lab_end" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+
+                            
+                        </div> <!-- /.modal-body -->
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-success">Add New Class</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
                     </div>
-
-                    <div class="modal-body">
-                        <!-- Semester (Auto-filled) -->
-                        <input type="hidden" name="semester_id" value="<?= esc($activeSemester['semester_id'] ?? '') ?>">
-
-                        <div class="mb-3">
-                            <label class="form-label">Semester</label>
-                            <div class="form-control bg-light">
-                                <?= ucwords(esc(($activeSemester['semester'] ?? 'No Active Semester')) . ' - ' . ($activeSemester['schoolyear'] ?? '')) ?>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <!-- Instructor Search -->
-                            <div class="col-md-6 position-relative">
-                                <label for="instructorSearchInput" class="form-label">Instructor</label>
-                                <input type="text" id="instructorSearchInput" class="form-control" placeholder="Search Instructor..." autocomplete="off" required>
-                                <input type="hidden" name="ftb_id" id="instructorIdInput">
-                                <ul id="instructorSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
-                            </div>
-
-                            <!-- Section -->
-                            <div class="col-md-6">
-                                <label for="section" class="form-label">Section</label>
-                                <input type="text" name="section" id="section" class="form-control" <?= old('section') ?> placeholder="Section e.g., A, B, C" required>
-                            </div>
-                        </div>
-
-                        
-                        <!-- Subject -->
-                        <div class="mb-3 position-relative">
-                            <label for="subjectSearchInput" class="form-label">Subject</label>
-                            <input type="text" id="subjectSearchInput" class="form-control" placeholder="Search Subject Code or Name..." autocomplete="off" required>
-                            <input type="hidden" name="subject_id" id="subjectIdInput">
-
-                            <ul id="subjectSuggestions" class="list-group position-absolute w-100 shadow" style="top: 100%; z-index: 1050; max-height: 200px; overflow-y: auto;"></ul>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Type</label>
-                            <input type="text" id="subjectTypeInput" name="subject_type" class="form-control" readonly placeholder="Subject Type">
-                        </div>
-
-                        <ul id="subjectSuggestions" class="list-group position-absolute" style="z-index: 1050;"></ul>
-
-
-                    <!-- Schedule -->
-                    <div class="row">
-                        <!-- Lecture Schedule -->
-                        <div id="lectureSchedule" class="col-md-12">
-                            <h6>Lecture Schedule</h6>
-                            <div class="mb-3">
-                                <label for="lecDay" class="form-label">Day/s</label>
-                                <input type="text" id="lecDay" name="lec_day" class="form-control" placeholder="e.g., M,T,W,Th,F" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="lecRoom" class="form-label">Room</label>
-                                <input type="text" id="lecRoom" name="lec_room" class="form-control" placeholder="e.g., Room 101" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="lecStart" class="form-label">Start Time</label>
-                                <input type="time" id="lecStart" name="lec_start" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="lecEnd" class="form-label">End Time</label>
-                                <input type="time" id="lecEnd" name="lec_end" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <!-- Lab Schedule -->
-                        <div id="labSchedule" class="col-md-6 d-none">
-                            <h6>Lab Schedule</h6>
-                            <div class="mb-3">
-                                <label for="labDay" class="form-label">Lab Day/s</label>
-                                <input type="text" id="labDay" name="lab_day" class="form-control" placeholder="e.g., M,T,W,Th,F">
-                            </div>
-                            <div class="mb-3">
-                                <label for="labRoom" class="form-label">Lab Room</label>
-                                <input type="text" id="labRoom" name="lab_room" class="form-control" placeholder="e.g., Room 101">
-                            </div>
-                            <div class="mb-3">
-                                <label for="labStart" class="form-label">Lab Start Time</label>
-                                <input type="time" id="labStart" name="lab_start" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label for="labEnd" class="form-label">Lab End Time</label>
-                                <input type="time" id="labEnd" name="lab_end" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-
-
-                        
-                    </div> <!-- /.modal-body -->
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-outline-success">Add New Class</button>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
 
 </div>
 

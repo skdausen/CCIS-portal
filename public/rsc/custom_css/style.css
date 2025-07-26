@@ -579,7 +579,7 @@ z-index: 1081; /* Bootstrap default modals use 1050–1070 */
 }
 
 /* STABLE COLUMN WIDTHS */
-.users-table :is(th, td):is(:nth-child(1), :nth-child(2)) {
+.users-table :is(th, td):is(:nth-child(1)) {
     width: 8%;
 }
 
@@ -589,7 +589,7 @@ z-index: 1081; /* Bootstrap default modals use 1050–1070 */
 }
 
 :is(.student-grade-table) :is(th, td):is(:nth-child(1), :nth-child(3), :nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)),
-.users-table :is(th, td):is(:nth-child(5), :nth-child(6)) {
+.users-table :is(th, td):is(:nth-child(2), :nth-child(5), :nth-child(6)) {
     width: 10%;
 }
 

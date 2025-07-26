@@ -1,17 +1,16 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="<?= base_url('/rsc/custom_css/style.css') ?>">
-
 <div class="container mt-5">
-    <div class="d-flex align-items-center mb-4">
-        <a href="<?= site_url('student/grades/grades') ?>" class="btn btn-link text-muted text-decoration-none d-flex align-items-center gap-2">
-            <img src="<?= base_url('rsc/assets/uploads/left_arrow.png') ?>" alt="Back" style="width: 40px; height: 40px;">
+    <div class="position-relative text-center mb-4 w-100">
+        
+        <!-- Back Arrow - positioned at the start -->
+        <a href="<?= site_url('student/grades/grades') ?>" 
+        class="position-absolute start-0 top-50 translate-middle-y btn btn-link text-muted text-decoration-none d-flex align-items-center gap-2 px-0">
+            <i class="fas fa-arrow-left fs-3"></i>
         </a>
 
+        <!-- Centered Title -->
         <h3 class="m-0">My Curriculum Plan View</h3>
 
-        
     </div>
-
 
     <?php if (!empty($groupedSubjects)): ?>
         <?php foreach ($groupedSubjects as $year => $semesters): ?>
@@ -59,7 +58,7 @@
                         <?php endforeach; ?>
                         <tr class="fw-bold bg-light">
                             <td colspan="2" class="text-end">Total Units:</td>
-                            <td><?= $totalLec ?></td>
+                            <td class="text-center"><?= $totalLec ?></td>
                             <td><?= $totalLab ?></td>
                             <td><?= $totalLec + $totalLab ?></td>
                             <td>-</td>
@@ -75,7 +74,7 @@
 
 <div class="container" style="max-width: 1300px;">
     <div class="text-end mt-4 mb-2">
-        <a href="<?= site_url('student/grades/curriculum_download') ?>" class="btn btn-primary btn-sm">
+        <a href="<?= site_url('student/grades/curriculum_download') ?>" class="btn btn-outline-success">
             Download PDF
         </a>
     </div>
@@ -87,7 +86,7 @@
         <!-- Left Column: Legend -->
         <div class="col-md-6">
             <div class="p-4 rounded shadow-sm bg-white h-100">
-                <h5 class="fw-bold mb-3 text-primary">Legend for Latin Honors</h5>
+                <h5 class="fw-bold mb-3 text-purple">Legend for Latin Honors</h5>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <span class="fw-bold">Summa Cum Laude:</span> 1.0 – 1.25 <br>
@@ -108,7 +107,7 @@
         <!-- Right Column: Computed GWA and Honors -->
         <div class="col-md-6">
             <div class="p-4 rounded shadow-sm bg-white h-100">
-                <h5 class="fw-bold mb-3 text-primary">Automated GWA Result</h5>
+                <h5 class="fw-bold mb-3 text-purple">Automated GWA Result</h5>
                 <div class="alert gwa-box">
                     <p class="mb-2 fs-5">Your Computed GWA: <strong><?= $gwa !== null ? $gwa : 'N/A' ?></strong></p>
 

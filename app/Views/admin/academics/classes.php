@@ -11,7 +11,8 @@
         <!-- FILTERS & SEARCH -->
         <div class="row align-items-center mb-3">
             <div class="col-md-3 mb-2">
-                <input type="text" id="instructorSearch" class="form-control " placeholder="Search Instructor...">
+                <input type="text" id="instructorSearch" class="form-control" placeholder="Search Instructor..." value="<?= esc($_GET['instructor'] ?? '') ?>">
+
             </div>
 
             <div class="col-md-2 mb-2">
@@ -669,43 +670,62 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Filter table by instructor name or section as well as semester -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const tableRows = document.querySelectorAll('table tbody tr');
-        const instructorSearch = document.querySelector('#instructorSearch');
-        const sectionFilter = document.querySelector('#sectionFilter');
-        const semesterFilter = document.querySelector('#semesterFilter');
-        const clearFiltersBtn = document.querySelector('#clearFiltersBtn');
+        const instructorInput = document.getElementById('instructorSearch');
+        const sectionFilter = document.getElementById('sectionFilter');
+        const semesterFilter = document.getElementById('semesterFilter');
+        const clearBtn = document.getElementById('clearFiltersBtn');
 
-        function filterTable() {
-            const instructorValue = instructorSearch.value.toLowerCase().trim();
-            const sectionValue = sectionFilter.value.toLowerCase();
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentInstructor = urlParams.get('instructor') || '';
+        const currentSection = urlParams.get('section') || '';
+        const currentSemester = urlParams.get('semester_id') || '';
 
-            tableRows.forEach(row => {
-                const instructor = (row.dataset.instructor || '').toLowerCase();
-                const section = (row.dataset.section || '').toLowerCase();
+        instructorInput.value = currentInstructor;
+        sectionFilter.value = currentSection;
+        semesterFilter.value = currentSemester;
 
-                const matchesInstructor = !instructorValue || instructor.includes(instructorValue);
-                const matchesSection = !sectionValue || section === sectionValue;
-
-                row.style.display = matchesInstructor && matchesSection ? '' : 'none';
-            });
+        // Focus & keep cursor at the end if instructor search has value
+        if (currentInstructor) {
+            instructorInput.focus();
+            const val = instructorInput.value;
+            instructorInput.value = '';
+            instructorInput.value = val;
         }
 
-        instructorSearch.addEventListener('input', filterTable);
-        sectionFilter.addEventListener('change', filterTable);
+        // Section filter change
+        sectionFilter.addEventListener('change', () => {
+            urlParams.set('section', sectionFilter.value);
+            urlParams.set('page', 1);
+            window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+        });
 
-        clearFiltersBtn.addEventListener('click', () => {
-            instructorSearch.value = '';
-            sectionFilter.value = '';
-            semesterFilter.value = '';
+        // Semester filter change
+        semesterFilter.addEventListener('change', () => {
+            urlParams.set('semester_id', semesterFilter.value);
+            urlParams.set('page', 1);
+            window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+        });
 
-            // Remove ?semester_id=... from URL and reload
-            const url = new URL(window.location.href);
-            url.searchParams.delete('semester_id');
-            window.location.href = url.toString();
+        // Instructor input typing (with debounce)
+        let instructorTimeout;
+        instructorInput.addEventListener('input', () => {
+            clearTimeout(instructorTimeout);
+            instructorTimeout = setTimeout(() => {
+                urlParams.set('instructor', instructorInput.value.trim());
+                urlParams.set('page', 1);
+                window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+            }, 500);
+        });
+
+        // Clear button resets all filters
+        clearBtn.addEventListener('click', () => {
+            window.location.href = window.location.pathname;
         });
     });
-
 </script>
+
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

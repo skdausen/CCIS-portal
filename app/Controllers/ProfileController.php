@@ -38,9 +38,37 @@ class ProfileController extends BaseController
         } else {
             $img = $this->request->getFile('profimg');
             if ($img && $img->isValid() && !$img->hasMoved()) {
-                $newName = $img->getRandomName();
-                $img->move('rsc/assets/uploads', $newName);
-                $data['profimg'] = $newName;
+                $mimeType = $img->getMimeType(); // Get actual MIME type
+                $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+                if (!in_array($mimeType, $allowedTypes)) {
+                    // Not an allowed file type
+                    return redirect()->back()->with('error', 'Only JPG, JPEG, or PNG images are allowed.');
+                }
+
+                $image = null;
+
+                if ($mimeType === 'image/jpeg' || $mimeType === 'image/jpg') {
+                    $image = imagecreatefromjpeg($img->getTempName());
+                } elseif ($mimeType === 'image/png') {
+                    $image = imagecreatefrompng($img->getTempName());
+                    imagepalettetotruecolor($image);
+                    imagealphablending($image, true);
+                    imagesavealpha($image, true);
+                }
+
+                if ($image) {
+                    $randomName = pathinfo($img->getRandomName(), PATHINFO_FILENAME);
+                    $webpName = $randomName . '.webp';
+                    $destination = FCPATH . 'rsc/assets/uploads/' . $webpName;
+
+                    imagewebp($image, $destination, 80); // compress and save
+                    imagedestroy($image);
+
+                    $data['profimg'] = $webpName;
+                } else {
+                    $data['profimg'] = session('profimg') ?? 'default.png';
+                }
             } else {
                 $data['profimg'] = session('profimg') ?? 'default.png';
             }

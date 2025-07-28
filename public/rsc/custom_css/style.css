@@ -456,7 +456,7 @@ z-index: 1081; /* Bootstrap default modals use 1050–1070 */
 }
 
 /* TABLE STYLES */
-.curriculum-table, .grade-table, .classes-table, .schedule-table, .users-table {
+.curriculum-table, .grade-table, .schedule-table, .users-table {
     table-layout: fixed;
     width: 100%;
 }

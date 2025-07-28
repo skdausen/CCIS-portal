@@ -800,7 +800,7 @@ class AdminController extends BaseController
                 }
             }
 
-            // 🧠 Existing class logic
+            // Existing class logic
             $existing = $classModel->where([
                 'subject_id' => $subjectId,
                 'ftb_id' => $ftbId,
@@ -812,7 +812,7 @@ class AdminController extends BaseController
                 return redirect()->back()->withInput()->with('error', 'Class with same subject, faculty, section, and semester already exists.');
             }
 
-            // 🕒 Time validation
+            // Time validation
             if (strtotime($lec_start) >= strtotime($lec_end)) {
                 return redirect()->back()->withInput()->with('error', 'Lecture end time must be after start time.');
             }

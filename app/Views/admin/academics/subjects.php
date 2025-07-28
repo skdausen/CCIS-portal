@@ -170,37 +170,48 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+                        
+                    <?php
+                        $queryParams = [];
+                        if (isset($_GET['search'])) {
+                            $queryParams['search'] = $_GET['search'];
+                        }
+                        if (isset($_GET['filter'])) {
+                            $queryParams['filter'] = $_GET['filter'];
+                        }
+                        ?>
+
                         <nav aria-label="Subjects pagination">
-                <ul class="pagination justify-content-center my-4">
-                    <?php if ($page > 1): ?>
-                        <li class="page-item mx-1">
-                            <a class="page-link" href="<?= site_url('admin/academics/subjects?page=' . ($page - 1)) ?>">Previous</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="page-item disabled mx-1">
-                            <span class="page-link">Previous</span>
-                        </li>
-                    <?php endif; ?>
+                            <ul class="pagination justify-content-center my-4">
+                                <?php if ($page > 1): ?>
+                                    <li class="page-item mx-1">
+                                        <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $page - 1]))) ?>">Previous</a>
+                                    </li>
+                                <?php else: ?>
+                                    <li class="page-item disabled mx-1">
+                                        <span class="page-link">Previous</span>
+                                    </li>
+                                <?php endif; ?>
 
-                    <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                        <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= site_url('admin/academics/subjects?page=' . $p) ?>">
-                                <?= $p ?>
-                            </a>
-                        </li>
-                    <?php endfor; ?>
+                                <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                                    <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
+                                        <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $p]))) ?>">
+                                            <?= $p ?>
+                                        </a>
+                                    </li>
+                                <?php endfor; ?>
 
-                    <?php if ($page < $totalPages): ?>
-                        <li class="page-item mx-1">
-                            <a class="page-link" href="<?= site_url('admin/academics/subjects?page=' . ($page + 1)) ?>">Next</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="page-item disabled mx-1">
-                            <span class="page-link">Next</span>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
+                                <?php if ($page < $totalPages): ?>
+                                    <li class="page-item mx-1">
+                                        <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $page + 1]))) ?>">Next</a>
+                                    </li>
+                                <?php else: ?>
+                                    <li class="page-item disabled mx-1">
+                                        <span class="page-link">Next</span>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
 
         </div>
     </div>
@@ -286,41 +297,53 @@
 
 
 
-<!-- FILTER SCRIPT -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const filter = document.getElementById('categoryFilter');
-        const search = document.getElementById('searchInput');
+        const filterSelect = document.getElementById('categoryFilter');
+        const searchInput = document.getElementById('searchInput');
         const clearBtn = document.getElementById('clearFilterBtn');
-        const rows = document.querySelectorAll('#coursesTable tbody tr');
 
-        function filterRows() {
-            const categoryVal = filter.value.toLowerCase();
-            const searchVal = search.value.toLowerCase();
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentFilter = urlParams.get('filter') || '';
+        const currentSearch = urlParams.get('search') || '';
+        filterSelect.value = currentFilter;
+        searchInput.value = currentSearch;
 
-            rows.forEach(row => {
-                const code = row.cells[0].textContent.toLowerCase(); // Course Code column
-                const desc = row.cells[1].textContent.toLowerCase(); // Description column
-
-                const matchCategory = !categoryVal || code.startsWith(categoryVal); // Example: starts with 'cs'
-                const matchSearch = !searchVal || code.includes(searchVal) || desc.includes(searchVal);
-
-                row.style.display = matchCategory && matchSearch ? '' : 'none';
-            });
+        // Re-focus the search input on page load if there was a search term
+        if (currentSearch) {
+            searchInput.focus();
+            // Optionally put cursor at the end:
+            const val = searchInput.value;
+            searchInput.value = '';
+            searchInput.value = val;
         }
 
-        filter.addEventListener('change', filterRows);
-        search.addEventListener('input', filterRows);
-        clearBtn.addEventListener('click', () => {
-            filter.value = '';
-            search.value = '';
-            filterRows();
+        // Filter dropdown change
+        filterSelect.addEventListener('change', () => {
+            urlParams.set('filter', filterSelect.value);
+            urlParams.set('page', 1);
+            window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
         });
 
-        // Initialize to show all rows
-        filterRows();
+        // Search typing with delay
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                urlParams.set('search', searchInput.value.trim());
+                urlParams.set('page', 1);
+                window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+            }, 500);
+        });
+
+        // Clear filters
+        clearBtn.addEventListener('click', () => {
+            window.location.href = window.location.pathname;
+        });
     });
 </script>
+
+
 
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
@@ -390,7 +413,7 @@
         filterRows();
     });
 </script>
-\<script>
+<script>
 function toggleAddUnits() {
     const typeSelect = document.getElementById('add_subject_type');
     const labGroup = document.getElementById('lab_units_group');

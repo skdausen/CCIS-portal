@@ -522,37 +522,55 @@ class AdminController extends BaseController
      ***********************************************/
 
     // View all subjects
-    public function view_subjects()
-    {
-        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-            return redirect()->to('auth/login');
-        }
-        $subjectModel = new SubjectModel();
-        $curriculumModel = new CurriculumModel();
-
-        $perPage = 10;
-        $page = $this->request->getGet('page') ?? 1;
-
-        $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
-
-        $totalSubjects = count($allSubjects);
-        $totalPages = ceil($totalSubjects / $perPage);
-
-        $offset = ($page - 1) * $perPage;
-        $subjects = array_slice($allSubjects, $offset, $perPage);
-
-        $data = [
-            'subjects' => $subjects,
-            'curriculums' => $curriculumModel->findAll(),
-            'page' => $page,
-            'totalPages' => $totalPages,
-        ];
-
-        return view('templates/admin/admin_header')
-            . view('templates/admin/sidebar')
-            . view('admin/academics/subjects', $data)
-            . view('templates/footer');
+   public function view_subjects()
+{
+    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+        return redirect()->to('auth/login');
     }
+
+    $subjectModel = new SubjectModel();
+    $curriculumModel = new CurriculumModel();
+
+    $perPage = 10;
+    $page = $this->request->getGet('page') ?? 1;
+
+    $search = strtolower($this->request->getGet('search') ?? '');
+    $filter = strtolower($this->request->getGet('filter') ?? '');
+
+    // Get all subjects
+    $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
+
+    // Apply search and filter
+    $filteredSubjects = array_filter($allSubjects, function ($subject) use ($search, $filter) {
+        $code = strtolower($subject['subject_code']);
+        $desc = strtolower($subject['subject_name']);
+
+        $matchCategory = !$filter || str_starts_with($code, $filter); // e.g. cs, ge, pe
+        $matchSearch = !$search || str_contains($code, $search) || str_contains($desc, $search);
+
+        return $matchCategory && $matchSearch;
+    });
+
+    $totalSubjects = count($filteredSubjects);
+    $totalPages = ceil($totalSubjects / $perPage);
+
+    $offset = ($page - 1) * $perPage;
+    $subjects = array_slice($filteredSubjects, $offset, $perPage);
+
+    $data = [
+        'subjects' => $subjects,
+        'curriculums' => $curriculumModel->findAll(),
+        'page' => $page,
+        'totalPages' => $totalPages,
+        'search' => $search,
+        'filter' => $filter
+    ];
+
+    return view('templates/admin/admin_header')
+        . view('templates/admin/sidebar')
+        . view('admin/academics/subjects', $data)
+        . view('templates/footer');
+}
 
 
     // Create a new subject

@@ -93,61 +93,63 @@
         ?>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover classes-table custom-padding">
-                <thead class="table-light">
-                    <tr>
-                        <th>Subject</th>
-                        <th>Type</th>
-                        <th>Day, Time, Room</th>
-                        <th>Section</th>
-                        <th>Instructor</th>
-                        <th>Semester</th>
-                        <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-                            <th>Actions</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($classes as $class): ?>
-                    <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
-                        <?php
-                            $subjectName = trim($class['subject_name']);
-                            $fullTitle = $class['subject_code'] . " - " . $subjectName;
-
-                            // Use mb_strlen to properly count multibyte characters
-                            $shortTitle = (mb_strlen($fullTitle) > 52)
-                                ? mb_substr($fullTitle, 0, 52) . '...'
-                                : $fullTitle;
-                        ?>
-                        <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
-                        <td><?= esc($class['subject_type']) ?></td>
-                        <td class="small-font">
-                            <?= !empty($class['lec_day']) ? '<strong>Lec</strong>: ' . esc(strtoupper($class['lec_day'])) : '' ?>
-                            <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
-                                <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
-                            <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
-                            <?php else: ?> - <?php endif; ?>
-                            <?php if (!empty($class['lab_day'])): ?>
-                                <br><strong>Lab</strong>: <?= esc(strtoupper($class['lab_day'])) ?>
-                                <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
-                                <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
-                                <?php endif; ?>
-                                <?= esc(strtoupper($class['lab_room'])) ?>
+            <div class="table-scroll">
+                <table class="table table-bordered table-hover classes-table custom-padding">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Type</th>
+                            <th>Day, Time, Room</th>
+                            <th>Section</th>
+                            <th>Instructor</th>
+                            <th>Semester</th>
+                            <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+                                <th>Actions</th>
                             <?php endif; ?>
-                        </td>
-                        <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
-                        <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
-                        <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
-                        <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
-                            <td>
-                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
-                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($classes as $class): ?>
+                        <tr data-instructor="<?= strtolower($class['fname'] . ' ' . $class['lname']) ?>" data-section="<?= strtolower($class['section']) ?>">
+                            <?php
+                                $subjectName = trim($class['subject_name']);
+                                $fullTitle = $class['subject_code'] . " - " . $subjectName;
+    
+                                // Use mb_strlen to properly count multibyte characters
+                                $shortTitle = (mb_strlen($fullTitle) > 52)
+                                    ? mb_substr($fullTitle, 0, 52) . '...'
+                                    : $fullTitle;
+                            ?>
+                            <td title="<?= esc($fullTitle) ?>"><?= esc($shortTitle) ?></td>
+                            <td><?= esc($class['subject_type']) ?></td>
+                            <td class="small-font">
+                                <?= !empty($class['lec_day']) ? '<strong>Lec</strong>: ' . esc(strtoupper($class['lec_day'])) : '' ?>
+                                <?php if (!empty($class['lec_start']) && !empty($class['lec_end'])): ?>
+                                    <?= date("g:i A", strtotime($class['lec_start'])) ?> - <?= date("g:i A", strtotime($class['lec_end'])) ?>
+                                <?= !empty($class['lec_room']) ? '' . esc(strtoupper($class['lec_room'])) : '' ?>
+                                <?php else: ?> - <?php endif; ?>
+                                <?php if (!empty($class['lab_day'])): ?>
+                                    <br><strong>Lab</strong>: <?= esc(strtoupper($class['lab_day'])) ?>
+                                    <?php if (!empty($class['lab_start']) && !empty($class['lab_end'])): ?>
+                                    <?= date("g:i A", strtotime($class['lab_start'])) ?> - <?= date("g:i A", strtotime($class['lab_end'])) ?>
+                                    <?php endif; ?>
+                                    <?= esc(strtoupper($class['lab_room'])) ?>
+                                <?php endif; ?>
                             </td>
-                        <?php endif; ?>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                            <td><?= esc(strtoupper($class['section'] ?? 'N/A')) ?></td>
+                            <td><?= ucwords(esc($class['fname'] . ' ' . $class['lname'])) ?></td>
+                            <td><?= ucwords(esc($class['semester']) . ' ' . $class['schoolyear']) ?></td>
+                            <?php if (!empty($activeSemester) && (!isset($_GET['semester_id']) || $_GET['semester_id'] == $activeSemester['semester_id'])): ?>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $class['class_id'] ?>">Edit</button>
+                                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $class['class_id'] ?>">Delete</button>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
                 <?php if ($totalPages > 1): ?>
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center gap-3">
@@ -179,7 +181,6 @@
                         </ul>
                     </nav>
                 <?php endif; ?>
-
         </div>
 
         <!-- OUTSIDE THE TABLE: Edit and Delete Modals -->

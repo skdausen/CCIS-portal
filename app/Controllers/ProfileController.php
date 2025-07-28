@@ -123,9 +123,13 @@ class ProfileController extends BaseController
         //  Get program name
         $programName = null;
         $programId = $this->request->getPost('program_id');
+
         if ($role === 'student' && $programId) {
             $programModel = new ProgramModel();
-            $program = $programModel->find($programId);
+
+            // to tell the vscode this is an array
+            /** @var array $program */
+            $program = $programModel->asArray()->find($programId);
             if ($program) {
                 $programName = $program['program_name'];
             }
@@ -174,6 +178,5 @@ class ProfileController extends BaseController
 
         return redirect()->back()->with('success', 'Password updated successfully!')->with('open_modal', 'profileModal');
     }
-
 
 }

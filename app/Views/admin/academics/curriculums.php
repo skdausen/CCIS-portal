@@ -11,10 +11,10 @@
             <div class="col-md-4">
                 <input type="text" id="curriculumSearch" class="form-control" placeholder="Search Curriculum Name...">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 w-100">Clear</button>
             </div>
-            <div class="col-md-6 mb-2 d-flex justify-content-end">
+            <div class="col-md-7 mb-2 d-flex justify-content-end">
                 <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addModal">
                     Add New Curriculum
                 </button>        

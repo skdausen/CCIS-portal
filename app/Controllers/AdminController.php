@@ -610,32 +610,50 @@ class AdminController extends BaseController
 
 
     // Create a new subject
-    public function createSubject()
-    {
-        $subjectModel = new SubjectModel();
+public function createSubject()
+{
+    $subjectModel = new SubjectModel();
 
-        $lec_units = $this->request->getPost('lec_units');
-        $lab_units = $this->request->getPost('lab_units');
+    // Original input
+    $subject_code = $this->request->getPost('subject_code');
+    $subject_name = $this->request->getPost('subject_name');
+    $subject_type = $this->request->getPost('subject_type');
+    $lec_units    = $this->request->getPost('lec_units');
+    $lab_units    = $this->request->getPost('lab_units');
 
-        $data = [
-            'subject_code'   => $this->request->getPost('subject_code'),
-            'subject_name'   => $this->request->getPost('subject_name'),
-            'subject_type'   => $this->request->getPost('subject_type'),
-            'lec_units'      => $lec_units,
-            'lab_units'      => $lab_units,
-            'total_units'    => $lec_units + $lab_units,
-            'curriculum_id'  => $this->request->getPost('curriculum_id'),
-            'yearlevel_sem'  => $this->request->getPost('yearlevel_sem'),
-        ];
+    //  Normalize inputs
+    $normalized_code = strtolower(str_replace(' ', '', $subject_code));
+    $normalized_name = strtolower(trim($subject_name));
 
-        $success = $subjectModel->insert($data);
+    //  Check for existing subject with same normalized values
+    $existing = $subjectModel
+        ->where('REPLACE(LOWER(subject_code), " ", "")', $normalized_code)
+        ->where('LOWER(subject_name)', $normalized_name)
+        ->where('lec_units', $lec_units)
+        ->where('lab_units', $lab_units)
+        ->first();
 
-        if (!$success) {
-            dd($subjectModel->errors());
-        }
-
-        return redirect()->to('admin/academics/subjects')->with('success', 'Subject added.');
+    if ($existing) {
+        return redirect()->back()->with('error', 'Subject already exists with the same code, name, and units.');
     }
+
+    // Insert the original (non-normalized) values
+    $data = [
+        'subject_code'  => $subject_code,
+        'subject_name'  => $subject_name,
+        'subject_type'  => $subject_type,
+        'lec_units'     => $lec_units,
+        'lab_units'     => $lab_units,
+        'curriculum_id' => $this->request->getPost('curriculum_id'),
+        'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
+    ];
+
+    $subjectModel->insert($data);
+
+    return redirect()->back()->with('success', 'Subject added successfully.');
+}
+
+
 
 
 
@@ -656,47 +674,69 @@ class AdminController extends BaseController
     }
 
     //update
-    public function updateSubject($id)
-    {
-        $subjectModel = new SubjectModel();
+   public function updateSubject($id)
+{
+    $subjectModel = new SubjectModel();
 
-        $lec_units = $this->request->getPost('lec_units');
-        $lab_units = $this->request->getPost('lab_units');
+    // Original inputs
+    $subject_code = $this->request->getPost('subject_code');
+    $subject_name = $this->request->getPost('subject_name');
+    $subject_type = $this->request->getPost('subject_type');
+    $lec_units    = $this->request->getPost('lec_units');
+    $lab_units    = $this->request->getPost('lab_units');
 
-        $data = [
-            'subject_code'   => $this->request->getPost('subject_code'),
-            'subject_name'   => $this->request->getPost('subject_name'),
-            'subject_type'   => $this->request->getPost('subject_type'),
-            'lec_units'      => $lec_units,
-            'lab_units'      => $lab_units,
-            'total_units'    => $lec_units + $lab_units,
-            'curriculum_id'  => $this->request->getPost('curriculum_id'),
-            'yearlevel_sem'  => $this->request->getPost('yearlevel_sem'), // ✅ This was missing
-        ];
+    //  Normalize inputs
+    $normalized_code = strtolower(str_replace(' ', '', $subject_code));
+    $normalized_name = strtolower(trim($subject_name));
 
-        $subjectModel->update($id, $data);
+    //  Check for duplicate (excluding the current record)
+    $duplicate = $subjectModel
+        ->where("subject_id !=", $id)
+        ->where("REPLACE(LOWER(subject_code), ' ', '') =", $normalized_code)
+        ->where("LOWER(subject_name) =", $normalized_name)
+        ->where("lec_units", $lec_units)
+        ->where("lab_units", $lab_units)
+        ->first();
 
-        return redirect()->to('admin/academics/subjects')->with('success', 'Subject updated successfully.');
+    if ($duplicate) {
+        return redirect()->back()->with('error', 'Another subject already exists with the same code, name, and units.');
     }
 
+    // Proceed with update using raw input
+    $data = [
+        'subject_code'  => $subject_code,
+        'subject_name'  => $subject_name,
+        'subject_type'  => $subject_type,
+        'lec_units'     => $lec_units,
+        'lab_units'     => $lab_units,
+        'curriculum_id' => $this->request->getPost('curriculum_id'),
+        'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
+    ];
+
+    $subjectModel->update($id, $data);
+
+    return redirect()->back()->with('success', 'Subject updated successfully.');
+}
+
+
     // Delete a subject
-    public function deleteSubject($subject_id)
+    public function deleteSubject($id)
     {
-        $subjectModel = new SubjectModel();
         $classModel = new ClassModel();
+        $subjectModel = new SubjectModel();
 
-        // Check if there are related classes first
-        $relatedClasses = $classModel->where('subject_id', $subject_id)->countAllResults();
+        // Check if this subject is used in classes
+        $used = $classModel->where('subject_id', $id)->first();
 
-        if ($relatedClasses > 0) {
-            return redirect()->back()->with('error', 'Cannot delete. This subject has classes assigned to it.');
+        if ($used) {
+            return redirect()->back()->with('error', 'Cannot delete subject. It is currently assigned to one or more instructors.');
         }
 
-        // Delete subject
-        $subjectModel->delete($subject_id);
+        $subjectModel->delete($id);
 
         return redirect()->back()->with('success', 'Subject deleted successfully.');
     }
+
 
     /********************************************** 
         CLASSES MANAGEMENT

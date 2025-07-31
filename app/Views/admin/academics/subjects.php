@@ -8,6 +8,7 @@
         </div>
 
 
+
         <!-- FILTERS & SEARCH -->
     <div class="row mb-3">
         <div class="col-md-3 mb-2 d-flex">
@@ -171,7 +172,7 @@
                         </div>
                     </div>
 
-
+                    
                     <!-- Delete Modal -->
                     <div class="modal fade" id="deleteModal<?= $subject['subject_id'] ?>" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
@@ -321,6 +322,41 @@
 
 
 
+<!-- Flash Message Modal -->
+<?php if (session()->getFlashdata('success')): ?>
+<!-- Success Modal -->  
+<div class="modal fade" id="successModal" tabindex="-1" data-success-message="<?= esc(session()->getFlashdata('success')) ?>">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if (session()->getFlashdata('error')): ?>
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" data-error-message="<?= esc(session()->getFlashdata('error')) ?>">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 
 
 <script>
@@ -371,41 +407,52 @@
 
 
 
-<!-- Success Modal -->
-<div class="modal fade" id="successModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Success</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="successMessage"></p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Error</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p id="errorMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-danger" onclick="location.reload()">Retry</button>
-                <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Flash Message Script -->
+
+     <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const successModalEl = document.getElementById('successModal');
+    const errorModalEl = document.getElementById('errorModal');
+
+    function autoDismissModal(modalEl, messageId, messageText) {
+        const modal = new bootstrap.Modal(modalEl);
+        const messageContainer = document.getElementById(messageId);
+        messageContainer.textContent = messageText;
+
+        modal.show();
+
+        // Set timeout to auto-close only if it's still open
+        const timer = setTimeout(() => {
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        if (modalEl.classList.contains('show')) {
+            modal.hide();
+            if (modalBackdrop) modalBackdrop.remove();
+        }
+        }, 1500);
+
+        // Clear timeout if manually closed
+        modalEl.addEventListener('hidden.bs.modal', () => {
+        clearTimeout(timer);
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        if (modalBackdrop) modalBackdrop.remove();
+        });
+    }
+
+    if (successModalEl) {
+        const msg = successModalEl.getAttribute('data-success-message');
+        autoDismissModal(successModalEl, 'successMessage', msg);
+    }
+
+    if (errorModalEl) {
+        const msg = errorModalEl.getAttribute('data-error-message');
+        autoDismissModal(errorModalEl, 'errorMessage', msg);
+    }
+    });
+    </script>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const filter = document.getElementById('categoryFilter');

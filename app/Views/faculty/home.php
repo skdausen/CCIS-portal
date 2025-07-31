@@ -75,17 +75,12 @@
                         $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
 
                         // Get nearing announcements (this month, not today)
-                        $nearing = array_filter($announcements, function ($a) use ($today, $currentMonth, $currentYear) {
+                        $nearing = array_filter($announcements, function ($a) use ($today) {
                             $eventDate = strtotime($a['event_datetime']);
-                            $now = strtotime('now');
-                            $daysLater = strtotime('+11 days');
+                            $now = strtotime($today); // Use today's date at midnight
+                            $tenDaysLater = strtotime('+10 days', $now);
 
-                            return
-                                $eventDate > $now &&
-                                $eventDate <= $daysLater &&
-                                date('Y-m-d', $eventDate) !== $today &&
-                                date('m', $eventDate) === $currentMonth &&
-                                date('Y', $eventDate) === $currentYear;
+                            return $eventDate > $now && $eventDate <= $tenDaysLater;
                         });
 
                         usort($nearing, function ($a, $b) {

@@ -361,12 +361,19 @@ class StudentController extends BaseController
     private function prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters)
     {
         $db = Database::connect();
-        $semesters = $db->table('semesters')
+
+        $semesters = $db->table('student_schedules') // use your actual enrollment mapping table
+            ->join('classes', 'classes.class_id = student_schedules.class_id')
+            ->join('semesters', 'semesters.semester_id = classes.semester_id')
             ->join('schoolyears', 'schoolyears.schoolyear_id = semesters.schoolyear_id')
-            ->select('semesters.*, schoolyears.schoolyear')
+            ->select('semesters.semester_id, semesters.semester, schoolyears.schoolyear')
+            ->where('student_schedules.stb_id', $stbId) // filter by logged-in student
+            ->groupBy('semesters.semester_id')
             ->orderBy('schoolyears.schoolyear', 'DESC')
             ->orderBy('semesters.semester', 'DESC')
-            ->get()->getResult();
+            ->get()
+            ->getResult();
+
 
         // For Dean’s List checks
         $curriculumId   = $student->curriculum_id;
@@ -422,11 +429,26 @@ class StudentController extends BaseController
             ? round($weightedSum / $unitsForGwa, 3)
             : null;
 
+        // Check for any failed grades
+        $hasFailingGrade = false;
+        foreach ($grades as $g) {
+            if (is_numeric($g->sem_grade) && (float)$g->sem_grade == 5.00) {
+                $hasFailingGrade = true;
+                break;
+            }
+        }
+
         // Determine whether student qualifies as Dean’s Lister *for that YLS*
         $isDeanLister = false;
         if ($selectedYLS && isset($deansListFlags[$selectedYLS])) {
             $isDeanLister = $deansListFlags[$selectedYLS];
+
+            // Apply final condition: must have no failing grade and GWA must be ≤ 1.75
+            if ($hasFailingGrade || $gwa === null || $gwa > 1.75) {
+                $isDeanLister = false;
+            }
         }
+
 
         return [
             'grades'           => $grades,

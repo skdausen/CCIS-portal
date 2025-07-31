@@ -25,7 +25,7 @@
                 <!-- Updates RIGHT -->
                 <div class="col-12 col-lg-6 mb-3">
                     <div class="p-3 border-0 shadow-sm rounded-2" id="latest-update">
-                        <!-- 🔍 Filter Logic -->
+                        <!-- Filter Logic -->
                         <?php
                             $today = date('Y-m-d');
                             $currentMonth = date('m');
@@ -43,17 +43,12 @@
                             $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
 
                             // Get nearing announcements (this month, not today)
-                            $nearing = array_filter($announcements, function ($a) use ($today, $currentMonth, $currentYear) {
+                            $nearing = array_filter($announcements, function ($a) use ($today) {
                                 $eventDate = strtotime($a['event_datetime']);
-                                $now = strtotime('now');
-                                $daysLater = strtotime('+11 days');
+                                $now = strtotime($today); // Use today's date at midnight
+                                $tenDaysLater = strtotime('+10 days', $now);
 
-                                return
-                                    $eventDate > $now &&
-                                    $eventDate <= $daysLater &&
-                                    date('Y-m-d', $eventDate) !== $today &&
-                                    date('m', $eventDate) === $currentMonth &&
-                                    date('Y', $eventDate) === $currentYear;
+                                return $eventDate > $now && $eventDate <= $tenDaysLater;
                             });
 
                             usort($nearing, function ($a, $b) {

@@ -91,7 +91,7 @@
                 <div class="mb-4 ms-auto d-flex flex-column align-items-end">
                         <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-info' ?> mt-4 text-end">
                             <?php
-                                $displayedGwa = ($gwa === null || $gwa === 0 || $hasIncomplete) ? '--' : number_format($gwa, 3);
+                                $displayedGwa = ($gwa === null || $gwa === 0 || $hasIncomplete) ? '--' : number_format($gwa, 2);
                             ?>
                             <strong>GWA:</strong> <?= esc($displayedGwa) ?><br>
 

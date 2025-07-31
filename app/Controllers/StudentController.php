@@ -226,15 +226,21 @@ class StudentController extends BaseController
             ->orderBy('semesters.semester', 'DESC')
             ->get()->getResult();
 
-        // Automatically select the active semester if not selected
         if (!$selectedSemester) {
-            $activeSemester = $db->table('semesters')
-                ->where('is_active', 1)
-                ->select('semester_id')
+            // Get the most recent semester where the student has enrolled
+            $latestSemester = $db->table('student_schedules ss')
+                ->join('classes c', 'c.class_id = ss.class_id')
+                ->join('semesters sem', 'sem.semester_id = c.semester_id')
+                ->where('ss.stb_id', $stbId)
+                ->select('sem.semester_id')
+                ->orderBy('sem.schoolyear_id', 'DESC')
+                ->orderBy('sem.semester', 'DESC')
+                ->limit(1)
                 ->get()
                 ->getRow();
-            if ($activeSemester) {
-                $selectedSemester = $activeSemester->semester_id;
+
+            if ($latestSemester) {
+                $selectedSemester = $latestSemester->semester_id;
             }
         }
 

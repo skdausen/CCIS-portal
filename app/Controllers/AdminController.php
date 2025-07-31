@@ -387,12 +387,14 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
-        $semester = $this->request->getPost('semester'); // e.g., "1st"
-        $schoolyearText = str_replace(['–', '—'], '-', $this->request->getPost('schoolyear'));
-        $schoolyearText = preg_replace('/\s+/', '', trim($schoolyearText));
+        $semester = $this->request->getPost('semester');
+
+        $startYear = $this->request->getPost('start_year');
+        $endYear = $this->request->getPost('end_year');
+        $schoolyearText = "{$startYear}-{$endYear}";
+
         $status = $this->request->getPost('status');
         $isActive = $status == '1' ? 1 : 0;
-
 
         $schoolYearModel = new SchoolYearModel();
         $semesterModel = new SemesterModel();
@@ -439,8 +441,9 @@ class AdminController extends BaseController
         }
 
         $semester = $this->request->getPost('semester');
-        $schoolyearText = str_replace(['–', '—'], '-', $this->request->getPost('schoolyear'));
-        $schoolyearText = preg_replace('/\s+/', '', trim($schoolyearText));
+        $startYear = $this->request->getPost('start_year');
+        $endYear = $this->request->getPost('end_year');
+        $schoolyearText = "{$startYear}-{$endYear}";
         $status = $this->request->getPost('status');
 
         if (!$semester || !$schoolyearText || $status === null) {
@@ -466,16 +469,15 @@ class AdminController extends BaseController
             return redirect()->back()->with('error', 'Semester and school year combination already exists.');
         }
 
-        // Prevent multiple active semesters
+        // Automatically deactivate other active semester if needed
         if ($isActive === 1) {
-            $activeSemester = $semesterModel
-                ->where('is_active', 1)
-                ->where('semester_id !=', $id) // exclude this semester
-                ->first();
-            if ($activeSemester) {
-                return redirect()->back()->with('error', 'Another active semester already exists. Please deactivate it first.');
-            }
+            // Deactivate all other active semesters
+            $semesterModel->where('is_active', 1)
+                ->where('semester_id !=', $id)
+                ->set(['is_active' => 0])
+                ->update();
         }
+
 
         $semesterModel->update($id, [
             'semester' => $semester,
@@ -495,6 +497,7 @@ class AdminController extends BaseController
 
         $classModel = new ClassModel();
         $semesterModel = new SemesterModel();
+        $schoolyearModel = new SchoolYearModel();
         $semester = $semesterModel->find($id);
 
         if (!$semester) {
@@ -767,8 +770,6 @@ class AdminController extends BaseController
             ])
             . view('templates/footer');
     }
-
-
 
     public function createClass()
     {

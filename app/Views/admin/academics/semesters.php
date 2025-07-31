@@ -59,6 +59,14 @@
                     <div class="modal fade" id="editModal<?= $semester['semester_id'] ?>" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
+
+                                <?php
+                                // Split the schoolyear for pre-filling
+                                $schoolYearParts = explode('-', $semester['schoolyear']);
+                                $startYear = $schoolYearParts[0] ?? '';
+                                $endYear = $schoolYearParts[1] ?? '';
+                                ?>
+
                                 <form method="post" action="<?= site_url('admin/academics/semesters/update/' . $semester['semester_id']) ?>">
                                     <?= csrf_field() ?>
                                     <div class="modal-header">
@@ -76,7 +84,11 @@
                                         </div>
                                         <div class="mb-3">
                                             <label>School Year</label>
-                                            <input type="text" name="schoolyear" class="form-control" value="<?= esc($semester['schoolyear']) ?>" required>
+                                            <div class="d-flex gap-2">
+                                                <input type="number" name="start_year" class="form-control" id="editStartYear<?= $semester['semester_id'] ?>" value="<?= esc($startYear) ?>" required min="2000" max="2099" required>
+                                                <span class="align-self-center">-</span>
+                                                <input type="number" name="end_year" class="form-control" id="editEndYear<?= $semester['semester_id'] ?>" value="<?= esc($endYear) ?>" required min="2001" max="2100" readonly required>
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label>Status</label>
@@ -141,9 +153,14 @@
                                     <option value="midyear">Midyear</option>
                                 </select>
                             </div>
+                            <!-- School Year Inputs -->
                             <div class="mb-3">
                                 <label class="form-label">School Year</label>
-                                <input type="text" name="schoolyear" class="form-control" placeholder="e.g., 2025-2026" required>
+                                <div class="d-flex gap-2">
+                                    <input type="number" name="start_year" class="form-control" id="startYearInput" placeholder="Start Year (e.g., 2025)" required min="2000" max="2099" required>
+                                    <span class="align-self-center">-</span>
+                                    <input type="number" name="end_year" class="form-control" id="endYearInput" placeholder="End Year" required min="2001" max="2100" readonly required>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
@@ -167,6 +184,31 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Auto-increment for ADD modal
+        const addStartInput = document.getElementById('startYearInput');
+        const addEndInput = document.getElementById('endYearInput');
+
+        if (addStartInput && addEndInput) {
+            addStartInput.addEventListener('input', function () {
+                const startYear = parseInt(this.value);
+                addEndInput.value = !isNaN(startYear) ? startYear + 1 : '';
+            });
+        }
+
+        // Auto-increment for all EDIT modals
+        document.querySelectorAll('[id^="editStartYear"]').forEach(startInput => {
+            const semesterId = startInput.id.replace('editStartYear', '');
+            const endInput = document.getElementById('editEndYear' + semesterId);
+
+            if (endInput) {
+                startInput.addEventListener('input', function () {
+                    const startYear = parseInt(this.value);
+                    endInput.value = !isNaN(startYear) ? startYear + 1 : '';
+                });
+            }
+        });
+
+        // Filter
         const semesterFilter = document.getElementById('semesterFilter');
         const searchInput = document.getElementById('searchInput');
         const clearFilterBtn = document.getElementById('clearFilterBtn');

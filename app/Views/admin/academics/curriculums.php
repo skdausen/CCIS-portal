@@ -7,12 +7,10 @@
         </div>
 
         <!-- Search Filter -->
-        <div class="row g-2 align-items-center mb-4">
-            <div class="col-md-4">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-5 d-flex gap-2">
                 <input type="text" id="curriculumSearch" class="form-control" placeholder="Search Curriculum Name...">
-            </div>
-            <div class="col-md-1">
-                <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 w-100">Clear</button>
+                <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2">Clear</button>
             </div>
             <div class="col-md-7 mb-2 d-flex justify-content-end">
                 <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addModal">

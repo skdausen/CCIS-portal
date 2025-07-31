@@ -545,11 +545,21 @@ class AdminController extends BaseController
         $code = strtolower($subject['subject_code']);
         $desc = strtolower($subject['subject_name']);
 
-        $matchCategory = !$filter || str_starts_with($code, $filter); // e.g. cs, ge, pe
+        $matchCategory = !$filter 
+    || ($filter === 'recent') 
+    || str_starts_with($code, $filter);
         $matchSearch = !$search || str_contains($code, $search) || str_contains($desc, $search);
 
         return $matchCategory && $matchSearch;
     });
+
+    if ($filter === 'recent') {
+        usort($filteredSubjects, function ($a, $b) {
+            return $b['subject_id'] <=> $a['subject_id'];
+        });
+    }
+
+
 
     $totalSubjects = count($filteredSubjects);
     $totalPages = ceil($totalSubjects / $perPage);
@@ -557,13 +567,36 @@ class AdminController extends BaseController
     $offset = ($page - 1) * $perPage;
     $subjects = array_slice($filteredSubjects, $offset, $perPage);
 
+
+    // Extract unique category prefixes from subject codes
+    $categories = [];
+
+    foreach ($allSubjects as $subject) {
+        preg_match('/^[A-Za-z]+/', $subject['subject_code'], $matches);
+        $prefix = strtolower($matches[0] ?? '');
+
+        if ($prefix && !in_array($prefix, $categories)) {
+            $categories[] = $prefix;
+        }
+    }
+
+    sort($categories);
+
+
+    //  Get the top 5 most recently added subjects regardless of search/filter
+    $recentSubjects = $subjectModel
+        ->orderBy('subject_id', 'DESC')
+        ->findAll(3);
+
     $data = [
         'subjects' => $subjects,
         'curriculums' => $curriculumModel->findAll(),
         'page' => $page,
         'totalPages' => $totalPages,
         'search' => $search,
-        'filter' => $filter
+        'filter' => $filter,
+        'categories' => $categories,
+        'recentSubjects' => $recentSubjects
     ];
 
     return view('templates/admin/admin_header')

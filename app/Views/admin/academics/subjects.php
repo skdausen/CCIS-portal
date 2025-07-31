@@ -13,9 +13,11 @@
         <div class="col-md-3 mb-2 d-flex">
             <select id="categoryFilter" class="form-select">
                 <option value="">Filter by Category</option>
-                <option value="cs">CS</option>
-                <option value="ge">GE</option>
-                <option value="pe">PE</option>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= esc($cat) ?>" <?= $filter === $cat ? 'selected' : '' ?>>
+                        <?= strtoupper(esc($cat)) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
             <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
         </div>
@@ -28,6 +30,30 @@
             <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addModal">Add New Subject</button>
         </div>
     </div>
+
+    
+    <?php
+    $filter = $_GET['filter'] ?? ''; // get the current filter if any
+    ?>
+
+    <?php if (empty($filter)): ?>
+    <div class="mt-3 mb-4">
+        <h5 class="fw-semibold mb-3">Recently Added Subjects</h5>
+        <ul class="list-group">
+            <?php if (!empty($recentSubjects)): ?>
+                <?php foreach ($recentSubjects as $subject): ?>
+                    <li class="list-group-item">
+                        <?= esc($subject['subject_code']) ?> : <?= esc($subject['subject_name']) ?>
+                    </li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li class="list-group-item">No recent subjects found.</li>
+            <?php endif; ?>
+        </ul>
+    </div>
+    <?php endif; ?>
+
+
 
 
         <!-- Subjects Table -->

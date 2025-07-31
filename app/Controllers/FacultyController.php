@@ -186,8 +186,10 @@ class FacultyController extends BaseController
         $students = $studentModel->getStudentsByClass($classId);
         // Sort enrolled students alphabetically by last name
         usort($students, function ($a, $b) {
-            return strcmp($a['lname'], $b['lname']);
+            return strcasecmp($a['lname'], $b['lname']); // case-insensitive A-Z
         });
+
+
 
         // Already enrolled student IDs
         $enrolledIds = $studentScheduleModel
@@ -204,8 +206,9 @@ class FacultyController extends BaseController
 
         // Sort all students alphabetically by last name
         usort($allStudents, function ($a, $b) {
-            return strcmp($a['lname'], $b['lname']);
+            return strcasecmp($a['lname'], $b['lname']); // case-insensitive A-Z
         });
+
 
         return view('templates/faculty/faculty_header')
             . view('faculty/view_class', [
@@ -279,6 +282,13 @@ class FacultyController extends BaseController
             ->join('grades', 'grades.stb_id = students.stb_id AND grades.class_id = student_schedules.class_id', 'left')
             ->where('student_schedules.class_id', $classId)
             ->findAll();
+            
+            usort($students, function ($a, $b) {
+            return strcasecmp($a['lname'], $b['lname']); // A-Z, case-insensitive
+        });
+
+
+            
 
         return view('templates/faculty/faculty_header')
             . view('faculty/manage_grades', [

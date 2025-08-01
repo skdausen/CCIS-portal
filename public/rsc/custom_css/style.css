@@ -1,5 +1,6 @@
 body {
-    background-color: white;
+    /* background-color: white; */
+    background: url('../assets/bg-portal.png') center/cover no-repeat fixed; /* adjust path if needed */
     min-height: 100vh; 
     display: flex;
     flex-direction: column;
@@ -336,6 +337,9 @@ h4, h6 {
     background-color: #343a40 !important;
     color: white !important;
 }
+.btn{
+    background-color: white;
+}
 .btn-thin {
     font-weight: 400;         /* NORMAL WEIGHT */
     padding: 0.25rem 0.5rem;  /* THINNER LOOK */
@@ -405,7 +409,7 @@ h4, h6 {
     overflow-y: auto;
 }
 .front-modal {
-z-index: 1081; /* Bootstrap default modals use 1050–1070 */
+    z-index: 1081; /* Bootstrap default modals use 1050–1070 */
 }
 
 /* Adjustments for mobile responsiveness */
@@ -694,6 +698,11 @@ sssssssssssssssssssssssssidebar */
 /* RESPONSIVE CSS */
 
 @media (max-width: 991.98px) { /* Bootstrap's lg breakpoint for navbar collapse */
+    body {
+        background: url('../assets/bg-portal.png') repeat fixed; /* it will tile like a pattern */
+        background-size: auto; /* optional: you can also try 80px, 100px, etc. */
+    }
+
     .navbar-collapse {
         flex-direction: column; /* Stack items vertically when collapsed */
         align-items: flex-end; /* Align collapsed items to the right */
@@ -828,5 +837,4 @@ sssssssssssssssssssssssssidebar */
     .classes-table td:nth-child(7) {
         min-width: 120px;
     }
-
 }

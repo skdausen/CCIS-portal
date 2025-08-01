@@ -1,11 +1,11 @@
 <!-- Views/admin/home.php -->
-<div class="container mt-5">
+<div class="container mt-5 pb-5">
     <h2>Welcome, <?= session('username'); ?>!</h2>
     <p class="lead">You are logged in as <strong><?= session('role'); ?></strong>.</p>
 
     <!-- Calendar & Announcement -->
-    <div class="card mt-4 p-3 border-0" style="background-color:rgba(248, 249, 255, 0);">
-        <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card mt-4 p-3 border-0 shadow-darker">
+        <div class="card-header d-flex justify-content-between align-items-center bg-white">
             <div>
                 <h4 class="m-0">Events & Announcements</h4>
             </div>
@@ -15,7 +15,7 @@
                 </button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body bg-white">
             <div class="row">
                 <!-- Calendar LEFT -->
                 <div class="col-12 col-lg-6 mb-3">

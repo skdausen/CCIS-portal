@@ -54,149 +54,148 @@
     </div>
     <?php endif; ?>
 
-
-
-
         <!-- Subjects Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover custom-padding" id="subjectsTable">
-                <thead class="table-light">
-                    <tr>
-                        <th>Subject Code</th>
-                        <th>Subject Name</th>
-                        <th>Subject Type</th>
-                        <th class="text-center">Lecture Units</th>
-                        <th class="text-center">Lab Units</th>
-                        <th class="text-center">Total Units</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($subjects as $subject): ?>
-                    <tr>
-                        <td><?= esc($subject['subject_code']) ?></td>
-                        <?php
-                            $fullTitle = trim($subject['subject_name']);
-                            $shortTitle = (strlen($fullTitle) > 52)
-                                ? mb_substr($fullTitle, 0, 52) . '...'
-                                : $fullTitle;
-                        ?>
-                        <td title="<?= esc($fullTitle) ?>">
-                            <?= esc($shortTitle) ?>
-                        </td>
-                        <td><?= esc($subject['subject_type']) ?></td>
-                        <td class="text-center"><?= esc($subject['lec_units']) ?></td>
-                        <td class="text-center"><?= esc($subject['lab_units']) ?></td>
-                        <td class="text-center"><?= esc($subject['total_units']) ?></td>
-                        <td>
-                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
-                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
-                        </td>
-                    </tr>
-
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editModal<?= $subject['subject_id'] ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <form method="post" action="<?= site_url('admin/academics/subjects/update/' . $subject['subject_id']) ?>">
+            <div class="table-scroll">
+                <table class="table table-bordered table-hover subjects-table custom-padding" id="subjectsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Subject Type</th>
+                            <th class="text-center">Lecture Units</th>
+                            <th class="text-center">Lab Units</th>
+                            <th class="text-center">Total Units</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($subjects as $subject): ?>
+                        <tr>
+                            <td><?= esc($subject['subject_code']) ?></td>
+                            <?php
+                                $fullTitle = trim($subject['subject_name']);
+                                $shortTitle = (strlen($fullTitle) > 52)
+                                    ? mb_substr($fullTitle, 0, 52) . '...'
+                                    : $fullTitle;
+                            ?>
+                            <td title="<?= esc($fullTitle) ?>">
+                                <?= esc($shortTitle) ?>
+                            </td>
+                            <td><?= esc($subject['subject_type']) ?></td>
+                            <td class="text-center"><?= esc($subject['lec_units']) ?></td>
+                            <td class="text-center"><?= esc($subject['lab_units']) ?></td>
+                            <td class="text-center"><?= esc($subject['total_units']) ?></td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
+                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
+                            </td>
+                        </tr>
+    
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal<?= $subject['subject_id'] ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form method="post" action="<?= site_url('admin/academics/subjects/update/' . $subject['subject_id']) ?>">
+                                        <?= csrf_field() ?>
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit Subject</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+    
+                                            <div class="mb-3">
+                                                <label>Curriculum</label>
+                                                <select name="curriculum_id" class="form-select" required>
+                                                    <option value="">Select Curriculum</option>
+                                                    <?php foreach ($curriculums as $curr): ?>
+                                                        <option value="<?= $curr['curriculum_id'] ?>" <?= $curr['curriculum_id'] == $subject['curriculum_id'] ? 'selected' : '' ?>>
+                                                            <?= esc($curr['curriculum_name']) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+    
+                                            <div class="mb-3">
+                                                <label>Year Level & Semester</label>
+                                                <select name="yearlevel_sem" class="form-select" required>
+                                                    <option value="">Select Year Level & Semester</option>
+                                                    <option value="Y1S1" <?= $subject['yearlevel_sem'] == 'Y1S1' ? 'selected' : '' ?>>1st Year - 1st Semester</option>
+                                                    <option value="Y1S2" <?= $subject['yearlevel_sem'] == 'Y1S2' ? 'selected' : '' ?>>1st Year - 2nd Semester</option>
+                                                    <option value="Y2S1" <?= $subject['yearlevel_sem'] == 'Y2S1' ? 'selected' : '' ?>>2nd Year - 1st Semester</option>
+                                                    <option value="Y2S2" <?= $subject['yearlevel_sem'] == 'Y2S2' ? 'selected' : '' ?>>2nd Year - 2nd Semester</option>
+                                                    <option value="Y3S1" <?= $subject['yearlevel_sem'] == 'Y3S1' ? 'selected' : '' ?>>3rd Year - 1st Semester</option>
+                                                    <option value="Y3S2" <?= $subject['yearlevel_sem'] == 'Y3S2' ? 'selected' : '' ?>>3rd Year - 2nd Semester</option>
+                                                    <option value="Y3S3" <?= $subject['yearlevel_sem'] == 'Y3S3' ? 'selected' : '' ?>>3rd Year - Midyear</option>
+                                                    <option value="Y4S1" <?= $subject['yearlevel_sem'] == 'Y4S1' ? 'selected' : '' ?>>4th Year - 1st Semester</option>
+                                                    <option value="Y4S2" <?= $subject['yearlevel_sem'] == 'Y4S2' ? 'selected' : '' ?>>4th Year - 2nd Semester</option>
+                                                </select>
+                                            </div>
+    
+                                            <div class="mb-3">
+                                                <label>Subject Code</label>
+                                                <input type="text" name="subject_code" class="form-control" value="<?= esc($subject['subject_code']) ?>" required>
+                                            </div>
+    
+                                            <div class="mb-3">
+                                                <label>Subject Name</label>
+                                                <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
+                                            </div>
+    
+                                            <div class="mb-3">
+                                                <label>Subject Type</label>
+                                                <select name="subject_type" class="form-select edit-subject-type" data-id="<?= $subject['subject_id'] ?>" onchange="toggleEditUnits(<?= $subject['subject_id'] ?>)" required>
+                                                    <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
+                                                    <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
+                                                </select>
+                                            </div>
+    
+                                            <div class="mb-3">
+                                                <label>Lecture Units</label>
+                                                <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required min="0">
+                                            </div>
+    
+                                            <div class="mb-3 edit-lab-units-group-<?= $subject['subject_id'] ?>" style="<?= $subject['subject_type'] == 'LEC with LAB' ? '' : 'display: none;' ?>">
+                                                <label>Lab Units</label>
+                                                <input type="number" name="lab_units" class="form-control" min="0" value="<?= esc($subject['lab_units']) ?>">
+                                            </div>
+    
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-outline-success">Update</button>
+                                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+    
+                        
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?= $subject['subject_id'] ?>" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <form method="post" action="<?= site_url('admin/academics/subjects/delete/' . $subject['subject_id']) ?>">
                                     <?= csrf_field() ?>
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Edit Subject</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-
-                                        <div class="mb-3">
-                                            <label>Curriculum</label>
-                                            <select name="curriculum_id" class="form-select" required>
-                                                <option value="">Select Curriculum</option>
-                                                <?php foreach ($curriculums as $curr): ?>
-                                                    <option value="<?= $curr['curriculum_id'] ?>" <?= $curr['curriculum_id'] == $subject['curriculum_id'] ? 'selected' : '' ?>>
-                                                        <?= esc($curr['curriculum_name']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-
-                                        <div class="mb-3">
-                                            <label>Year Level & Semester</label>
-                                            <select name="yearlevel_sem" class="form-select" required>
-                                                <option value="">Select Year Level & Semester</option>
-                                                <option value="Y1S1" <?= $subject['yearlevel_sem'] == 'Y1S1' ? 'selected' : '' ?>>1st Year - 1st Semester</option>
-                                                <option value="Y1S2" <?= $subject['yearlevel_sem'] == 'Y1S2' ? 'selected' : '' ?>>1st Year - 2nd Semester</option>
-                                                <option value="Y2S1" <?= $subject['yearlevel_sem'] == 'Y2S1' ? 'selected' : '' ?>>2nd Year - 1st Semester</option>
-                                                <option value="Y2S2" <?= $subject['yearlevel_sem'] == 'Y2S2' ? 'selected' : '' ?>>2nd Year - 2nd Semester</option>
-                                                <option value="Y3S1" <?= $subject['yearlevel_sem'] == 'Y3S1' ? 'selected' : '' ?>>3rd Year - 1st Semester</option>
-                                                <option value="Y3S2" <?= $subject['yearlevel_sem'] == 'Y3S2' ? 'selected' : '' ?>>3rd Year - 2nd Semester</option>
-                                                <option value="Y3S3" <?= $subject['yearlevel_sem'] == 'Y3S3' ? 'selected' : '' ?>>3rd Year - Midyear</option>
-                                                <option value="Y4S1" <?= $subject['yearlevel_sem'] == 'Y4S1' ? 'selected' : '' ?>>4th Year - 1st Semester</option>
-                                                <option value="Y4S2" <?= $subject['yearlevel_sem'] == 'Y4S2' ? 'selected' : '' ?>>4th Year - 2nd Semester</option>
-                                            </select>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete <strong><?= esc($subject['subject_code']) ?></strong>?
                                         </div>
-
-                                        <div class="mb-3">
-                                            <label>Subject Code</label>
-                                            <input type="text" name="subject_code" class="form-control" value="<?= esc($subject['subject_code']) ?>" required>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                            <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                         </div>
-
-                                        <div class="mb-3">
-                                            <label>Subject Name</label>
-                                            <input type="text" name="subject_name" class="form-control" value="<?= esc($subject['subject_name']) ?>" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label>Subject Type</label>
-                                            <select name="subject_type" class="form-select edit-subject-type" data-id="<?= $subject['subject_id'] ?>" onchange="toggleEditUnits(<?= $subject['subject_id'] ?>)" required>
-                                                <option value="LEC" <?= $subject['subject_type'] == 'LEC' ? 'selected' : '' ?>>LEC</option>
-                                                <option value="LEC with LAB" <?= $subject['subject_type'] == 'LEC with LAB' ? 'selected' : '' ?>>LEC with LAB</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label>Lecture Units</label>
-                                            <input type="number" name="lec_units" class="form-control" value="<?= esc($subject['lec_units']) ?>" required min="0">
-                                        </div>
-
-                                        <div class="mb-3 edit-lab-units-group-<?= $subject['subject_id'] ?>" style="<?= $subject['subject_type'] == 'LEC with LAB' ? '' : 'display: none;' ?>">
-                                            <label>Lab Units</label>
-                                            <input type="number" name="lab_units" class="form-control" min="0" value="<?= esc($subject['lab_units']) ?>">
-                                        </div>
-
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-outline-success">Update</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
-
-                    
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal<?= $subject['subject_id'] ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <form method="post" action="<?= site_url('admin/academics/subjects/delete/' . $subject['subject_id']) ?>">
-                                <?= csrf_field() ?>
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Confirm Delete</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to delete <strong><?= esc($subject['subject_code']) ?></strong>?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2" data-bs-dismiss="modal">Cancel</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
                         
                     <?php
                         $queryParams = [];

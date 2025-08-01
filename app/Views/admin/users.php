@@ -35,48 +35,50 @@
     <!-- USERS TABLE -->
     <div id="userTableContainer">
         <div class="table-responsive" >
-            <table class="table table-bordered table-hover custom-padding users-table" id="usersTable">
-                <thead class="table-light">
-                    <tr>
-                        <th>User ID</th>
-                        <th>Role</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody class="users-table-body">
-                    <?php if (!empty($users)): ?>
-                        <?php foreach ($users as $user): ?>
-                            <tr>
-                                <td><?= esc($user['user_id']) ?></td>
-                                <td><?=strtoupper( esc($user['role']) )?></td>
-                                <td><?= esc($user['username']) ?></td>
-                                <td><?= esc($user['email']) ?></td>
-                                <td>
-                                    <?php if ($user['status'] === 'active'): ?>
-                                        <span class="badge bg-success">Active</span>
-                                    <?php else: ?>
-                                        <span class="badge bg-secondary">Inactive</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <a href="#" 
-                                    class="btn btn-sm btn-outline-primary viewUserBtn"
-                                    data-user-id="<?= esc($user['user_id']) ?>">
-                                    View
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+            <div class="table-scroll">
+                <table class="table table-bordered table-hover custom-padding users-table" id="usersTable">
+                    <thead class="table-light">
                         <tr>
-                            <td colspan="6" class="text-center">No users found.</td>
+                            <th>User ID</th>
+                            <th>Role</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="users-table-body">
+                        <?php if (!empty($users)): ?>
+                            <?php foreach ($users as $user): ?>
+                                <tr>
+                                    <td><?= esc($user['user_id']) ?></td>
+                                    <td><?=strtoupper( esc($user['role']) )?></td>
+                                    <td><?= esc($user['username']) ?></td>
+                                    <td><?= esc($user['email']) ?></td>
+                                    <td>
+                                        <?php if ($user['status'] === 'active'): ?>
+                                            <span class="badge bg-success">Active</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="#" 
+                                        class="btn btn-sm btn-outline-primary viewUserBtn"
+                                        data-user-id="<?= esc($user['user_id']) ?>">
+                                        View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center">No users found.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

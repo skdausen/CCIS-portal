@@ -1,16 +1,29 @@
+html, body{
+    margin: 0 !important;
+    padding: 0 !important;
+}
 body {
     /* background-color: white; */
-    background: url('../assets/bg-portal.png') center/cover no-repeat fixed; /* adjust path if needed */
+    background: url('../assets/bg-portal.png') center/cover no-repeat fixed;
     min-height: 100vh; 
     display: flex;
     flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000; /* high value to keep it above everything */
+}
+
 /* NAVIGATION BAR STYLES */
 .navbar {
-    background-color: #343a40; /* Dark background for navbar */
+    background-color: #343a40; 
     border-radius: 0 0 10px 10px; /* Rounded bottom corners */
-    width: 100%; /* Ensure it spans full width */
+    width: 100%; 
+    z-index: 10030;
 }
 .navbar-brand {
     font-weight: bold;
@@ -789,7 +802,7 @@ sssssssssssssssssssssssssidebar */
     }
 
     /* TABLE SETTINGS */
-    .classes-table {
+    .classes-table, .users-table, .semester-table, .subjects-table {
         table-layout: auto;
         width: 100%;
         min-width: 800px; 
@@ -797,6 +810,8 @@ sssssssssssssssssssssssssidebar */
     }
 
     /* COLUMN SETTINGS */
+    .subjects-table th,
+    .subjects-table td,
     .classes-table th,
     .classes-table td {
         padding: 10px;

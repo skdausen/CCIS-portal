@@ -260,27 +260,30 @@ class AdminController extends BaseController
             $programId    = $programs[$programName] ?? null;
             $yearLevel    = is_numeric($yearLevel) ? intval($yearLevel) : null;
 
+            // Determine a user identifier (either username or row number as fallback)
+            $userIdentifier = $username ? "<strong>$username</strong>" : "Row " . ($index + 2);
+
             // Validate basic fields
             if (empty($username) || empty($email) || empty($role)) {
-                $skippedRows[] = "Row " . ($index + 2) . ": Missing required fields";
+                $skippedRows[] = "$userIdentifier: Missing required fields";
                 continue;
             }
 
             // Skip if username/email already exists
             if ($userModel->where('username', $username)->orWhere('email', $email)->first()) {
-                $skippedRows[] = "Row " . ($index + 2) . ": Duplicate username/email";
+                $skippedRows[] = "$userIdentifier: Username/Email already exists";
                 continue;
             }
 
             // Validate role
             if (!in_array($role, ['student', 'faculty', 'admin'])) {
-                $skippedRows[] = "Row " . ($index + 2) . ": Invalid role";
+                $skippedRows[] = "$userIdentifier: Invalid role";
                 continue;
             }
 
             // Validate student requirements
             if ($role === 'student' && (!$curriculumId || !$programId || !$yearLevel)) {
-                $skippedRows[] = "Row " . ($index + 2) . ": Invalid student data";
+                $skippedRows[] = "$userIdentifier: Invalid student data";
                 continue;
             }
 

@@ -317,7 +317,12 @@
                     <li><code>program_name</code></li>
                     <li><code>year_level</code></li>
                 </ul>
-                <div class="text-muted mt-2">Selected File: <span id="uploadedUserFileName">[None]</span></div>
+                <div class="d-flex align-items-center text-muted mt-2">
+                    <span>Selected File: <span id="uploadedUserFileName" class="ms-1">[None]</span></span>
+                    <button type="button" id="removeSelectedFileBtn" class="btn btn-sm btn-link text-danger ms-2 d-none" title="Remove file">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>
                 <div class="alert alert-warning small mt-3 mb-2" role="alert">
                     <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Important:</strong> Please <u>remove the sample rows</u> from the downloaded template before uploading the file.
                 </div>
@@ -359,6 +364,8 @@
         const userFileInput = document.getElementById('users_file');
         const uploadUsersForm = document.getElementById('uploadUsersForm');
         const uploadUserBtn = document.getElementById('triggerUserUploadBtn');
+        const uploadedFileNameDisplay = document.getElementById('uploadedUserFileName');
+        const removeFileBtn = document.getElementById('removeSelectedFileBtn');
 
         uploadUserBtn.addEventListener('click', function () {
             if (!userFileInput.files.length) {
@@ -392,7 +399,8 @@
                     $('#uploadFeedbackModal').modal('show');
 
                     userFileInput.value = "";
-                    document.getElementById('uploadedUserFileName').textContent = '[None]';
+                    uploadedFileNameDisplay.textContent = '[None]';
+                    removeFileBtn.classList.add('d-none');
 
                     if (response.reload) {
                         $('#userTableContainer').load(location.href + " #userTableContainer > *");
@@ -406,11 +414,21 @@
             });
         });
 
+        // Update file name display and show remove button
         userFileInput.addEventListener('change', function () {
-            const fileName = userFileInput.files.length > 0 ? userFileInput.files[0].name : '[No file selected]';
-            document.getElementById('uploadedUserFileName').textContent = fileName;
+            const fileName = userFileInput.files.length > 0 ? userFileInput.files[0].name : '[None]';
+            uploadedFileNameDisplay.textContent = fileName;
+            removeFileBtn.classList.toggle('d-none', !userFileInput.files.length);
+        });
+
+        // Handle remove file button
+        removeFileBtn.addEventListener('click', function () {
+            userFileInput.value = '';
+            uploadedFileNameDisplay.textContent = '[None]';
+            removeFileBtn.classList.add('d-none');
         });
     </script>
+
 
     <script>
     document.addEventListener('keydown', function(event) {

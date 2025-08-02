@@ -127,9 +127,18 @@ class Password extends BaseController
     public function resetPassword()
     {
         $email = $this->request->getPost('email');
-        $password = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+        $newPasswordRaw = $this->request->getPost('password');
 
         $userModel = new UserModel();
+        $user = $userModel->where('email', $email)->first();
+
+        // Check if the new password is the same as the current one
+        if (password_verify($newPasswordRaw, $user['userpassword'])) {
+            session()->setFlashdata('error', 'New password cannot be the same as the old password.');
+            return redirect()->back();
+        }
+
+        $password = password_hash($newPasswordRaw, PASSWORD_DEFAULT);
         $userModel->updatePassword($email, $password);
 
         session()->setFlashdata('success', 'Your password has been reset successfully');

@@ -33,7 +33,7 @@ class FacultyController extends BaseController
         $db = \Config\Database::connect();
         $faculty = $db->table('faculty')->where('user_id', $userId)->get()->getRow();
         $ftbId = $faculty->ftb_id ?? null;
-        $facultyName = $faculty->fname . ' ' . $faculty->lname;
+        $facultyName = ucwords($faculty->fname . ' ' . $faculty->mname . ' ' . $faculty->lname);
 
         // Get current active semester
         $semester = $db->table('semesters')

@@ -175,15 +175,20 @@ class ProfileController extends BaseController
         $user = $userModel->find($userId);
 
         if (!$user || !password_verify($currentPassword, $user['userpassword'])) {
-            return redirect()->back()->with('error', 'Current password is incorrect.')->with('open_modal', 'profileModal');
+            return redirect()->back()->with('error', 'Current password is incorrect.')->with('open_modal', 'editPasswordModal');
         }
 
         if ($newPassword !== $confirmPassword) {
-            return redirect()->back()->with('error', 'New passwords do not match.')->with('open_modal', 'profileModal');
+            return redirect()->back()->with('error', 'New passwords do not match.')->with('open_modal', 'editPasswordModal');
         }
 
         if (strlen($newPassword) < 8) {
-            return redirect()->back()->with('error', 'New password must be at least 8 characters.')->with('open_modal', 'profileModal');
+            return redirect()->back()->with('error', 'New password must be at least 8 characters.')->with('open_modal', 'editPasswordModal');
+        }
+
+        // Check if the new password is the same as the current one
+        if (password_verify($newPassword, $user['userpassword'])) {
+            return redirect()->back()->with('error', 'New password cannot be the same as the old password.')->with('open_modal', 'editPasswordModal');
         }
 
         // Update password

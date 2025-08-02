@@ -26,6 +26,7 @@ class StudentController extends BaseController
 
         $studentModel = new StudentModel();
         $student = $studentModel->where('user_id', session('user_id'))->first();
+        $studentName = ucwords($student['fname'] . ' ' . $student['mname'] . ' ' . $student['lname']);
         if ($student) {
             session()->set([
                 'stb_id' => $student['stb_id'],
@@ -115,7 +116,8 @@ class StudentController extends BaseController
                 'announcements' => $announcements,
                 'programs' => $programs,
                 'student' => $student,
-                'schedule' => $schedule
+                'schedule' => $schedule,
+                'studentName' => $studentName
             ])
             . view('templates/footer');
     }

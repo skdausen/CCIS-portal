@@ -349,7 +349,6 @@ class AdminController extends BaseController
 
     }
 
-
     public function downloadUserTemplate()
     {
         $spreadsheet = new Spreadsheet();
@@ -363,7 +362,7 @@ class AdminController extends BaseController
         $sheet->setCellValue('E1', 'program_name');
         $sheet->setCellValue('F1', 'year_level');
 
-        // Optional sample rows
+        // Sample rows
         $sheet->setCellValue('A2', 'CCIS-22-0001');
         $sheet->setCellValue('B2', 'student1@gmail.com');
         $sheet->setCellValue('C2', 'student');
@@ -382,15 +381,12 @@ class AdminController extends BaseController
 
         // Set headers for download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="user_download_template.xlsx"');
+        header('Content-Disposition: attachment;filename="User_Sample_Template.xlsx"');
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output');
         exit;
     }
-
-
-
 
     // Controller method to get users with joined profile info
     public function viewUsers()

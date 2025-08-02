@@ -318,6 +318,9 @@
                     <li><code>year_level</code></li>
                 </ul>
                 <div class="text-muted mt-2">Selected File: <span id="uploadedUserFileName">[None]</span></div>
+                <div class="alert alert-warning small mt-3 mb-2" role="alert">
+                    <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Important:</strong> Please <u>remove the sample rows</u> from the downloaded template before uploading the file.
+                </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="triggerUserUploadBtn" class="btn btn-outline-success">
@@ -331,10 +334,10 @@
 
     <!-- FEEDBACK MODAL -->
     <div class="modal fade" id="uploadFeedbackModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Upload Summary</h5>
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title text-white">Upload Summary</h5>
             <button class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -346,7 +349,6 @@
         </div>
     </div>
     </div>
-
 
     <!-- Custom JS for Users Page -->
     <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
@@ -366,14 +368,14 @@
 
             const formData = new FormData(uploadUsersForm);
 
-            // 🔐 Append CSRF token manually
+            // Append CSRF token manually
             const csrfTokenName = '<?= csrf_token() ?>';
             const csrfHash = '<?= csrf_hash() ?>';
             formData.append(csrfTokenName, csrfHash);
 
             uploadUserBtn.disabled = true;
             const originalText = uploadUserBtn.innerHTML;
-            uploadUserBtn.innerHTML = '⏳ Uploading...';
+            uploadUserBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Uploading...';
 
             $.ajax({
                 url: uploadUsersForm.action,

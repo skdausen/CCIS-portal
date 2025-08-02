@@ -89,6 +89,10 @@ class Password extends BaseController
     {
         $email = $this->request->getPost('email');
         $otp = $this->request->getPost('otp');
+        $otp = preg_replace('/\s+/', '', $otp);
+        if (!preg_match('/^\d{6}$/', $otp)) {
+            return redirect()->back()->with('error', 'OTP code must be exactly 6 digits.');
+        }
 
         $userModel = new UserModel();
         if ($userModel->verifyOTP($email, $otp)) {

@@ -185,14 +185,18 @@
                     style="width: 120px; height: 120px; object-fit: cover;">
                 
                 <div class="mt-2">
-                    <label for="profimg" class="form-label small text-muted">Change Photo</label>
+                    <label for="profimg" class="form-label small text-muted">
+                      Change Photo
+                      <span class="d-block text-muted fst-italic" style="font-size:0.75rem;">Max file size: 1MB</span>
+                    </label>
 
                     <div class="d-flex align-items-center gap-2">
                         <input type="file"
                             name="profimg"
                             id="profimg"
                             class="form-control form-control-sm flex-grow-1"
-                            accept="image/*">
+                            accept="image/*"
+                            placeholder="Max file size: 1MB">
 
                         <button type="button"
                             id="clearProfileImage"
@@ -450,6 +454,14 @@
       profileInput.addEventListener('change', function () {
           const file = this.files[0];
           if (file) {
+              // Check if file size is more than 1MB (1048576 bytes)
+              if (file.size > 1048576) {
+                  alert('Image must not exceed 1MB.');
+                  this.value = ''; // Clear the input
+                  profilePreview.src = currentImage; // Reset preview
+                  clearFlag.value = '0';
+                  return;
+              }
               profilePreview.src = URL.createObjectURL(file);
               clearFlag.value = '0'; // user picked new file
           }

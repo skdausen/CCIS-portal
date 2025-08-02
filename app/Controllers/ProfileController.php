@@ -38,6 +38,10 @@ class ProfileController extends BaseController
         } else {
             $img = $this->request->getFile('profimg');
             if ($img && $img->isValid() && !$img->hasMoved()) {
+                // CHECK FILE SIZE (1MB = 1048576 bytes)
+                if ($img->getSize() > 1048576) {
+                    return redirect()->back()->with('error', 'Image must not exceed 1MB.');
+                }
                 $mimeType = $img->getMimeType(); // Get actual MIME type
                 $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 
@@ -65,8 +69,19 @@ class ProfileController extends BaseController
                     imagewebp($image, $destination, 80); // compress and save
                     imagedestroy($image);
 
+                    // SET new image
                     $data['profimg'] = $webpName;
-                } else {
+
+                    // DELETE old image (if not default.png)
+                    $oldImage = session('profimg');
+                    if ($oldImage && $oldImage !== 'default.png') {
+                        $oldPath = FCPATH . 'rsc/assets/uploads/' . $oldImage;
+                        if (file_exists($oldPath)) {
+                            unlink($oldPath);
+                        }
+                    }
+                }
+                else {
                     $data['profimg'] = session('profimg') ?? 'default.png';
                 }
             } else {

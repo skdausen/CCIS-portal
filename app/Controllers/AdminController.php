@@ -13,7 +13,9 @@ use App\Models\StudentModel;
 use App\Models\AnnouncementModel;
 use App\Models\CurriculumModel;
 use App\Models\ProgramModel;
-
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class AdminController extends BaseController
 {
@@ -184,6 +186,210 @@ class AdminController extends BaseController
         }
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
+
+
+    public function uploadUsers()
+    {
+        helper(['form']);
+
+        $file = $this->request->getFile('users_file');
+
+        if (!$file->isValid()) {
+            $msg = 'Invalid file upload.';
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => $msg]);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
+        // Validate MIME type and extension
+        $allowedTypes = [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel'
+        ];
+        $ext = $file->getClientExtension();
+        if (!in_array($file->getMimeType(), $allowedTypes) || !in_array($ext, ['xls', 'xlsx'])) {
+            return redirect()->back()->with('error', 'Please upload a valid Excel file (XLS or XLSX).');
+        }
+
+        // Put your try-catch here
+        try {
+            $userModel = new UserModel();
+            $studentModel = new StudentModel();
+            $facultyModel = new FacultyModel();
+            $adminModel = new AdminModel();
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Model error: ' . $e->getMessage()
+            ]);
+        }
+
+        // Load models
+        $userModel       = new UserModel();
+        $studentModel    = new StudentModel();
+        $facultyModel    = new FacultyModel();
+        $adminModel      = new AdminModel();
+        $programModel    = new ProgramModel();
+        $curriculumModel = new CurriculumModel();
+
+        // Load spreadsheet
+        $reader = new XlsxReader;
+        $spreadsheet = $reader->load($file->getTempName());
+        $sheet = $spreadsheet->getActiveSheet()->toArray();
+
+        // Fetch all program/curriculum name-ID maps
+        $programs    = array_column($programModel->findAll(), 'program_id', 'program_name');
+        $curriculums = array_column($curriculumModel->findAll(), 'curriculum_id', 'curriculum_name');
+
+        $db = \Config\Database::connect();
+        $defaultPassword = password_hash('ccis1234', PASSWORD_DEFAULT);
+        $defaultImg = 'default.png';
+
+        $db->transStart();
+
+        $addedUsers = 0;
+        $skippedRows = [];
+
+        foreach (array_slice($sheet, 1) as $index => $row) {
+            [$username, $email, $role, $curriculumName, $programName, $yearLevel] = array_map('trim', $row);
+
+            $username = strtoupper($username);
+            $role     = strtolower($role);
+            $curriculumId = $curriculums[$curriculumName] ?? null;
+            $programId    = $programs[$programName] ?? null;
+            $yearLevel    = is_numeric($yearLevel) ? intval($yearLevel) : null;
+
+            // Validate basic fields
+            if (empty($username) || empty($email) || empty($role)) {
+                $skippedRows[] = "Row " . ($index + 2) . ": Missing required fields";
+                continue;
+            }
+
+            // Skip if username/email already exists
+            if ($userModel->where('username', $username)->orWhere('email', $email)->first()) {
+                $skippedRows[] = "Row " . ($index + 2) . ": Duplicate username/email";
+                continue;
+            }
+
+            // Validate role
+            if (!in_array($role, ['student', 'faculty', 'admin'])) {
+                $skippedRows[] = "Row " . ($index + 2) . ": Invalid role";
+                continue;
+            }
+
+            // Validate student requirements
+            if ($role === 'student' && (!$curriculumId || !$programId || !$yearLevel)) {
+                $skippedRows[] = "Row " . ($index + 2) . ": Invalid student data";
+                continue;
+            }
+
+            // Insert into users table
+            $userId = $userModel->insert([
+                'username'     => $username,
+                'email'        => $email,
+                'userpassword' => $defaultPassword,
+                'role'         => $role,
+                'status'       => 'inactive',
+                'created_at'   => date('Y-m-d H:i:s'),
+            ]);
+
+            // Insert into role-specific table
+            if ($role === 'student') {
+                $studentModel->insert([
+                    'student_id'    => $username,
+                    'user_id'       => $userId,
+                    'curriculum_id' => $curriculumId,
+                    'program_id'    => $programId,
+                    'year_level'    => $yearLevel,
+                    'profimg'       => $defaultImg
+                ]);
+            } elseif ($role === 'faculty') {
+                $facultyModel->insert([
+                    'faculty_id' => $username,
+                    'user_id'    => $userId,
+                    'profimg'    => $defaultImg
+                ]);
+            } elseif ($role === 'admin') {
+                $adminModel->insert([
+                    'admin_id' => $username,
+                    'user_id'  => $userId,
+                    'profimg'  => $defaultImg
+                ]);
+            }
+
+            $addedUsers++;
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === false) {
+            $msg = 'Failed to upload users. Please try again.';
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => 'error', 'message' => $msg]);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
+        $summary = "$addedUsers user(s) uploaded successfully.";
+        if (!empty($skippedRows)) {
+            $summary .= ' Skipped rows: <br>' . implode('<br>', $skippedRows);
+        }
+
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'status' => 'success',
+                'message' => $summary,
+                'reload' => true
+            ]);
+        } else {
+            return redirect()->to('admin/users')->with('success', $summary);
+        }
+
+
+    }
+
+
+    public function downloadUserTemplate()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header row
+        $sheet->setCellValue('A1', 'username');
+        $sheet->setCellValue('B1', 'email');
+        $sheet->setCellValue('C1', 'role');
+        $sheet->setCellValue('D1', 'curriculum_name');
+        $sheet->setCellValue('E1', 'program_name');
+        $sheet->setCellValue('F1', 'year_level');
+
+        // Optional sample rows
+        $sheet->setCellValue('A2', 'CCIS-22-0001');
+        $sheet->setCellValue('B2', 'student1@gmail.com');
+        $sheet->setCellValue('C2', 'student');
+        $sheet->setCellValue('D2', 'Old Curriculum');
+        $sheet->setCellValue('E2', 'Bachelor of Science in Computer Science');
+        $sheet->setCellValue('F2', '1');
+
+        $sheet->setCellValue('A3', 'CCIS-22-0002');
+        $sheet->setCellValue('B3', 'faculty@gmail.com');
+        $sheet->setCellValue('C3', 'faculty');
+        $sheet->setCellValue('D3', '');
+        $sheet->setCellValue('E3', '');
+        $sheet->setCellValue('F3', '');
+
+        $writer = new XlsxWriter($spreadsheet);
+
+        // Set headers for download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="user_download_template.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+        exit;
+    }
+
+
 
 
     // Controller method to get users with joined profile info

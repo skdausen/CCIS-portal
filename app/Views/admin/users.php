@@ -10,7 +10,7 @@
         <form method="get" id="filterForm" class="col-md-7">
             <div class="row">
                 <!-- Role filter -->
-                <div class="col-md-5">
+                <div class="col-md-5 mb-2">
                     <select name="role" class="form-select" id="filterRole">
                         <option value="">All Roles</option>
                         <option value="admin" <?= ($role === 'admin') ? 'selected' : '' ?>>Admin</option>
@@ -21,13 +21,23 @@
                 </div>
 
                 <!-- Search input -->
-                <div class="col-md-7">
+                <div class="col-md-7 mb-2">
                     <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search username or email" value="<?= esc($search ?? '') ?>">
                 </div>
             </div>
         </form>
         <!-- Add User Button -->
-        <div class="col-md-5 mb-2 d-flex justify-content-end">
+        <div class="col-md-5 mb-2 d-flex justify-content-end gap-2">
+            <!-- DOWNLOAD EXCEL FORMAT FOR UPLOAD -->
+            <a href="<?= site_url('admin/download-user-template') ?>" 
+                class="btn btn-outline-success" 
+                id="downloadTemplateBtn">
+                Download Template
+            </a>
+            <!-- OPEN UPLOAD MODAL -->
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#uploadUsersModal">
+                Upload Excel
+            </button>
             <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Add Account</button>
         </div>
     </div>
@@ -126,7 +136,6 @@
         </ul>
     </nav>
 
-
     <!-- ADD USER MODAL -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-md modal-dialog-centered">
@@ -190,7 +199,6 @@
                             <option value="4" <?= ($student['year_level'] ?? '') == 'Fourth Year' ? 'selected' : '' ?>>4th Year</option>
                         </select>
                     </div>
-
 
                     <p class="mt-3"><strong>Default password:</strong> <code>ccis1234</code></p>
                 </div>
@@ -287,8 +295,120 @@
     </div>
     </div>
 
+    <!-- UPLOAD USERS FORM -->
+    <form id="uploadUsersForm" action="<?= site_url('admin/upload-users') ?>" method="post" enctype="multipart/form-data">
+        <?= csrf_field() ?>
+        <input type="file" id="users_file" name="users_file" class="d-none" accept=".xlsx,.xls" required>
+        <!-- UPLOAD USERS MODAL -->
+        <div class="modal fade" id="uploadUsersModal" tabindex="-1" aria-labelledby="uploadUsersModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Upload User Accounts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                <p>Upload an Excel file based on the template format. File must include the following headers:</p>
+                <ul>
+                    <li><code>username</code></li>
+                    <li><code>email</code></li>
+                    <li><code>role</code></li>
+                    <li><code>curriculum_name</code></li>
+                    <li><code>program_name</code></li>
+                    <li><code>year_level</code></li>
+                </ul>
+                <div class="text-muted mt-2">Selected File: <span id="uploadedUserFileName">[None]</span></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="triggerUserUploadBtn" class="btn btn-outline-success">
+                        Upload File
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- FEEDBACK MODAL -->
+    <div class="modal fade" id="uploadFeedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Upload Summary</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div id="uploadFeedbackMessage" class="text-muted"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
     <!-- Custom JS for Users Page -->
     <script src="<?= base_url('rsc/custom_js/users.js') ?>"></script>
+
+    <script src="<?= base_url('rsc/custom_js/jquery-3.6.0.min.js') ?>"></script>
+
+    <script>
+        const userFileInput = document.getElementById('users_file');
+        const uploadUsersForm = document.getElementById('uploadUsersForm');
+        const uploadUserBtn = document.getElementById('triggerUserUploadBtn');
+
+        uploadUserBtn.addEventListener('click', function () {
+            if (!userFileInput.files.length) {
+                userFileInput.click();
+                return;
+            }
+
+            const formData = new FormData(uploadUsersForm);
+
+            // 🔐 Append CSRF token manually
+            const csrfTokenName = '<?= csrf_token() ?>';
+            const csrfHash = '<?= csrf_hash() ?>';
+            formData.append(csrfTokenName, csrfHash);
+
+            uploadUserBtn.disabled = true;
+            const originalText = uploadUserBtn.innerHTML;
+            uploadUserBtn.innerHTML = '⏳ Uploading...';
+
+            $.ajax({
+                url: uploadUsersForm.action,
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    uploadUserBtn.disabled = false;
+                    uploadUserBtn.innerHTML = originalText;
+
+                    $('#uploadUsersModal').modal('hide');
+                    $('#uploadFeedbackMessage').html(response.message);
+                    $('#uploadFeedbackModal').modal('show');
+
+                    userFileInput.value = "";
+                    document.getElementById('uploadedUserFileName').textContent = '[None]';
+
+                    if (response.reload) {
+                        $('#userTableContainer').load(location.href + " #userTableContainer > *");
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while uploading the users.");
+                    uploadUserBtn.disabled = false;
+                    uploadUserBtn.innerHTML = originalText;
+                }
+            });
+        });
+
+        userFileInput.addEventListener('change', function () {
+            const fileName = userFileInput.files.length > 0 ? userFileInput.files[0].name : '[No file selected]';
+            document.getElementById('uploadedUserFileName').textContent = fileName;
+        });
+    </script>
 
     <script>
     document.addEventListener('keydown', function(event) {

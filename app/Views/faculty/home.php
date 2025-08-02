@@ -57,7 +57,7 @@
                         <div id="calendar" class="calendar-sm p-3"></div>
                     </div>
 
-                    <!-- 🔍 Filter Logic -->
+                    <!--  Filter Logic -->
                     <?php
                         $today = date('Y-m-d');
                         $currentMonth = date('m');

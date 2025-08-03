@@ -22,13 +22,13 @@ class ProfileController extends BaseController
 
         $clearImage = $this->request->getPost('clear_image');
         $data = [
-            'fname'      => $this->request->getPost('fname'),
-            'mname'      => $this->request->getPost('mname'),
-            'lname'      => $this->request->getPost('lname'),
+            'fname'      => ucwords(strtolower($this->request->getPost('fname'))),
+            'mname'      => ucwords(strtolower($this->request->getPost('mname'))),
+            'lname'      => ucwords(strtolower($this->request->getPost('lname'))),
             'email'      => $this->request->getPost('email'),
             'sex'        => $this->request->getPost('sex'),
             'birthdate'  => $this->request->getPost('birthdate'),
-            'address'    => $this->request->getPost('address'),
+            'address'    => ucwords(strtolower($this->request->getPost('address'))),
             'contactnum' => $this->request->getPost('contactnum'),
         ];
 

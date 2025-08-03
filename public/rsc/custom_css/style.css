@@ -815,6 +815,11 @@ sssssssssssssssssssssssssidebar */
         justify-content: center;
         padding: 1rem 0;
     }
+    /* MODAL */
+    .custom-modal-dialog {
+        align-items: flex-start !important;
+        margin-top: 1rem !important;       
+    }
 
     /* CLASSES TABLE */
     .table-scroll {

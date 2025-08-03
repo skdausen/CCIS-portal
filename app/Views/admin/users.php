@@ -300,8 +300,8 @@
         <?= csrf_field() ?>
         <input type="file" id="users_file" name="users_file" class="d-none" accept=".xlsx,.xls" required>
         <!-- UPLOAD USERS MODAL -->
-        <div class="modal fade" id="uploadUsersModal" tabindex="-1" aria-labelledby="uploadUsersModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal fade" id="uploadUsersModal" tabindex="-1" aria-labelledby="uploadUsersModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-md custom-modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title">Upload User Accounts</h5>

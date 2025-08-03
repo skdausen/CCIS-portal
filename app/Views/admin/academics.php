@@ -32,7 +32,7 @@
 
     <!-- Chart -->
      <div class="mt-5">
-        <h4>Academic Overview</h4>
+        <h4>Academic Overview Chart</h4>
         <!-- Fixed height, white background -->
         <div style="height: 500px; background-color: white; padding: 1rem; border-radius: 10px;">
             <canvas id="summaryChart"></canvas>

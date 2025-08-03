@@ -4,9 +4,9 @@
     </div>
 
     <?php if ($currentYearKey && !empty($groupedSubjects[$currentYearKey])): ?>
-        <div class="row m-0">
+        <div class="row m-0 flex-column flex-md-row justify-content-between">
             <h5 class="col-6 mt-4 fw-bold p-0"><?= $currentYearKey ?></h5>
-            <div class="col-6 d-flex justify-content-end p-0">
+            <div class="col-6 d-flex justify-content-end align-self-end p-0">
                 <nav aria-label="Curriculum pagination" class="small">
                     <p class="text-muted mb-3 text-end small">Page <?= $page ?> of <?= $totalPages ?></p>
                     <ul class="pagination pagination-sm justify-content-center">
@@ -44,40 +44,42 @@
         <?php foreach ($groupedSubjects[$currentYearKey] as $semester => $subjects): ?>
             <?php if (!empty($subjects)): ?>
                 <h6 class="mt-3"><?= $semester ?></h6>
-                <table class="table table-bordered curriculum-table custom-padding">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>LEC Units</th>
-                            <th>LAB Units</th>
-                            <th>Total Units</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $totalLec = 0;
-                        $totalLab = 0;
-                        foreach ($subjects as $subject):
-                            $totalLec += $subject['lec_units'];
-                            $totalLab += $subject['lab_units'];
-                        ?>
-                        <tr>
-                            <td><?= esc($subject['subject_code']) ?></td>
-                            <td><?= esc($subject['subject_name']) ?></td>
-                            <td class="text-center"><?= esc($subject['lec_units']) ?></td>
-                            <td class="text-center"><?= esc($subject['lab_units']) ?></td>
-                            <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <tr class="fw-bold bg-light">
-                            <td colspan="2" class="text-end">Total Units:</td>
-                            <td class="text-center"><?= $totalLec ?></td>
-                            <td class="text-center"><?= $totalLab ?></td>
-                            <td class="text-center"><?= $totalLec + $totalLab ?></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered curriculum-table table-standard custom-padding">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Subject Code</th>
+                                <th>Subject Name</th>
+                                <th>LEC Units</th>
+                                <th>LAB Units</th>
+                                <th>Total Units</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $totalLec = 0;
+                            $totalLab = 0;
+                            foreach ($subjects as $subject):
+                                $totalLec += $subject['lec_units'];
+                                $totalLab += $subject['lab_units'];
+                            ?>
+                            <tr>
+                                <td><?= esc($subject['subject_code']) ?></td>
+                                <td><?= esc($subject['subject_name']) ?></td>
+                                <td class="text-center"><?= esc($subject['lec_units']) ?></td>
+                                <td class="text-center"><?= esc($subject['lab_units']) ?></td>
+                                <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <tr class="fw-bold bg-light">
+                                <td colspan="2" class="text-end">Total Units:</td>
+                                <td class="text-center"><?= $totalLec ?></td>
+                                <td class="text-center"><?= $totalLab ?></td>
+                                <td class="text-center"><?= $totalLec + $totalLab ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         <?php endforeach; ?>
     <?php else: ?>

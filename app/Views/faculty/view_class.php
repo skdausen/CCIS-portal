@@ -36,16 +36,16 @@
     <hr>
 
     <!-- Students Section -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <h6 class="text-uppercase fw-bold text-muted mb-0">Enrolled Students:</h6>
-        <div>
-            <button type="button" class="btn btn-outline-success btn-sm me-2 mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
-                Manage Students
-            </button>
-            <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-outline-success btn-sm mb-3">
-              Manage Grades
-            </a>
-        </div>
+    <div class="d-flex justify-content-between mb-2 ">
+      <h6 class="text-uppercase fw-bold text-muted mb-3 mt-0 mt-md-3">Enrolled Students:</h6>
+      <div class="d-flex align-self-center">
+          <button type="button" class="btn btn-outline-success btn-sm me-2 mb-3" data-bs-toggle="modal" data-bs-target="#manageStudentsModal">
+              Manage Students
+          </button>
+          <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades') ?>" class="btn btn-outline-success btn-sm mb-3">
+            Manage Grades
+          </a>
+      </div>
     </div>
 
     <!-- Students Table -->
@@ -54,7 +54,7 @@
           <div class="alert alert-warning">No students enrolled in this class.</div>
       <?php else: ?>
           <div class="table-responsive">
-              <table class="table table-bordered table-sm custom-padding">
+              <table class="table table-bordered table-sm custom-padding table-standard enrolled-students-table">
                 <thead class="table-dark">
                   <tr>
                     <th>ID Number</th>
@@ -84,26 +84,26 @@
           </div>
       <?php endif; ?>
     </div>
-</div>
+  </div>
 
-<!-- Modal -->
-<div class="modal fade" id="manageStudentsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="manageStudentsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/enroll') ?>" method="post">
-      <div class="modal-content">
+  <!-- MANAGE STUDENT Modal -->
+  <div class="modal fade" id="manageStudentsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="manageStudentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+      <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/enroll') ?>" method="post">
+        <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="manageStudentsModalLabel">Enroll Students</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
-          <!-- 🔎 Filter bar -->
+          <!-- Filter bar -->
           <div class="row mb-3">
             <div class="col-md-4">
-              <input type="text" id="studentSearch" class="form-control" placeholder="Search by name or ID number...">
+              <input type="text" id="studentSearch" class="form-control mb-2" placeholder="Search by name or ID number...">
             </div>
             <div class="col-md-4">
-              <select id="filterProgram" class="form-select">
+              <select id="filterProgram" class="form-select mb-2">
                 <option value="">All Programs</option>
                 <?php 
                   $programs = array_unique(array_column($allStudents, 'program_name'));
@@ -113,7 +113,7 @@
               </select>
             </div>
             <div class="col-md-4">
-              <select id="filterYear" class="form-select">
+              <select id="filterYear" class="form-select mb-2">
                 <option value="">All Year Levels</option>
                 <?php 
                   $years = array_unique(array_column($allStudents, 'year_level'));
@@ -126,8 +126,8 @@
           </div>
 
           <!-- Table -->
-          <div class="table-responsive">
-            <table class="table table-hover table-bordered" id="studentsTable">
+          <div class="table-responsive table-scroll-y">
+            <table class="table table-hover table-bordered students-table table-standard" id="studentsTable">
               <thead class="table-dark">
                 <tr>
                   <th>Select</th>
@@ -198,7 +198,7 @@
 </script>
 
 
-<!-- 🔥 Style for selection feedback -->
+<!-- Style for selection feedback -->
 <style>
   .selectable-row {
     cursor: pointer;
@@ -213,7 +213,7 @@
   }
 </style>
 
-<!-- 💫 JS for row selection + filtering -->
+<!-- JS for row selection + filtering -->
 <script>
   function filterStudents() {
     const search = document.getElementById('studentSearch').value.toLowerCase();

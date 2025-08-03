@@ -46,7 +46,7 @@
     <div id="userTableContainer">
         <div class="table-responsive" >
             <div class="table-scroll">
-                <table class="table table-bordered table-hover custom-padding users-table" id="usersTable">
+                <table class="table table-bordered table-hover custom-padding users-table table-standard" id="usersTable">
                     <thead class="table-light">
                         <tr>
                             <th>User ID</th>
@@ -360,6 +360,7 @@
 
     <script src="<?= base_url('rsc/custom_js/jquery-3.6.0.min.js') ?>"></script>
 
+    <!-- User AJAX -->
     <script>
         const userFileInput = document.getElementById('users_file');
         const uploadUsersForm = document.getElementById('uploadUsersForm');
@@ -429,7 +430,7 @@
         });
     </script>
 
-
+    <!-- Keyboard Navigation for Pagination -->
     <script>
     document.addEventListener('keydown', function(event) {
         const currentPage = <?= $page ?>;

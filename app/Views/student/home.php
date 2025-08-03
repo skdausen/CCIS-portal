@@ -1,4 +1,3 @@
-<!-- Views/admin/home.php -->
 <div class="container mt-5 <?= esc(session('role')) ?>">
     <h2>Welcome, <?= $studentName?>!</h2>
 
@@ -12,7 +11,7 @@
 
                     <?php if (!empty($entries)): ?>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-sm schedule-table custom-padding">
+                            <table class="table table-bordered table-sm schedule-table table-standard custom-padding">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Subject Code</th>
@@ -60,18 +59,6 @@
                             <ul class="quick-links">
                                 <li>
                                     <a href="https://fpes.online/login-student.php" target="_blank"><i class="fa-solid fa-link me-2"></i>Faculty Evaluation</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/people/Ispsc-Main-Campus-Registrar/61576774508246/" target="_blank"><i class="fa-solid fa-link me-2"></i>ISPSC Main Campus- Registrar FB Page</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/people/ISPSC-Main-Campus-Office-of-Student-Affairs-and-Services/100095246231734/" target="_blank"><i class="fa-solid fa-link me-2"></i>ISPSC Main Campus- SAS FB Page</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/nlpsccssocandon" target="_blank"><i class="fa-solid fa-link me-2"></i>CSSO FB Page</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/ComputingStudiesISPSCMain" target="_blank"><i class="fa-solid fa-link me-2"></i>Computing Studies FB Page</a>
                                 </li>
                             </ul>    
                         </div>

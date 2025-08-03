@@ -91,7 +91,7 @@
 
         <div class="table-responsive">
             <div class="table-scroll">
-                <table class="table table-bordered table-hover classes-table custom-padding">
+                <table class="table table-bordered table-hover classes-table table-standard custom-padding">
                     <thead class="table-light">
                         <tr>
                             <th>Subject</th>

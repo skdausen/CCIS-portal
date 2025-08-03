@@ -57,7 +57,7 @@
         <!-- Subjects Table -->
         <div class="table-responsive">
             <div class="table-scroll">
-                <table class="table table-bordered table-hover subjects-table custom-padding" id="subjectsTable">
+                <table class="table table-bordered table-hover subjects-table table-standard custom-padding" id="subjectsTable">
                     <thead class="table-light">
                         <tr>
                             <th>Subject Code</th>

@@ -8,7 +8,7 @@
 
         <!-- Search Filter -->
         <div class="row align-items-center mb-4">
-            <div class="col-md-5 d-flex gap-2">
+            <div class="col-md-5 mb-2 d-flex gap-2">
                 <input type="text" id="curriculumSearch" class="form-control" placeholder="Search Curriculum Name...">
                 <button type="button" id="clearFilterBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2">Clear</button>
             </div>
@@ -59,8 +59,8 @@
         <div id="curriculumList">
             <?php foreach ($curriculumsToDisplay as $curriculum): ?>
                 <div class="card mb-3 curriculum-card">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
+                    <div class="card-body d-flex justify-content-between flex-column flex-md-row">
+                        <div class="mb-3 mb-md-0">
                             <h5 class="curriculum-title mb-1">
                                 <a href="<?= site_url('admin/academics/curriculums/view/' . $curriculum['curriculum_id']) ?>">
                                     <?= esc($curriculum['curriculum_name']) ?>
@@ -68,7 +68,7 @@
                             </h5>
                             <p class="curriculum-program mb-0"><?= esc($curriculum['program_name']) ?></p>
                         </div>
-                        <button class="btn btn-sm btn-outline-primary"
+                        <button class="btn btn-sm btn-outline-primary ms-auto ms-md-0 align-self-md-center"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editModal<?= $curriculum['curriculum_id'] ?>">
                             Edit

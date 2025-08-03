@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } else {
             let html = `
-                <table class="table table-bordered custom-padding faculty-classes">
+                <table class="table table-bordered custom-padding faculty-classes table-standard">
                     <thead>
                         <tr>
                             <th>Subject Code</th>

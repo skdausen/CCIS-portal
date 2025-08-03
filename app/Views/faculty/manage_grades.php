@@ -31,7 +31,7 @@
             <div id="gradeTableContainer">
                 <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/save') ?>" method="post">
                     <div class="table-responsive">
-                        <table class="table table-bordered grade-table align-middle custom-padding">
+                        <table class="table table-bordered grade-table table-standard align-middle custom-padding">
                             <thead class="table-dark text-center">
                                 <tr>
                                     <th>ID Number</th>

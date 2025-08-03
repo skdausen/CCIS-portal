@@ -2,6 +2,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Force browser not to cache this page -->
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>AdaL CCIS Portal</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="<?= base_url("rsc/bootstrap-5.3.7/css/bootstrap.min.css") ?>">
@@ -11,15 +17,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- FullCalendar Styles -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-    <!-- Force browser not to cache this page -->
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
 </head>
+<body>
+    <div class="wrapper d-flex flex-column min-vh-100">
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-darker">
             <div class="container-fluid">
-                <a class="navbar-brand ms-3 p-0" href="<?= site_url('student/home') ?>">
+                <a class="navbar-brand ms-0 ms-md-2 p-0" href="<?= site_url('student/home') ?>">
                     <img src="<?= base_url('rsc/assets/cs-logo.png') ?>" alt="CS Logo" class="cs-logo me-2" style="width: 50px;">
                     CCIS
                 </a>
@@ -57,4 +61,4 @@
             </div>
         </nav>      
     </header>
-    <main class="mt-5">
+    <main class="mt-5 p-3 flex-grow-1">

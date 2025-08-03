@@ -363,8 +363,6 @@
     </div>
   </div>
 
-
-
   <!-- No Active Semester Modal -->
   <div class="modal fade" id="noSemesterModal" tabindex="-1" aria-labelledby="noSemesterModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -441,7 +439,6 @@
     });
   </script>
 
-
   <!-- Prevent back history script -->
   <script src="<?= base_url("rsc/custom_js/preventBackHistory.js") ?>"></script>
 
@@ -495,5 +492,92 @@
   </script>
 
   </main>
+
+  <footer class="footer mt-5 text-center shadow-darker border-top">
+    <div class="container py-4 footer-container">
+      <div class="row align-items-center">
+        <!-- Logo Column -->
+        <div class="col-12 col-md-3 mb-3 mb-md-0 text-md-start">
+          <a href="<?= site_url('admin/home') ?>" class="navbar-brand d-inline-block">
+            <img src="<?= base_url('rsc/assets/cs-logo.png') ?>" alt="CS Logo" class="cs-logo" style="width: 140px;">
+          </a>
+        </div>
+
+        <!-- Main Navigation Links -->
+        <div class="col-12 col-md-6 mb-3 mb-md-0">
+        <ul class="nav justify-content-center flex-wrap">
+            <?php if (in_array(session('role'), ['admin', 'superadmin'])): ?>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('admin/home') ?>">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('admin/users') ?>">Users</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('admin/academics') ?>">Academics</a>
+              </li>
+
+            <?php elseif (session('role') === 'faculty'): ?>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('faculty/home') ?>">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('faculty/classes') ?>">Classes</a>
+              </li>
+
+            <?php elseif (session('role') === 'student'): ?>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('student/home') ?>">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('student/curriculum') ?>">Curriculum</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3 text-dark" href="<?= site_url('student/grades/grades') ?>">Grades</a>
+              </li>
+            <?php endif; ?>
+            <li class="nav-item">
+              <a class="nav-link px-3 text-dark" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-3 text-dark" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-12 col-md-3">
+          <ul class="nav flex-row flex-md-column justify-content-center align-items-center align-items-md-end small">
+            <h6 class="d-none d-md-block">Quick Links</h6>
+            <li class="nav-item">
+              <a class="nav-link px-2 text-dark" href="https://www.facebook.com/people/Ispsc-Main-Campus-Registrar/61576774508246/" target="_blank">
+                <i class="fa-brands fa-facebook me-2"></i>Registrar FB
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 text-dark" href="https://www.facebook.com/people/ISPSC-Main-Campus-Office-of-Student-Affairs-and-Services/100095246231734/" target="_blank">
+                <i class="fa-brands fa-facebook me-2"></i>SAS FB
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 text-dark" href="https://www.facebook.com/nlpsccssocandon" target="_blank">
+                <i class="fa-brands fa-facebook me-2"></i>CSSO FB
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 text-dark" href="https://www.facebook.com/ComputingStudiesISPSCMain" target="_blank">
+                <i class="fa-brands fa-facebook me-2"></i>CCIS FB
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <hr class="my-3">
+      <p class="mb-0 small">&copy; <?= date('Y') ?> CCIS Portal. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
 </body>
 </html>

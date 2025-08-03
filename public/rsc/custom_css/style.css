@@ -15,7 +15,7 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1001; /* high value to keep it above everything */
+    z-index: 1001; 
 }
 
 /* NAVIGATION BAR STYLES */
@@ -56,6 +56,17 @@ header {
 .shadow-darker {
   /* OFFSET X: 4px (right), OFFSET Y: 4px (bottom) */
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); /* darker shadow only on right & bottom */
+}
+
+footer{
+    margin-top: auto;
+    background-color: #343a40;
+    color: white !important;
+    border-radius: 10px 10px 0 0;
+    z-index: 1001;
+}
+.footer-container{
+    z-index: 1002;
 }
 
 /* HOME STYLES */
@@ -421,6 +432,11 @@ h4, h6 {
     z-index: 1081; /* Bootstrap default modals use 1050–1070 */
 }
 
+.table-scroll-y {
+    max-height: 300px;     
+    overflow-y: auto;       
+}
+
 /* Adjustments for mobile responsiveness */
 .fixed-columns th,
 .fixed-columns td {
@@ -710,10 +726,15 @@ sssssssssssssssssssssssssidebar */
     body {
         background: url('../assets/bg-portal.png') repeat fixed; /* it will tile like a pattern */
         background-size: auto; /* optional: you can also try 80px, 100px, etc. */
+        padding: auto;
     }
 
     .cs-logo{
         width: 40px !important;
+    }
+
+    footer .cs-logo{
+        width: 80px !important;
     }
 
     .navbar-collapse {
@@ -800,20 +821,16 @@ sssssssssssssssssssssssssidebar */
         overflow-x: auto;
         width: 100%;
     }
-
-    /* TABLE SETTINGS */
-    .classes-table, .users-table, .semester-table, .subjects-table .faculty-classes {
+    /* STANDARDIZED TABLES */
+    .table-standard {
         table-layout: auto;
         width: 100%;
-        min-width: 800px; 
+        min-width: 800px;
         border-collapse: collapse;
     }
 
-    /* COLUMN SETTINGS */
-    .subjects-table th,
-    .subjects-table td,
-    .classes-table th,
-    .classes-table td {
+    .table-standard th,
+    .table-standard td {
         padding: 10px;
         vertical-align: middle;
         white-space: nowrap;
@@ -822,25 +839,26 @@ sssssssssssssssssssssssssidebar */
         font-size: 0.95rem;
     }
 
+
     /* SUBJECT COLUMN */
-    .classes-table th:nth-child(2),
-    .classes-table td:nth-child(2) {
+    .classes-table th:nth-child(1),
+    .classes-table td:nth-child(1) {
         min-width: 200px;
         max-width: 300px;
         text-align: left;
     }
 
     /* TYPE COLUMN */
-    .classes-table th:nth-child(3),
-    .classes-table td:nth-child(3) {
-        width: 80px;
+    .classes-table th:nth-child(2),
+    .classes-table td:nth-child(2) {
+        width: 100px;
     }
 
     /* SCHEDULE COLUMN */
-    .classes-table th:nth-child(4),
-    .classes-table td:nth-child(4) {
-        min-width: 140px;
-        max-width: 180px;
+    .classes-table th:nth-child(3),
+    .classes-table td:nth-child(3) {
+        min-width: 150px;
+        max-width: 350px;
     }
 
     /* OTHER COLUMNS */
@@ -852,4 +870,35 @@ sssssssssssssssssssssssssidebar */
     .classes-table td:nth-child(7) {
         min-width: 120px;
     }
+
+    /* FACULTY CLASSES */
+
+    /* SUBJECT COLUMN */
+    .faculty-classes th:nth-child(2),
+    .faculty-classes td:nth-child(2) {
+        min-width: 200px;
+        max-width: 300px;
+        text-align: left;
+    }
+
+    /* SCHEDULE COLUMN */
+    .faculty-classes th:nth-child(5),
+    .faculty-classes td:nth-child(5),
+    .faculty-classes th:nth-child(6),
+    .faculty-classes td:nth-child(6) {
+        min-width: 150px;
+        max-width: 300px;
+        text-align: left;
+    }
+
+    /* OTHER COLUMNS */
+    .faculty-classes th:nth-child(3),
+    .faculty-classes td:nth-child(3),       
+    .faculty-classes th:nth-child(4),
+    .faculty-classes td:nth-child(4),S  
+    .faculty-classes th:nth-child(7),
+    .faculty-classes td:nth-child(7) {
+        min-width: 120px;
+    }   
+
 }

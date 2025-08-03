@@ -1,4 +1,4 @@
-<div class="container mt-5 pb-5">
+<div class="container mt-5">
     <div class="mb-4">
         <h2 class="text">My Grades</h2>
     </div>
@@ -7,7 +7,7 @@
         <div class="col-12 col-lg-12">
             <!-- Filters -->
             <form method="get" class="d-flex align-items-end gap-3 mb-4 flex-wrap">
-                <div>
+                <div class="col-12 col-md-4">
                     <label for="semester_id" class="form-label">Semester</label>
                     <select name="semester_id" id="semester_id" class="form-select" onchange="this.form.submit()" style="min-width: 250px;">
                         <?php foreach ($semesters as $sem): ?>
@@ -30,7 +30,7 @@
                 <div class="alert alert-warning shadow-sm rounded">No grades available for selected filters.</div>
             <?php else: ?>
             <div class="table-responsive">
-                <table class="table table-bordered student-grade-table custom-padding">
+                <table class="table table-bordered student-grade-table table-standard custom-padding">
                     <thead class="table-dark align-middle ">
                         <tr>
                             <th>Subject Code</th>
@@ -66,7 +66,7 @@
             <div class="d-flex justify-content-between align-items-start w-100">
 
                 <!-- Grade Card -->
-                <div class="card border-0 shadow-sm col-md-3 scale-down">
+                <div class="card border-0 shadow-sm col-6 col-md-3 scale-down">
                     <div class="card-header">
                         Grade System Guide
                     </div>
@@ -88,7 +88,7 @@
                 </div>
 
                 <!-- Button aligned to bottom right -->
-                <div class="mb-4 ms-auto d-flex flex-column align-items-end">
+                <div class="col-6 col-md-4 mb-4 ms-auto d-flex flex-column align-items-end">
                         <div class="alert <?= $isDeanLister ? 'alert-success' : 'alert-info' ?> mt-4 text-end">
                             <?php
                                 $displayedGwa = ($gwa === null || $gwa === 0 || $hasIncomplete) ? '--' : number_format($gwa, 2);
@@ -98,9 +98,9 @@
                             <?php if ($displayedGwa === '--'): ?>
                                 <small class="text-muted">Some grades may be NE. GWA not available.</small>
                             <?php elseif ($isDeanLister): ?>
-                                <strong>You're qualified for the Dean's List.</strong> Congratulations!
+                                <strong class="small">You're qualified for the Dean's List.</strong> Congratulations!
                             <?php else: ?>
-                                Keep striving! Aim for a GWA ≤ 1.75 and Grades ≤ 2.25 to qualify for the Dean's List.
+                                <small class="text-muted">Keep striving! Aim for a GWA ≤ 1.75 and Grades ≤ 2.25 to qualify for the Dean's List.</small>
                             <?php endif; ?>
                         </div>
                     <a href="<?= site_url('student/grades/download?semester_id=' . $selectedSemester) ?>" class="btn btn-outline-success mb-3">

@@ -56,7 +56,7 @@
         <?php foreach ($groupedSubjects[$currentYearKey] as $semester => $subjects): ?>
             <?php if (!empty($subjects)): ?>
                 <h6 class="mt-3"><?= esc($semester) ?></h6>
-                <table class="table table-bordered curriculum-table custom-padding">
+                <table class="table table-bordered curriculum-table table-standard custom-padding">
                     <thead class="table-light">
                         <tr>
                             <th>Subject Code</th>

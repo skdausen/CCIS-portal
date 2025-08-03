@@ -1,5 +1,5 @@
 <!-- Views/faculty/home.php -->
-<div class="container mt-5 <?= esc(session('role')) ?> pb-5">
+<div class="container mt-5 <?= esc(session('role')) ?>">
     <h2>Welcome, <?= $facultyName ?>!</h2>
 
     <div class="row mt-3">
@@ -12,7 +12,7 @@
 
                     <?php if (count($entries) > 0): ?>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-sm schedule-table align-middle custom-padding">
+                            <table class="table table-bordered table-sm schedule-table table-standard align-middle custom-padding">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Subject Code</th>

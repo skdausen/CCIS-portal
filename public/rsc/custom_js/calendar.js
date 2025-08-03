@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (calendarEl && typeof announcements !== 'undefined') {
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            height: 400,
+            height: 500,
             events: announcements.map(a => ({
                 id: a.announcement_id,
                 title: a.title,
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 document.getElementById('eventDescription').innerText = announcement.content;
 
-                // ✅ Insert your safe block here (edit + delete only for admins)
+                //edit + delete only for admins
                 const idInput = document.getElementById('modalAnnouncementId');
                 if (idInput) {
                     idInput.value = announcementId;

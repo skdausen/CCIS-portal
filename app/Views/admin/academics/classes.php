@@ -44,10 +44,6 @@
                 </select>
                 <button id="clearFiltersBtn" class="btn btn-outline-secondary btn-thin rounded-1 px-3 py-2 ms-2">Clear</button>
             </div>
-<!-- 
-            <div class="col-md-1 mb-2">
-                
-            </div> -->
 
             <div class="col-md-3 mb-2 text-end">
                 <button class="btn btn-outline-success"

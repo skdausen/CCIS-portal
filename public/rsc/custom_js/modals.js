@@ -67,3 +67,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+
+function showNoSemesterModal() {
+    const modalElement = document.getElementById('noSemesterModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    // Auto-close after 1.5 seconds (1500 ms)
+    setTimeout(() => {
+        modal.hide();
+    }, 1500);
+}
+
+

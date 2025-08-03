@@ -54,9 +54,6 @@
     </div>
     <?php endif; ?>
 
-
-
-
         <!-- Subjects Table -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover custom-padding" id="subjectsTable">

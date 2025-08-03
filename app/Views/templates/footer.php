@@ -85,7 +85,7 @@
                   </tr>
                   <tr>
                     <th>Full Name</th>
-                    <td><?= esc(session('fname')) ?> <?= esc(session('mname')) ?> <?= esc(session('lname')) ?></td>
+                    <td><?= ucwords(esc(session('fname') . ' ' . session('mname') . ' ' . session('lname'))) ?></td>
                   </tr>
                   <tr>
                     <th>Sex</th>
@@ -126,7 +126,7 @@
                   </tr>
                   <tr>
                     <th>Address</th>
-                    <td><?= esc(session('address')) ?></td>
+                    <td><?= esc(ucwords(session('address'))) ?></td>
                   </tr>
                   <tr>
                     <th>Contact Number</th>
@@ -162,7 +162,7 @@
     </div>
   </div>
 
-  <!-- EDIT PROFILE MODAL (Styled like Profile View) -->
+  <!-- EDIT PROFILE MODAL -->
   <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
@@ -185,14 +185,18 @@
                     style="width: 120px; height: 120px; object-fit: cover;">
                 
                 <div class="mt-2">
-                    <label for="profimg" class="form-label small text-muted">Change Photo</label>
+                    <label for="profimg" class="form-label small text-muted">
+                      Change Photo
+                      <span class="d-block text-muted fst-italic" style="font-size:0.75rem;">Max file size: 1MB</span>
+                    </label>
 
                     <div class="d-flex align-items-center gap-2">
                         <input type="file"
                             name="profimg"
                             id="profimg"
                             class="form-control form-control-sm flex-grow-1"
-                            accept="image/*">
+                            accept="image/*"
+                            placeholder="Max file size: 1MB">
 
                         <button type="button"
                             id="clearProfileImage"
@@ -288,16 +292,23 @@
               </div>
 
               <?php if (session('role') === 'faculty'): ?>
-              <div class="col-md-12">
-                <label for="employee_status" class="form-label">Employee Status:</label>
-                <select name="employee_status" id="employee_status" class="form-select">
-                  <option value="">Select status</option>
-                  <option value="Full-time" <?= (isset($faculty['employee_status']) && $faculty['employee_status'] === 'Full-time') ? 'selected' : '' ?>>Regular</option>
-                  <option value="Part-time" <?= (isset($faculty['employee_status']) && $faculty['employee_status'] === 'Part-time') ? 'selected' : '' ?>>Part-Time</option>
-                </select>
-              </div>
-              <?php endif; ?>
+                <div class="col-md-12">
+                  <label for="employee_status" class="form-label">Employee Status:</label>
+                  <select name="employee_status" id="employee_status" class="form-select" required>
+                    <option value="">Select status</option>
+                    <option value="Full-time"
+                      <?= session('employee_status') === 'Full-time' ? 'selected' : '' ?>>
+                      Regular
+                    </option>
+                    <option value="Part-time"
+                      <?= session('employee_status') === 'Part-time' ? 'selected' : '' ?>>
+                      Part-Time
+                    </option>
+                  </select>
+                </div>
 
+
+              <?php endif; ?>
 
               <!-- Address -->
               <div class="col-md-12">
@@ -317,89 +328,93 @@
   </div>
 
   <!-- EDIT PASSWORD MODAL -->
-<div class="modal fade" id="editPasswordModal" tabindex="-1" aria-labelledby="editPasswordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <form action="<?= site_url('profile/update_password') ?>" method="post">
-        <?= csrf_field() ?>
-        <div class="modal-header">
-          <h5 class="modal-title" id="editPasswordModalLabel">Change Password</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="currentPassword" class="form-label">Current Password</label>
-            <input type="password" name="current_password" id="currentPassword" class="form-control" placeholder="Enter Current password" required>
+  <div class="modal fade" id="editPasswordModal" tabindex="-1" aria-labelledby="editPasswordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="editPasswordForm" action="<?= site_url('profile/update_password') ?>" method="post">
+          <?= csrf_field() ?>
+          <div class="modal-header">
+            <h5 class="modal-title" id="editPasswordModalLabel">Change Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="mb-3">
-            <label for="newPassword" class="form-label">New Password</label>
-            <input type="password" name="password" class="form-control" placeholder="Enter New password" required>
+          <div class="modal-body">
+            <div id="passwordError" class="alert alert-danger <?= session()->getFlashdata('error') ? '' : 'd-none' ?>">
+              <?= session()->getFlashdata('error') ?>
+            </div>
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Current Password</label>
+              <input type="password" name="current_password" id="currentPassword" class="form-control" placeholder="Enter Current password" required>
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" name="password" id="newPassword" class="form-control" placeholder="Enter New password" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm New Password</label>
+              <input type="password" name="confirm_password" id="confirmPassword" class="form-control" placeholder="Confirm New password" required>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-            <input type="password" name="confirm_password" id="confirmPassword" class="form-control" placeholder="Confirm New password" required>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-outline-success">Save Changes</button>
+            <button type="button" class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-primary">Save Changes</button>
-          <button type="button" class="btn btn-outline-secondary rounded-1 px-3 py-2 btn-thin" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-<!-- No Active Semester Modal -->
-<div class="modal fade" id="noSemesterModal" tabindex="-1" aria-labelledby="noSemesterModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-danger">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="noSemesterModalLabel">Cannot Add Class</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center">
-        <p class="mb-0">No active semester is set. Please activate a semester first before adding a class.</p>
-      </div>
-      <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Okay</button>
+        </form>
       </div>
     </div>
   </div>
-</div>
-
-<script>
-  function showNoSemesterModal() {
-    const modalElement = document.getElementById('noSemesterModal');
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
-
-    // Auto-close after 1.5 seconds (1500 ms)
-    setTimeout(() => {
-      modal.hide();
-    }, 1500);
-  }
-</script>
 
 
-<?php if (session()->getFlashdata('open_modal')): ?>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function () {
-      var modalId = "<?= session()->getFlashdata('open_modal') ?>";
-      var modalElement = document.getElementById(modalId);
-      if (modalElement) {
-        var modal = new bootstrap.Modal(modalElement);
-        modal.show();
-      }
-    }, 1000); // Delay in milliseconds (1000ms = 1s)
-  });
-</script>
-<?php endif; ?>
 
+  <!-- No Active Semester Modal -->
+  <div class="modal fade" id="noSemesterModal" tabindex="-1" aria-labelledby="noSemesterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-danger">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="noSemesterModalLabel">Cannot Add Class</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="mb-0">No active semester is set. Please activate a semester first before adding a class.</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Okay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- For update password error -->
+  <?php if (session()->getFlashdata('open_modal')): ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const targetModal = new bootstrap.Modal(document.getElementById('<?= session()->getFlashdata('open_modal') ?>'));
+      targetModal.show();
+    });
+  </script>
+  <?php endif; ?>
+
+  <?php if (session()->getFlashdata('open_modal')): ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
+        var modalId = "<?= session()->getFlashdata('open_modal') ?>";
+        var modalElement = document.getElementById(modalId);
+        if (modalElement) {
+          var modal = new bootstrap.Modal(modalElement);
+          modal.show();
+        }
+      }, 1000); // Delay in milliseconds (1000ms = 1s)
+    });
+  </script>
+  <?php endif; ?>
+
+<!-- EXTERNAL JS  -->
 
   <!-- Bootstrap JS -->
   <script src="<?= base_url("rsc/bootstrap-5.3.7/js/bootstrap.bundle.min.js") ?>"></script>
+
+  <!-- Password JS -->
+  <script src="<?= base_url('rsc/custom_js/password.js') ?>"></script>
 
   <!-- Event, Error, Success Modal JS -->
   <script src="<?= base_url('rsc/custom_js/modals.js') ?>"></script>
@@ -450,6 +465,14 @@
       profileInput.addEventListener('change', function () {
           const file = this.files[0];
           if (file) {
+              // Check if file size is more than 1MB (1048576 bytes)
+              if (file.size > 1048576) {
+                  alert('Image must not exceed 1MB.');
+                  this.value = ''; // Clear the input
+                  profilePreview.src = currentImage; // Reset preview
+                  clearFlag.value = '0';
+                  return;
+              }
               profilePreview.src = URL.createObjectURL(file);
               clearFlag.value = '0'; // user picked new file
           }
@@ -471,6 +494,6 @@
 
   </script>
 
-
+  </main>
 </body>
 </html>

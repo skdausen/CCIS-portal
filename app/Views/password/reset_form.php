@@ -13,6 +13,11 @@
         <form action="<?= site_url('password/reset') ?>" method="post">
                         <?= csrf_field() ?>
 
+            <!-- Old password alert -->
+            <div class="alert alert-danger <?= session()->getFlashdata('error') ? '' : 'd-none' ?>" id="passwordOld" role="alert">
+                <?= session()->getFlashdata('error') ?>
+            </div>
+
             <div class="alert alert-danger d-none" id="passwordMismatch" role="alert">
                 Passwords do not match
             </div>
@@ -52,10 +57,12 @@ document.querySelector('form').addEventListener('submit', function(e) {
 
     const alertMismatch = document.getElementById('passwordMismatch');
     const alertShort = document.getElementById('passwordTooShort');
+    const alertOld = document.getElementById('passwordOld');
 
-    // Hide both alerts at the start
+    // Hide alerts at the start
     alertMismatch.classList.add('d-none');
     alertShort.classList.add('d-none');
+    if (alertOld) alertOld.classList.add('d-none');
 
     // Validation checks
     if (password.length < 8) {

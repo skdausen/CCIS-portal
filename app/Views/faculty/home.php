@@ -2,7 +2,7 @@
 <div class="container mt-5 <?= esc(session('role')) ?> pb-5">
     <h2>Welcome, <?= $facultyName ?>!</h2>
 
-    <div class="row mt-5 ">
+    <div class="row mt-3">
         <!-- LEFT COLUMN: WEEKLY SCHEDULE -->
         <div class="col-lg-8 col-12">
             <h4 class="fw-bold mb-4">My Weekly Schedule</h4>
@@ -57,7 +57,7 @@
                         <div id="calendar" class="calendar-sm p-3"></div>
                     </div>
 
-                    <!-- 🔍 Filter Logic -->
+                    <!--  Filter Logic -->
                     <?php
                         $today = date('Y-m-d');
                         $currentMonth = date('m');
@@ -74,33 +74,42 @@
 
                         $latest = !empty($todaysAnnouncements) ? $todaysAnnouncements[0] : null;
 
-                        // Get nearing announcements (this month, not today)
+                        // Get nearing announcements
                         $nearing = array_filter($announcements, function ($a) use ($today) {
                             $eventDate = strtotime($a['event_datetime']);
-                            $now = strtotime($today); // Use today's date at midnight
-                            $tenDaysLater = strtotime('+10 days', $now);
+                            $tomorrow = strtotime('+1 day', strtotime($today));
+                            $tenDaysLater = strtotime('+10 days', strtotime($today));
 
-                            return $eventDate > $now && $eventDate <= $tenDaysLater;
+                            return $eventDate >= $tomorrow && $eventDate <= $tenDaysLater;
                         });
 
                         usort($nearing, function ($a, $b) {
                             return strtotime($a['event_datetime']) - strtotime($b['event_datetime']);
                         });
 
-                        $nearing = array_slice($nearing, 0, 3);
+                        $nearing = array_slice($nearing, 0);
                     ?>
 
-                    <!-- Latest Announcement -->
+                    <!-- Announcements -->
                     <div class="col-12 p-2 card shadow-darker">
+                        <!-- Latest Announcement -->
                         <div class="p-2" id="latest-update">
                             <h5 class="text-purple mb-3"><i class="fa-solid fa-bullhorn me-2"></i> Latest Announcement</h5>
-                            <div class="ms-3">
-                                <?php if ($latest) : ?>
-                                    <h6 class="mt-2"><?= esc($latest['title']); ?></h6>
-                                    <small class="text-muted">
-                                        <?= date('F j, Y \a\t g:i A', strtotime($latest['event_datetime'])); ?>
-                                    </small>
-                                    <p class="mt-2"><?= esc($latest['content']); ?></p>
+                            <div class="latest-scroll ms-3">
+                                <?php if (!empty($todaysAnnouncements)) : ?>
+                                    <?php foreach ($todaysAnnouncements as $announcement) : ?>
+                                        <div class="mb-3">
+                                            <h5><?= esc($announcement['title']); ?></h5>
+                                            <p>
+                                                <small class="text-muted">
+                                                    <?= date('F j, Y \a\t g:i A', strtotime($announcement['event_datetime'])); ?>
+                                                </small>
+                                            </p>
+                                            <p>
+                                                <small class="mt-2"><?= esc($announcement['content']); ?></small>
+                                            </p>
+                                        </div>
+                                    <?php endforeach; ?>
                                 <?php else : ?>
                                     <p>No announcements for today.</p>
                                 <?php endif; ?>
@@ -110,31 +119,47 @@
                         <!-- Nearest Events -->
                         <div class="ms-2">
                             <h6 class="text-purple mt-1"><i class="bi bi-pin-angle-fill me-2"></i> Nearing Events</h6>
-                            <?php if (!empty($nearing)) : ?>
-                                <ul class="list-group list-group-flush mt-2">
-                                    <?php foreach ($nearing as $n) : ?>
-                                        <li class="list-group-item">
-                                            <strong>
-                                                <button class="btn btn-link p-0"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#eventModal"
-                                                    data-id="<?= $n['announcement_id']; ?>"
-                                                    data-title="<?= esc($n['title']); ?>"
-                                                    data-date="<?= date('Y-m-d\TH:i:s', strtotime($n['event_datetime'])); ?>"
-                                                    data-description="<?= esc($n['content']); ?>">
-                                                    <?= esc($n['title']); ?>
-                                                </button>
-                                                <br>
-                                            </strong>
-                                            <small class="text-muted">
-                                                <?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?>
-                                            </small>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <?php else : ?>
-                                    <p class="text-muted mt-2">No upcoming announcements.</p>
-                            <?php endif; ?>
+                            <div class="nearing-scroll">
+                                <?php if (!empty($nearing)) : ?>
+                                    <ul class="list-group list-group-flush">
+                                        <?php foreach ($nearing as $n) : ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div class="flex-grow-1 me-3">
+                                                    <strong>
+                                                        <button class="btn btn-link p-0 text-decoration-none text-black fw-bold"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#eventModal"
+                                                            data-id="<?= $n['announcement_id']; ?>"
+                                                            data-title="<?= esc($n['title']); ?>"
+                                                            data-date="<?= date('Y-m-d\TH:i:s', strtotime($n['event_datetime'])); ?>"
+                                                            data-description="<?= esc($n['content']); ?>">
+                                                            <?= esc($n['title']); ?>
+                                                        </button>
+                                                        <br>
+                                                    </strong>
+                                                    <small class="text-muted">
+                                                        <?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?>
+                                                    </small>
+                                                </div>
+                                                <!-- View Button on the right -->
+                                                <div>
+                                                    <button class="btn btn-sm btn-outline-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#eventModal"
+                                                        data-id="<?= $n['announcement_id']; ?>"
+                                                        data-title="<?= esc($n['title']); ?>"
+                                                        data-date="<?= date('Y-m-d\TH:i:s', strtotime($n['event_datetime'])); ?>"
+                                                        data-description="<?= esc($n['content']); ?>">
+                                                        View
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <?php else : ?>
+                                        <p class="text-muted mt-2">No upcoming announcements.</p>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,7 +170,7 @@
 
 <!-- Modal for Announcement -->
 <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content shadow">
             <div class="modal-header text-dark">
                 <h5 class="modal-title" id="eventModalLabel">Announcement Details</h5>

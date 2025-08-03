@@ -28,7 +28,7 @@
 
         <!-- SEMESTERS TABLE -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover custom-padding" id="semestersTable">
+            <table class="table table-bordered table-hover semester-table custom-padding" id="semestersTable">
                 <thead class="table-light">
                     <tr>
                         <th>Semester</th>

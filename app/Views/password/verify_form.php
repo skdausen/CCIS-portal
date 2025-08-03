@@ -33,7 +33,7 @@
 
                 <div class="mb-3">
                     <label for="otp" class="form-label">OTP Code:</label>
-                    <input type="text" name="otp" class="form-control rounded-pill py-2" placeholder="Enter OTP" required>
+                    <input type="text" name="otp"  max="6" pattern="\d{6}" class="form-control rounded-pill py-2" placeholder="Enter OTP" required>
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 rounded-pill py-2">

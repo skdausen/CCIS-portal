@@ -31,18 +31,26 @@
     </div>
 
     <!-- Chart -->
-    <div class="mt-5">
-        <h4>Courses vs Classes</h4>
-        <canvas id="summaryChart"></canvas>
+     <div class="mt-5">
+        <h4>Academic Overview</h4>
+        <!-- Fixed height, white background -->
+        <div style="height: 500px; background-color: white; padding: 1rem; border-radius: 10px;">
+            <canvas id="summaryChart"></canvas>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
     <script>
         const ctx = document.getElementById('summaryChart').getContext('2d');
+
+        Chart.register(ChartDataLabels); // Register the plugin
+
         const summaryChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [ 'Semesters', 'Subjects', 'Classes', 'Faculty'],
+                labels: ['Semesters', 'Subjects', 'Classes', 'Faculty'],
                 datasets: [{
                     label: 'Total Count',
                     data: [<?= $semestersCount ?>, <?= $subjectsCount ?>, <?= $classesCount ?>, <?= $facultyCount ?>],
@@ -51,25 +59,43 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#333' } // dark text
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#333',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: Math.round
+                    }
+                },
                 scales: {
                     x: {
-                        ticks: { color: 'white' },
+                        ticks: {
+                            color: '#333',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            }
+                        },
                         grid: { color: '#E0E0E0' }
                     },
                     y: {
                         beginAtZero: true,
-                        ticks: { color: 'white' },
+                        ticks: { color: '#333' },
                         grid: { color: '#E0E0E0' }
                     }
-                },
-                plugins: {
-                    legend: {
-                        labels: { color: 'white' }
-                    }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
         });
     </script>
+
 
 
 

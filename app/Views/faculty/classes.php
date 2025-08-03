@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="col-md-12">
-            <div id="classesContainer"></div>
+            <div id="classesContainer" class="table-scroll"></div>
         </div>
             <nav>
                 <ul id="pagination" class="pagination justify-content-center mt-3 gap-3"></ul>
@@ -152,19 +152,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
         } else {
             let html = `
-            <table class="table table-bordered custom-padding">
-                <thead>
-                    <tr>
-                        <th>Subject Code</th>
-                        <th>Subject Name</th>
-                        <th>Type</th>
-                        <th>Section</th>
-                        <th>Lecture</th>
-                        <th>Lab</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+                <table class="table table-bordered custom-padding faculty-classes">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Type</th>
+                            <th>Section</th>
+                            <th>Lecture</th>
+                            <th>Lab</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
             paginated.forEach(c => {
                 const fullTitle = `${c.subject_name}`;
                 const shortTitle = fullTitle.length > 52 ? fullTitle.substring(0, 52) + '...' : fullTitle;

@@ -87,7 +87,9 @@
                         <td><?= esc($subject['subject_type']) ?></td>
                         <td class="text-center"><?= esc($subject['lec_units']) ?></td>
                         <td class="text-center"><?= esc($subject['lab_units']) ?></td>
-                        <td class="text-center"><?= esc($subject['total_units']) ?></td>
+                        <td class="text-center">
+                            <?= esc((int)$subject['lec_units'] + (int)$subject['lab_units']) ?>
+                        </td>
                         <td>
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
                             <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>

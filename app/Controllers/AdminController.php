@@ -825,6 +825,7 @@ public function createSubject()
     $subject_type = $this->request->getPost('subject_type');
     $lec_units    = $this->request->getPost('lec_units');
     $lab_units    = $this->request->getPost('lab_units');
+    $total_units = (int)$lec_units + (int)$lab_units;
 
     //  Normalize inputs
     $normalized_code = strtolower(str_replace(' ', '', $subject_code));
@@ -849,6 +850,7 @@ public function createSubject()
         'subject_type'  => $subject_type,
         'lec_units'     => $lec_units,
         'lab_units'     => $lab_units,
+        'total_units'   => $total_units,
         'curriculum_id' => $this->request->getPost('curriculum_id'),
         'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
     ];
@@ -889,6 +891,7 @@ public function createSubject()
     $subject_type = $this->request->getPost('subject_type');
     $lec_units    = $this->request->getPost('lec_units');
     $lab_units    = $this->request->getPost('lab_units');
+    $total_units = (int)$lec_units + (int)$lab_units;
 
     //  Normalize inputs
     $normalized_code = strtolower(str_replace(' ', '', $subject_code));
@@ -914,6 +917,7 @@ public function createSubject()
         'subject_type'  => $subject_type,
         'lec_units'     => $lec_units,
         'lab_units'     => $lab_units,
+        'total_units'   => $total_units,
         'curriculum_id' => $this->request->getPost('curriculum_id'),
         'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
     ];

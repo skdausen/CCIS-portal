@@ -252,7 +252,16 @@ class AdminController extends BaseController
         $skippedRows = [];
 
         foreach (array_slice($sheet, 1) as $index => $row) {
-            [$username, $email, $role, $curriculumName, $programName, $yearLevel] = array_map('trim', $row);
+            // Skip completely empty rows
+            $trimmedRow = array_map(function ($cell) {
+                return trim((string)$cell);
+            }, $row);
+
+            if (count(array_filter($trimmedRow)) === 0) {
+                continue; // skip if all values are empty after trimming
+            }
+            
+            [$username, $email, $role, $curriculumName, $programName, $yearLevel] = $trimmedRow;
 
             $username = strtoupper($username);
             $role     = strtolower($role);
@@ -263,27 +272,34 @@ class AdminController extends BaseController
             // Determine a user identifier (either username or row number as fallback)
             $userIdentifier = $username ? "<strong>$username</strong>" : "Row " . ($index + 2);
 
-            // Validate basic fields
-            if (empty($username) || empty($email) || empty($role)) {
-                $skippedRows[] = "$userIdentifier: Missing required fields";
-                continue;
+            $errors = [];
+
+            if (empty($username)) $errors[] = "Missing username";
+            if (empty($email))    $errors[] = "Missing email";
+
+            if (!empty($username) && $userModel->where('username', $username)->first()) {
+                $errors[] = "Username already exists";
             }
 
-            // Skip if username/email already exists
-            if ($userModel->where('username', $username)->orWhere('email', $email)->first()) {
-                $skippedRows[] = "$userIdentifier: Username/Email already exists";
-                continue;
+            if (!empty($email) && $userModel->where('email', $email)->first()) {
+                $errors[] = "Email already exists";
             }
 
             // Validate role
-            if (!in_array($role, ['student', 'faculty', 'admin'])) {
-                $skippedRows[] = "$userIdentifier: Invalid role";
-                continue;
+            if (empty($role)) {
+                $errors[] = "Missing role";
+            } elseif (!in_array($role, ['student', 'faculty', 'admin'])) {
+                $errors[] = "Invalid role";
             }
 
-            // Validate student requirements
-            if ($role === 'student' && (!$curriculumId || !$programId || !$yearLevel)) {
-                $skippedRows[] = "$userIdentifier: Invalid student data";
+            if ($role === 'student') {
+                if (!$curriculumId) $errors[] = "Invalid curriculum";
+                if (!$programId)    $errors[] = "Invalid program";
+                if (!$yearLevel)    $errors[] = "Invalid year level";
+            }
+
+            if (!empty($errors)) {
+                $skippedRows[] = "$userIdentifier:<ul><li>" . implode('</li><li>', $errors) . "</li></ul>";
                 continue;
             }
 
@@ -730,139 +746,135 @@ class AdminController extends BaseController
      ***********************************************/
 
     // View all subjects
-   public function view_subjects()
-{
-    if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
-        return redirect()->to('auth/login');
-    }
-
-    $subjectModel = new SubjectModel();
-    $curriculumModel = new CurriculumModel();
-
-    $perPage = 10;
-    $page = $this->request->getGet('page') ?? 1;
-
-    $search = strtolower($this->request->getGet('search') ?? '');
-    $filter = strtolower($this->request->getGet('filter') ?? '');
-
-    // Get all subjects
-    $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
-
-    // Apply search and filter
-    $filteredSubjects = array_filter($allSubjects, function ($subject) use ($search, $filter) {
-        $code = strtolower($subject['subject_code']);
-        $desc = strtolower($subject['subject_name']);
-
-        $matchCategory = !$filter 
-    || ($filter === 'recent') 
-    || str_starts_with($code, $filter);
-        $matchSearch = !$search || str_contains($code, $search) || str_contains($desc, $search);
-
-        return $matchCategory && $matchSearch;
-    });
-
-    if ($filter === 'recent') {
-        usort($filteredSubjects, function ($a, $b) {
-            return $b['subject_id'] <=> $a['subject_id'];
-        });
-    }
-
-
-
-    $totalSubjects = count($filteredSubjects);
-    $totalPages = ceil($totalSubjects / $perPage);
-
-    $offset = ($page - 1) * $perPage;
-    $subjects = array_slice($filteredSubjects, $offset, $perPage);
-
-
-    // Extract unique category prefixes from subject codes
-    $categories = [];
-
-    foreach ($allSubjects as $subject) {
-        preg_match('/^[A-Za-z]+/', $subject['subject_code'], $matches);
-        $prefix = strtolower($matches[0] ?? '');
-
-        if ($prefix && !in_array($prefix, $categories)) {
-            $categories[] = $prefix;
+    public function view_subjects()
+    {
+        if (!session()->get('isLoggedIn') || !in_array(session()->get('role'), ['admin', 'superadmin'])) {
+            return redirect()->to('auth/login');
         }
+
+        $subjectModel = new SubjectModel();
+        $curriculumModel = new CurriculumModel();
+
+        $perPage = 10;
+        $page = $this->request->getGet('page') ?? 1;
+
+        $search = strtolower($this->request->getGet('search') ?? '');
+        $filter = strtolower($this->request->getGet('filter') ?? '');
+
+        // Get all subjects
+        $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
+
+        // Apply search and filter
+        $filteredSubjects = array_filter($allSubjects, function ($subject) use ($search, $filter) {
+            $code = strtolower($subject['subject_code']);
+            $desc = strtolower($subject['subject_name']);
+
+            $matchCategory = !$filter 
+        || ($filter === 'recent') 
+        || str_starts_with($code, $filter);
+            $matchSearch = !$search || str_contains($code, $search) || str_contains($desc, $search);
+
+            return $matchCategory && $matchSearch;
+        });
+
+        if ($filter === 'recent') {
+            usort($filteredSubjects, function ($a, $b) {
+                return $b['subject_id'] <=> $a['subject_id'];
+            });
+        }
+
+
+
+        $totalSubjects = count($filteredSubjects);
+        $totalPages = ceil($totalSubjects / $perPage);
+
+        $offset = ($page - 1) * $perPage;
+        $subjects = array_slice($filteredSubjects, $offset, $perPage);
+
+
+        // Extract unique category prefixes from subject codes
+        $categories = [];
+
+        foreach ($allSubjects as $subject) {
+            preg_match('/^[A-Za-z]+/', $subject['subject_code'], $matches);
+            $prefix = strtolower($matches[0] ?? '');
+
+            if ($prefix && !in_array($prefix, $categories)) {
+                $categories[] = $prefix;
+            }
+        }
+
+        sort($categories);
+
+
+        //  Get the top 5 most recently added subjects regardless of search/filter
+        $recentSubjects = $subjectModel
+            ->orderBy('subject_id', 'DESC')
+            ->findAll(3);
+
+        $data = [
+            'subjects' => $subjects,
+            'curriculums' => $curriculumModel->findAll(),
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'search' => $search,
+            'filter' => $filter,
+            'categories' => $categories,
+            'recentSubjects' => $recentSubjects
+        ];
+
+        return view('templates/admin/admin_header')
+            . view('templates/admin/sidebar')
+            . view('admin/academics/subjects', $data)
+            . view('templates/footer');
     }
-
-    sort($categories);
-
-
-    //  Get the top 5 most recently added subjects regardless of search/filter
-    $recentSubjects = $subjectModel
-        ->orderBy('subject_id', 'DESC')
-        ->findAll(3);
-
-    $data = [
-        'subjects' => $subjects,
-        'curriculums' => $curriculumModel->findAll(),
-        'page' => $page,
-        'totalPages' => $totalPages,
-        'search' => $search,
-        'filter' => $filter,
-        'categories' => $categories,
-        'recentSubjects' => $recentSubjects
-    ];
-
-    return view('templates/admin/admin_header')
-        . view('templates/admin/sidebar')
-        . view('admin/academics/subjects', $data)
-        . view('templates/footer');
-}
 
 
     // Create a new subject
-public function createSubject()
-{
-    $subjectModel = new SubjectModel();
+    public function createSubject()
+    {
+        $subjectModel = new SubjectModel();
 
-    // Original input
-    $subject_code = $this->request->getPost('subject_code');
-    $subject_name = $this->request->getPost('subject_name');
-    $subject_type = $this->request->getPost('subject_type');
-    $lec_units    = $this->request->getPost('lec_units');
-    $lab_units    = $this->request->getPost('lab_units');
-    $total_units = (int)$lec_units + (int)$lab_units;
+        // Original input
+        $subject_code = $this->request->getPost('subject_code');
+        $subject_name = $this->request->getPost('subject_name');
+        $subject_type = $this->request->getPost('subject_type');
+        $lec_units    = $this->request->getPost('lec_units');
+        $lab_units    = $this->request->getPost('lab_units');
+        $total_units = (int)$lec_units + (int)$lab_units;
 
-    //  Normalize inputs
-    $normalized_code = strtolower(str_replace(' ', '', $subject_code));
-    $normalized_name = strtolower(trim($subject_name));
+        //  Normalize inputs
+        $normalized_code = strtolower(str_replace(' ', '', $subject_code));
+        $normalized_name = strtolower(trim($subject_name));
 
-    //  Check for existing subject with same normalized values
-    $existing = $subjectModel
-        ->where('REPLACE(LOWER(subject_code), " ", "")', $normalized_code)
-        ->where('LOWER(subject_name)', $normalized_name)
-        ->where('lec_units', $lec_units)
-        ->where('lab_units', $lab_units)
-        ->first();
+        //  Check for existing subject with same normalized values
+        $existing = $subjectModel
+            ->where('REPLACE(LOWER(subject_code), " ", "")', $normalized_code)
+            ->where('LOWER(subject_name)', $normalized_name)
+            ->where('lec_units', $lec_units)
+            ->where('lab_units', $lab_units)
+            ->first();
 
-    if ($existing) {
-        return redirect()->back()->with('error', 'Subject already exists with the same code, name, and units.');
+        if ($existing) {
+            return redirect()->back()->with('error', 'Subject already exists with the same code, name, and units.');
+        }
+
+        // Insert the original (non-normalized) values
+        $data = [
+            'subject_code'  => $subject_code,
+            'subject_name'  => $subject_name,
+            'subject_type'  => $subject_type,
+            'lec_units'     => $lec_units,
+            'lab_units'     => $lab_units,
+            'total_units'   => $total_units,
+            'curriculum_id' => $this->request->getPost('curriculum_id'),
+            'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
+        ];
+
+        $subjectModel->insert($data);
+
+        return redirect()->back()->with('success', 'Subject added successfully.');
     }
-
-    // Insert the original (non-normalized) values
-    $data = [
-        'subject_code'  => $subject_code,
-        'subject_name'  => $subject_name,
-        'subject_type'  => $subject_type,
-        'lec_units'     => $lec_units,
-        'lab_units'     => $lab_units,
-        'total_units'   => $total_units,
-        'curriculum_id' => $this->request->getPost('curriculum_id'),
-        'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
-    ];
-
-    $subjectModel->insert($data);
-
-    return redirect()->back()->with('success', 'Subject added successfully.');
-}
-
-
-
-
 
     // Show edit form
     public function editSubject($id)
@@ -881,51 +893,51 @@ public function createSubject()
     }
 
     //update
-   public function updateSubject($id)
-{
-    $subjectModel = new SubjectModel();
+    public function updateSubject($id)
+    {
+        $subjectModel = new SubjectModel();
 
-    // Original inputs
-    $subject_code = $this->request->getPost('subject_code');
-    $subject_name = $this->request->getPost('subject_name');
-    $subject_type = $this->request->getPost('subject_type');
-    $lec_units    = $this->request->getPost('lec_units');
-    $lab_units    = $this->request->getPost('lab_units');
-    $total_units = (int)$lec_units + (int)$lab_units;
+        // Original inputs
+        $subject_code = $this->request->getPost('subject_code');
+        $subject_name = $this->request->getPost('subject_name');
+        $subject_type = $this->request->getPost('subject_type');
+        $lec_units    = $this->request->getPost('lec_units');
+        $lab_units    = $this->request->getPost('lab_units');
+        $total_units = (int)$lec_units + (int)$lab_units;
 
-    //  Normalize inputs
-    $normalized_code = strtolower(str_replace(' ', '', $subject_code));
-    $normalized_name = strtolower(trim($subject_name));
+        //  Normalize inputs
+        $normalized_code = strtolower(str_replace(' ', '', $subject_code));
+        $normalized_name = strtolower(trim($subject_name));
 
-    //  Check for duplicate (excluding the current record)
-    $duplicate = $subjectModel
-        ->where("subject_id !=", $id)
-        ->where("REPLACE(LOWER(subject_code), ' ', '') =", $normalized_code)
-        ->where("LOWER(subject_name) =", $normalized_name)
-        ->where("lec_units", $lec_units)
-        ->where("lab_units", $lab_units)
-        ->first();
+        //  Check for duplicate (excluding the current record)
+        $duplicate = $subjectModel
+            ->where("subject_id !=", $id)
+            ->where("REPLACE(LOWER(subject_code), ' ', '') =", $normalized_code)
+            ->where("LOWER(subject_name) =", $normalized_name)
+            ->where("lec_units", $lec_units)
+            ->where("lab_units", $lab_units)
+            ->first();
 
-    if ($duplicate) {
-        return redirect()->back()->with('error', 'Another subject already exists with the same code, name, and units.');
+        if ($duplicate) {
+            return redirect()->back()->with('error', 'Another subject already exists with the same code, name, and units.');
+        }
+
+        // Proceed with update using raw input
+        $data = [
+            'subject_code'  => $subject_code,
+            'subject_name'  => $subject_name,
+            'subject_type'  => $subject_type,
+            'lec_units'     => $lec_units,
+            'lab_units'     => $lab_units,
+            'total_units'   => $total_units,
+            'curriculum_id' => $this->request->getPost('curriculum_id'),
+            'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
+        ];
+
+        $subjectModel->update($id, $data);
+
+        return redirect()->back()->with('success', 'Subject updated successfully.');
     }
-
-    // Proceed with update using raw input
-    $data = [
-        'subject_code'  => $subject_code,
-        'subject_name'  => $subject_name,
-        'subject_type'  => $subject_type,
-        'lec_units'     => $lec_units,
-        'lab_units'     => $lab_units,
-        'total_units'   => $total_units,
-        'curriculum_id' => $this->request->getPost('curriculum_id'),
-        'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
-    ];
-
-    $subjectModel->update($id, $data);
-
-    return redirect()->back()->with('success', 'Subject updated successfully.');
-}
 
 
     // Delete a subject

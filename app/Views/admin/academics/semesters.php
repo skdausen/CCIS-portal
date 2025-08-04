@@ -157,9 +157,9 @@
                             <div class="mb-3">
                                 <label class="form-label">School Year</label>
                                 <div class="d-flex gap-2">
-                                    <input type="number" name="start_year" class="form-control" id="startYearInput" placeholder="Start Year (e.g., 2025)" required min="2000" max="2099" required>
+                                    <input type="number" name="start_year" class="form-control" id="startYearInput" placeholder="Start Year (e.g., 2025)" min="2000" max="2099" maxlength="4" pattern="\d{4}" inputmode="numeric" required>
                                     <span class="align-self-center">-</span>
-                                    <input type="number" name="end_year" class="form-control" id="endYearInput" placeholder="End Year" required min="2001" max="2100" readonly required>
+                                    <input type="number" name="end_year" class="form-control" id="endYearInput" placeholder="End Year" min="2001" max="2100" maxlength="4" pattern="\d{4}" inputmode="numeric" readonly required>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -189,23 +189,62 @@
         const addEndInput = document.getElementById('endYearInput');
 
         if (addStartInput && addEndInput) {
-            addStartInput.addEventListener('input', function () {
-                const startYear = parseInt(this.value);
-                addEndInput.value = !isNaN(startYear) ? startYear + 1 : '';
+                addStartInput.addEventListener('input', function () {
+                    // Remove non-digits and limit to 4 digits
+                    this.value = this.value.replace(/\D/g, '').slice(0, 4);
+
+                    const startYear = parseInt(this.value, 10);
+                    if (!isNaN(startYear)) {
+                        if (startYear < 2000 || startYear > 2099) {
+                            this.setCustomValidity("Year must be between 2000 and 2099");
+                            addEndInput.value = '';
+                        } else {
+                            this.setCustomValidity("");
+                            const endYear = startYear + 1;
+                            addEndInput.value = endYear > 2100 ? '' : endYear.toString().slice(0, 4); // Keep it 4 digits
+                        }
+                    } else {
+                        addEndInput.value = '';
+                    }
+                });
+                addEndInput.addEventListener('input', function () {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 4); // Remove non-digits + trim to 4
+
+                    if (this.value && (this.value < 2001 || this.value > 2100)) {
+                        this.setCustomValidity("Year must be between 2001 and 2100");
+                    } else {
+                        this.setCustomValidity("");
+                }
             });
         }
+
+        document.getElementById('endYearInput').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 4); // Remove non-digits + trim to 4
+
+            if (this.value && (this.value < 2001 || this.value > 2100)) {
+                this.setCustomValidity("Year must be between 2001 and 2100");
+            } else {
+                this.setCustomValidity("");
+            }
+        });
 
         // Auto-increment for all EDIT modals
         document.querySelectorAll('[id^="editStartYear"]').forEach(startInput => {
             const semesterId = startInput.id.replace('editStartYear', '');
             const endInput = document.getElementById('editEndYear' + semesterId);
 
-            if (endInput) {
-                startInput.addEventListener('input', function () {
-                    const startYear = parseInt(this.value);
-                    endInput.value = !isNaN(startYear) ? startYear + 1 : '';
-                });
-            }
+        if (endInput) {
+            startInput.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 4);
+                const startYear = parseInt(this.value, 10);
+                if (!isNaN(startYear)) {
+                    const endYear = startYear + 1;
+                    endInput.value = endYear > 2100 ? '' : endYear.toString().slice(0, 4);
+                } else {
+                    endInput.value = '';
+                }
+            });
+        }
         });
 
         // Filter

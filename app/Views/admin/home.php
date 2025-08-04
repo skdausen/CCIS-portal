@@ -88,22 +88,36 @@
                             <?php if (!empty($nearing)) : ?>
                                 <ul class="list-group list-group-flush mt-2">
                                     <?php foreach ($nearing as $n) : ?>
-                                        <li class="list-group-item">
-                                            <strong>
-                                                <button class="btn btn-link p-0 text-decoration-none text-black fw-bold"
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1 me-3">
+                                                <strong>
+                                                    <button class="btn btn-link p-0 text-decoration-none text-black fw-bold"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#eventModal"
+                                                        data-id="<?= $n['announcement_id']; ?>"
+                                                        data-title="<?= esc($n['title']); ?>"
+                                                        data-date="<?= date('Y-m-d\TH:i:s', strtotime($n['event_datetime'])); ?>"
+                                                        data-description="<?= esc($n['content']); ?>">
+                                                        <?= esc($n['title']); ?>
+                                                    </button>
+                                                    <br>
+                                                </strong>
+                                                <small class="text-muted">
+                                                    <?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?>
+                                                </small>
+                                            </div>
+                                            <!-- View Button on the right -->
+                                            <div>
+                                                <button class="btn btn-sm btn-outline-primary"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#eventModal"
                                                     data-id="<?= $n['announcement_id']; ?>"
                                                     data-title="<?= esc($n['title']); ?>"
                                                     data-date="<?= date('Y-m-d\TH:i:s', strtotime($n['event_datetime'])); ?>"
                                                     data-description="<?= esc($n['content']); ?>">
-                                                    <?= esc($n['title']); ?>
+                                                    View
                                                 </button>
-                                                <br>
-                                            </strong>
-                                            <small class="text-muted">
-                                                <?= date('F j, Y \a\t g:i A', strtotime($n['event_datetime'])); ?>
-                                            </small>
+                                            </div>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>

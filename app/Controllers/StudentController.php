@@ -342,14 +342,20 @@ class StudentController extends BaseController
 
         $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
 
+        // Prepare logo path for PDF
+        $logoData = base64_encode(file_get_contents(FCPATH . 'rsc/assets/cs-logo.png'));
+        $logoBase64 = 'data:image/png;base64,' . $logoData;
+
         // Build the PDF HTML
         $html = view('student/grades/download', array_merge([
             'grades'          => $grades,
             'currentSemester' => $currentSemester,
+            'logoBase64'        => $logoBase64
         ], $grades_data));
 
         // Render PDF
         $dompdf = new Dompdf();
+        $dompdf->getOptions()->set('isRemoteEnabled', true);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
@@ -366,6 +372,7 @@ class StudentController extends BaseController
 
         return $dompdf->stream($filename, ['Attachment' => true]);
     }
+    
     private function prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters)
     {
         $db = Database::connect();
@@ -456,7 +463,6 @@ class StudentController extends BaseController
                 $isDeanLister = false;
             }
         }
-
 
         return [
             'grades'           => $grades,

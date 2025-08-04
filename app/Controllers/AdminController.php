@@ -825,6 +825,7 @@ public function createSubject()
     $subject_type = $this->request->getPost('subject_type');
     $lec_units    = $this->request->getPost('lec_units');
     $lab_units    = $this->request->getPost('lab_units');
+    $total_units = (int)$lec_units + (int)$lab_units;
 
     //  Normalize inputs
     $normalized_code = strtolower(str_replace(' ', '', $subject_code));
@@ -849,6 +850,7 @@ public function createSubject()
         'subject_type'  => $subject_type,
         'lec_units'     => $lec_units,
         'lab_units'     => $lab_units,
+        'total_units'   => $total_units,
         'curriculum_id' => $this->request->getPost('curriculum_id'),
         'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
     ];
@@ -889,6 +891,7 @@ public function createSubject()
     $subject_type = $this->request->getPost('subject_type');
     $lec_units    = $this->request->getPost('lec_units');
     $lab_units    = $this->request->getPost('lab_units');
+    $total_units = (int)$lec_units + (int)$lab_units;
 
     //  Normalize inputs
     $normalized_code = strtolower(str_replace(' ', '', $subject_code));
@@ -914,6 +917,7 @@ public function createSubject()
         'subject_type'  => $subject_type,
         'lec_units'     => $lec_units,
         'lab_units'     => $lab_units,
+        'total_units'   => $total_units,
         'curriculum_id' => $this->request->getPost('curriculum_id'),
         'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
     ];
@@ -1286,6 +1290,8 @@ public function createSubject()
             return redirect()->to('auth/login');
         }
 
+        
+
         $curriculumModel = new CurriculumModel();
         $programModel = new ProgramModel();
         $subjectModel = new SubjectModel();
@@ -1293,6 +1299,7 @@ public function createSubject()
         $yearlevel_sem = $this->request->getGet('yearlevel_sem');
         $selectedCurriculum = $this->request->getGet('curriculum_id');
         $search = $this->request->getGet('search');
+        
 
         $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
         $programs = $programModel->findAll();
@@ -1325,18 +1332,36 @@ public function createSubject()
             });
         }
 
+    // STEP: Manual Pagination Setup
+        $perPage = 5;
+        $page = (int) ($this->request->getGet('page') ?? 1);
+        $total = count($curriculumsToDisplay);
+        $offset = ($page - 1) * $perPage;
+        $paginatedCurriculums = array_slice($curriculumsToDisplay, $offset, $perPage);
+
+        $totalCurriculums = count($curriculumsToDisplay);
+        $totalPages = ceil($totalCurriculums / $perPage);
+        $offset = ($page - 1) * $perPage;
+        $paginatedCurriculums = array_slice($curriculumsToDisplay, $offset, $perPage);
+
+
         return view('templates/admin/admin_header')
             . view('templates/admin/sidebar')
             . view('admin/academics/curriculums', [
                 'curriculums' => $curriculums,
-                'curriculumsToDisplay' => $curriculumsToDisplay,
+                'curriculumsToDisplay' => $paginatedCurriculums,
                 'programs' => $programs,
                 'curriculumSubjects' => $curriculumSubjects,
                 'selectedFilter' => $yearlevel_sem,
                 'selectedCurriculum' => $selectedCurriculum,
                 'search' => $search,
+                'page' => $page,
+                'totalPages' => $totalPages,
+                'total' => $total
             ])
             . view('templates/footer');
+
+
     }
 
     // Create Curriculum (with duplicate name check)
@@ -1347,11 +1372,16 @@ public function createSubject()
         $curriculum_name = $this->request->getPost('curriculum_name');
         $program_id = $this->request->getPost('program_id');
 
-        // Check for duplicate
-        $existing = $curriculumModel->where('curriculum_name', $curriculum_name)->first();
+        // Check for duplicate within the same program only
+        $existing = $curriculumModel->where([
+            'curriculum_name' => $curriculum_name,
+            'program_id' => $program_id
+        ])->first();
+
         if ($existing) {
-            return redirect()->back()->with('error', 'Curriculum name already exists.');
+            return redirect()->back()->with('error', 'This curriculum already exists under the selected program.');
         }
+
 
         $data = [
             'curriculum_name' => $curriculum_name,
@@ -1374,12 +1404,14 @@ public function createSubject()
         // Check for duplicate, excluding self
         $existing = $curriculumModel
             ->where('curriculum_name', $curriculum_name)
+            ->where('program_id', $program_id)
             ->where('curriculum_id !=', $curriculum_id)
             ->first();
 
         if ($existing) {
-            return redirect()->back()->with('error', 'Curriculum name already exists.');
+            return redirect()->back()->with('error', 'This curriculum already exists under the selected program.');
         }
+
 
         $data = [
             'curriculum_name' => $curriculum_name,
@@ -1407,6 +1439,7 @@ public function createSubject()
         $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
 
         $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->orderBy('yearlevel_sem')->findAll();
+        $noSubjects = empty($subjects);
 
         $groupedSubjects = [
             '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
@@ -1444,7 +1477,9 @@ public function createSubject()
                 'groupedSubjects' => $groupedSubjects,
                 'currentYearKey' => $currentYearKey,
                 'page' => $page,
-                'totalPages' => $totalPages
+                'totalPages' => $totalPages,
+                'noSubjects' => $noSubjects
+
             ])
             . view('templates/footer');
     }

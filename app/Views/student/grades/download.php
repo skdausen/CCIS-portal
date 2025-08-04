@@ -84,6 +84,7 @@
 </head>
 <body>
     <div class="content">
+        <img src="<?= $logoBase64 ?>" alt="Logo" style="height: 100px; margin-bottom: 20px;">
         <h2>Student Grade Report</h2>
         <!-- Student Details -->
         <?php if (!empty($grades)): ?>

@@ -18,4 +18,24 @@ public function getCurriculumsWithProgramName()
         ->get()
         ->getResultArray();
 }
+
+public function getFilteredPaginatedCurriculums($search = null, $perPage = 10)
+{
+    // Start building a query
+    $builder = $this->select('curriculums.curriculum_id, curriculums.curriculum_name, curriculums.program_id, programs.program_name')
+                    ->join('programs', 'programs.program_id = curriculums.program_id');
+
+    // If there is a search term, add filtering
+    if (!empty($search)) {
+        $builder->groupStart()
+                ->like('curriculums.curriculum_name', $search)
+                ->orLike('programs.program_name', $search)
+                ->groupEnd();
+    }
+
+    // Return paginated result
+    return $builder->orderBy('curriculums.curriculum_name', 'ASC')
+                   ->paginate($perPage, 'curriculums');
+}
+
 }

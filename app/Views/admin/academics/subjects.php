@@ -6,9 +6,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Subjects Management</h3>
         </div>
-
-
-
         <!-- FILTERS & SEARCH -->
     <div class="row mb-3">
         <div class="col-md-3 mb-2 d-flex">
@@ -57,7 +54,7 @@
         <!-- Subjects Table -->
         <div class="table-responsive">
             <div class="table-scroll">
-                <table class="table table-bordered table-hover subjects-table table-standard custom-padding" id="subjectsTable">
+                <table class="table table-bordered table-hover table-standard custom-padding" id="subjectsTable">
                     <thead class="table-light">
                         <tr>
                             <th>Subject Code</th>
@@ -85,7 +82,9 @@
                             <td><?= esc($subject['subject_type']) ?></td>
                             <td class="text-center"><?= esc($subject['lec_units']) ?></td>
                             <td class="text-center"><?= esc($subject['lab_units']) ?></td>
-                            <td class="text-center"><?= esc($subject['total_units']) ?></td>
+                            <td class="text-center">
+                                <?= esc((int)$subject['lec_units'] + (int)$subject['lab_units']) ?>
+                            </td>
                             <td>
                                 <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $subject['subject_id'] ?>">Edit</button>
                                 <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $subject['subject_id'] ?>">Delete</button>
@@ -238,7 +237,6 @@
                                 <?php endif; ?>
                             </ul>
                         </nav>
-
         </div>
     </div>
 

@@ -14,7 +14,20 @@
         </div>
     </div>
 
-    <?php if ($currentYearKey && !empty($groupedSubjects[$currentYearKey])): ?>
+        <?php 
+        $hasSubjects = false;
+        foreach ($groupedSubjects as $yearSemesters) {
+            foreach ($yearSemesters as $semesterSubjects) {
+                if (!empty($semesterSubjects)) {
+                    $hasSubjects = true;
+                    break 2;
+                }
+            }
+        }
+        ?>
+
+        <?php if ($hasSubjects): ?>
+
         <div class="row m-0">
             <h5 class="col-6 mt-4 fw-bold p-0"><?= $currentYearKey ?></h5>
             <div class="col-6 d-flex justify-content-end p-0">
@@ -93,40 +106,62 @@
             <?php endif; ?>
         <?php endforeach; ?>
     <?php else: ?>
-        <p class="text-muted">No subjects for this year.</p>
+    <div class="card border-0 shadow-sm mt-5">
+        <div class="card-body text-center py-5">
+            <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">No subjects found</h5>
+            <p class="text-muted small mb-0">This curriculum does not have any assigned subjects yet.</p>
+        </div>
+    </div>
     <?php endif; ?>
 
-    <nav aria-label="Curriculum pagination">
-        <ul class="pagination justify-content-center my-4">
-            <?php if ($page > 1): ?>
-                <li class="page-item mx-1">
-                    <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page - 1)) ?>">Previous</a>
-                </li>
-            <?php else: ?>
-                <li class="page-item disabled mx-1">
-                    <span class="page-link">Previous</span>
-                </li>
-            <?php endif; ?>
+    <?php
+    // Check if there are any subjects at all
+    $hasSubjects = false;
+    foreach ($groupedSubjects as $yearGroup) {
+        foreach ($yearGroup as $semesterSubjects) {
+            if (!empty($semesterSubjects)) {
+                $hasSubjects = true;
+                break 2;
+            }
+        }
+    }
+    ?>
 
-            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
-                    <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . $p) ?>">
-                        <?= $p ?>
-                    </a>
-                </li>
-            <?php endfor; ?>
+    <?php if ($hasSubjects): ?>
+        <nav aria-label="Curriculum pagination">
+            <ul class="pagination justify-content-center my-4">
+                <?php if ($page > 1): ?>
+                    <li class="page-item mx-1">
+                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page - 1)) ?>">Previous</a>
+                    </li>
+                <?php else: ?>
+                    <li class="page-item disabled mx-1">
+                        <span class="page-link">Previous</span>
+                    </li>
+                <?php endif; ?>
 
-            <?php if ($page < $totalPages): ?>
-                <li class="page-item mx-1">
-                    <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page + 1)) ?>">Next</a>
-                </li>
-            <?php else: ?>
-                <li class="page-item disabled mx-1">
-                    <span class="page-link">Next</span>
-                </li>
-            <?php endif; ?>
-        </ul>
-    </nav>
+                <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                    <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
+                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . $p) ?>">
+                            <?= $p ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+
+                <?php if ($page < $totalPages): ?>
+                    <li class="page-item mx-1">
+                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page + 1)) ?>">Next</a>
+                    </li>
+                <?php else: ?>
+                    <li class="page-item disabled mx-1">
+                        <span class="page-link">Next</span>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+    <?php endif; ?>
+
 </div>
 
 <script>

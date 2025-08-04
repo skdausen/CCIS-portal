@@ -1290,6 +1290,8 @@ public function createSubject()
             return redirect()->to('auth/login');
         }
 
+        
+
         $curriculumModel = new CurriculumModel();
         $programModel = new ProgramModel();
         $subjectModel = new SubjectModel();
@@ -1297,6 +1299,7 @@ public function createSubject()
         $yearlevel_sem = $this->request->getGet('yearlevel_sem');
         $selectedCurriculum = $this->request->getGet('curriculum_id');
         $search = $this->request->getGet('search');
+        
 
         $curriculums = $curriculumModel->getCurriculumsWithProgramName(); // For dropdown
         $programs = $programModel->findAll();
@@ -1329,18 +1332,36 @@ public function createSubject()
             });
         }
 
+    // STEP: Manual Pagination Setup
+        $perPage = 5;
+        $page = (int) ($this->request->getGet('page') ?? 1);
+        $total = count($curriculumsToDisplay);
+        $offset = ($page - 1) * $perPage;
+        $paginatedCurriculums = array_slice($curriculumsToDisplay, $offset, $perPage);
+
+        $totalCurriculums = count($curriculumsToDisplay);
+        $totalPages = ceil($totalCurriculums / $perPage);
+        $offset = ($page - 1) * $perPage;
+        $paginatedCurriculums = array_slice($curriculumsToDisplay, $offset, $perPage);
+
+
         return view('templates/admin/admin_header')
             . view('templates/admin/sidebar')
             . view('admin/academics/curriculums', [
                 'curriculums' => $curriculums,
-                'curriculumsToDisplay' => $curriculumsToDisplay,
+                'curriculumsToDisplay' => $paginatedCurriculums,
                 'programs' => $programs,
                 'curriculumSubjects' => $curriculumSubjects,
                 'selectedFilter' => $yearlevel_sem,
                 'selectedCurriculum' => $selectedCurriculum,
                 'search' => $search,
+                'page' => $page,
+                'totalPages' => $totalPages,
+                'total' => $total
             ])
             . view('templates/footer');
+
+
     }
 
     // Create Curriculum (with duplicate name check)

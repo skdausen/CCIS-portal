@@ -115,12 +115,50 @@
                 </div>
 
             <?php endforeach; ?>
+           <?php if ($total > 0 || $totalPages > 1): ?>
+                <nav>
+                    <ul class="pagination justify-content-center gap-2">
+
+                        <!-- Previous Button -->
+                        <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                            <a class="page-link"
+                            href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>">
+                            Prev
+                            </a>
+                        </li>
+
+                       <!-- Page Numbers -->
+                        <?php if ($total > 0): ?>
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                    <a class="page-link"
+                                    href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => $i])) ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+                        <?php endif; ?>
+
+
+                        <!-- Next Button -->
+                        <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+                            <a class="page-link"
+                            href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>">
+                            Next
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+            <?php endif; ?>
+
+
         </div>
     </div>
 </div>
 
 <!-- Scripts -->
-<script>
+<!-- <script>
     const searchInput = document.getElementById('curriculumSearch');
     const curriculumCards = document.querySelectorAll('.curriculum-card');
 
@@ -138,4 +176,82 @@
         searchInput.value = '';
         curriculumCards.forEach(card => card.style.display = '');
     });
+</script> -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const filterSelect = document.getElementById('curriculumFilter');
+    const searchInput = document.getElementById('curriculumSearch');
+    const clearBtn = document.getElementById('clearFilterBtn'); // ✅ this is your actual button ID
+    const curriculumCards = document.querySelectorAll('.curriculum-card');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentFilter = urlParams.get('curriculum_id') || '';
+    const currentSearch = urlParams.get('search') || '';
+
+    if (filterSelect) filterSelect.value = currentFilter;
+    if (searchInput) searchInput.value = currentSearch;
+
+    if (searchInput && currentSearch) {
+        searchInput.focus();
+        const val = searchInput.value;
+        searchInput.value = '';
+        searchInput.value = val;
+    }
+
+    if (filterSelect) {
+        filterSelect.addEventListener('change', () => {
+            urlParams.set('curriculum_id', filterSelect.value);
+            urlParams.set('page', 1);
+            window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+        });
+    }
+
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                urlParams.set('search', searchInput.value.trim());
+                urlParams.set('page', 1);
+                window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+            }, 500);
+        });
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            curriculumCards.forEach(card => card.style.display = ''); // show all cards again
+            window.location.href = window.location.pathname; // clears all URL filters
+        });
+    }
+});
 </script>
+
+
+<script>
+document.addEventListener('keydown', function(event) {
+    const isModalOpen = document.querySelector('.modal.show');
+    if (isModalOpen) return;
+
+    const currentPage = <?= $page ?>;
+    const totalPages = <?= $totalPages ?>;
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (event.key === 'ArrowRight') {
+        let nextPage = currentPage + 1;
+        if (nextPage > totalPages) nextPage = 1;
+        urlParams.set('page', nextPage);
+        window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+    }
+
+    if (event.key === 'ArrowLeft') {
+        let prevPage = currentPage - 1;
+        if (prevPage < 1) prevPage = totalPages;
+        urlParams.set('page', prevPage);
+        window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+    }
+});
+</script>
+

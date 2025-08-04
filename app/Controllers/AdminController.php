@@ -1351,11 +1351,16 @@ public function createSubject()
         $curriculum_name = $this->request->getPost('curriculum_name');
         $program_id = $this->request->getPost('program_id');
 
-        // Check for duplicate
-        $existing = $curriculumModel->where('curriculum_name', $curriculum_name)->first();
+        // Check for duplicate within the same program only
+        $existing = $curriculumModel->where([
+            'curriculum_name' => $curriculum_name,
+            'program_id' => $program_id
+        ])->first();
+
         if ($existing) {
-            return redirect()->back()->with('error', 'Curriculum name already exists.');
+            return redirect()->back()->with('error', 'This curriculum already exists under the selected program.');
         }
+
 
         $data = [
             'curriculum_name' => $curriculum_name,
@@ -1378,12 +1383,14 @@ public function createSubject()
         // Check for duplicate, excluding self
         $existing = $curriculumModel
             ->where('curriculum_name', $curriculum_name)
+            ->where('program_id', $program_id)
             ->where('curriculum_id !=', $curriculum_id)
             ->first();
 
         if ($existing) {
-            return redirect()->back()->with('error', 'Curriculum name already exists.');
+            return redirect()->back()->with('error', 'This curriculum already exists under the selected program.');
         }
+
 
         $data = [
             'curriculum_name' => $curriculum_name,
@@ -1411,6 +1418,7 @@ public function createSubject()
         $curriculum['program_name'] = $program['program_name'] ?? 'N/A';
 
         $subjects = $subjectModel->where('curriculum_id', $curriculum_id)->orderBy('yearlevel_sem')->findAll();
+        $noSubjects = empty($subjects);
 
         $groupedSubjects = [
             '1st Year' => ['1st Semester' => [], '2nd Semester' => []],
@@ -1448,7 +1456,9 @@ public function createSubject()
                 'groupedSubjects' => $groupedSubjects,
                 'currentYearKey' => $currentYearKey,
                 'page' => $page,
-                'totalPages' => $totalPages
+                'totalPages' => $totalPages,
+                'noSubjects' => $noSubjects
+
             ])
             . view('templates/footer');
     }

@@ -3,112 +3,69 @@
 <head>
     <title><?= esc($curriculum_name ?? 'Curriculum') ?> PDF</title>
     <style>
-        body { font-family: "Times New Roman", Georgia, serif; font-size: 12px; }
+        body { font-family: Arial, sans-serif; font-size: 12px; }
         h3, h4, h5 { margin: 0; padding: 5px 0; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
         th, td { border: 1px solid #444; padding: 5px; text-align: center; vertical-align: middle; word-wrap: break-word; }
 
-
-        .student-info-table {
+        .student-info-table, .heading-table {
             /* width: 100%; */
             /* margin-bottom: 20px; */
             border: none;
         }
-
-        .student-info-table td {
+        .student-info-table td, .heading-table td {
             border: none;
             padding: 5px;
             font-size: 13px;
         }
-
         .curriculum-title {
             text-align: center;
             font-weight: bold;
             font-size: 16px;
-            margin-bottom: 0;
+            margin-bottom: 0 !important;
+            margin-top: 1rem;
         }
-
         .program-name {
             text-align: center;
             font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        .header-table {
-            width: 100%;
-            border: none;
-            margin-bottom: 20px;
-        }
-
-        .school-logo {
-            height: 70px;
-            margin-right: 10px;
-        }
-
-        .header-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .left-logos {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .school-info {
-            text-align: center;
-            flex: 1;
-        }
-
-        .school-info .school-name {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .school-info .college-name {
-            font-size: 14px;
-        }
-
-        .school-info .program {
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .school-info .curriculum-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin-top: 6px;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header with Logos and Text -->
+        <!-- Heading -->
+        <table class="heading-table" width="100%" style="margin-bottom: 20px; border: none;">
+            <tr>
+                <!-- Left Logo -->
+                <td style="width: 20%; text-align: left;">
+                <img src="<?= $logo1 ?>" alt="IS Logo" style="height: 75px;">
+                </td>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <!-- Left Logos -->
-            <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
-                <img src="<?= $logo1 ?>" alt="Logo 1" style="height: 50px;">
-                <img src="<?= $logo2 ?>" alt="Logo 2" style="height: 50px;">
-            </div>
-
-            <!-- Header Text -->
-            <div style="flex: 1; text-align: center;">
+                <!-- Center Text -->
+                <td style="width: 60%; text-align: center;">
                 <div style="font-size: 13px;">Republic of the Philippines</div>
-                <div style="font-size: 15px; font-weight: bold;">Ilocos Sur Polytechnic State College - Main Campus</div>
+                <div style="font-size: 15px; font-weight: bold;">
+                    Ilocos Sur Polytechnic State College - Main Campus
+                </div>
                 <div style="font-size: 13px;">College of Computing and Information Sciences</div>
-                <hr style="margin: 6px 0; border-top: 1px solid #000;">
-                <div style="font-size: 13px; font-weight: bold;">Bachelor of Science in Computer Science</div>
-                <div style="font-size: 12px;">CMO No. 25, Series 2015 · Board Resolution No. 2017</div>
-            </div>
+                </td>
 
-            <!-- Optional: Right Spacer (blank) -->
-            <div style="width: 70px;"></div>
-        </div>
+                <!-- Right Logo -->
+                <td style="width: 20%; text-align: right;">
+                <img src="<?= $logo2 ?>" alt="CCIS Logo" style="height: 75px;">
+                </td>
+            </tr>
+        </table>
 
+        <!-- Horizontal line -->
+        <hr style="margin: 6px auto; border-top: 1px solid #000; width: 100%;">
+
+        <!-- Curriculum Title -->
+        <h3 class="curriculum-title"><?= esc($curriculum_name ?? 'Curriculum') ?></h3>
+
+        <!-- Program Name -->
+        <p class="program-name"><?= esc($program_name ?? '') ?></p>
 
         <!-- Student Info -->
         <table class="student-info-table" style="width: 100%; margin-bottom: 10px;">

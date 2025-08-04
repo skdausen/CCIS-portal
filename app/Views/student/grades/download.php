@@ -68,45 +68,56 @@
         }
         /* RIGHT-ALIGN GRADE SUMMARY */
         .grade-summary-box {
-            width: 100%;
-            text-align: right;           
-            margin-top: 15px;        
-            padding-right: 15px;         
-            font-size: 14px;            
+            margin: 1rem 0 1.5rem 3rem;        
+            font-size: 0.7rem;            
             font-weight: bold;         
-            line-height: 1.4;
         }
-        .grade-summary-box div {
-            margin-bottom: 4px;
+        footer {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
         }
+        footer p {
+            text-align: center;
+            font-size: 11px;
+            font-style: italic;
+            color: #444;
+        }
+            
     </style>
 
 </head>
 <body>
     <div class="content">
 
-            <!-- Header with Logos and Text -->
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <!-- Left Logos -->
-            <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
-                <img src="<?= $logoIS ?>" alt="IS Logo" style="height: 50px;">
-                <img src="<?= $logoCC ?>" alt="CCIS Logo" style="height: 50px;">
-            </div>
+        <table width="100%" style="margin-bottom: 20px;">
+        <tr>
+            <!-- Left Logo -->
+            <td style="width: 20%; text-align: left;">
+            <img src="<?= $logoIS ?>" alt="IS Logo" style="height: 75px;">
+            </td>
 
-            <!-- Header Text -->
-            <div style="flex: 1; text-align: center;">
-                <div style="font-size: 13px;">Republic of the Philippines</div>
-                <div style="font-size: 15px; font-weight: bold;">Ilocos Sur Polytechnic State College - Main Campus</div>
-                <div style="font-size: 13px;">College of Computing and Information Sciences</div>
-                <hr style="margin: 6px 0; border-top: 1px solid #000;">
-                <div style="font-size: 13px; font-weight: bold;">Bachelor of Science in Computer Science</div>
-                <div style="font-size: 12px;">CMO No. 25, Series 2015 · Board Resolution No. 2017</div>
+            <!-- Center Text -->
+            <td style="width: 60%; text-align: center;">
+            <div style="font-size: 13px;">Republic of the Philippines</div>
+            <div style="font-size: 15px; font-weight: bold;">
+                Ilocos Sur Polytechnic State College - Main Campus
             </div>
+            <div style="font-size: 13px;">College of Computing and Information Sciences</div>
+            </td>
 
-            <!-- Optional: Right Spacer (blank) -->
-            <div style="width: 70px;"></div>
-        </div>
-        
+            <!-- Right Logo -->
+            <td style="width: 20%; text-align: right;">
+            <img src="<?= $logoCC ?>" alt="CCIS Logo" style="height: 75px;">
+            </td>
+        </tr>
+        </table>
+
+        <!-- Horizontal line -->
+        <hr style="margin: 6px auto; border-top: 1px solid #000; width: 100%;">
+
+
         <h2>Student Grade Report</h2>
         <!-- Student Details -->
         <?php if (!empty($grades)): ?>
@@ -193,30 +204,30 @@
                         <div>Total Units Earned: --</div>
                     <?php endif; ?>
                 </div>
-    
-                <!-- GRADE SYSTEM GUIDE - LEFT COLUMN -->
-                <div>
-                    <div style="margin-bottom: 10px;">Grade System Guide</div>
-                    <ul style="list-style-type: none; padding-left: 0; margin: 0;">
-                        <li><strong>1.00</strong> – 97–100%</li>
-                        <li><strong>1.25</strong> – 94–96%</li>
-                        <li><strong>1.50</strong> – 91–93%</li>
-                        <li><strong>1.75</strong> – 88–90%</li>
-                        <li><strong>2.00</strong> – 85–87%</li>
-                        <li><strong>2.25</strong> – 82–84%</li>
-                        <li><strong>2.50</strong> – 79–81%</li>
-                        <li><strong>2.75</strong> – 76–78%</li>
-                        <li><strong>3.00</strong> – 75%</li>
-                        <li><strong>5.00</strong> – Failed</li>
-                        <li><strong>NE</strong> – No Entry</li>
-                    </ul>
-                </div>
+
             </div>
     </div>
 
-    <div style="margin-top: 40px; text-align: center; font-size: 11px; font-style: italic; color: #444;">
-     <p>This is <strong>not</strong> an official Certificate of Grades. For the official document, please request a Certificate of Grades (COG) from the Registrar's Office.</p>
-    </div>
+    <footer>
+        <!-- GRADE SYSTEM GUIDE - LEFT COLUMN -->
+        <div class="grade-summary-box">
+            <div style="margin-bottom: 10px;">Grade System Guide</div>
+            <ul style="list-style-type: none; padding-left: 0; margin: 0;">
+                <li><strong>1.00</strong> – 97–100%</li>
+                <li><strong>1.25</strong> – 94–96%</li>
+                <li><strong>1.50</strong> – 91–93%</li>
+                <li><strong>1.75</strong> – 88–90%</li>
+                <li><strong>2.00</strong> – 85–87%</li>
+                <li><strong>2.25</strong> – 82–84%</li>
+                <li><strong>2.50</strong> – 79–81%</li>
+                <li><strong>2.75</strong> – 76–78%</li>
+                <li><strong>3.00</strong> – 75%</li>
+                <li><strong>5.00</strong> – Failed</li>
+                <li><strong>NE</strong> – No Entry</li>
+            </ul>
+        </div>
+        <p>This is <strong>not</strong> an official Certificate of Grades. For the official document, please request a Certificate of Grades (COG) from the Registrar's Office.</p>
+    </footer>
 
 </body>
 </html>

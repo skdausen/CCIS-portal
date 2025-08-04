@@ -6,7 +6,7 @@
         </div>
         <div class="text-center mb-4">
             <img src="<?= base_url('rsc/assets/cs-logo.png') ?>" alt="CS Logo" class="mb-3" style="width: 80px;">
-            <h4 class="fw-bold" >Forgot Password</h4>
+            <h4 class="fw-bold text-shadow">Forgot Password</h4>
             <p>Enter your email</p>
         </div>
 

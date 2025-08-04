@@ -9,8 +9,8 @@
         th, td { border: 1px solid #444; padding: 5px; text-align: center; vertical-align: middle; word-wrap: break-word; }
 
         .student-info-table {
-            width: 100%;
-            margin-bottom: 20px;
+            /* width: 100%; */
+            /* margin-bottom: 20px; */
             border: none;
         }
 
@@ -32,17 +32,74 @@
             font-size: 13px;
             margin-bottom: 20px;
         }
+
+        .header-table {
+            width: 100%;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .school-logo {
+            height: 70px;
+            margin-right: 10px;
+        }
+
+        .header-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .left-logos {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .school-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .school-info .school-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .school-info .college-name {
+            font-size: 14px;
+        }
+
+        .school-info .program {
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .school-info .curriculum-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Curriculum Title -->
-    <h3 class="curriculum-title"><?= esc($curriculum_name ?? 'Curriculum') ?></h3>
+    <!-- Header with Logos and Text -->
+    <div class="header-wrapper">
+        <div class="left-logos">
+            <!-- <img src="<?= base_url('assets/transparentlogois.png') ?>" alt="ISPSC Logo" class="school-logo">
+            <img src="<?= base_url('assets/ccislogo.jpg') ?>" alt="CCIS Logo" class="school-logo"> -->
+        </div>
+        <div class="school-info">
+            <div class="school-name">Ilocos Sur Polytechnic State College - Main Campus</div>
+            <div class="college-name">College of Computing and Information Sciences</div>
+            <div class="program"><?= esc($program_name ?? '') ?></div>
+            <div class="curriculum-title"><?= esc($curriculum_name ?? 'Curriculum') ?></div>
+        </div>
+    </div>
 
-    <!-- Program Name -->
-    <p class="program-name"><?= esc($program_name ?? '') ?></p>
-
-    <!-- Name and ID in Two Columns -->
+    <!-- Student Info -->
     <table class="student-info-table">
         <tr>
             <td style="text-align: left;"><strong>Student Name:</strong> <?= esc($student_name ?? 'N/A') ?></td>

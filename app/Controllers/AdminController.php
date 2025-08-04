@@ -903,41 +903,38 @@ class AdminController extends BaseController
         $subject_type = $this->request->getPost('subject_type');
         $lec_units    = $this->request->getPost('lec_units');
         $lab_units    = $this->request->getPost('lab_units');
-        $total_units = (int)$lec_units + (int)$lab_units;
+        $total_units  = (int)$lec_units + (int)$lab_units;
 
-        //  Normalize inputs
+        // Normalize subject_code (remove spaces and make lowercase)
         $normalized_code = strtolower(str_replace(' ', '', $subject_code));
-        $normalized_name = strtolower(trim($subject_name));
 
-        //  Check for duplicate (excluding the current record)
+        // Check for duplicate subject_code (excluding the current record)
         $duplicate = $subjectModel
-            ->where("subject_id !=", $id)
+            ->where('subject_id !=', $id)
             ->where("REPLACE(LOWER(subject_code), ' ', '') =", $normalized_code)
-            ->where("LOWER(subject_name) =", $normalized_name)
-            ->where("lec_units", $lec_units)
-            ->where("lab_units", $lab_units)
             ->first();
 
         if ($duplicate) {
-            return redirect()->back()->with('error', 'Another subject already exists with the same code, name, and units.');
+            return redirect()->back()->with('error', 'Another subject already exists with the same subject code.');
         }
 
-        // Proceed with update using raw input
-        $data = [
-            'subject_code'  => $subject_code,
-            'subject_name'  => $subject_name,
-            'subject_type'  => $subject_type,
-            'lec_units'     => $lec_units,
-            'lab_units'     => $lab_units,
-            'total_units'   => $total_units,
-            'curriculum_id' => $this->request->getPost('curriculum_id'),
-            'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
-        ];
+            // Proceed with update using raw input
+            $data = [
+                'subject_code'  => $subject_code,
+                'subject_name'  => $subject_name,
+                'subject_type'  => $subject_type,
+                'lec_units'     => $lec_units,
+                'lab_units'     => $lab_units,
+                'total_units'   => $total_units,
+                'curriculum_id' => $this->request->getPost('curriculum_id'),
+                'yearlevel_sem' => $this->request->getPost('yearlevel_sem'),
+            ];
 
-        $subjectModel->update($id, $data);
+            $subjectModel->update($id, $data);
 
         return redirect()->back()->with('success', 'Subject updated successfully.');
     }
+
 
 
     // Delete a subject

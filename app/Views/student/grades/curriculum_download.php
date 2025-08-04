@@ -3,10 +3,11 @@
 <head>
     <title><?= esc($curriculum_name ?? 'Curriculum') ?> PDF</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
+        body { font-family: "Times New Roman", Georgia, serif; font-size: 12px; }
         h3, h4, h5 { margin: 0; padding: 5px 0; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
         th, td { border: 1px solid #444; padding: 5px; text-align: center; vertical-align: middle; word-wrap: break-word; }
+
 
         .student-info-table {
             /* width: 100%; */
@@ -86,26 +87,38 @@
 <body>
 
     <!-- Header with Logos and Text -->
-    <div class="header-wrapper">
-        <div class="left-logos">
-            <!-- <img src="<?= base_url('assets/transparentlogois.png') ?>" alt="ISPSC Logo" class="school-logo">
-            <img src="<?= base_url('assets/ccislogo.jpg') ?>" alt="CCIS Logo" class="school-logo"> -->
-        </div>
-        <div class="school-info">
-            <div class="school-name">Ilocos Sur Polytechnic State College - Main Campus</div>
-            <div class="college-name">College of Computing and Information Sciences</div>
-            <div class="program"><?= esc($program_name ?? '') ?></div>
-            <div class="curriculum-title"><?= esc($curriculum_name ?? 'Curriculum') ?></div>
-        </div>
-    </div>
 
-    <!-- Student Info -->
-    <table class="student-info-table">
-        <tr>
-            <td style="text-align: left;"><strong>Student Name:</strong> <?= esc($student_name ?? 'N/A') ?></td>
-            <td style="text-align: right;"><strong>ID Number:</strong> <?= esc($student_id ?? 'N/A') ?></td>
-        </tr>
-    </table>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <!-- Left Logos -->
+            <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
+                <img src="<?= $logo1 ?>" alt="Logo 1" style="height: 50px;">
+                <img src="<?= $logo2 ?>" alt="Logo 2" style="height: 50px;">
+            </div>
+
+            <!-- Header Text -->
+            <div style="flex: 1; text-align: center;">
+                <div style="font-size: 13px;">Republic of the Philippines</div>
+                <div style="font-size: 15px; font-weight: bold;">Ilocos Sur Polytechnic State College - Main Campus</div>
+                <div style="font-size: 13px;">College of Computing and Information Sciences</div>
+                <hr style="margin: 6px 0; border-top: 1px solid #000;">
+                <div style="font-size: 13px; font-weight: bold;">Bachelor of Science in Computer Science</div>
+                <div style="font-size: 12px;">CMO No. 25, Series 2015 · Board Resolution No. 2017</div>
+            </div>
+
+            <!-- Optional: Right Spacer (blank) -->
+            <div style="width: 70px;"></div>
+        </div>
+
+
+        <!-- Student Info -->
+        <table class="student-info-table" style="width: 100%; margin-bottom: 10px;">
+            <tr>
+                <td style="text-align: left;"><strong>Student Name:</strong> <?= esc($student_name ?? 'N/A') ?></td>
+                <td style="text-align: right;"><strong>ID Number:</strong> <?= esc($student_id ?? 'N/A') ?></td>
+            </tr>
+        </table>
+
+
 
     <!-- Subject Table -->
     <?php if (!empty($groupedSubjects)): ?>

@@ -27,8 +27,13 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
-                    <!-- The set_value() function provided by the Form Helper is used to show old input data when errors occur. -->
-                    <input type="email" class="form-control rounded-pill py-2" name="email" id="email" required placeholder="Enter your email">
+                    <div class="input-group rounded-pill">
+                        <span class="input-group-text border-0">
+                            <i class="bi bi-envelope-fill text-secondary"></i>
+                        </span>
+                        <!-- The set_value() function provided by the Form Helper is used to show old input data when errors occur. -->
+                        <input type="email" class="form-control border-0 py-2" name="email" id="email" required placeholder="Enter your email">
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 rounded-pill py-2">

@@ -32,12 +32,22 @@
 
             <div class="mb-3">
                 <label for="newpw" class="form-label">New Password:</label>
-                <input type="password" name="password" class="form-control rounded-pill py-2" placeholder="Enter New password" required>
+                <div class="input-group rounded-pill">
+                    <span class="input-group-text border-0">
+                        <i class="bi bi-key-fill"></i>
+                    </span>
+                    <input type="password" name="password" class="form-control border-0 py-2" placeholder="Enter New password" required>
+                </div>
             </div>
 
             <div class="mb-3">
                 <label for="confirmpw" class="form-label">Confirm Password:</label>
-                <input type="password" name="confirm_password" id="confirm_password" class="form-control rounded-pill py-2" placeholder="Re-type New Password" required>
+                <div class="input-group rounded-pill">
+                    <span class="input-group-text border-0">
+                        <i class="bi bi-key"></i>
+                    </span>
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control border-0 py-2" placeholder="Re-type New Password" required>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-success w-100 rounded-pill py-2">

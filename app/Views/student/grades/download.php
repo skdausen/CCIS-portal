@@ -84,7 +84,29 @@
 </head>
 <body>
     <div class="content">
-        <img src="<?= $logoBase64 ?>" alt="Logo" style="height: 100px; margin-bottom: 20px;">
+
+            <!-- Header with Logos and Text -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <!-- Left Logos -->
+            <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
+                <img src="<?= $logoIS ?>" alt="IS Logo" style="height: 50px;">
+                <img src="<?= $logoCC ?>" alt="CCIS Logo" style="height: 50px;">
+            </div>
+
+            <!-- Header Text -->
+            <div style="flex: 1; text-align: center;">
+                <div style="font-size: 13px;">Republic of the Philippines</div>
+                <div style="font-size: 15px; font-weight: bold;">Ilocos Sur Polytechnic State College - Main Campus</div>
+                <div style="font-size: 13px;">College of Computing and Information Sciences</div>
+                <hr style="margin: 6px 0; border-top: 1px solid #000;">
+                <div style="font-size: 13px; font-weight: bold;">Bachelor of Science in Computer Science</div>
+                <div style="font-size: 12px;">CMO No. 25, Series 2015 · Board Resolution No. 2017</div>
+            </div>
+
+            <!-- Optional: Right Spacer (blank) -->
+            <div style="width: 70px;"></div>
+        </div>
+        
         <h2>Student Grade Report</h2>
         <!-- Student Details -->
         <?php if (!empty($grades)): ?>
@@ -191,5 +213,10 @@
                 </div>
             </div>
     </div>
+
+    <div style="margin-top: 40px; text-align: center; font-size: 11px; font-style: italic; color: #444;">
+     <p>This is <strong>not</strong> an official Certificate of Grades. For the official document, please request a Certificate of Grades (COG) from the Registrar's Office.</p>
+    </div>
+
 </body>
 </html>

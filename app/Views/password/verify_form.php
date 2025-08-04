@@ -28,12 +28,22 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
-                    <input type="email" name="email" class="form-control rounded-pill py-2" value="<?= esc($email) ?>" readonly>
+                        <div class="input-group rounded-pill">
+                            <span class="input-group-text border-0">
+                                <i class="bi bi-envelope-fill text-secondary"></i>
+                            </span>
+                            <input type="email" name="email" class="form-control border-0 py-2" value="<?= esc($email) ?>" readonly>
+                        </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="otp" class="form-label">OTP Code:</label>
-                    <input type="text" name="otp"  maxlength="6" pattern="\d{6}" inputmode="numeric" class="form-control rounded-pill py-2" placeholder="Enter OTP" required>
+                        <div class="input-group rounded-pill">
+                            <span class="input-group-text border-0">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </span>
+                            <input type="text" name="otp"  maxlength="6" pattern="\d{6}" inputmode="numeric" class="form-control rounded-pill py-2" placeholder="Enter OTP" required>
+                        </div>
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 rounded-pill py-2">

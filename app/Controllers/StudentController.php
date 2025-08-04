@@ -343,14 +343,18 @@ class StudentController extends BaseController
         $grades_data = $this->prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters);
 
         // Prepare logo path for PDF
-        $logoData = base64_encode(file_get_contents(FCPATH . 'rsc/assets/cs-logo.png'));
-        $logoBase64 = 'data:image/png;base64,' . $logoData;
+        $ISData = base64_encode(file_get_contents(FCPATH . 'rsc/assets/transparentlogois.png'));
+        $CCData = base64_encode(file_get_contents(FCPATH . 'rsc/assets/cs-logo.png'));
+
+        $ISData = 'data:image/png;base64,' . $ISData;
+        $CCData = 'data:image/png;base64,' . $CCData;
 
         // Build the PDF HTML
         $html = view('student/grades/download', array_merge([
             'grades'          => $grades,
             'currentSemester' => $currentSemester,
-            'logoBase64'        => $logoBase64
+            'logoIS'           => $ISData,
+            'logoCC'           => $CCData
         ], $grades_data));
 
         // Render PDF
@@ -743,6 +747,12 @@ class StudentController extends BaseController
 
         // Generate PDF
         $dompdf = new Dompdf(['isRemoteEnabled' => true]);
+        $logo1Data = base64_encode(file_get_contents(FCPATH . 'rsc/assets/transparentlogois.png'));
+        $logo2Data = base64_encode(file_get_contents(FCPATH . 'rsc/assets/cs-logo.png'));
+
+        $logo1 = 'data:image/png;base64,' . $logo1Data;
+        $logo2 = 'data:image/png;base64,' . $logo2Data;
+
         $html = view('student/grades/curriculum_download', [
             'groupedSubjects'   => $groupedSubjects,
             'gwa'               => $gwa,
@@ -750,7 +760,9 @@ class StudentController extends BaseController
             'student_name'      => $fullName,
             'student_id'        => $student->student_id,
             'program_name'      => $student->program_name,
-            'curriculum_name'   => $student->curriculum_name
+            'curriculum_name'   => $student->curriculum_name,
+            'logo1'             => $logo1,
+            'logo2'             => $logo2
         ]);
         
 

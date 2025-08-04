@@ -20,10 +20,22 @@
         <form action="<?= site_url('auth/login') ?>" method="post" onsubmit="showSpinner()">
           <?= csrf_field() ?>
           <div class="mb-3">
-            <input type="text" name="username" class="form-control rounded-pill py-2" placeholder="Enter Username" required autofocus>
+            <div class="input-group rounded-pill">
+              <span class="input-group-text border-0">
+                <i class="bi bi-person-fill text-secondary"></i>
+              </span>
+              <input type="text" name="username" class="form-control border-0 py-2" placeholder="Enter Username" required autofocus>
+            </div>
           </div>
+
+          <!-- PASSWORD INPUT WITH ICON -->
           <div class="mb-3">
-            <input type="password" name="password" class="form-control rounded-pill py-2" placeholder="Enter Password" required>
+            <div class="input-group rounded-pill">
+              <span class="input-group-text border-0">
+                <i class="bi bi-lock-fill text-secondary"></i>
+              </span>
+              <input type="password" name="password" class="form-control border-0 py-2" placeholder="Enter Password" required>
+            </div>
           </div>
 
           <div class="d-flex justify-content-end align-items-center mb-3">

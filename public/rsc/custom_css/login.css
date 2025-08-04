@@ -14,33 +14,44 @@ html, body {
   z-index: -1; /* sends it behind content */
 }
 .content {
+  min-height: 100vh;
+  height: 100dvh; /* modern fix for mobile safe area */
   display: flex;
-  align-items: center;    /* vertical center */
-  justify-content: center; /* horizontal center */
-  height: 100vh;           /* full screen height */
-  position: relative;
-  z-index: 2;             
-  padding: 1rem;
-}
-.col-12{
-  align-items: center;    
   justify-content: center;
+  align-items: center;
+  padding: 1rem;
 }
 img{
     width: 80px;                   /* Adjusts logo size */
     margin-bottom: 20px;           /* Space below the logo */
 }
 .card{
-  background-color: rgba(255, 255, 255, 0.20) !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
   box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.75) !important; /* darker shadow only on right & bottom */
 }
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  border-radius: 0 0.5rem 0.5rem 0 !important; /* TL TR BR BL */
+  background-color: white !important;
+  font-size: 0.9rem !important;
+}
+.input-text-group{
+  background-color:#4c4c4c !important;
+  border-radius: 0.5rem 0 0 0.5rem !important; /* TL TR BR BL */
+}
+button[type="submit"]{
+  border: none !important;
+  border-radius: 0.5rem !important;
+}
+
 h4, p, a, label, i{
   color: white !important;
 }
 i{
   color: gray !important;
 }
-i:hover{
+.back-arrow a > i:hover{
   color: green !important;
 }
 .spinner-border {
@@ -49,13 +60,4 @@ i:hover{
 .shadow-darker {
   /* OFFSET X: 4px (right), OFFSET Y: 4px (bottom) */
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); /* darker shadow only on right & bottom */
-}
-
-@media (max-width: 991.98px) {
-  .col-12{
-    justify-items: center;
-  }
-  .card{
-    width: 80%;
-  }
 }

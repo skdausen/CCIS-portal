@@ -9,24 +9,16 @@
     <!-- Grade Form Section -->
     <div class="card bg-white shadow rounded mb-5 mr-3">
         <div class="card-body p-4">
-            <form id="uploadGradesForm" action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/upload') ?>" method="post" enctype="multipart/form-data">
+            <div class="d-flex justify-content-end gap-3">
+                <button for="grades_file" class="btn btn-outline-success gi btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#uploadGradesModal">
+                    Upload Excel
+                </button>
 
-                <div class="d-flex justify-content-end gap-3">
-                    <input class="form-control d-none" type="file" name="grades_file" id="grades_file" accept=".xlsx,.xls" required>
-
-                    <!-- BUTTON TO TRIGGER FILE INPUT -->
-                    <button type="button" id="triggerUploadBtn" class="btn btn-outline-success btn-sm mb-3">
-                        Upload Grades
-                    </button>
-
-                    <!-- <button type="submit" class="btn btn-outline-primary btn-sm mb-3">Upload Grades</button> -->
-                    <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-success gi btn-sm mb-3">
-                        Download Grade Template
-                    </a>
-                </div>
-
-            </form>
-
+                <!-- <button type="submit" class="btn btn-outline-primary btn-sm mb-3">Upload Grades</button> -->
+                <a href="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/download-template') ?>" class="btn btn-outline-success gi btn-sm mb-3">
+                    Download Grade Template
+                </a>
+            </div>
 
             <div id="gradeTableContainer">
                 <form action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/save') ?>" method="post">
@@ -87,7 +79,6 @@
                 </form>
             </div>
 
-
         </div>
     </div>
 
@@ -110,6 +101,38 @@
         </div>
     </div>
 </div>
+
+<!-- Upload Grades Modal -->
+<form id="uploadGradesForm" action="<?= base_url('faculty/class/' . $class['class_id'] . '/grades/upload') ?>" method="post" enctype="multipart/form-data">
+    <?= csrf_field() ?>
+    <input type="file" class="form-control d-none" name="grades_file" id="grades_file" accept=".xlsx,.xls" required>
+
+    <div class="modal fade" id="uploadGradesModal" tabindex="-1" aria-labelledby="uploadGradesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadGradesModalLabel">Upload Grades (Excel)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Upload a grade template. The Excel file must contain the following headers (case-insensitive):</p>
+                    <ul class="mb-3">
+                        <li><code>student_id</code> (Should be in the first column)</li>
+                        <li><code>MG</code> (Midterm Grade)</li>
+                        <li><code>TFG</code> (Tentative Final Grade)</li>
+                    </ul>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="triggerUploadBtn" class="btn btn-outline-success">
+                        Upload Grades
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmUploadModal" tabindex="-1" aria-labelledby="confirmUploadModalLabel" aria-hidden="true">
@@ -139,8 +162,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button id="confirmUploadBtn" class="btn btn-success">Confirm and Save</button>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button id="confirmUploadBtn" class="btn btn-outline-success">Confirm and Save</button>
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
         </div>
     </div>
@@ -175,9 +198,10 @@
         if (fileInput.files.length === 0) return;
 
         const formData = new FormData(uploadForm);
+        formData.append("<?= csrf_token() ?>", "<?= csrf_hash() ?>");
         uploadBtn.disabled = true;
         const originalText = uploadBtn.innerHTML;
-        uploadBtn.innerHTML = '⏳ Uploading...';
+        uploadBtn.innerHTML = 'Uploading...';
 
         $.ajax({
             url: uploadForm.action,
@@ -190,6 +214,7 @@
                 uploadBtn.innerHTML = originalText;
 
                 if (response.status === 'no_changes') {
+                    $('#uploadGradesModal').modal('hide');
                     $('#uploadFeedbackMessage').html("No grade changes detected. Please review your inputs");
                     $('#uploadFeedbackModal').modal('show');
                     fileInput.value = "";
@@ -197,6 +222,7 @@
                 }
 
                 if (response.status === 'changes_detected') {
+                    $('#uploadGradesModal').modal('hide');
                     const tableBody = document.getElementById('changePreviewTableBody');
                     tableBody.innerHTML = "";
 
@@ -245,6 +271,7 @@
                 }
 
                 if (response.status === 'success') {
+                    $('#uploadGradesModal').modal('hide');
                     $("#gradeTableContainer").load(location.href + " #gradeTableContainer > *");
                     $('#uploadFeedbackMessage').html(response.message);
                     $('#uploadFeedbackModal').modal('show');
@@ -252,6 +279,7 @@
                 }
                 
                 if (response.status === 'error') {
+                    $('#uploadGradesModal').modal('hide');
                     $('#uploadFeedbackMessage').html(response.message);
                     $('#uploadFeedbackModal').modal('show');
                     fileInput.value = "";
@@ -284,6 +312,7 @@
             }
         });
     });
+
 </script>
 
 

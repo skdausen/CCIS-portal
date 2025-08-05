@@ -90,7 +90,7 @@
 </head>
 <body>
     <div class="content">
-
+        <!-- Heading -->
         <table width="100%" style="margin-bottom: 20px;">
         <tr>
             <!-- Left Logo -->
@@ -122,7 +122,6 @@
         <!-- Student Details -->
         <?php if (!empty($grades)): ?>
             <?php $student = $grades[0]; ?>
-            <p><strong>Student ID:</strong> <?= $student->student_id ?></p>
             <p><strong>Name:</strong> <?= $student->lname ?>, <?= $student->fname ?> <?= $student->mname ?></p>
             <p><strong>Program:</strong> <?= $student->program_name ?? '-' ?></p>
             <?php if (!empty($currentSemester)): ?>

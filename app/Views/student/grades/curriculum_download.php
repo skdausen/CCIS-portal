@@ -71,7 +71,6 @@
         <table class="student-info-table" style="width: 100%; margin-bottom: 10px;">
             <tr>
                 <td style="text-align: left;"><strong>Student Name:</strong> <?= esc($student_name ?? 'N/A') ?></td>
-                <td style="text-align: right;"><strong>ID Number:</strong> <?= esc($student_id ?? 'N/A') ?></td>
             </tr>
         </table>
 

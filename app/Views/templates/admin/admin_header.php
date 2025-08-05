@@ -31,7 +31,6 @@
                 <div class="container-fluid position-relative">
                     <a class="navbar-brand ms-0 ms-md-2 p-0" href="<?= site_url('admin/home') ?>">
                         <img src="<?= base_url('rsc/assets/cs-logo.png') ?>" alt="CS Logo" class="cs-logo me-2" style="width: 50px;">
-                        CCIS
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>

@@ -57,7 +57,8 @@ $routes->group('admin', function ($routes) {
     $routes->get('add-user', 'AdminController::addUserForm');
     $routes->post('create-user', 'AdminController::createUser');
     $routes->get('user/(:num)', 'AdminController::getUser/$1');
-    $routes->get('download-user-template', 'AdminController::downloadUserTemplate');
+    $routes->get('download-student-template', 'AdminController::downloadStudentTemplate');
+    $routes->get('download-faculty-template', 'AdminController::downloadFacultyTemplate');
     $routes->post('upload-users', 'AdminController::uploadUsers');
 
     // Academics Home

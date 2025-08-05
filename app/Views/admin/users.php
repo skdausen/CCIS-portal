@@ -28,12 +28,23 @@
         </form>
         <!-- Add User Button -->
         <div class="col-md-5 mb-2 d-flex justify-content-end gap-2">
-            <!-- DOWNLOAD EXCEL FORMAT FOR UPLOAD -->
-            <a href="<?= site_url('admin/download-user-template') ?>" 
-                class="btn btn-outline-success" 
-                id="downloadTemplateBtn">
-                Download Template
-            </a>
+            <div class="dropdown">
+                <button class="btn btn-outline-success dropdown-toggle" type="button" id="downloadTemplateDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Download Template
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadTemplateDropdown">
+                    <li>
+                        <a class="dropdown-item" href="<?= site_url('admin/download-student-template') ?>">
+                            Student Template
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="<?= site_url('admin/download-faculty-template') ?>">
+                            Faculty Template
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <!-- OPEN UPLOAD MODAL -->
             <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#uploadUsersModal">
                 Upload Excel

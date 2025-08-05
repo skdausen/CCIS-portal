@@ -252,26 +252,36 @@ class AdminController extends BaseController
         $skippedRows = [];
 
         foreach (array_slice($sheet, 1) as $index => $row) {
-            // Skip completely empty rows
-            $trimmedRow = array_map(function ($cell) {
-                return trim((string)$cell);
-            }, $row);
+            $trimmedRow = array_map(fn($cell) => trim((string)$cell), $row);
+            if (count(array_filter($trimmedRow)) === 0) continue;
 
-            if (count(array_filter($trimmedRow)) === 0) {
-                continue; // skip if all values are empty after trimming
-            }
-            
+            // Pad missing columns to avoid "undefined offset" errors
+            $trimmedRow = array_pad($trimmedRow, 6, '');
+
             [$username, $email, $role, $curriculumName, $programName, $yearLevel] = $trimmedRow;
 
             $username = strtoupper($username);
             $role     = strtolower($role);
+            
+            // For student only: expand short program names
+            if ($role === 'student') {
+                $programMap = [
+                    'BSCS' => 'Bachelor of Science in Computer Science',
+                    'BSIT' => 'Bachelor of Science in Information Technology',
+                    'BEED' => 'Bachelor of Elementary Education',
+                    'BSED' => 'Bachelor of Secondary Education',
+                ];
+                $programAbbr = strtoupper(trim($programName));
+                if (isset($programMap[$programAbbr])) {
+                    $programName = $programMap[$programAbbr];
+                }
+            }
+
             $curriculumId = $curriculums[$curriculumName] ?? null;
             $programId    = $programs[$programName] ?? null;
             $yearLevel    = is_numeric($yearLevel) ? intval($yearLevel) : null;
 
-            // Determine a user identifier (either username or row number as fallback)
             $userIdentifier = $username ? "<strong>$username</strong>" : "Row " . ($index + 2);
-
             $errors = [];
 
             if (empty($username)) $errors[] = "Missing username";
@@ -280,12 +290,11 @@ class AdminController extends BaseController
             if (!empty($username) && $userModel->where('username', $username)->first()) {
                 $errors[] = "Username already exists";
             }
-
             if (!empty($email) && $userModel->where('email', $email)->first()) {
                 $errors[] = "Email already exists";
             }
 
-            // Validate role
+            // Role checks
             if (empty($role)) {
                 $errors[] = "Missing role";
             } elseif (!in_array($role, ['student', 'faculty', 'admin'])) {
@@ -303,7 +312,7 @@ class AdminController extends BaseController
                 continue;
             }
 
-            // Insert into users table
+            // Insert into users
             $userId = $userModel->insert([
                 'username'     => $username,
                 'email'        => $email,
@@ -313,7 +322,7 @@ class AdminController extends BaseController
                 'created_at'   => date('Y-m-d H:i:s'),
             ]);
 
-            // Insert into role-specific table
+            // Role-specific insert
             if ($role === 'student') {
                 $studentModel->insert([
                     'student_id'    => $username,
@@ -368,12 +377,12 @@ class AdminController extends BaseController
 
     }
 
-    public function downloadUserTemplate()
+    public function downloadStudentTemplate()
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Header row
+        // HEADER ROW
         $sheet->setCellValue('A1', 'username');
         $sheet->setCellValue('B1', 'email');
         $sheet->setCellValue('C1', 'role');
@@ -381,26 +390,45 @@ class AdminController extends BaseController
         $sheet->setCellValue('E1', 'program_name');
         $sheet->setCellValue('F1', 'year_level');
 
-        // Sample rows
-        $sheet->setCellValue('A2', 'CCIS-22-0001');
+        // SAMPLE STUDENT DATA
+        $sheet->setCellValue('A2', 'CCIS-25-0001');
         $sheet->setCellValue('B2', 'student1@gmail.com');
         $sheet->setCellValue('C2', 'student');
         $sheet->setCellValue('D2', 'Old Curriculum');
         $sheet->setCellValue('E2', 'Bachelor of Science in Computer Science');
         $sheet->setCellValue('F2', '1');
 
-        $sheet->setCellValue('A3', 'CCIS-22-0002');
-        $sheet->setCellValue('B3', 'faculty@gmail.com');
-        $sheet->setCellValue('C3', 'faculty');
-        $sheet->setCellValue('D3', '');
-        $sheet->setCellValue('E3', '');
-        $sheet->setCellValue('F3', '');
+        $writer = new XlsxWriter($spreadsheet);
+
+        // HEADERS FOR DOWNLOAD
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Student_Template.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function downloadFacultyTemplate()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // HEADER ROW
+        $sheet->setCellValue('A1', 'username');
+        $sheet->setCellValue('B1', 'email');
+        $sheet->setCellValue('C1', 'role');
+
+        // SAMPLE FACULTY DATA
+        $sheet->setCellValue('A2', 'FM-JDS-001');
+        $sheet->setCellValue('B2', 'faculty@gmail.com');
+        $sheet->setCellValue('C2', 'faculty');
 
         $writer = new XlsxWriter($spreadsheet);
 
-        // Set headers for download
+        // HEADERS FOR DOWNLOAD
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="User_Sample_Template.xlsx"');
+        header('Content-Disposition: attachment;filename="Faculty_Template.xlsx"');
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output');

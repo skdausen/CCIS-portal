@@ -498,7 +498,8 @@
       <div class="row align-items-center">
         <!-- Logo Column -->
         <div class="col-12 col-md-3 mb-3 mb-md-0 text-md-start">
-          <a href="<?= site_url('admin/home') ?>" class="navbar-brand d-inline-block">
+          <a href="<?= site_url('admin/home') ?>" class="navbar-brand d-inline-block gap-2">
+            <img src="<?= base_url('rsc/assets/ispsc-logo.png') ?>" alt="ISPSC Logo" class="cs-logo" style="width: 140px;">
             <img src="<?= base_url('rsc/assets/cs-logo.png') ?>" alt="CS Logo" class="cs-logo" style="width: 140px;">
           </a>
         </div>

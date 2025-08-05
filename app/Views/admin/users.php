@@ -149,7 +149,7 @@
 
     <!-- ADD USER MODAL -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="addUserModalLabel">Add New User Account</h5>
@@ -157,27 +157,36 @@
         </div>
             <form action="<?= site_url('admin/create-user') ?>" method="post" id="addUser">
                 <div class="modal-body">
-
                     <div class="mb-3">
-                    <label for="username" class="form-label">Username:</label>
-                    <input type="text" name="username" id="username" class="form-control" placeholder="Enter ID Number" required>
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" name="username" id="username" class="form-control" placeholder="Enter ID Number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fname" class="form-label">First Name:</label>
+                        <input type="text" name="fname" id="fname" class="form-control" placeholder="Enter First Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mname" class="form-label">Middle Name:</label>
+                        <input type="text" name="mname" id="mname" class="form-control" placeholder="Enter Middle Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lname" class="form-label">Last Name:</label>
+                        <input type="text" name="lname" id="lname" class="form-control" placeholder="Enter Last Name" required>
                     </div>
 
                     <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter email address" required>
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter email address" required>
                     </div>
-
                     <div class="mb-3">
-                    <label for="role" class="form-label">Role:</label>
-                    <select name="role" id="role" class="form-select" required>
-                        <option value="">Select role</option>
-                        <option value="admin">Admin</option>
-                        <option value="faculty">Faculty</option>
-                        <option value="student">Student</option>
-                    </select>
+                        <label for="role" class="form-label">Role:</label>
+                        <select name="role" id="role" class="form-select" required>
+                            <option value="">Select role</option>
+                            <option value="admin">Admin</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="student">Student</option>
+                        </select>
                     </div>
-
                     <div class="mb-3 d-none" id="curriculumGroup">
                         <label for="curriculum_id" class="form-label">Curriculum:</label>
                         <select name="curriculum_id" id="curriculum_id" class="form-select">
@@ -322,11 +331,14 @@
                 <p>Upload an Excel file based on the template format. File must include the following headers:</p>
                 <ul>
                     <li><code>username</code></li>
+                    <li><code>lname</code></li>
+                    <li><code>fname</code></li>
+                    <li><code>mname</code></li>
                     <li><code>email</code></li>
                     <li><code>role</code></li>
-                    <li><code>curriculum_name</code></li>
-                    <li><code>program_name</code></li>
-                    <li><code>year_level</code></li>
+                    <li><code>curriculum_name</code>(for students)</li>
+                    <li><code>program_name</code>(for students)</li>
+                    <li><code>year_level</code>(for students)</li>
                 </ul>
                 <div class="d-flex align-items-center text-muted mt-2">
                     <span>Selected File: <span id="uploadedUserFileName" class="ms-1">[None]</span></span>

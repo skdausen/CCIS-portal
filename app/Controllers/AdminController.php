@@ -101,6 +101,9 @@ class AdminController extends BaseController
 
         // GET POST INPUTS
         $username = strtoupper($this->request->getPost('username'));
+        $fname = $this->request->getPost('fname');
+        $mname = $this->request->getPost('mname');
+        $lname = $this->request->getPost('lname');
         $email    = $this->request->getPost('email');
         $role     = strtolower($this->request->getPost('role'));
         $curriculumId = $this->request->getPost('curriculum_id'); 
@@ -144,6 +147,9 @@ class AdminController extends BaseController
             if (!$studentModel->insert([
                 'student_id'     => $username,
                 'user_id'        => $userId,
+                'fname'         => $fname,
+                'mname'         => $mname,
+                'lname'         => $lname,
                 'curriculum_id'  => $curriculumId,
                 'program_id'  => $programId,
                 'year_level'  => $yearLevel,
@@ -159,6 +165,9 @@ class AdminController extends BaseController
             if (!$facultyModel->insert([
                 'faculty_id' => $username,
                 'user_id'    => $userId,
+                'fname'         => $fname,
+                'mname'         => $mname,
+                'lname'         => $lname,
                 'profimg'    => $defaultImg
             ])) {
                 $db->transRollback();
@@ -170,6 +179,9 @@ class AdminController extends BaseController
             if (!$adminModel->insert([
                 'admin_id'   => $username,
                 'user_id'    => $userId,
+                'fname'         => $fname,
+                'mname'         => $mname,
+                'lname'         => $lname,
                 'profimg'    => $defaultImg
             ])) {
                 $db->transRollback();
@@ -187,7 +199,6 @@ class AdminController extends BaseController
         return redirect()->to('admin/users')->with('success', 'Account created successfully.');
     }
 
-
     public function uploadUsers()
     {
         helper(['form']);
@@ -196,13 +207,11 @@ class AdminController extends BaseController
 
         if (!$file->isValid()) {
             $msg = 'Invalid file upload.';
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON(['status' => 'error', 'message' => $msg]);
-            }
-            return redirect()->back()->with('error', $msg);
+            return $this->request->isAJAX()
+                ? $this->response->setJSON(['status' => 'error', 'message' => $msg])
+                : redirect()->back()->with('error', $msg);
         }
 
-        // Validate MIME type and extension
         $allowedTypes = [
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'application/vnd.ms-excel'
@@ -212,12 +221,13 @@ class AdminController extends BaseController
             return redirect()->back()->with('error', 'Please upload a valid Excel file (XLS or XLSX).');
         }
 
-        // Put your try-catch here
         try {
-            $userModel = new UserModel();
-            $studentModel = new StudentModel();
-            $facultyModel = new FacultyModel();
-            $adminModel = new AdminModel();
+            $userModel       = new UserModel();
+            $studentModel    = new StudentModel();
+            $facultyModel    = new FacultyModel();
+            $adminModel      = new AdminModel();
+            $programModel    = new ProgramModel();
+            $curriculumModel = new CurriculumModel();
         } catch (\Exception $e) {
             return $this->response->setJSON([
                 'status' => 'error',
@@ -225,29 +235,18 @@ class AdminController extends BaseController
             ]);
         }
 
-        // Load models
-        $userModel       = new UserModel();
-        $studentModel    = new StudentModel();
-        $facultyModel    = new FacultyModel();
-        $adminModel      = new AdminModel();
-        $programModel    = new ProgramModel();
-        $curriculumModel = new CurriculumModel();
-
-        // Load spreadsheet
         $reader = new XlsxReader;
         $spreadsheet = $reader->load($file->getTempName());
         $sheet = $spreadsheet->getActiveSheet()->toArray();
 
-        // Fetch all program/curriculum name-ID maps
         $programs    = array_column($programModel->findAll(), 'program_id', 'program_name');
         $curriculums = array_column($curriculumModel->findAll(), 'curriculum_id', 'curriculum_name');
 
         $db = \Config\Database::connect();
-        $defaultPassword = password_hash('ccis1234', PASSWORD_DEFAULT);
-        $defaultImg = 'default.png';
-
         $db->transStart();
 
+        $defaultPassword = password_hash('ccis1234', PASSWORD_DEFAULT);
+        $defaultImg = 'default.png';
         $addedUsers = 0;
         $skippedRows = [];
 
@@ -255,46 +254,50 @@ class AdminController extends BaseController
             $trimmedRow = array_map(fn($cell) => trim((string)$cell), $row);
             if (count(array_filter($trimmedRow)) === 0) continue;
 
-            // Pad missing columns to avoid "undefined offset" errors
-            $trimmedRow = array_pad($trimmedRow, 6, '');
-
-            [$username, $email, $role, $curriculumName, $programName, $yearLevel] = $trimmedRow;
+            // Match Excel column order
+            [$username, $lname, $fname, $mname, $email, $role] = array_pad($trimmedRow, 6, '');
+            $curriculumName = $trimmedRow[6] ?? null;
+            $programName    = $trimmedRow[7] ?? null;
+            $yearLevel      = $trimmedRow[8] ?? null;
 
             $username = strtoupper($username);
+            $lname    = ucwords(strtolower($lname));
+            $fname    = ucwords(strtolower($fname));
+            $mname    = $mname ? ucwords(strtolower($mname)) : null;
+            $email    = strtolower($email);
             $role     = strtolower($role);
-            
-            // For student only: expand short program names
+
             if ($role === 'student') {
+                // Map abbreviation to full name
                 $programMap = [
                     'BSCS' => 'Bachelor of Science in Computer Science',
                     'BSIT' => 'Bachelor of Science in Information Technology',
-                    'BEED' => 'Bachelor of Elementary Education',
-                    'BSED' => 'Bachelor of Secondary Education',
                 ];
                 $programAbbr = strtoupper(trim($programName));
                 if (isset($programMap[$programAbbr])) {
                     $programName = $programMap[$programAbbr];
                 }
+
+                $curriculumId = $curriculums[$curriculumName] ?? null;
+                $programId    = $programs[$programName] ?? null;
+                $yearLevel    = is_numeric($yearLevel) ? (int)$yearLevel : null;
             }
 
-            $curriculumId = $curriculums[$curriculumName] ?? null;
-            $programId    = $programs[$programName] ?? null;
-            $yearLevel    = is_numeric($yearLevel) ? intval($yearLevel) : null;
-
-            $userIdentifier = $username ? "<strong>$username</strong>" : "Row " . ($index + 2);
+            $userIdentifier = $username ?: "Row " . ($index + 2);
             $errors = [];
 
             if (empty($username)) $errors[] = "Missing username";
-            if (empty($email))    $errors[] = "Missing email";
+            if (empty($fname)) $errors[] = "Missing first name";
+            if (empty($lname)) $errors[] = "Missing last name";
+            if (empty($email)) $errors[] = "Missing email";
 
-            if (!empty($username) && $userModel->where('username', $username)->first()) {
+            if ($userModel->where('username', $username)->first()) {
                 $errors[] = "Username already exists";
             }
-            if (!empty($email) && $userModel->where('email', $email)->first()) {
+            if ($userModel->where('email', $email)->first()) {
                 $errors[] = "Email already exists";
             }
 
-            // Role checks
             if (empty($role)) {
                 $errors[] = "Missing role";
             } elseif (!in_array($role, ['student', 'faculty', 'admin'])) {
@@ -308,11 +311,10 @@ class AdminController extends BaseController
             }
 
             if (!empty($errors)) {
-                $skippedRows[] = "$userIdentifier:<ul><li>" . implode('</li><li>', $errors) . "</li></ul>";
+                $skippedRows[] = "<strong>$userIdentifier</strong>:<ul><li>" . implode('</li><li>', $errors) . "</li></ul>";
                 continue;
             }
 
-            // Insert into users
             $userId = $userModel->insert([
                 'username'     => $username,
                 'email'        => $email,
@@ -322,28 +324,26 @@ class AdminController extends BaseController
                 'created_at'   => date('Y-m-d H:i:s'),
             ]);
 
-            // Role-specific insert
+            // Role-specific table insert
+            $roleData = [
+                'user_id' => $userId,
+                'fname'   => $fname,
+                'mname'   => $mname,
+                'lname'   => $lname,
+                'profimg' => $defaultImg
+            ];
+
             if ($role === 'student') {
-                $studentModel->insert([
+                $studentModel->insert(array_merge($roleData, [
                     'student_id'    => $username,
-                    'user_id'       => $userId,
                     'curriculum_id' => $curriculumId,
                     'program_id'    => $programId,
-                    'year_level'    => $yearLevel,
-                    'profimg'       => $defaultImg
-                ]);
+                    'year_level'    => $yearLevel
+                ]));
             } elseif ($role === 'faculty') {
-                $facultyModel->insert([
-                    'faculty_id' => $username,
-                    'user_id'    => $userId,
-                    'profimg'    => $defaultImg
-                ]);
+                $facultyModel->insert(array_merge($roleData, ['faculty_id' => $username]));
             } elseif ($role === 'admin') {
-                $adminModel->insert([
-                    'admin_id' => $username,
-                    'user_id'  => $userId,
-                    'profimg'  => $defaultImg
-                ]);
+                $adminModel->insert(array_merge($roleData, ['admin_id' => $username]));
             }
 
             $addedUsers++;
@@ -353,10 +353,9 @@ class AdminController extends BaseController
 
         if ($db->transStatus() === false) {
             $msg = 'Failed to upload users. Please try again.';
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON(['status' => 'error', 'message' => $msg]);
-            }
-            return redirect()->back()->with('error', $msg);
+            return $this->request->isAJAX()
+                ? $this->response->setJSON(['status' => 'error', 'message' => $msg])
+                : redirect()->back()->with('error', $msg);
         }
 
         $summary = "$addedUsers user(s) uploaded successfully.";
@@ -364,18 +363,11 @@ class AdminController extends BaseController
             $summary .= ' Skipped rows: <br>' . implode('<br>', $skippedRows);
         }
 
-        if ($this->request->isAJAX()) {
-            return $this->response->setJSON([
-                'status' => 'success',
-                'message' => $summary,
-                'reload' => true
-            ]);
-        } else {
-            return redirect()->to('admin/users')->with('success', $summary);
-        }
-
-
+        return $this->request->isAJAX()
+            ? $this->response->setJSON(['status' => 'success', 'message' => $summary, 'reload' => true])
+            : redirect()->to('admin/users')->with('success', $summary);
     }
+
 
     public function downloadStudentTemplate()
     {
@@ -384,19 +376,25 @@ class AdminController extends BaseController
 
         // HEADER ROW
         $sheet->setCellValue('A1', 'username');
-        $sheet->setCellValue('B1', 'email');
-        $sheet->setCellValue('C1', 'role');
-        $sheet->setCellValue('D1', 'curriculum_name');
-        $sheet->setCellValue('E1', 'program_name');
-        $sheet->setCellValue('F1', 'year_level');
+        $sheet->setCellValue('B1', 'lname');
+        $sheet->setCellValue('C1', 'fname');
+        $sheet->setCellValue('D1', 'mname');
+        $sheet->setCellValue('E1', 'email');
+        $sheet->setCellValue('F1', 'role');
+        $sheet->setCellValue('G1', 'curriculum_name');
+        $sheet->setCellValue('H1', 'program_name');
+        $sheet->setCellValue('I1', 'year_level');
 
         // SAMPLE STUDENT DATA
         $sheet->setCellValue('A2', 'CCIS-25-0001');
-        $sheet->setCellValue('B2', 'student1@gmail.com');
-        $sheet->setCellValue('C2', 'student');
-        $sheet->setCellValue('D2', 'Old Curriculum');
-        $sheet->setCellValue('E2', 'Bachelor of Science in Computer Science');
-        $sheet->setCellValue('F2', '1');
+        $sheet->setCellValue('B2', 'Dela Cruz');
+        $sheet->setCellValue('C2', 'John');
+        $sheet->setCellValue('D2', 'Doe');
+        $sheet->setCellValue('E2', 'CCIS-25-0001@gmail.com');
+        $sheet->setCellValue('F2', 'student');
+        $sheet->setCellValue('G2', 'Old Curriculum');
+        $sheet->setCellValue('H2', 'Bachelor of Science in Computer Science');
+        $sheet->setCellValue('I2', '1');
 
         $writer = new XlsxWriter($spreadsheet);
 
@@ -416,13 +414,19 @@ class AdminController extends BaseController
 
         // HEADER ROW
         $sheet->setCellValue('A1', 'username');
-        $sheet->setCellValue('B1', 'email');
-        $sheet->setCellValue('C1', 'role');
+        $sheet->setCellValue('B1', 'lname');
+        $sheet->setCellValue('C1', 'fname');
+        $sheet->setCellValue('D1', 'mname');
+        $sheet->setCellValue('E1', 'email');
+        $sheet->setCellValue('F1', 'role');
 
         // SAMPLE FACULTY DATA
         $sheet->setCellValue('A2', 'FM-JDS-001');
-        $sheet->setCellValue('B2', 'faculty@gmail.com');
-        $sheet->setCellValue('C2', 'faculty');
+        $sheet->setCellValue('B2', 'Dela Cruz');
+        $sheet->setCellValue('C2', 'John');
+        $sheet->setCellValue('D2', 'Doe');
+        $sheet->setCellValue('E2', 'faculty@gmail.com');
+        $sheet->setCellValue('F2', 'faculty');
 
         $writer = new XlsxWriter($spreadsheet);
 

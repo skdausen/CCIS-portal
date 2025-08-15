@@ -551,6 +551,16 @@
           <ul class="nav flex-row flex-md-column justify-content-center align-items-center align-items-md-end small">
             <h6 class="d-none d-md-block">Quick Links</h6>
             <li class="nav-item">
+              <a class="nav-link px-2 text-dark" href="https://main.ccisproject.cloud/" target="_blank">
+                <i class="bi bi-globe me-2"></i>CCIS Website
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 text-dark" href="https://www.facebook.com/ComputingStudiesISPSCMain" target="_blank">
+                <i class="fa-brands fa-facebook me-2"></i>CCIS FB
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link px-2 text-dark" href="https://www.facebook.com/people/Ispsc-Main-Campus-Registrar/61576774508246/" target="_blank">
                 <i class="fa-brands fa-facebook me-2"></i>Registrar FB
               </a>
@@ -565,11 +575,6 @@
                 <i class="fa-brands fa-facebook me-2"></i>CSSO FB
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link px-2 text-dark" href="https://www.facebook.com/ComputingStudiesISPSCMain" target="_blank">
-                <i class="fa-brands fa-facebook me-2"></i>CCIS FB
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -577,6 +582,14 @@
       <!-- Footer Bottom -->
       <hr class="my-3">
       <p class="mb-0 small">&copy; <?= date('Y') ?> CCIS Portal. All rights reserved.</p>
+      <div class="d-flex flex-wrap justify-content-center flex-md-row flex-column text-center small">
+        <span class="mx-1">Developed by</span>
+        <span class="mx-1">	&#8226; Dausen, Sean Kelly T.</span>
+        <span class="mx-1">	&#8226; Gironella, Jose S.</span>
+        <span class="mx-1">	&#8226; Ibeng, Brigitte Mae E.</span>
+        <span class="mx-1">	&#8226; Karganilla, Jedrick S.</span>
+        <span class="mx-1">	&#8226; Paglinawan, Ella Shane R.</span>
+      </div>
     </div>
   </footer>
 </div>

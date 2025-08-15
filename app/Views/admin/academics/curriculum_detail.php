@@ -28,19 +28,25 @@
 
         <?php if ($hasSubjects): ?>
 
-        <div class="row m-0">
-            <h5 class="col-6 mt-4 fw-bold p-0"><?= $currentYearKey ?></h5>
-            <div class="col-6 d-flex justify-content-end p-0">
+        <div class="d-flex flex-column flex-md-row m-0">
+            <h5 class="col-12 col-md-6 mt-4 fw-bold p-0"><?= $currentYearKey ?></h5>
+            <div class="col-12 col-md-6 d-flex justify-content-end p-0">
                 <nav aria-label="Curriculum pagination" class="small">
                     <p class="text-muted mb-3 text-end small">Page <?= $page ?> of <?= $totalPages ?></p>
                     <ul class="pagination pagination-sm justify-content-center">
                         <?php if ($page > 1): ?>
                             <li class="page-item mx-1">
-                                <a class="page-link page-link-top" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page - 1)) ?>">Previous</a>
+                                <a class="page-link page-link-top" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page - 1)) ?>">
+                                    <i class="bi bi-chevron-left"></i>
+                                    <span class="text-label"> Previous</span>
+                                </a>
                             </li>
                         <?php else: ?>
                             <li class="page-item disabled mx-1">
-                                <span class="page-link page-link-top">Previous</span>
+                                <span class="page-link page-link-top">
+                                    <i class="bi bi-chevron-left"></i>
+                                    <span class="text-label"> Previous</span>
+                                </span>
                             </li>
                         <?php endif; ?>
 
@@ -54,11 +60,17 @@
 
                         <?php if ($page < $totalPages): ?>
                             <li class="page-item mx-1">
-                                <a class="page-link page-link-top" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page + 1)) ?>">Next</a>
+                                <a class="page-link page-link-top" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page + 1)) ?>">
+                                    <span class="text-label">Next </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
                             </li>
                         <?php else: ?>
                             <li class="page-item disabled mx-1">
-                                <span class="page-link page-link-top">Next</span>
+                                <span class="page-link page-link-top">
+                                    <span class="text-label">Next </span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -69,40 +81,42 @@
         <?php foreach ($groupedSubjects[$currentYearKey] as $semester => $subjects): ?>
             <?php if (!empty($subjects)): ?>
                 <h6 class="mt-3"><?= esc($semester) ?></h6>
-                <table class="table table-bordered curriculum-table table-standard custom-padding">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>LEC Units</th>
-                            <th>LAB Units</th>
-                            <th>Total Units</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $totalLec = 0;
-                        $totalLab = 0;
-                        foreach ($subjects as $subject):
-                            $totalLec += $subject['lec_units'];
-                            $totalLab += $subject['lab_units'];
-                        ?>
-                        <tr>
-                            <td><?= esc($subject['subject_code']) ?></td>
-                            <td title="<?= esc($subject['subject_name']) ?>"><?= esc($subject['subject_name']) ?></td>
-                            <td class="text-center"><?= esc($subject['lec_units']) ?></td>
-                            <td class="text-center"><?= esc($subject['lab_units']) ?></td>
-                            <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <tr class="fw-bold bg-light">
-                            <td colspan="2" class="text-end">Total Units:</td>
-                            <td class="text-center"><?= $totalLec ?></td>
-                            <td class="text-center"><?= $totalLab ?></td>
-                            <td class="text-center"><?= $totalLec + $totalLab ?></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-scroll">
+                    <table class="table table-bordered curriculum-table table-standard custom-padding">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Subject Code</th>
+                                <th>Subject Name</th>
+                                <th>LEC Units</th>
+                                <th>LAB Units</th>
+                                <th>Total Units</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $totalLec = 0;
+                            $totalLab = 0;
+                            foreach ($subjects as $subject):
+                                $totalLec += $subject['lec_units'];
+                                $totalLab += $subject['lab_units'];
+                            ?>
+                            <tr>
+                                <td><?= esc($subject['subject_code']) ?></td>
+                                <td title="<?= esc($subject['subject_name']) ?>"><?= esc($subject['subject_name']) ?></td>
+                                <td class="text-center"><?= esc($subject['lec_units']) ?></td>
+                                <td class="text-center"><?= esc($subject['lab_units']) ?></td>
+                                <td class="text-center"><?= esc($subject['lec_units'] + $subject['lab_units']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <tr class="fw-bold bg-light">
+                                <td colspan="2" class="text-end">Total Units:</td>
+                                <td class="text-center"><?= $totalLec ?></td>
+                                <td class="text-center"><?= $totalLab ?></td>
+                                <td class="text-center"><?= $totalLec + $totalLab ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         <?php endforeach; ?>
     <?php else: ?>
@@ -130,14 +144,20 @@
 
     <?php if ($hasSubjects): ?>
         <nav aria-label="Curriculum pagination">
-            <ul class="pagination justify-content-center my-4">
+            <ul class="pagination pagination-sm justify-content-center my-4">
                 <?php if ($page > 1): ?>
                     <li class="page-item mx-1">
-                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page - 1)) ?>">Previous</a>
+                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page - 1)) ?>">
+                            <i class="bi bi-chevron-left"></i>
+                            <span class="text-label"> Previous</span>
+                        </a>
                     </li>
                 <?php else: ?>
                     <li class="page-item disabled mx-1">
-                        <span class="page-link">Previous</span>
+                        <span class="page-link">
+                            <i class="bi bi-chevron-left"></i>
+                            <span class="text-label"> Previous</span>
+                        </span>
                     </li>
                 <?php endif; ?>
 
@@ -151,11 +171,17 @@
 
                 <?php if ($page < $totalPages): ?>
                     <li class="page-item mx-1">
-                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page + 1)) ?>">Next</a>
+                        <a class="page-link" href="<?= site_url('admin/academics/curriculums/view/' . $curriculum_id . '?page=' . ($page + 1)) ?>">
+                            <span class="text-label"> Next</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
                     </li>
                 <?php else: ?>
                     <li class="page-item disabled mx-1">
-                        <span class="page-link">Next</span>
+                        <span class="page-link">
+                            <span class="text-label"> Next</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </span>
                     </li>
                 <?php endif; ?>
             </ul>

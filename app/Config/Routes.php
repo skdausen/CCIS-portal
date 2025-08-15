@@ -12,13 +12,10 @@ use App\Controllers\AuthController;
  * @var RouteCollection $routes
  */
 
-// ---------------------
-// HOME
-// ---------------------
+$routes->get('/', function() {
+    return redirect()->to('/auth/login');
+});
 
-// ---------------------
-// STATIC PAGES
-// ---------------------
 // ---------------------
 // AUTHENTICATION ROUTES
 // ---------------------

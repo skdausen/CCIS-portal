@@ -112,6 +112,7 @@
         $baseQuery = http_build_query($queryParams);
     ?>
 
+    <!-- PAGINATION -->
     <nav aria-label="Curriculum pagination">
         <ul class="pagination justify-content-center my-4">
             <!-- Previous Button -->
@@ -126,7 +127,18 @@
             <?php endif; ?>
 
             <!-- Page Numbers -->
-            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+            <?php
+                $maxPagesToShow = 5; // how many page buttons to show
+                $start = max(1, $page - floor($maxPagesToShow / 2)); 
+                $end = min($totalPages, $start + $maxPagesToShow - 1);
+
+                // Adjust start if we are near the end
+                if ($end - $start + 1 < $maxPagesToShow) {
+                    $start = max(1, $end - $maxPagesToShow + 1);
+                }
+
+                for ($p = $start; $p <= $end; $p++):
+            ?>
                 <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
                     <a class="page-link" href="<?= site_url('admin/users?page=' . $p . (!empty($baseQuery) ? '&' . $baseQuery : '')) ?>">
                         <?= $p ?>

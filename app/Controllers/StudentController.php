@@ -372,9 +372,29 @@ class StudentController extends BaseController
         // Clean file name (remove spaces, special chars if needed)
         $filename = "{$fullName} {$semesterText} {$schoolYear} Grades_Report";
         $filename = preg_replace('/[^\w\s\-]/', '', $filename);  
-        $filename = str_replace(' ', '_', $filename);            
+        $filename = str_replace(' ', '_', $filename);       
+        
+        // FIX for mobile — clear any previous output
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+        
+        // Get PDF output
+        $pdfOutput = $dompdf->output();
 
-        return $dompdf->stream($filename, ['Attachment' => true]);
+        // Set headers manually (bypass CI response)
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '.pdf"');
+        header('Content-Length: ' . strlen($pdfOutput));
+        header('Cache-Control: private, must-revalidate, max-age=0');
+        header('Pragma: public');
+        header('Connection: close');
+
+        // Send PDF content
+        echo $pdfOutput;
+
+        flush();
+        exit;
     }
     
     private function prepareGradesData($grades, $student, $selectedSemester, $stbId, $semesters)
@@ -776,8 +796,29 @@ class StudentController extends BaseController
         // Clean file name (remove spaces, special chars if needed)
         $filename = "{$fullName} Curriculum_Plan";
         $filename = preg_replace('/[^\w\s\-]/', '', $filename);  
-        $filename = str_replace(' ', '_', $filename);     
-        $dompdf->stream($filename, ['Attachment' => 1]); 
+        $filename = str_replace(' ', '_', $filename);  
+        
+        // FIX for mobile — clear any previous output
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+        
+        // Get PDF output
+        $pdfOutput = $dompdf->output();
+        
+        // Set headers manually (bypass CI response)
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '.pdf"');
+        header('Content-Length: ' . strlen($pdfOutput));
+        header('Cache-Control: private, must-revalidate, max-age=0');
+        header('Pragma: public');
+        header('Connection: close');
+
+        // Send PDF content
+        echo $pdfOutput;
+
+        flush();
+        exit;
     }
 
     private function getStudentCurriculumData($student_id)

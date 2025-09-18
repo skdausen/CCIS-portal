@@ -784,6 +784,7 @@ class AdminController extends BaseController
             return redirect()->to('auth/login');
         }
 
+        $db = \Config\Database::connect();
         $subjectModel = new SubjectModel();
         $curriculumModel = new CurriculumModel();
 
@@ -794,7 +795,12 @@ class AdminController extends BaseController
         $filter = strtolower($this->request->getGet('filter') ?? '');
 
         // Get all subjects
-        $allSubjects = $subjectModel->orderBy('subject_code')->findAll();
+        $allSubjects = $db->table('subjects s')
+            ->select('s.*, c.curriculum_name') // add curriculum name
+            ->join('curriculums c', 'c.curriculum_id = s.curriculum_id', 'left')
+            ->orderBy('s.subject_id')
+            ->get()
+            ->getResultArray();
 
         // Apply search and filter
         $filteredSubjects = array_filter($allSubjects, function ($subject) use ($search, $filter) {
@@ -873,6 +879,7 @@ class AdminController extends BaseController
         $subject_type = $this->request->getPost('subject_type');
         $lec_units    = $this->request->getPost('lec_units');
         $lab_units    = $this->request->getPost('lab_units');
+        $curriculum_id = $this->request->getPost('curriculum_id');
         $total_units = (int)$lec_units + (int)$lab_units;
 
         //  Normalize inputs
@@ -883,6 +890,7 @@ class AdminController extends BaseController
         $existing = $subjectModel
             ->where('REPLACE(LOWER(subject_code), " ", "")', $normalized_code)
             ->where('LOWER(subject_name)', $normalized_name)
+            ->where('curriculum_id', $curriculum_id)
             ->where('lec_units', $lec_units)
             ->where('lab_units', $lab_units)
             ->first();
@@ -935,17 +943,19 @@ class AdminController extends BaseController
         $subject_type = $this->request->getPost('subject_type');
         $lec_units    = $this->request->getPost('lec_units');
         $lab_units    = $this->request->getPost('lab_units');
+        $curriculum_id = $this->request->getPost('curriculum_id');
         $total_units  = (int)$lec_units + (int)$lab_units;
 
-        // Normalize subject_code (remove spaces and make lowercase)
+        // Normalize subject_code
         $normalized_code = strtolower(str_replace(' ', '', $subject_code));
 
-        // Check for duplicate subject_code (excluding the current record)
+        // Check for duplicate subject_code within the same curriculum
         $duplicate = $subjectModel
-            ->where('subject_id !=', $id)
-            ->where("REPLACE(LOWER(subject_code), ' ', '') =", $normalized_code)
+            ->where('subject_id !=', $id) // exclude self
+            ->where('curriculum_id', $curriculum_id)
+            ->where('REPLACE(LOWER(subject_code), " ", "")', $normalized_code)
             ->first();
-
+            
         if ($duplicate) {
             return redirect()->back()->with('error', 'Another subject already exists with the same subject code.');
         }
@@ -1015,7 +1025,7 @@ class AdminController extends BaseController
             : (!empty($activeSemester) ? $activeSemester['semester_id'] : null);
 
         // Pagination variables
-        $perPage = 10;
+        $perPage = 5;
         $page = (int) ($this->request->getGet('page') ?? 1);
         $offset = ($page - 1) * $perPage;
 
@@ -1053,11 +1063,9 @@ class AdminController extends BaseController
             $builder->where('classes.section', $sectionFilter);
         }
 
-        $allClasses = $builder->findAll();
-        $totalClasses = count($allClasses);
+        $totalClasses = $builder->countAllResults(false); // database counts rows
+        $classes = $builder->limit($perPage, $offset)->find(); // fetch only needed rows
         $totalPages = ceil($totalClasses / $perPage);
-
-        $classes = array_slice($allClasses, $offset, $perPage);
 
         $facultyList = $facultyModel->findAll();
         $instructors = [];
@@ -1112,35 +1120,6 @@ class AdminController extends BaseController
             $lab_day = strtoupper($this->request->getPost('lab_day'));
             $lab_start = $this->request->getPost('lab_start');
             $lab_end = $this->request->getPost('lab_end');
-
-            // Check all classes in the same semester (not just by faculty)
-            $conflictLec = $classModel
-                ->where('semester_id', $semesterId)
-                ->where('lec_day', $lec_day)
-                ->groupStart()
-                    ->where('lec_start <', $lec_end)
-                    ->where('lec_end >', $lec_start)
-                ->groupEnd()
-                ->first();
-
-            if ($conflictLec) {
-                return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
-            }
-
-            if ($subjectType === 'LEC with LAB') {
-                $conflictLab = $classModel
-                    ->where('semester_id', $semesterId)
-                    ->where('lab_day', $lab_day)
-                    ->groupStart()
-                        ->where('lab_start <', $lab_end)
-                        ->where('lab_end >', $lab_start)
-                    ->groupEnd()
-                    ->first();
-
-                if ($conflictLab) {
-                    return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
-                }
-            }
 
             // Existing class logic
             $existing = $classModel->where([
@@ -1209,42 +1188,6 @@ class AdminController extends BaseController
             $lab_day = strtoupper($this->request->getPost('lab_day'));
             $lab_start = $this->request->getPost('lab_start');
             $lab_end = $this->request->getPost('lab_end');
-
-            // Check lecture schedule conflict (against other classes in the same semester)
-            $conflictLec = $classModel
-                ->where('semester_id', $semesterId)
-                ->where('lec_day', $lec_day)
-                ->where('class_id !=', $id)
-                ->groupStart()
-                    ->where('ftb_id', $ftbId)
-                    ->orWhere('section', $section)
-                ->groupEnd()
-                ->groupStart()
-                    ->where('lec_start <', $lec_end)
-                    ->where('lec_end >', $lec_start)
-                ->groupEnd()
-                ->first();
-
-            if ($conflictLec) {
-                return redirect()->back()->withInput()->with('error', 'Lecture schedule conflict detected (conflict with another class in the semester).');
-            }
-
-            // 🧪 Lab conflict check if applicable
-            if ($subjectType === 'LEC with LAB') {
-                $conflictLab = $classModel
-                    ->where('semester_id', $semesterId)
-                    ->where('lab_day', $lab_day)
-                    ->where('class_id !=', $id)
-                    ->groupStart()
-                        ->where('lab_start <', $lab_end)
-                        ->where('lab_end >', $lab_start)
-                    ->groupEnd()
-                    ->first();
-
-                if ($conflictLab) {
-                    return redirect()->back()->withInput()->with('error', 'Lab schedule conflict detected (conflict with another class in the semester).');
-                }
-            }
 
             // Check duplicate class entry
             $existing = $classModel->where([

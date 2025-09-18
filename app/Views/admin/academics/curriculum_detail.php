@@ -28,8 +28,7 @@
 
         <?php if ($hasSubjects): ?>
 
-        <div class="d-flex flex-column flex-md-row m-0">
-            <h5 class="col-12 col-md-6 mt-4 fw-bold p-0"><?= $currentYearKey ?></h5>
+        <div class="d-flex flex-column flex-md-row-reverse m-0">
             <div class="col-12 col-md-6 d-flex justify-content-end p-0">
                 <nav aria-label="Curriculum pagination" class="small">
                     <p class="text-muted mb-3 text-end small">Page <?= $page ?> of <?= $totalPages ?></p>
@@ -76,6 +75,7 @@
                     </ul>
                 </nav>
             </div>
+            <h5 class="col-12 col-md-6 mt-4 fw-bold p-0"><?= $currentYearKey ?></h5>
         </div>
 
         <?php foreach ($groupedSubjects[$currentYearKey] as $semester => $subjects): ?>

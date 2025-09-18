@@ -57,6 +57,7 @@
                 <table class="table table-bordered table-hover table-standard custom-padding" id="subjectsTable">
                     <thead class="table-light">
                         <tr>
+                            <th title="Curriculum ID">Curr ID</th>
                             <th>Subject Code</th>
                             <th>Subject Name</th>
                             <th>Subject Type</th>
@@ -69,6 +70,9 @@
                     <tbody>
                         <?php foreach ($subjects as $subject): ?>
                         <tr>
+                            <td title="<?= esc($subject['curriculum_name']) ?>">
+                                <?= esc($subject['curriculum_id']) ?>
+                            </td>
                             <td><?= esc($subject['subject_code']) ?></td>
                             <?php
                                 $fullTitle = trim($subject['subject_name']);
@@ -206,37 +210,47 @@
                         }
                         ?>
 
-                        <nav aria-label="Subjects pagination">
-                            <ul class="pagination justify-content-center my-4">
-                                <?php if ($page > 1): ?>
-                                    <li class="page-item mx-1">
-                                        <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $page - 1]))) ?>">Previous</a>
-                                    </li>
-                                <?php else: ?>
-                                    <li class="page-item disabled mx-1">
-                                        <span class="page-link">Previous</span>
-                                    </li>
-                                <?php endif; ?>
+            <nav aria-label="Subjects pagination">
+                <ul class="pagination justify-content-center my-4">
+                    <?php
+                        $maxPagesToShow = 5;
+                        $currentBlock = ceil($page / $maxPagesToShow); 
+                        $start = ($currentBlock - 1) * $maxPagesToShow + 1;
+                        $end = min($totalPages, $start + $maxPagesToShow - 1);
+                    ?>
 
-                                <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                                    <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
-                                        <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $p]))) ?>">
-                                            <?= $p ?>
-                                        </a>
-                                    </li>
-                                <?php endfor; ?>
+                    <!-- Previous Button -->
+                    <?php if ($page > 1): ?>
+                        <li class="page-item mx-1">
+                            <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $page - 1]))) ?>">Previous</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="page-item disabled mx-1">
+                            <span class="page-link">Previous</span>
+                        </li>
+                    <?php endif; ?>
 
-                                <?php if ($page < $totalPages): ?>
-                                    <li class="page-item mx-1">
-                                        <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $page + 1]))) ?>">Next</a>
-                                    </li>
-                                <?php else: ?>
-                                    <li class="page-item disabled mx-1">
-                                        <span class="page-link">Next</span>
-                                    </li>
-                                <?php endif; ?>
-                            </ul>
-                        </nav>
+                    <!-- Page Numbers -->
+                    <?php for ($p = $start; $p <= $end; $p++): ?>
+                        <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
+                            <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $p]))) ?>">
+                                <?= $p ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Next Button -->
+                    <?php if ($page < $totalPages): ?>
+                        <li class="page-item mx-1">
+                            <a class="page-link" href="<?= site_url('admin/academics/subjects?' . http_build_query(array_merge($queryParams, ['page' => $page + 1]))) ?>">Next</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="page-item disabled mx-1">
+                            <span class="page-link">Next</span>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         </div>
     </div>
 

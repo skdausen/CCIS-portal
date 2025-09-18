@@ -147,37 +147,48 @@
                     </tbody>
                 </table>
             </div>
-                <?php if ($totalPages > 1): ?>
-                    <nav class="mt-4">
-                        <ul class="pagination justify-content-center gap-3">
-                            <!-- Prev Button -->
-                            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                                <a class="page-link"
-                                href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => max(1, $page - 1)])) ?>">
-                                    Prev
-                                </a>
-                            </li>
+            <nav aria-label="Classes pagination">
+                <ul class="pagination justify-content-center my-4">
+                    <!-- Previous Button -->
+                    <?php if ($page > 1): ?>
+                        <li class="page-item mx-1">
+                            <a class="page-link" href="<?= site_url('admin/academics/classes?page=' . ($page - 1)) ?>">Previous</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="page-item disabled mx-1">
+                            <span class="page-link">Previous</span>
+                        </li>
+                    <?php endif; ?>
 
-                            <!-- Page Numbers -->
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                                    <a class="page-link"
-                                    href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => $i])) ?>">
-                                        <?= $i ?>
-                                    </a>
-                                </li>
-                            <?php endfor; ?>
+                    <!-- Page Numbers -->
+                    <?php
+                        $maxPagesToShow = 5;
+                        $currentBlock = ceil($page / $maxPagesToShow);
 
-                            <!-- Next Button -->
-                            <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
-                                <a class="page-link"
-                                href="<?= current_url() . '?' . http_build_query(array_merge($_GET, ['page' => min($totalPages, $page + 1)])) ?>">
-                                    Next
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                <?php endif; ?>
+                        $start = ($currentBlock - 1) * $maxPagesToShow + 1;
+                        $end = min($totalPages, $currentBlock * $maxPagesToShow);
+
+                        for ($p = $start; $p <= $end; $p++):
+                    ?>
+                        <li class="page-item mx-1 <?= ($page == $p) ? 'active' : '' ?>">
+                            <a class="page-link" href="<?= site_url('admin/academics/classes?page=' . $p) ?>">
+                                <?= $p ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Next Button -->
+                    <?php if ($page < $totalPages): ?>
+                        <li class="page-item mx-1">
+                            <a class="page-link" href="<?= site_url('admin/academics/classes?page=' . ($page + 1)) ?>">Next</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="page-item disabled mx-1">
+                            <span class="page-link">Next</span>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         </div>
 
         <!-- OUTSIDE THE TABLE: Edit and Delete Modals -->
@@ -454,7 +465,8 @@
             'id' => $subject['subject_id'],
             'code' => $subject['subject_code'],
             'name' => $subject['subject_name'],
-            'type' => $subject['subject_type']
+            'type' => $subject['subject_type'],
+            'curriculum_id' => $subject['curriculum_id']
         ];
     }, $courses)); ?>;
 </script>
@@ -484,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Create suggestion item
             const li = document.createElement('li');
             li.classList.add('list-group-item', 'list-group-item-action');
-            li.textContent = `${sub.code} - ${sub.name}`;
+            li.textContent = `${sub.code} - ${sub.name} (Curr ID: ${sub.curriculum_id})`;
             li.dataset.id = sub.id;
             li.dataset.type = sub.type;
 

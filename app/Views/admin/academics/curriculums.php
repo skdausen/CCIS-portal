@@ -62,8 +62,8 @@
                     <div class="card-body d-flex justify-content-between flex-column flex-md-row">
                         <div class="mb-3 mb-md-0">
                             <h5 class="curriculum-title mb-1">
-                                <a href="<?= site_url('admin/academics/curriculums/view/' . $curriculum['curriculum_id']) ?>">
-                                    <?= esc($curriculum['curriculum_name']) ?>
+                                <a href="<?= site_url('admin/academics/curriculums/view/' . $curriculum['curriculum_id']) ?>" class="text-decoration-none">
+                                    <?= '[ Curr ID: ' . esc($curriculum['curriculum_id']) . ' ] ' . esc($curriculum['curriculum_name']) ?>
                                 </a>
                             </h5>
                             <p class="curriculum-program mb-0"><?= esc($curriculum['program_name']) ?></p>

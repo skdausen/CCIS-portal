@@ -790,50 +790,7 @@ sssssssssssssssssssssssssidebar */
     .navbar-collapse.show {
         display: block !important;
     }
-}
-
-@media (max-width: 768px) {
-    .main-container {
-        flex-direction: column;
-        margin-left: 60px; 
-    }  
-    .content-area {
-        padding: 1rem;
-    }
-    .search-bar {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    .top-actions {
-        flex-direction: column;
-        gap: 1rem;
-    }    
-    .sidebar {
-        padding: 2rem 0;
-        width: 60px;
-    }
-    .sidebar .sidebar-nav .label,
-    .sidebar #toggleSidebarBtn,
-    .sidebar .sidebar-title {
-        display: none !important;
-    }
-    .sidebar .sidebar-nav a {
-        justify-content: center;
-        padding: 1rem 0;
-    }
-
-    .chevron-label {
-        display: inline;
-    }
-    .text-label {
-        display: none;
-    }
-    /* MODAL */
-    .custom-modal-dialog {
-        align-items: flex-start !important;
-        margin-top: 1rem !important;       
-    }
-
+    
     /* CLASSES TABLE */
     .table-scroll {
         overflow-x: auto;
@@ -917,6 +874,49 @@ sssssssssssssssssssssssssidebar */
     .faculty-classes th:nth-child(7),
     .faculty-classes td:nth-child(7) {
         min-width: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        margin-left: 60px; 
+    }  
+    .content-area {
+        padding: 1rem;
+    }
+    .search-bar {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .top-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }    
+    .sidebar {
+        padding: 2rem 0;
+        width: 60px;
+    }
+    .sidebar .sidebar-nav .label,
+    .sidebar #toggleSidebarBtn,
+    .sidebar .sidebar-title {
+        display: none !important;
+    }
+    .sidebar .sidebar-nav a {
+        justify-content: center;
+        padding: 1rem 0;
+    }
+
+    .chevron-label {
+        display: inline;
+    }
+    .text-label {
+        display: none;
+    }
+    /* MODAL */
+    .custom-modal-dialog {
+        align-items: flex-start !important;
+        margin-top: 1rem !important;       
     }   
 
 }
